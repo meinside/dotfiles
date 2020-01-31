@@ -21,7 +21,7 @@ Prep scripts will clone dot/config files from the repository and install several
 
 #### a. On Linux / Raspberry Pi / WSL
 
-```
+```bash
 $ cd ~
 $ wget -O - "https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh" | bash
 ```
