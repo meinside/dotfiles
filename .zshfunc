@@ -1,0 +1,128 @@
+# .zshfunc
+#
+# my zsh functions
+#
+# created on 2014.10.06.
+# updated on 2020.01.31.
+#
+# ... by meinside@gmail.com
+#
+
+# list files changed in given days
+# (referenced: http://gotofritz.net/blog/howto/finding-recently-changed-files-osx-terminal/)
+ls-changed-in-days () {
+	if [[ $1 && -x $2 ]]; then
+		echo "> listing files modified in $1 day(s): $2"
+
+		find $2 -type f -mtime -$1 -print0 | xargs -0 du -sk | sort -nr
+	else
+		echo "* usage: $0 NUM_DAYS DIR_PATH"
+	fi
+}
+
+# install bundle, brew, brew cask and everything!
+install-all () {
+	if ! [[ -x `which brew` ]]; then
+		# install homebrew
+		ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+	fi
+
+	# homebrew
+	brew tap Homebrew/bundle && \
+		brew bundle
+}
+
+# update bundle, brew, brew cask and everything!
+update-all () {
+	# osx updates
+	echo
+	echo "> checking for macOS software updates..."
+	softwareupdate --install --all
+
+	# mac appstore
+	if [[ -x `which mas` ]]; then
+		echo
+		echo "> updating Mac App Store apps..."
+		mas upgrade
+	fi
+
+	# homebrew
+	if [[ -x `which brew` ]]; then
+		echo
+		echo "> updating brew..."
+		brew update
+		brew upgrade
+
+		echo
+		echo "> cleaning brew..."
+		brew cleanup
+	else
+		echo
+		echo "* brew not installed"
+	fi
+
+	# go get
+	if [[ -x `which goget` ]]; then
+		echo
+		echo "> updating go packages..."
+		goget
+	fi
+
+	# vim bundles
+	echo
+	echo "> updating vim bundles..."
+	vi +PlugUpdate +qall
+
+	# upgrade oh-my-zsh
+	upgrade_oh_my_zsh
+
+	# XXX - TODO: fix for linux / rpi / wsl
+	#sudo apt-get update && sudo apt-get -y upgrade && sudo apt-get autoremove && sudo apt-get autoclean;goget;vim +PlugUpdate +qall;upgrade_oh_my_zsh
+}
+
+# list go imports
+list-go-imports () {
+	if [[ $1 && $1 == '--all' ]]; then
+		# show all (including standard packages)
+		go list -f '{{join .Deps "\n"}}' | xargs go list -f '{{.ImportPath}}'
+	else
+		# not including standard
+		go list -f '{{join .Deps "\n"}}' | xargs go list -f '{{if not .Standard}}{{.ImportPath}}{{end}}'
+	fi
+}
+
+# Run kubernetes dashboard locally for development
+#
+# https://github.com/kubernetes/dashboard/
+kube-dashboard() {
+	# https://github.com/kubernetes/dashboard/releases
+	ver="1.10.1"
+	yaml="https://raw.githubusercontent.com/kubernetes/dashboard/v$ver/src/deploy/recommended/kubernetes-dashboard.yaml"
+
+	if [[ $1 && $1 == 'delete' ]]; then
+		echo "> removing kubernetes-dashboard v$ver..."
+		echo
+
+		# add '--enable-skip-login' for development
+		curl "$yaml" | \
+			gsed 's/^\(\(\s*\)- --auto-generate-certificates\)$/\1\n\2- --enable-skip-login/' | \
+			kubectl delete -f -
+	else
+		echo "> running kubernetes-dashboard v$ver on:"
+		echo
+		echo "http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/"
+		echo
+
+		# add '--enable-skip-login' for development
+		curl "$yaml" | \
+			gsed 's/^\(\(\s*\)- --auto-generate-certificates\)$/\1\n\2- --enable-skip-login/' | \
+			kubectl apply -f - && \
+			kubectl proxy
+	fi
+}
+
+# cheatsheet
+cheat() {
+	curl "https://cht.sh/$1"
+}
+

@@ -1,0 +1,216 @@
+# .gitignore of meinside@gmail.com
+#
+# last update: 2020.01.31.
+
+# unnecessary binary files
+*.o
+*.lo
+*.la
+*.al
+.libs
+*.so
+*.so.[0-9]*
+*.a
+*.pyc
+*.pyo
+*.class
+
+# swap files
+*.swp
+*~.nib
+
+# cache files/dirs
+.cache/
+
+.lldb/
+.local/
+.lsp/
+.rncache/
+.swt/
+default.profraw
+dive.log
+ganttproject.log*
+java*.log*
+
+# temp files/dirs
+backups/
+tmp/
+.rpi-firmware
+
+# other scm files/dirs
+.svn
+.cvs
+.subversion/
+
+# macOS files/dirs
+.AppleDB
+.AppleDesktop
+.AppleDouble
+.DS_Store
+.Trash/
+.CFUserTextEncoding
+.crash_*
+Applications/
+Desktop/
+Documents/
+Downloads/
+Library/
+Movies/
+Music/
+Network Trash Folder/
+Pictures/
+Public/
+Sites/
+Temporary Items/
+
+# X11 files/dirs
+.fontconfig/
+.dbus/
+.Xauthority
+.xsession-errors
+
+# clojure files/dirs
+.clojure/
+.lein/
+
+# dart files/dirs
+.dart/
+.dartServer/
+.pub-cache/
+.stagehand
+
+# golang files/dirs
+.gogets
+.gore/
+
+# java files/dirs
+.gradle/
+.m2/
+
+# node.js files/dirs
+.babel.json
+.config/configstore
+.node-gyp
+.npm/
+node_modules/
+npm-debug.log
+
+# python files/dirs
+.pip/
+.virtualenvs/
+
+# ruby files/dirs
+.gem
+.rvm
+.bundle
+.bundler
+.rvm/
+.solargraph/
+
+# rust files/dirs
+.cargo/
+.multirust
+.rustup/
+
+# xcode files
+.cocoapods/
+xcuserdata
+
+# other src files
+public_html/
+srcs/
+
+# private/config files & dirs
+.android/
+.aptitude/
+.aws/
+.config/
+.custom_env
+.davmail.properties
+.docker/
+.eclrc
+.elinks/
+.gdrive/
+.gist-vim
+.gitconfig
+.gnupg
+.gtmx.json
+.lsp/
+.oh-my-zsh/
+.srcclr/
+.ssh/
+.wget-hsts
+.zcompdump-*
+.zsh-update
+mbox
+
+# container files & dirs
+.boot2docker/
+.docker/
+.dockercfg
+.helm/
+.kube/
+
+# history files
+.*history
+.dbshell
+.nvimlog
+.oracle_jre_usage/
+.psql_history*
+.wget-hsts
+
+# other applications' files & dirs
+.AndroidStudio*/
+.cups/
+.dlv/
+.dropbox/
+.dropbox-master/
+.eclipse/
+.ethash/
+.flutter
+.ganttproject
+.Genymobile/
+.heroku/
+.hoogle/
+.httpie/
+.ipfs/
+.itmstransporter/
+.julia/
+.keras/
+.lesshst
+.lnav/
+.matplotlib/
+.netrc
+.ngrok2/
+.oracle_jre_usage/
+.putty/
+.rest-client/
+.tooling/
+.vim/
+.viminfo
+.vimrc.lowperf
+.vscode/
+.vscode-insiders/
+.vscode-server/
+.vscode-server-insiders/
+.RData
+.rnd
+.rstudio-desktop/
+.w3m/
+.wireshark-etc/
+.wireshark/
+.htoprc
+Calibre Library/
+Dropbox/
+Google Drive/
+VirtualBox VMs/
+pprof/
+
+# personal data
+.emulator_console_auth_token
+.homebrew_analytics_user_uuid
+.wakeup
+.sleep
+bin/
+files/
+

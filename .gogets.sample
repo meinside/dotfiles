@@ -1,0 +1,49 @@
+# .gogets.sample
+#
+# $ go get -u github.com/meinside/goget
+# $ goget
+#
+# then it will automatically 'go get -u' all packages listed in this file(~/.gogets)
+#
+# last update: 2020.01.31.
+
+# official packages
+golang.org/x/tools/cmd/godoc
+github.com/tools/godep
+
+# useful packages
+github.com/mailgun/godebug
+github.com/motemen/gore
+github.com/pkg/profile
+github.com/tcnksm/gotests
+github.com/google/gops
+
+# for development
+github.com/asciimoo/wuzz
+github.com/astaxie/beego
+github.com/beego/bee
+github.com/davecheney/httpstat
+github.com/derekparker/delve/cmd/dlv
+github.com/y0ssar1an/q
+github.com/mattn/go-sqlite3
+github.com/gcla/termshark/cmd/termshark
+github.com/cespare/goclj/cljfmt
+
+# for development (VS Code)
+github.com/mdempsky/gocode
+github.com/ramya-rao-a/go-outline
+github.com/acroca/go-symbols
+github.com/uudashr/gopkgs/cmd/gopkgs
+golang.org/x/tools/cmd/guru
+golang.org/x/tools/cmd/gorename
+golang.org/x/tools/cmd/goimports
+github.com/zmb3/gogetdoc
+golang.org/x/lint/golint
+
+# for backup
+github.com/gdrive-org/gdrive
+
+# my packages
+github.com/meinside/gtmx
+github.com/meinside/goget
+

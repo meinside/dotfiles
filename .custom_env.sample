@@ -1,0 +1,20 @@
+# .custom_env.sample
+#
+# last update: 2020.01.31.
+
+# print go version of a compiled binary
+gobuildversion() {
+        if [ -e "$1" ]; then
+                gdb "$1" -ex "print 'runtime.buildVersion'" -ex quit 2> /dev/null | tail -n 1 | grep -o '".*"' | tr -d '"'
+        else
+                echo "Go binary '$1' does not exist."
+        fi
+}
+
+# private go modules
+# (https://tip.golang.org/cmd/go/#hdr-Module_configuration_for_non_public_modules)
+export GOPRIVATE=github.com/meinside
+
+# docker cli options
+export DOCKER_CLI_EXPERIMENTAL=enabled
+

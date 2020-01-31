@@ -1,0 +1,81 @@
+# sample .gitconfig file
+#
+# (copy as .gitconfig and customize it)
+#
+# last update: 2020.01.31.
+
+[alias]
+	# commands
+	cl = clone
+	co = checkout
+	ci = commit
+	st = status
+	br = branch
+	unstage = reset HEAD --
+	type = cat-file -t
+	dump = cat-file -p
+	cp = cherry-pick
+	fetchall = fetch --all --tags --prune
+
+	# log
+	l = log
+	ls = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short
+	ll = log --pretty=format:\"%h %ad | %s%d [%an]\" --graph --date=short -p
+
+	# diff
+	diff = diff --word-diff
+	ds = diff --staged
+	dc = diff --cached
+
+	# stash
+	sl = stash list
+	sa = stash apply
+	ss = stash save
+	stashall = stash save --include-untracked
+
+	# submodule
+	su = submodule update
+	sui = submodule update --init --recursive
+
+	# grep with group
+	g = "grep --break --heading --line-number"
+[status]
+	showUntrackedFiles = all
+[grep]
+	extendRegexp = true
+	lineNumber = true
+	fullname = true
+[color]
+	ui = auto
+[core]
+	editor = vim
+[push]
+#	default = simple
+[merge]
+	tool = vimdiff
+[branch]
+#	autosetuprebase = always    # or `git pull --rebase`
+[user]
+	name = Sungjin Han
+	email = meinside@gmail.com
+[github]
+	user = meinside
+[tag]
+	sort = version:refname
+
+# gitflow
+[gitflow "branch"]
+	master = master
+	develop = develop
+[gitflow "prefix"]
+	feature = feature/
+	release = release/
+	hotfix = hotfix/
+	bugfix = bugfix/
+	support = support/
+	versiontag = v
+
+# force ssh for my own repositories
+[url "ssh://git@github.com/meinside/"]
+	insteadOf = https://github.com/meinside/
+
