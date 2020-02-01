@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2020.01.31.
+# last update: 2020.02.01.
 
 # unnecessary binary files
 *.o
@@ -19,23 +19,21 @@
 *.swp
 *~.nib
 
-# cache files/dirs
+# cache, temp files/dirs
 .cache/
-
 .lldb/
 .local/
 .lsp/
 .rncache/
+.rpi-firmware
+.sudo_as_admin_successful
 .swt/
+backups/
 default.profraw
 dive.log
 ganttproject.log*
 java*.log*
-
-# temp files/dirs
-backups/
 tmp/
-.rpi-firmware
 
 # other scm files/dirs
 .svn
@@ -140,7 +138,7 @@ srcs/
 .srcclr/
 .ssh/
 .wget-hsts
-.zcompdump-*
+.zcompdump*
 .zsh-update
 mbox
 
