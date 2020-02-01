@@ -5,7 +5,6 @@
 #
 # ... by meinside@gmail.com
 #
-# $ git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh
 # $ chsh -s /bin/zsh
 #
 
@@ -49,11 +48,11 @@ plugins=(osx history mosh git git-flow docker kubectl copydir colored-man-pages 
 
 # Search for oh-my-zsh.sh
 if [ -f $ZSH/oh-my-zsh.sh ]; then
-	source $ZSH/oh-my-zsh.sh
+    source $ZSH/oh-my-zsh.sh
 else
-	echo "> Install oh-my-zsh:"
-	echo "$ git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh"
-	echo
+    echo "> Install oh-my-zsh:"
+    echo "$ git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh"
+    echo
 fi
 
 # User configuration
@@ -84,33 +83,33 @@ fi
 
 if [[ -z $TMUX ]]; then
 
-	# for Go
-	if [ -d /opt/go/bin ]; then
-		export GOROOT=/opt/go
-	elif [ -x "`which go`" ]; then
-		export GOROOT=`go env GOROOT`
-	fi
-	if [ -d $GOROOT ]; then
-		export GOPATH=$HOME/srcs/go
-		export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-	fi
+    # for Go
+    if [ -d /opt/go/bin ]; then
+	export GOROOT=/opt/go
+    elif [ -x "`which go`" ]; then
+	export GOROOT=`go env GOROOT`
+    fi
+    if [ -d $GOROOT ]; then
+	export GOPATH=$HOME/srcs/go
+	export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+    fi
 
-	# for Lein (Clojure)
-	export LEIN_JVM_OPTS=""
-	# https://github.com/venantius/ultra/issues/108
-	export LEIN_USE_BOOTCLASSPATH=no
+    # for Lein (Clojure)
+    export LEIN_JVM_OPTS=""
+    # https://github.com/venantius/ultra/issues/108
+    export LEIN_USE_BOOTCLASSPATH=no
 
-	# for Node.js
-	export PATH=$PATH:/opt/node/bin
+    # for Node.js
+    export PATH=$PATH:/opt/node/bin
 
-	# for Ruby (RVM)
-	[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+    # for Ruby (RVM)
+    [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
-	# for Rust
-	export PATH=$PATH:$HOME/.cargo/bin
+    # for Rust
+    export PATH=$PATH:$HOME/.cargo/bin
 
-	# additional paths
-	export PATH="$PATH:$HOME/bin:$HOME/.local/bin"
+    # additional paths
+    export PATH="$PATH:$HOME/bin:$HOME/.local/bin"
 
 fi
 
@@ -123,7 +122,7 @@ export WORKON_HOME=$HOME/.virtualenvs
 
 # for zsh-syntax-highlighting
 if [ -d /usr/share/zsh-syntax-highlighting/  ]; then
-	source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+    source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 # aliases
