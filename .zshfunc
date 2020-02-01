@@ -3,7 +3,7 @@
 # my zsh functions
 #
 # created on 2014.10.06.
-# updated on 2020.01.31.
+# updated on 2020.02.01.
 #
 # ... by meinside@gmail.com
 #
@@ -20,7 +20,7 @@ ls-changed-in-days () {
 	fi
 }
 
-# install bundle, brew, brew cask and everything!
+# (macOS) install bundle, brew, brew cask and everything!
 install-all () {
 	if ! [[ -x `which brew` ]]; then
 		# install homebrew
@@ -32,9 +32,8 @@ install-all () {
 		brew bundle
 }
 
-# update bundle, brew, brew cask and everything!
-update-all () {
-	# osx updates
+update-macos () {
+	# macOS updates
 	echo
 	echo "> checking for macOS software updates..."
 	softwareupdate --install --all
@@ -60,6 +59,21 @@ update-all () {
 		echo
 		echo "* brew not installed"
 	fi
+}
+
+update-linux () {
+	sudo apt-get update && \
+		sudo apt-get -y upgrade && \
+		sudo apt-get autoremove && \
+		sudo apt-get autoclean
+}
+
+# update bundle, brew, brew cask and everything!
+update-all () {
+	case "$OSTYPE" in
+		darwin*) update-macos ;;
+		linux*) update-linux ;;
+	esac
 
 	# go get
 	if [[ -x `which goget` ]]; then
@@ -75,9 +89,6 @@ update-all () {
 
 	# upgrade oh-my-zsh
 	upgrade_oh_my_zsh
-
-	# XXX - TODO: fix for linux / rpi / wsl
-	#sudo apt-get update && sudo apt-get -y upgrade && sudo apt-get autoremove && sudo apt-get autoclean;goget;vim +PlugUpdate +qall;upgrade_oh_my_zsh
 }
 
 # list go imports
