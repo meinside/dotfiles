@@ -82,6 +82,9 @@ fi
 ##  for development  #
 ######################
 
+# brew sbin
+export PATH="/usr/local/sbin:$PATH"
+
 if [[ -z $TMUX ]]; then
 
 	# for Go
