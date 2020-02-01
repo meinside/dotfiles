@@ -12,3 +12,7 @@ set-window-option -g window-status-style fg=black,bg=colour75
 set-window-option -g window-status-current-style fg=colour160,bg=colour75,bold
 set -g message-style fg=black,bg=colour75
 set -g pane-active-border-style fg=colour160
+
+# status
+set -g status-right '#[fg=colour160]#h#[fg=black] %b/%d (%a) %R '
+
