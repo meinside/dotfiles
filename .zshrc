@@ -45,7 +45,7 @@ HIST_STAMPS="yyyy-mm-dd"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git docker colored-man-pages encode64 urltools)
+plugins=(osx history mosh git git-flow docker kubectl copydir colored-man-pages encode64 urltools)
 
 # Search for oh-my-zsh.sh
 if [ -f $ZSH/oh-my-zsh.sh ]; then
