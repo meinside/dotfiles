@@ -47,7 +47,14 @@ HIST_STAMPS="yyyy-mm-dd"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(git docker colored-man-pages encode64 urltools)
 
-source $ZSH/oh-my-zsh.sh
+# Search for oh-my-zsh.sh
+if [ -f $ZSH/oh-my-zsh.sh ]; then
+	source $ZSH/oh-my-zsh.sh
+else
+	echo "> Install oh-my-zsh:"
+	echo "$ git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh"
+	echo
+fi
 
 # User configuration
 #umask 027
