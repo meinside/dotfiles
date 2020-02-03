@@ -447,13 +447,85 @@ vm.min_free_kbytes=32768
 
 ## 3. Tips for Linux
 
-TODO
+### A. Make a swap file
+
+```bash
+$ sudo dd if=/dev/zero of=/swapfile bs=1024 count=1M
+$ sudo chmod 0600 /swapfile
+$ sudo mkswap /swapfile
+```
+
+and append following line to `/etc/fstab`:
+
+```
+/swapfile swap swap defaults 0 0
+```
+
+### B. Install essential packages
+
+```bash
+$ sudo apt-get install zsh tmux fail2ban nginx
+```
+
+### C. Configure locale and timezone
+
+```bash
+$ sudo locale-gen ko_KR.UTF-8
+$ sudo dpkg-reconfigure tzdata
+```
+
 
 ---
 
 ## 4. Tips for WSL
 
-TODO
+### A. Prerequisite: Install Chocolatey and WSL
+
+#### 1. Install Chocolatey
+
+As [this installation guide](https://chocolatey.org/docs/installation) says, run **PowerShell** as administrator, and type following things:
+
+```
+Shell> Set-ExecutionPolicy AllSigned
+Shell> Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+```
+
+#### 2. Install WSL
+
+##### i. WSL
+
+Install `WSL` and `Ubuntu` on `Windows 10` with [this guide](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
+
+##### ii. WSL 2
+
+For WSL 2, read [this guide](https://docs.microsoft.com/en-us/windows/wsl/wsl2-install).
+
+### B. Install Terminal Emulator for WSL
+
+[felixse/FluentTerminal](https://chocolatey.org/packages/fluent-terminal) is recommended.
+
+#### 1. How to install fluent-terminal with chocolatey
+
+```
+Shell> choco install fluent-terminal
+```
+
+### Z. Trouble Shooting
+
+#### 1. `Hash Sum Mismatch` on apt-get update
+
+```bash
+$ sudo rm -rf /var/lib/apt/lists/partial
+$ sudo apt-get update -o Acquire::CompressionTypes::Order::=gz
+```
+
+#### 2. `cannot allocate memory` when forking a new process
+
+Try appending the following line to `/etc/sysctl.conf` file:
+
+```bash
+vm.overcommit_memory = 2
+```
 
 ---
 
