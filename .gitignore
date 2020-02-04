@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2020.02.01.
+# last update: 2020.02.04.
 
 # unnecessary binary files
 *.o
@@ -33,6 +33,7 @@ default.profraw
 dive.log
 ganttproject.log*
 java*.log*
+oradiag*/
 tmp/
 
 # other scm files/dirs
