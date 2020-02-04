@@ -5,7 +5,7 @@
 # $ brew tap Homebrew/bundle
 # $ brew bundle
 # 
-# last update: 2020.01.31.
+# last update: 2020.02.04.
 
 ######## formulas
 
@@ -83,4 +83,5 @@ cask 'java'
 tap 'homebrew/cask-fonts'
 cask 'font-hack'
 cask 'font-fira-code'
+cask 'font-jetbrains-mono'
 
