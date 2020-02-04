@@ -106,8 +106,13 @@ function clean {
 	sudo rm -rf ~/.cache/pip
 }
 
+# linux
+function install_linux {
+	prep && build && check_installation && clean
+}
+
 case "$OSTYPE" in
-	linux*) prep && build && check_installation && clean ;;
+	linux*) install_linux ;;
 	*) echo "* Unsupported os type: $OSTYPE" ;;
 esac
 

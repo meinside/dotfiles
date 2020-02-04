@@ -9,7 +9,7 @@
 # - or create a (temporary) swap partition.
 # 
 # created on : 2014.07.01.
-# last update: 2020.02.01.
+# last update: 2020.02.04.
 # 
 # by meinside@gmail.com
 
@@ -126,9 +126,14 @@ function install_go_macos {
 	brew install go
 }
 
+# for linux
+function install_go_linux {
+	prep && bootstrap && install_go && clean_bootstrap
+}
+
 case "$OSTYPE" in
 	darwin*) install_go_macos ;;
-	linux*) prep && bootstrap && install_go && clean_bootstrap ;;
+	linux*) install_go_linux ;;
 	*) echo "* Unsupported os type: $OSTYPE" ;;
 esac
 

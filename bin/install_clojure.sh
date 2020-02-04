@@ -4,7 +4,7 @@
 # 
 # for downloading and setting up clojure with JDK
 # 
-# last update: 2020.02.01.
+# last update: 2020.02.04.
 # 
 # by meinside@gmail.com
 
@@ -100,7 +100,7 @@ function install_macos {
 
 case "$OSTYPE" in
 	darwin*) install_macos ;;
-	linux*) prep && install_clojure && install_leiningen && clean ;;
+	linux*) install_linux ;;
 	*) echo "* Unsupported os type: $OSTYPE" ;;
 esac
 

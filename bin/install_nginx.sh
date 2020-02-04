@@ -21,7 +21,7 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2020.02.01.
+# last update: 2020.02.04.
 # 
 # by meinside@gmail.com
 
@@ -63,72 +63,72 @@ NGINX_SITES_DIR="/etc/nginx/sites-enabled"
 NGINX_SERVICE_FILE="/lib/systemd/system/nginx.service"
 
 function prep {
-	echo -e "${YELLOW}>>> Preparing for essential libraries...${RESET}"
+    echo -e "${YELLOW}>>> Preparing for essential libraries...${RESET}"
 
-	# openssl: download and unzip
-	echo -e "${YELLOW}>>> Downloading OpenSSL...${RESET}"
-	url=$OPENSSL_SRC_URL
-	file=`basename $url`
-	cd $TEMP_DIR \
-		&& wget $url \
-		&& tar -xzvf $file
+    # openssl: download and unzip
+    echo -e "${YELLOW}>>> Downloading OpenSSL...${RESET}"
+    url=$OPENSSL_SRC_URL
+    file=`basename $url`
+    cd $TEMP_DIR && \
+	wget $url && \
+	tar -xzvf $file
 
-	# zlib: download and unzip
-	echo -e "${YELLOW}>>> Downloading Zlib...${RESET}"
-	url=$ZLIB_SRC_URL
-	file=`basename $url`
-	cd $TEMP_DIR \
-		&& wget $url \
-		&& tar -xzvf $file
+    # zlib: download and unzip
+    echo -e "${YELLOW}>>> Downloading Zlib...${RESET}"
+    url=$ZLIB_SRC_URL
+    file=`basename $url`
+    cd $TEMP_DIR && \
+	wget $url && \
+	tar -xzvf $file
 
-	# pcre: download and unzip
-	echo -e "${YELLOW}>>> Downloading PCRE...${RESET}"
-	url=$PCRE_SRC_URL
-	file=`basename $url`
-	cd $TEMP_DIR \
-		&& wget $url \
-		&& tar -xzvf $file
+    # pcre: download and unzip
+    echo -e "${YELLOW}>>> Downloading PCRE...${RESET}"
+    url=$PCRE_SRC_URL
+    file=`basename $url`
+    cd $TEMP_DIR && \
+	wget $url && \
+	tar -xzvf $file
 }
 
 function build {
-	# download, unzip,
-	url=$NGINX_SRC_URL
-	file=`basename $url`
-	cd $TEMP_DIR \
-		&& wget $url \
-		&& tar -xzvf $file \
-		&& cd $NGINX_SRC_DIR
+    # download, unzip,
+    url=$NGINX_SRC_URL
+    file=`basename $url`
+    cd $TEMP_DIR && \
+	wget $url && \
+	tar -xzvf $file && \
+	cd $NGINX_SRC_DIR
 
-	# configure,
-	echo -e "${YELLOW}>>> Configuring Nginx...${RESET}"
-	./auto/configure \
-		--user=www-data \
-		--group=www-data \
-		--sbin-path="${NGINX_BIN}" \
-		--prefix=/etc/nginx \
-		--pid-path=/run/nginx.pid \
-		--error-log-path=/var/log/nginx/error.log \
-		--http-log-path=/var/log/nginx/access.log \
-		--with-http_ssl_module \
-		--with-openssl="${OPENSSL_SRC_DIR}" \
-		--with-openssl-opt="no-weak-ssl-ciphers no-ssl3 no-shared $ECFLAG -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
-		--with-pcre="${PCRE_SRC_DIR}" \
-		--with-zlib="${ZLIB_SRC_DIR}"
+    # configure,
+    echo -e "${YELLOW}>>> Configuring Nginx...${RESET}"
+    ./auto/configure \
+	--user=www-data \
+	--group=www-data \
+	--sbin-path="${NGINX_BIN}" \
+	--prefix=/etc/nginx \
+	--pid-path=/run/nginx.pid \
+	--error-log-path=/var/log/nginx/error.log \
+	--http-log-path=/var/log/nginx/access.log \
+	--with-http_ssl_module \
+	--with-openssl="${OPENSSL_SRC_DIR}" \
+	--with-openssl-opt="no-weak-ssl-ciphers no-ssl3 no-shared $ECFLAG -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
+	--with-pcre="${PCRE_SRC_DIR}" \
+	--with-zlib="${ZLIB_SRC_DIR}"
 
-	# make
-	echo -e "${YELLOW}>>> Building Nginx...${RESET}"
-	make
+    # make
+    echo -e "${YELLOW}>>> Building Nginx...${RESET}"
+    make
 
-	# make install
-	echo -e "${YELLOW}>>> Installing...${RESET}"
-	sudo make install
+    # make install
+    echo -e "${YELLOW}>>> Installing...${RESET}"
+    sudo make install
 }
 
 function configure {
-	# create sample sites
-	sudo mkdir -p "$NGINX_SITES_DIR"
-	echo -e "${YELLOW}>>> Creating sample site files in $NGINX_SITES_DIR/ ...${RESET}"
-	sudo bash -c "cat > $NGINX_SITES_DIR/example.com" <<EOF
+    # create sample sites
+    sudo mkdir -p "$NGINX_SITES_DIR"
+    echo -e "${YELLOW}>>> Creating sample site files in $NGINX_SITES_DIR/ ...${RESET}"
+    sudo bash -c "cat > $NGINX_SITES_DIR/example.com" <<EOF
 # reverse-proxy (http://localhost:80 => https://example.com:443)
 server {
     listen 80;
@@ -154,14 +154,14 @@ server {
 }
 EOF
 
-	# edit default conf to include enabled sites and limit requests
-	sudo sed -i 's|\(\(\s*\)include\(\s\+\)mime.types;\)|\1\n\2include\3/etc/nginx/sites-enabled/*.*;\n\2limit_req_zone $binary_remote_addr zone=lr_zone:10m rate=100r/s;|' $NGINX_CONF_FILE
+    # edit default conf to include enabled sites and limit requests
+    sudo sed -i 's|\(\(\s*\)include\(\s\+\)mime.types;\)|\1\n\2include\3/etc/nginx/sites-enabled/*.*;\n\2limit_req_zone $binary_remote_addr zone=lr_zone:10m rate=100r/s;|' $NGINX_CONF_FILE
 
-	# create systemd service file
-	if [ ! -e $NGINX_SERVICE_FILE ]; then
-		echo -e "${YELLOW}>>> Creating systemd service file: ${NGINX_SERVICE_FILE}...${RESET}"
+    # create systemd service file
+    if [ ! -e $NGINX_SERVICE_FILE ]; then
+	echo -e "${YELLOW}>>> Creating systemd service file: ${NGINX_SERVICE_FILE}...${RESET}"
 
-		sudo bash -c "cat > $NGINX_SERVICE_FILE" <<EOF
+	sudo bash -c "cat > $NGINX_SERVICE_FILE" <<EOF
 [Unit]
 Description=NGINX Service
 After=syslog.target network.target remote-fs.target nss-lookup.target
@@ -178,22 +178,27 @@ PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
 EOF
-	fi
+    fi
 }
 
 function clean {
-	echo -e "${YELLOW}>>> Cleaning...${RESET}"
+    echo -e "${YELLOW}>>> Cleaning...${RESET}"
 
-	# delete files
-	cd $TEMP_DIR
-	sudo rm -rf `basename $NGINX_SRC_URL` `basename $OPENSSL_SRC_URL` `basename $ZLIB_SRC_URL` `basename $PCRE_SRC_URL`
+    # delete files
+    cd $TEMP_DIR
+    sudo rm -rf `basename $NGINX_SRC_URL` `basename $OPENSSL_SRC_URL` `basename $ZLIB_SRC_URL` `basename $PCRE_SRC_URL`
 
-	# and directories
-	sudo rm -rf $NGINX_SRC_DIR $OPENSSL_SRC_DIR $ZLIB_SRC_DIR $PCRE_SRC_DIR
+    # and directories
+    sudo rm -rf $NGINX_SRC_DIR $OPENSSL_SRC_DIR $ZLIB_SRC_DIR $PCRE_SRC_DIR
+}
+
+# linux
+function install_linux {
+    prep && build && configure && clean
 }
 
 case "$OSTYPE" in
-	linux*) prep && build && configure && clean ;;
-	*) echo "* Unsupported os type: $OSTYPE" ;;
+    linux*) install_linux ;;
+    *) echo "* Unsupported os type: $OSTYPE" ;;
 esac
 

@@ -4,7 +4,7 @@
 # 
 # for building neovim from source code
 #
-# last update: 2020.02.01.
+# last update: 2020.02.04.
 # 
 # by meinside@gmail.com
 
@@ -55,13 +55,19 @@ function install {
 	sudo make install
 }
 
+# macOS
 function install_macos {
 	brew install neovim
 }
 
+# linux
+function install_linux {
+	prep && install && clean
+}
+
 case "$OSTYPE" in
 	darwin*) install_macos ;;
-	linux*) prep && install && clean ;;
+	linux*) install_linux ;;
 	*) echo "* Unsupported os type: $OSTYPE" ;;
 esac
 
