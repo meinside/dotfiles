@@ -428,6 +428,12 @@ and add following lines:
 0 1 * * * bash -l -c /some/ruby_script_under_rvm.rb
 ```
 
+#### f. Block IPs temporarily with iptables
+
+```bash
+$ sudo iptables -A INPUT -s 999.999.999.999 -j DROP
+```
+
 ### Z. Troubleshooting
 
 #### a. Error message: 'smsc95xx 1-1.1:1.0: eth0: kevent 2 may have been dropped'
