@@ -209,7 +209,6 @@ Plug 'tpope/vim-endwise'
 
 " For Rust
 Plug 'rust-lang/rust.vim'
-let g:rustfmt_autosave = 1
 
 " XXX - do not load following plugins on machines with low performance:
 " (touch '~/.vimrc.lowperf' for it)
@@ -258,6 +257,10 @@ if !filereadable(lowperf)
     let g:go_auto_type_info = 1
     let g:syntastic_go_checkers = ['go']	" XXX: 'golint' is too slow, use :GoLint manually.
     let g:syntastic_aggregate_errors = 1
+
+    " For Rust
+    let g:rustfmt_autosave = 1 " :RustFmt
+
 endif
 
 "
