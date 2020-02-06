@@ -5,7 +5,7 @@
 # $ brew tap Homebrew/bundle
 # $ brew bundle
 # 
-# last update: 2020.02.04.
+# last update: 2020.02.06.
 
 ######## formulas
 
@@ -44,6 +44,9 @@ brew 'go'
 
 # programming language: node
 brew 'node'
+
+# programming language: rust
+brew 'rustup-init'
 
 # development tools
 brew 'curl'

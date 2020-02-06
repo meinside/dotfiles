@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2020.01.31.
+" last update: 2020.02.06.
 "
 " NOTE: setup for nvim:
 "
@@ -168,8 +168,9 @@ if has('nvim')
     " - clojure: coc-conjure
     " - go: coc-go
     " - ruby: coc-solargraph ($ gem install solargraph)
+    " - rust: coc-rls
     let g:coc_global_extensions = ['coc-json',
-        \ 'coc-conjure', 'coc-go', 'coc-solargraph']
+        \ 'coc-conjure', 'coc-go', 'coc-rls', 'coc-solargraph']
 endif
 
 " For Linting
@@ -206,36 +207,40 @@ Plug 'fatih/vim-go', {'for': 'go', 'do': ':GoInstallBinaries'}
 Plug 'vim-ruby/vim-ruby'
 Plug 'tpope/vim-endwise'
 
+" For Rust
+Plug 'rust-lang/rust.vim'
+let g:rustfmt_autosave = 1
+
 " XXX - do not load following plugins on machines with low performance:
 " (touch '~/.vimrc.lowperf' for it)
 let lowperf=expand('~/.vimrc.lowperf')
 if !filereadable(lowperf)
 
-	" For syntax checking
-	Plug 'vim-syntastic/syntastic'
-	set statusline+=%#warningmsg#
-	if exists('*SyntasticStatuslineFlag')
-		set statusline+=%{SyntasticStatuslineFlag()}
-	endif
-	set statusline+=%*
-	let g:syntastic_always_populate_loc_list = 1
-	let g:syntastic_auto_loc_list = 1
-	let g:syntastic_check_on_open = 0
-	let g:syntastic_check_on_wq = 0
+    " For syntax checking
+    Plug 'vim-syntastic/syntastic'
+    set statusline+=%#warningmsg#
+    if exists('*SyntasticStatuslineFlag')
+        set statusline+=%{SyntasticStatuslineFlag()}
+    endif
+    set statusline+=%*
+    let g:syntastic_always_populate_loc_list = 1
+    let g:syntastic_auto_loc_list = 1
+    let g:syntastic_check_on_open = 0
+    let g:syntastic_check_on_wq = 0
 
-	" For gitgutter
-	Plug 'airblade/vim-gitgutter'        " [c, ]c for prev/next hunk
-	let g:gitgutter_highlight_lines = 1
-	let g:gitgutter_realtime = 0
-	let g:gitgutter_eager = 0
+    " For gitgutter
+    Plug 'airblade/vim-gitgutter'        " [c, ]c for prev/next hunk
+    let g:gitgutter_highlight_lines = 1
+    let g:gitgutter_realtime = 0
+    let g:gitgutter_eager = 0
 
-	" For Clojure
+    " For Clojure
     if has('nvim')
         Plug 'Olical/conjure', { 'tag': 'v2.1.2', 'do': 'bin/compile'  }
         let g:conjure_log_direction = "horizontal"
     endif
 
-	" For Go
+    " For Go
     if has('nvim')
         " disable vim-go :GoDef short cut (gd), this is handled by LanguageClient [LC]
         let g:go_def_mapping_enabled = 0
@@ -330,8 +335,6 @@ if has("autocmd")
         autocmd FileType css,scss set ai sw=2 ts=2 sts=2 et
 
         " For programming languages
-        " Golang
-        autocmd FileType go set ai sw=4 ts=4 sts=4 noet
         " Ruby
         autocmd FileType ruby,eruby,yaml set ai sw=2 ts=2 sts=2 et
         " Python

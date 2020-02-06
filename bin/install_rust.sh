@@ -4,10 +4,8 @@
 # 
 # Install Rust and its toolchain from rustup.rs
 #
-# * Add `export PATH=$PATH:$HOME/.cargo/bin` to the rc file.
-# 
 # created on : 2019.02.18.
-# last update: 2020.02.04.
+# last update: 2020.02.06.
 # 
 # by meinside@gmail.com
 
@@ -19,7 +17,7 @@ function install_linux {
 }
 
 function install_macos {
-	brew install rust
+	brew install rustup-init
 }
 
 case "$OSTYPE" in
