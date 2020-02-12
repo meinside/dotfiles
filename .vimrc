@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2020.02.06.
+" last update: 2020.02.12.
 "
 " NOTE: setup for nvim:
 "
@@ -169,8 +169,12 @@ if has('nvim')
     " - go: coc-go
     " - ruby: coc-solargraph ($ gem install solargraph)
     " - rust: coc-rls
-    let g:coc_global_extensions = ['coc-json',
-        \ 'coc-conjure', 'coc-go', 'coc-rls', 'coc-solargraph']
+    let g:coc_global_extensions = [
+        \'coc-json',
+        \'coc-conjure',
+        \'coc-go',
+        \'coc-rls',
+        \'coc-solargraph']
 endif
 
 " For Linting
