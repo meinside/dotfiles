@@ -4,7 +4,7 @@
 #
 # (referenced: https://docs.docker.com/engine/security/https/)
 #
-# last update: 2020.02.01.
+# last update: 2020.02.14.
 
 EXPIRE_IN=3650	# valid for 10 years
 
@@ -26,12 +26,17 @@ if [ $num_args -gt 0 ]; then
 
 	# ip addresses
 	ips=("${args[@]:1}")
+	ips+=("localhost")
 	ips+=("127.0.0.1")
 
-	echo "Allowed ips: ${ips[@]}"
+	echo "Additional domains or allowed ips: ${ips[@]}"
 
 	for i in "${!ips[@]}"; do
-		ips[$i]="IP:${ips[$i]}"
+		if [[ "${ips[$i]}" =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
+			ips[$i]="IP:${ips[$i]}"
+		else
+			ips[$i]="DNS:${ips[$i]}"
+		fi
 	done
 	ip_addrs=$(IFS=, ; echo "${ips[*]}")
 
@@ -65,10 +70,10 @@ if [ $num_args -gt 0 ]; then
 else
 	# print usage
 	echo "Usage:"
-	echo " $ $0 HOST_NAME [ALLOWED_IP_ADDR1] [ALLOWED_IP_ADDR2] ..."
+	echo " $ $0 HOST_NAME [ADDITIONAL_DOMAIN1/ALLOWED_IP_ADDR1] [ADDITIONAL_DOMAIN2/ALLOWED_IP_ADDR2] ..."
 	echo
 	echo "Example:"
 	echo " $ $0 my.hostname.com"
-	echo " $ $0 dev.hostname.com 192.168.0.11 192.168.0.12"
+	echo " $ $0 dev.hostname.com test.hostname.com 192.168.0.11 192.168.0.12"
 fi
 
