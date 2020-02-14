@@ -477,7 +477,7 @@ $ sudo apt-get install zsh tmux fail2ban nginx
 
 ```bash
 $ sudo apt-get install locales tzdata
-# or,
+$ sudo locale-gen en_US.UTF-8
 $ sudo locale-gen ko_KR.UTF-8
 $ sudo dpkg-reconfigure tzdata
 ```
