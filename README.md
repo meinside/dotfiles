@@ -476,6 +476,7 @@ $ sudo apt-get install zsh tmux fail2ban nginx
 ### C. Configure locale and timezone
 
 ```bash
+$ sudo apt-get install locales
 $ sudo locale-gen ko_KR.UTF-8
 $ sudo dpkg-reconfigure tzdata
 ```
