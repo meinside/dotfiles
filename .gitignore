@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2020.02.04.
+# last update: 2020.02.17.
 
 # unnecessary binary files
 *.o
@@ -136,6 +136,7 @@ srcs/
 .gtmx.json
 .lsp/
 .oh-my-zsh/
+.selected_editor
 .srcclr/
 .ssh/
 .wget-hsts
