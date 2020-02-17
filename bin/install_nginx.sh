@@ -21,7 +21,7 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2020.02.07.
+# last update: 2020.02.17.
 # 
 # by meinside@gmail.com
 
@@ -110,6 +110,7 @@ function build {
 	--error-log-path=/var/log/nginx/error.log \
 	--http-log-path=/var/log/nginx/access.log \
 	--with-http_ssl_module \
+	--with-http_sub_module \
 	--with-openssl="${OPENSSL_SRC_DIR}" \
 	--with-openssl-opt="no-weak-ssl-ciphers no-ssl3 no-shared $ECFLAG -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
 	--with-pcre="${PCRE_SRC_DIR}" \
