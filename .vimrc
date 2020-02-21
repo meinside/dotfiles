@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2020.02.12.
+" last update: 2020.02.21.
 "
 " NOTE: setup for nvim:
 "
@@ -180,6 +180,9 @@ endif
 " For Linting
 if has('nvim')
     Plug 'dense-analysis/ale'
+    let g:ale_set_loclist = 0
+    let g:ale_open_list = 1
+    let g:ale_set_quickfix = 1
 endif
 
 " For source file browsing, XXX: ctags and vim-nox is needed! ($ sudo apt-get install vim-nox ctags)
