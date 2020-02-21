@@ -180,9 +180,20 @@ endif
 " For Linting
 if has('nvim')
     Plug 'dense-analysis/ale'
+
+    " show quickfix list
     let g:ale_set_loclist = 0
     let g:ale_open_list = 1
     let g:ale_set_quickfix = 1
+
+    " lint only on save
+    let g:ale_lint_on_text_changed = 'never'
+    let g:ale_lint_on_insert_leave = 0
+    let g:ale_lint_on_enter = 0
+
+    " C-k, C-j for moving between errors
+    nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+    nmap <silent> <C-j> <Plug>(ale_next_wrap)
 endif
 
 " For source file browsing, XXX: ctags and vim-nox is needed! ($ sudo apt-get install vim-nox ctags)
