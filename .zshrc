@@ -118,8 +118,8 @@ fi
 
 # for python and virtualenv
 #
-# $ sudo apt-get install python-pip
-# $ sudo pip install virtualenvwrapper
+# $ sudo apt-get install python3-pip
+# $ sudo pip3 install virtualenvwrapper
 export WORKON_HOME=$HOME/.virtualenvs
 [[ -s "/usr/local/bin/virtualenvwrapper.sh" ]] && source "/usr/local/bin/virtualenvwrapper.sh"	# virtualenv and virtualenvwrapper
 

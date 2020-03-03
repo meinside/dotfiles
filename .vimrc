@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2020.02.21.
+" last update: 2020.03.03.
 "
 " NOTE: setup for nvim:
 "
@@ -77,6 +77,8 @@ Plug 'tmhedberg/matchit'
 Plug 'tpope/vim-ragtag' " TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-fugitive'
+Plug 'junegunn/gv.vim' " :GV, :GV!, :GV?
+Plug 'mtth/locate.vim' " :L xxx, :lclose, gl
 Plug 'vim-airline/vim-airline'
 let g:airline#extensions#ale#enabled = 1
 Plug 'Yggdroot/indentLine'
