@@ -9,11 +9,11 @@
 
 #   $ sudo apt-get -y install certbot
 #
-#   # for subdomain certificates (will restart nginx when issued):
-#   $ sudo certbot certonly --authenticator standalone -d "subdomain1.example.com" --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
+#   # for root and subdomain certificates (will restart nginx when issued):
+#   $ sudo certbot certonly --authenticator standalone -d "example.com" -d "subdomain1.example.com" --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 
-#   # or for certificate for wildcard and root domain:
-#   $ sudo certbot certonly --manual --preferred-challenges=dns --agree-tos -d "*.example.com" -d "example.com"
+#   # or manually issue a certificate for a wildcard domain (cannot be renewed automatically):
+#   $ sudo certbot certonly --manual --preferred-challenges=dns --agree-tos -d "*.example.com"
 #
 # * for auto-renewing SSL certificates:
 #   $ sudo crontab -e
@@ -21,7 +21,7 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2020.03.05.
+# last update: 2020.03.31.
 # 
 # by meinside@gmail.com
 
