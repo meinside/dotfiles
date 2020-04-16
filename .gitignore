@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2020.02.21.
+# last update: 2020.04.16.
 
 # unnecessary binary files
 *.o
@@ -186,6 +186,7 @@ mbox
 .netrc
 .ngrok2/
 .oracle_jre_usage/
+.plotly/
 .putty/
 .rest-client/
 .tooling/

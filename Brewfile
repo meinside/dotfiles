@@ -5,7 +5,7 @@
 # $ brew tap Homebrew/bundle
 # $ brew bundle
 # 
-# last update: 2020.03.02.
+# last update: 2020.04.16.
 
 ######## formulas
 
@@ -79,6 +79,7 @@ cask 'xquartz'
 # for development
 cask 'iterm2'
 cask 'java'
+#cask 'falcon-sql-client'
 #cask 'postico'
 #cask 'sequel-pro'
 
