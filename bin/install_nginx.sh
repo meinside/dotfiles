@@ -137,7 +137,7 @@ function configure {
     sudo bash -c "cat > $NGINX_SITES_DIR/example.com" <<EOF
 # An example for a reverse-proxy (http://localhost:8080 => https://example.com:443)
 #
-# (https://ssl-config.mozilla.org/#server=nginx&version=1.16.1&config=intermediate&openssl=1.1.1d&guideline=5.4)
+# (https://ssl-config.mozilla.org/#server=nginx&version=1.18.0&config=intermediate&openssl=1.1.1g&guideline=5.4)
 server {
     listen 80;
     listen [::]:80;
@@ -148,7 +148,9 @@ server {
 }
 
 server {
+    #listen 443 ssl http2;
     listen 443 ssl;
+    #listen [::]:443 ssl http2;
     listen [::]:443 ssl;
 
     server_name example.com;
