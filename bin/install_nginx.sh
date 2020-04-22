@@ -4,6 +4,8 @@
 # 
 # Build and install Nginx.
 #
+# (https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#sources)
+#
 # * for issuing and renewing SSL certificates:
 #   (https://webcodr.io/2018/02/nginx-reverse-proxy-on-raspberry-pi-with-lets-encrypt/)
 
@@ -21,7 +23,7 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2020.03.31.
+# last update: 2020.04.22.
 # 
 # by meinside@gmail.com
 
@@ -38,10 +40,10 @@ RESET="\033[0m"
 TEMP_DIR="/tmp"
 
 # versions
-NGINX_VERSION="1.16.1"
-OPENSSL_VERSION="1.1.1d"
+NGINX_VERSION="1.18.0"
+OPENSSL_VERSION="1.1.1g"
 ZLIB_VERSION="1.2.11"
-PCRE_VERSION="8.43"
+PCRE_VERSION="8.44"
 
 # source files
 NGINX_SRC_URL="https://github.com/nginx/nginx/archive/release-${NGINX_VERSION}.tar.gz"
@@ -111,6 +113,9 @@ function build {
 	--http-log-path=/var/log/nginx/access.log \
 	--with-http_ssl_module \
 	--with-http_sub_module \
+	--with-http_v2_module \
+	--with-stream \
+	--with-stream_ssl_module \
 	--with-openssl="${OPENSSL_SRC_DIR}" \
 	--with-openssl-opt="no-weak-ssl-ciphers no-ssl3 no-shared $ECFLAG -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
 	--with-pcre="${PCRE_SRC_DIR}" \
