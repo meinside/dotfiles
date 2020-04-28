@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2020.03.03.
+" last update: 2020.04.28.
 "
 " NOTE: setup for nvim:
 "
@@ -170,13 +170,26 @@ if has('nvim')
     " - clojure: coc-conjure
     " - go: coc-go
     " - ruby: coc-solargraph ($ gem install solargraph)
-    " - rust: coc-rls
+    " - rust: coc-rust-analyzer
     let g:coc_global_extensions = [
         \'coc-json',
         \'coc-conjure',
         \'coc-go',
-        \'coc-rls',
+        \'coc-rust-analyzer',
         \'coc-solargraph']
+
+    " * for coc-rust-analyzer,
+    "
+    " install rust-analyzer:
+    "
+    "   $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer && cargo xtask install --server
+    " 
+    " :CocConfig
+    "
+    "   {
+    "     "rust-analyzer": { "serverPath": "~/.cargo/bin/rust-analyzer" }
+    "   }
+
 endif
 
 " For Linting
