@@ -23,7 +23,7 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2020.04.22.
+# last update: 2020.04.29.
 # 
 # by meinside@gmail.com
 
@@ -190,6 +190,8 @@ EOF
     sudo sed -i 's|\(\(\s*\)include\(\s\+\)mime.types;\)|\1\n\2include\3/etc/nginx/sites-enabled/*.*;\n\2limit_req_zone $binary_remote_addr zone=lr_zone:10m rate=100r/s;|' $NGINX_CONF_FILE
 
     # create systemd service file
+    #
+    # https://www.nginx.com/resources/wiki/start/topics/examples/systemd/
     if [ ! -e $NGINX_SERVICE_FILE ]; then
 	echo -e "${YELLOW}>>> Creating systemd service file: ${NGINX_SERVICE_FILE}...${RESET}"
 
@@ -203,7 +205,7 @@ Type=forking
 PIDFile=/run/nginx.pid
 ExecStartPre=/usr/local/sbin/nginx -t
 ExecStart=/usr/local/sbin/nginx
-ExecReload=/bin/kill -s HUP \$MAINPID
+ExecReload=/usr/local/sbin/nginx -s reload
 ExecStop=/bin/kill -s QUIT \$MAINPID
 PrivateTmp=true
 
