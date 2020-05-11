@@ -2,7 +2,7 @@
 #
 # (copy as .gitconfig and customize it)
 #
-# last update: 2020.01.31.
+# last update: 2020.05.11.
 
 [alias]
 	# commands
@@ -54,6 +54,7 @@
 [merge]
 	tool = vimdiff
 [branch]
+#	autoSetupMerge = always
 #	autosetuprebase = always    # or `git pull --rebase`
 [user]
 	name = Sungjin Han
@@ -76,6 +77,6 @@
 	versiontag = v
 
 # force ssh for my own repositories
-[url "ssh://git@github.com/meinside/"]
-	insteadOf = https://github.com/meinside/
+#[url "ssh://git@github.com/meinside/"]
+#	insteadOf = https://github.com/meinside/
 
