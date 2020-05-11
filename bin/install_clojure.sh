@@ -4,7 +4,7 @@
 # 
 # for downloading and setting up clojure with JDK
 # 
-# last update: 2020.02.04.
+# last update: 2020.05.11.
 # 
 # by meinside@gmail.com
 
@@ -28,8 +28,8 @@ LEIN_BIN="/usr/local/bin/lein"
 
 JDK_DIR=/opt/jdk
 
-# https://www.azul.com/downloads/zulu-embedded/
-ZULU_EMBEDDED_VERSION="zulu11.35.36-ca-jdk11.0.5-linux_aarch32hf"
+# https://www.azul.com/downloads/zulu-community/?architecture=arm-32-bit-hf&package=jdk
+ZULU_EMBEDDED_VERSION="zulu11.39.61-ca-jdk11.0.7-linux_aarch32hf"
 ZULU_EMBEDDED_TGZ="http://cdn.azul.com/zulu-embedded/bin/${ZULU_EMBEDDED_VERSION}.tar.gz"
 
 function install_zulu_jdk {
