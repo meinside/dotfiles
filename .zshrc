@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2020.02.12.
+# updated on 2020.05.15.
 #
 # ... by meinside@gmail.com
 #
@@ -76,6 +76,17 @@ if [ -x /usr/bin/dircolors ]; then
     alias ls='ls --color=auto'
     alias grep="grep --color=auto"
 fi
+
+# key bindings
+bindkey -v
+bindkey "^A" vi-beginning-of-line
+bindkey "^E" vi-end-of-line
+bindkey "^K" kill-line
+bindkey "^D" delete-char
+bindkey "^F" vi-forward-char
+bindkey "^B" vi-backward-char
+bindkey '^[[A' history-beginning-search-backward
+bindkey "^N" history-beginning-search-forward
 
 ######################
 ##  for development  #
