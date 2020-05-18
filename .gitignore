@@ -97,6 +97,9 @@ snap/
 node_modules/
 npm-debug.log
 
+# perl files/dirs
+perl*/
+
 # python files/dirs
 .pip/
 .virtualenvs/
