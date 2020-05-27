@@ -2,7 +2,7 @@
 #
 # created by meinside@gmail.com
 #
-# last update: 2020.01.31.
+# last update: 2020.05.27.
 
 alias ll="ls -alF"
 
@@ -11,4 +11,18 @@ alias ctags='ctags -R --totals=yes'
 
 # $ ruby -rwebrick -e's=WEBrick::HTTPServer.new(Port:8080,DocumentRoot:Dir.pwd);trap("INT"){s.shutdown};s.start'
 alias httpserver="ruby -rwebrick -e's=WEBrick::HTTPServer.new(Port:8080,DocumentRoot:Dir.pwd);trap(\"INT\"){s.shutdown};s.start'"
+
+# referenced: https://thorsten-hans.com/5-types-of-zsh-aliases
+
+# for macOS
+if [[ $OSTYPE == darwin* ]]; then
+	alias flush='dscacheutil -flushcache'
+
+	alias chrome="open -a /Applications/Google\ Chrome.app"
+fi
+
+# suffix aliases (for zsh only)
+if [[ $SHELL == *"/bin/zsh"* ]]; then
+	alias -s {go,rs,clj,cljs,cljc,md,json,html,css}=vi
+fi
 
