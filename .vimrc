@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2020.04.28.
+" last update: 2020.05.28.
 "
 " NOTE: setup for nvim:
 "
@@ -268,6 +268,11 @@ if !filereadable(lowperf)
 
     " For Clojure
     if has('nvim')
+        " https://github.com/Olical/conjure/blob/master/doc/conjure.txt
+        "
+        " for auto completion: <C-x><C-o>
+        " for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
+        " for reloading everything: \rr
         Plug 'Olical/conjure', { 'tag': 'v2.1.2', 'do': 'bin/compile'  }
         let g:conjure_log_direction = "horizontal"
     endif
