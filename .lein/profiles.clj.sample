@@ -23,11 +23,4 @@
                        [slamhound "1.5.5"]]
 
         ;; global variables
-        :global-vars {*print-length* 20}
-
-        ;; for conjure
-        ;; (put a file named `.conjure.edn` in your project directory with this content: `{:conns {:lein {:port 55555}}}`)
-        :repl-options {:init (clojure.core.server/start-server {:accept 'clojure.core.server/io-prepl
-                                                                :address "localhost"
-                                                                :port 55555
-                                                                :name "lein"})}}}
+        :global-vars {*print-length* 20}}}
