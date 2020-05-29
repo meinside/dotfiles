@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2020.05.28.
+" last update: 2020.05.29.
 "
 " NOTE: setup for nvim:
 "
@@ -22,10 +22,9 @@
 " $ brew install node
 
 """"""""""""""""""""""""""""""""""""
-" settings for nvim
+" settings for nvim (symlink .vimrc)
 "
-"
-" for nvim, symbolic link '~/.vimrc' to '~/.config/nvim/init.vim'
+" $ mkdir -p ~/.config/nvim && ln -sf ~/.vimrc ~/.config/nvim/init.vim
 if !filereadable(expand('~/.config/nvim/init.vim'))
     silent !mkdir -p ~/.config/nvim
     silent !ln -sf ~/.vimrc ~/.config/nvim/init.vim
