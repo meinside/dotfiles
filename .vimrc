@@ -267,13 +267,13 @@ if !filereadable(lowperf)
 
     " For Clojure
     if has('nvim')
-        " https://github.com/Olical/conjure/blob/master/doc/conjure.txt
+        " :help conjure
         "
         " for auto completion: <C-x><C-o>
         " for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
         " for reloading everything: \rr
-        Plug 'Olical/conjure', { 'tag': 'v3.4.0' }
-        let g:conjure_log_direction = "horizontal"
+        " for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
+        Plug 'Olical/conjure', { 'tag': 'v3.4.0' } "https://github.com/Olical/conjure/releases
     endif
 
     " For Go
