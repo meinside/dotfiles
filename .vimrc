@@ -272,7 +272,7 @@ if !filereadable(lowperf)
         " for auto completion: <C-x><C-o>
         " for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
         " for reloading everything: \rr
-        Plug 'Olical/conjure', { 'tag': 'v2.1.2', 'do': 'bin/compile'  }
+        Plug 'Olical/conjure', { 'tag': 'v3.4.0' }
         let g:conjure_log_direction = "horizontal"
     endif
 
