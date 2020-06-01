@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2020.05.29.
+" last update: 2020.06.01.
 "
 " NOTE: setup for nvim:
 "
@@ -395,5 +395,5 @@ endif " has("autocmd")
 " set colorscheme
 let g:hybrid_transparent_background = 1
 set background=dark
-colorscheme hybrid_material
+colorscheme hybrid_reverse
 
