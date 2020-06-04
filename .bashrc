@@ -102,11 +102,3 @@ if [ -f ~/.custom_env ]; then
     . ~/.custom_env
 fi
 
-# for fzf
-# $ sudo apt install fzf
-# $ brew install fzf
-# > choco install fzf
-if [ -x `which fzf` ]; then
-    [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-fi
-

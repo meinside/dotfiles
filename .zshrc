@@ -155,12 +155,3 @@ fi
 # remove redundant paths
 typeset -aU path
 
-
-# for fzf
-# $ sudo apt install fzf
-# $ brew install fzf
-# > choco install fzf
-if [ -x `which fzf` ]; then
-    [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-fi
-
