@@ -1,7 +1,7 @@
 # My .bashrc file
 #
 # created on 2012.05.31.
-# updated on 2020.01.31.
+# updated on 2020.06.04.
 #
 # ... by meinside@gmail.com
 
@@ -100,5 +100,13 @@ export WORKON_HOME=$HOME/.virtualenvs
 # load custom environment variables (like GOPRIVATE, PATH, alias, ...) if exist
 if [ -f ~/.custom_env ]; then
     . ~/.custom_env
+fi
+
+# for fzf
+# $ sudo apt install fzf
+# $ brew install fzf
+# > choco install fzf
+if [ -x `which fzf` ]; then
+    [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 fi
 

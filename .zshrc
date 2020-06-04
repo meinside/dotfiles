@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2020.05.15.
+# updated on 2020.06.04.
 #
 # ... by meinside@gmail.com
 #
@@ -154,4 +154,13 @@ fi
 
 # remove redundant paths
 typeset -aU path
+
+
+# for fzf
+# $ sudo apt install fzf
+# $ brew install fzf
+# > choco install fzf
+if [ -x `which fzf` ]; then
+    [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+fi
 
