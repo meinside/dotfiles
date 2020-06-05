@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2020.06.01.
+" last update: 2020.06.05.
 "
 " NOTE: setup for nvim:
 "
@@ -74,7 +74,7 @@ Plug 'kristijanhusak/vim-hybrid-material'
 Plug 'jiangmiao/auto-pairs'
 Plug 'tmhedberg/matchit'
 Plug 'tpope/vim-ragtag' " TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
-Plug 'tpope/vim-surround'
+Plug 'tpope/vim-surround' " cst'" => change ' to " / ds" => remove " / ysiw" => wrap text object with " / yss" => wrap line with "
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/gv.vim' " :GV, :GV!, :GV?
 Plug 'mtth/locate.vim' " :L xxx, :lclose, gl
