@@ -75,6 +75,7 @@ Plug 'jiangmiao/auto-pairs'
 Plug 'tmhedberg/matchit'
 Plug 'tpope/vim-ragtag' " TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
 Plug 'tpope/vim-surround' " cst'" => change ' to " / ds" => remove " / ysiw" => wrap text object with " / yss" => wrap line with "
+Plug 'tpope/vim-repeat'
 Plug 'tpope/vim-fugitive'
 Plug 'junegunn/gv.vim' " :GV, :GV!, :GV?
 Plug 'mtth/locate.vim' " :L xxx, :lclose, gl
