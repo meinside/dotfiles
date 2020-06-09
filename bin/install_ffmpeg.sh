@@ -6,12 +6,15 @@
 #
 # (pass '--do-not-clean' argument for preserving files after install)
 # 
-# last update: 2020.02.01.
+# last update: 2020.06.09.
 # 
 # by meinside@gmail.com
 
 # XXX - for making newly created files/directories less restrictive
 umask 0022
+
+# https://github.com/FFmpeg/FFmpeg/tags
+FFMPEG_VERSION="n4.2.3" # XXX - update this
 
 TMP_DIR=/tmp/ffmpeg
 
@@ -27,9 +30,17 @@ function clean {
 }
 
 function install {
-	git clone --depth=1 https://github.com/FFmpeg/FFmpeg.git $TMP_DIR
+	git clone --depth=1 -b $FFMPEG_VERSION https://github.com/FFmpeg/FFmpeg.git $TMP_DIR
 	cd $TMP_DIR
-	./configure --arch=armel --target-os=linux --enable-gpl --enable-nonfree --enable-libx264 --enable-libvorbis --enable-libmp3lame
+
+	PLATFORM=`uname -m`
+	case "$PLATFORM" in
+		arm64) ARCH="aarch64" ;;
+		arm*) ARCH="armel" ;;
+		*) ARCH=$PLATFORM ;;
+	esac
+
+	./configure --arch=$ARCH --target-os=linux --enable-gpl --enable-nonfree --enable-libx264 --enable-libvorbis --enable-libmp3lame
 	make -j4
 
 	# install

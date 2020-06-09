@@ -6,7 +6,7 @@
 #
 # (https://clojure.org/guides/getting_started#_installation_on_linux)
 # 
-# last update: 2020.06.05.
+# last update: 2020.06.09.
 # 
 # by meinside@gmail.com
 
@@ -30,8 +30,17 @@ LEIN_BIN="/usr/local/bin/lein"
 
 JDK_DIR=/opt/jdk
 
-# https://www.azul.com/downloads/zulu-community/?architecture=arm-32-bit-hf&package=jdk
-ZULU_EMBEDDED_VERSION="zulu11.39.61-ca-jdk11.0.7-linux_aarch32hf"
+# (for ARM devices)
+#
+# ARM32 HF: https://www.azul.com/downloads/zulu-community/?architecture=arm-32-bit-hf&package=jdk
+# ARM64   : https://www.azul.com/downloads/zulu-community/?architecture=arm-64-bit&package=jdk
+PLATFORM=`uname -m`
+case "$PLATFORM" in
+	arm64) ZULU_EMBEDDED_VERSION="zulu11.39.61-ca-jdk11.0.7-linux_aarch64" ;;
+	armv7*) ZULU_EMBEDDED_VERSION="zulu11.39.61-ca-jdk11.0.7-linux_aarch32hf" ;;
+	x86*) ZULU_EMBEDDED_VERSION="" ;;
+	*) echo "* Unsupported platform: $PLATFORM"; exit 1 ;;
+esac
 ZULU_EMBEDDED_TGZ="http://cdn.azul.com/zulu-embedded/bin/${ZULU_EMBEDDED_VERSION}.tar.gz"
 
 function install_zulu_jdk {
@@ -55,7 +64,7 @@ function install_openjdk {
 }
 
 function prep {
-	case `uname -m` in
+	case "$PLATFORM" in
 		arm*) install_zulu_jdk ;;
 		*) install_openjdk ;;
 	esac
