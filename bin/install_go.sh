@@ -71,15 +71,36 @@ function bootstrap {
 
 		ln -sf "$INSTALLATION_DIR/go" "$BOOTSTRAP_DIR"
 	else
-		clone_bootstrap_repo && build_bootstrap
+		arch=`uname -m`
+		if [[ $arch == "aarch64" ]]; then
+			echo -e "${RED}>>> Go 1.4 does not support $arch.${RESET}"
+
+			echo -e "${YELLOW}>>> Installing Go from the package manager...${RESET}"
+
+			# install golang from the package manager
+			sudo apt-get -y install golang
+
+			BOOTSTRAP_DIR=/usr/lib/go
+		else
+			clone_bootstrap_repo && build_bootstrap
+		fi
 	fi
 }
 
 # clean Go (for bootstrap)
 function clean_bootstrap {
-	# remove bootstrap go
-	echo -e "${YELLOW}>>> Cleaning Go bootstrap at: $BOOTSTRAP_DIR${RESET}"
-	rm -rf "$BOOTSTRAP_DIR"
+	arch=`uname -m`
+	if [[ $arch == "aarch64" ]]; then
+		echo -e "${YELLOW}>>> Uninstalling package manager's Go...${RESET}"
+
+		# uninstall the package manager's golang
+		sudo apt-get -y purge golang
+		sudo apt-get -y autoremove
+	else
+		# remove bootstrap go
+		echo -e "${YELLOW}>>> Cleaning Go bootstrap at: $BOOTSTRAP_DIR${RESET}"
+		rm -rf "$BOOTSTRAP_DIR"
+	fi
 }
 
 function clone_repo {
