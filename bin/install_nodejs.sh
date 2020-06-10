@@ -5,7 +5,7 @@
 # install pre-built Node.js (LTS) for Linux from: https://nodejs.org/dist
 # 
 # created on : 2013.07.19.
-# last update: 2020.06.03.
+# last update: 2020.06.10.
 # 
 # by meinside@gmail.com
 
@@ -21,9 +21,10 @@ RESET="\033[0m"
 VERSION="12.18.0"	# XXX - edit this for other versions
 PLATFORM=`uname -m`	# armv7l, armv6l, ...
 
-# x86_64 = x64
+# x86_64 = x64, aarch64 = arm64
 case "$PLATFORM" in
 	x86_64) PLATFORM="x64" ;;
+	aarch64) PLATFORM="arm64" ;;
 esac
 
 NODEJS_DIST_BASEURL="https://nodejs.org/dist"

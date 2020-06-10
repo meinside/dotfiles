@@ -7,9 +7,11 @@
 # *** Note: this process needs much memory, so
 # - assign GPU memory as little as possible,
 # - or create a (temporary) swap partition.
+#
+# *** Another Note: `aarch64` is not supported in golang 1.4, so it will be bootstrapped with package manager's version.
 # 
 # created on : 2014.07.01.
-# last update: 2020.05.19.
+# last update: 2020.06.10.
 # 
 # by meinside@gmail.com
 
