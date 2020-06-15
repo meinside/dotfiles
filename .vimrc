@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2020.06.05.
+" last update: 2020.06.15.
 "
 " NOTE: setup for nvim:
 "
@@ -29,14 +29,12 @@ if !filereadable(expand('~/.config/nvim/init.vim'))
     silent !mkdir -p ~/.config/nvim
     silent !ln -sf ~/.vimrc ~/.config/nvim/init.vim
 endif
-if system('uname -s') == 'Darwin'
-    if has('nvim')	" settings for nvim only
-        set termguicolors
-        set mouse-=a	" not to enter visual mode when dragging text
-        let g:go_term_enabled = 1	" XXX - it needs to be set for 'delve' (2017.02.10.)
-    else	" settings for vim only
-        set t_Co=256
-    endif
+
+if has('nvim')	" settings for nvim only
+    set mouse-=a	" not to enter visual mode when dragging text
+    let g:go_term_enabled = 1	" XXX - it needs to be set for 'delve' (2017.02.10.)
+else	" settings for vim only
+    set t_Co=256
 endif
 
 """"""""""""""""""""""""""""""""""""
@@ -338,12 +336,6 @@ set termencoding=utf-8
 set wildmenu   " visual autocomplete for command menu
 set showbreak=↳
 set breakindent
-
-" for color schemes
-set t_Co=256
-if exists('$TMUX')
-    set termguicolors	" not working in terminals
-endif
 
 " file browser (netrw)
 " :Ex, :Sex, :Vex
