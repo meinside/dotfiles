@@ -52,15 +52,17 @@ function clean {
 }
 
 function install {
-	if [[ $1 == '--nightly' ]]; then
-		NVIM_VERSION="nightly"
+	tag=$NVIM_VERSION
+
+	if [[ $1 == "--nightly" ]]; then
+		tag="nightly"
 	fi
 
-	echo -e "${YELLOW}>>> Will install Neovim version ${NVIM_VERSION}...${RESET}"
+	echo -e "${YELLOW}>>> Will install Neovim version ${tag}...${RESET}"
 
 	git clone https://github.com/neovim/neovim.git $TMP_DIR && \
 		cd $TMP_DIR && \
-		git checkout $NVIM_VERSION
+		git checkout ${tag}
 
 	# configure and build
 	rm -rf build && \
@@ -78,12 +80,12 @@ function install_macos {
 
 # linux
 function install_linux {
-	prep && install && clean
+	prep && install $1 && clean
 }
 
 case "$OSTYPE" in
 	darwin*) install_macos ;;
-	linux*) install_linux ;;
+	linux*) install_linux $1 ;;
 	*) echo "* Unsupported os type: $OSTYPE" ;;
 esac
 
