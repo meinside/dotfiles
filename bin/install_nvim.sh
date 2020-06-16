@@ -4,10 +4,14 @@
 # 
 # for building neovim from source code
 #
-# last update: 2020.02.04.
+# last update: 2020.06.16.
 # 
 # by meinside@gmail.com
 
+# * To install nightly version:
+#
+# $ ./install_nvim.sh --nightly
+#
 # * Update alternatives with:
 #
 # $ sudo update-alternatives --install /usr/bin/vi vi /usr/local/bin/nvim 60
@@ -19,6 +23,12 @@
 
 # XXX - for making newly created files/directories less restrictive
 umask 0022
+
+# colors
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+YELLOW="\033[0;33m"
+RESET="\033[0m"
 
 TMP_DIR=/tmp/nvim
 
@@ -42,6 +52,12 @@ function clean {
 }
 
 function install {
+	if [[ $1 == '--nightly' ]]; then
+		NVIM_VERSION="nightly"
+	fi
+
+	echo -e "${YELLOW}>>> Will install Neovim version ${NVIM_VERSION}...${RESET}"
+
 	git clone https://github.com/neovim/neovim.git $TMP_DIR && \
 		cd $TMP_DIR && \
 		git checkout $NVIM_VERSION
