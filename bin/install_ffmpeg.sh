@@ -6,7 +6,7 @@
 #
 # (pass '--do-not-clean' argument for preserving files after install)
 # 
-# last update: 2020.06.09.
+# last update: 2020.06.18.
 # 
 # by meinside@gmail.com
 
@@ -14,13 +14,19 @@
 umask 0022
 
 # https://github.com/FFmpeg/FFmpeg/tags
-FFMPEG_VERSION="n4.2.3" # XXX - update this
+FFMPEG_VERSION="n4.3" # XXX - update this
 
 TMP_DIR=/tmp/ffmpeg
 
 function prep {
 	# install needed packages
-	sudo apt-get install -y build-essential libx264-dev libvorbis-dev libmp3lame-dev
+	sudo apt-get install -y build-essential \
+		libx264-dev \
+		libx265-dev libnuma-dev \
+		libvpx-dev \
+		libmp3lame-dev \
+		libvorbis-dev \
+		libopus-dev
 
 	clean
 }
@@ -40,7 +46,13 @@ function install {
 		*) ARCH=$PLATFORM ;;
 	esac
 
-	./configure --arch=$ARCH --target-os=linux --enable-gpl --enable-nonfree --enable-libx264 --enable-libvorbis --enable-libmp3lame
+	./configure --arch=$ARCH --target-os=linux --enable-gpl --enable-nonfree \
+		--enable-libx264 \
+		--enable-libx265 \
+		--enable-libvpx \
+		--enable-libmp3lame \
+		--enable-libvorbis \
+		--enable-libopus
 	make -j4
 
 	# install
