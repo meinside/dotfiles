@@ -9,7 +9,7 @@ My personal dot/config files for:
 - macOS (**Catalina**)
 - Raspberry Pi (**Raspbian Buster**)
 - Linux (**Debian/Ubuntu**)
-- WSL 1/2 (**Windows 10**)
+- WSL 2 (**Windows 10**)
 
 ---
 
@@ -500,13 +500,7 @@ Shell> Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System
 
 #### 2. Install WSL
 
-##### i. WSL
-
-Install `WSL` and `Ubuntu` on `Windows 10` with [this guide](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
-
-##### ii. WSL 2
-
-For WSL 2, read [this guide](https://docs.microsoft.com/en-us/windows/wsl/wsl2-install).
+Install `WSL` on `Windows 10` with [this guide](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
 
 ### B. Install Terminal Emulator for WSL
 
