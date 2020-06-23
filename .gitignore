@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2020.05.21.
+# last update: 2020.06.23.
 
 # unnecessary binary files
 *.o
@@ -195,6 +195,7 @@ mbox
 .putty/
 .rest-client/
 .tooling/
+.vnc/
 .vim/
 .viminfo
 .vimrc.lowperf
