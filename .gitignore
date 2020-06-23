@@ -179,6 +179,7 @@ mbox
 .Genymobile/
 .heroku/
 .hoogle/
+.htoprc
 .httpie/
 .ipfs/
 .itmstransporter/
@@ -209,7 +210,7 @@ mbox
 .w3m/
 .wireshark-etc/
 .wireshark/
-.htoprc
+.Xresources
 Calibre Library/
 Dropbox/
 Google Drive/
