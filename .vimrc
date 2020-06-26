@@ -159,25 +159,13 @@ if has('nvim')
     " - clojure: coc-conjure
     " - go: coc-go
     " - ruby: coc-solargraph ($ gem install solargraph)
-    " - rust: coc-rust-analyzer
+    " - rust: coc-rust-analyzer ($ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer && cargo xtask install --server)
     let g:coc_global_extensions = [
         \'coc-json',
         \'coc-conjure',
         \'coc-go',
         \'coc-rust-analyzer',
         \'coc-solargraph']
-
-    " * for coc-rust-analyzer,
-    "
-    " install rust-analyzer:
-    "
-    "   $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer && cargo xtask install --server
-    " 
-    " :CocConfig
-    "
-    "   {
-    "     "rust-analyzer": { "serverPath": "~/.cargo/bin/rust-analyzer" }
-    "   }
 
 endif
 
