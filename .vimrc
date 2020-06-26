@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2020.06.17.
+" last update: 2020.06.26.
 "
 " NOTE: setup for nvim:
 "
@@ -20,15 +20,6 @@
 "
 " (macOS)
 " $ brew install node
-
-""""""""""""""""""""""""""""""""""""
-" settings for nvim (symlink .vimrc)
-"
-" $ mkdir -p ~/.config/nvim && ln -sf ~/.vimrc ~/.config/nvim/init.vim
-if !filereadable(expand('~/.config/nvim/init.vim'))
-    silent !mkdir -p ~/.config/nvim
-    silent !ln -sf ~/.vimrc ~/.config/nvim/init.vim
-endif
 
 if has('nvim')	" settings for nvim only
     set mouse-=a	" not to enter visual mode when dragging text

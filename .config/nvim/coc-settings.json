@@ -1,0 +1,20 @@
+{
+  "coc.preferences.colorSupport": true,
+  "coc.preferences.snippets.enable": false,
+
+  "diagnostic.checkCurrentLine": true,
+  "diagnostic.errorSign": "✘",
+  "diagnostic.joinMessageLines": true,
+  "diagnostic.level": "information",
+  "diagnostic.messageTarget": "float",
+  "diagnostic.virtualText": false,
+
+  "highlight.colors.enable": true,
+
+  "signature.enable": true,
+
+  "suggest.autoTrigger": "always",
+
+  "rust-analyzer.diagnostics.enable": false,
+  "rust-analyzer.serverPath": "~/.cargo/bin/rust-analyzer"
+}
