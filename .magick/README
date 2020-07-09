@@ -1,8 +1,0 @@
-* referenced: http://www.imagemagick.org/discourse-server/viewtopic.php?f=3&t=18133
-
-On OSX, ImageMagick fails to search for fonts,
-so we have to generate ~/.magick/type.xml manually by running 'imagick_type_gen' script from http://www.imagemagick.org/Usage/scripts/
-
-
-$ ./imagick_type_gen > ~/.magick/type.xml
-

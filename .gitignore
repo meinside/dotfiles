@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2020.06.24.
+# last update: 2020.07.09.
 
 # unnecessary binary files
 *.o
@@ -189,6 +189,7 @@ mbox
 .keras/
 .lesshst
 .lnav/
+.magick/
 .matplotlib/
 .mitmproxy/
 .netrc
