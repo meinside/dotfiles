@@ -1,20 +1,44 @@
 {
-  "coc.preferences.colorSupport": true,
-  "coc.preferences.snippets.enable": false,
+  "diagnostic": {
+    "checkCurrentLine": true,
+    "errorSign": "✘",
+    "joinMessageLines": true,
+    "level": "information",
+    "messageTarget": "float",
+    "virtualText": false
+  },
 
-  "diagnostic.checkCurrentLine": true,
-  "diagnostic.errorSign": "✘",
-  "diagnostic.joinMessageLines": true,
-  "diagnostic.level": "information",
-  "diagnostic.messageTarget": "float",
-  "diagnostic.virtualText": false,
+  "highlight": {
+    "colors": {
+      "enable": true
+    }
+  },
 
-  "highlight.colors.enable": true,
-
-  "signature.enable": true,
+  "signature": {
+    "enable": true
+  },
 
   "suggest.autoTrigger": "always",
 
-  "rust-analyzer.diagnostics.enable": false,
-  "rust-analyzer.serverPath": "~/.cargo/bin/rust-analyzer"
+  "coc": {
+    "preferences": {
+      "colorSupport": true,
+      "snippets": {
+	"enable": false
+      }
+    }
+  },
+
+  "go": {
+    "disable": {
+      "workspaceFolders": false
+    }
+  },
+
+  "rust-analyzer": {
+    "diagnostics": {
+      "enable": false
+    },
+    "serverPath": "~/.cargo/bin/rust-analyzer"
+  }
 }
