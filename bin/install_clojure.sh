@@ -6,7 +6,7 @@
 #
 # (https://clojure.org/guides/getting_started#_installation_on_linux)
 # 
-# last update: 2020.07.14.
+# last update: 2020.07.22.
 # 
 # by meinside@gmail.com
 
@@ -19,7 +19,7 @@ GREEN="\033[0;32m"
 YELLOW="\033[0;33m"
 RESET="\033[0m"
 
-CLOJURE_VERSION="1.10.1.547"	# XXX - change clojure version
+CLOJURE_VERSION="1.10.1.561"	# XXX - change clojure version
 
 # https://clojure.org/guides/getting_started#_installation_on_linux
 CLOJURE_INSTALL_SCRIPT="https://download.clojure.org/install/linux-install-${CLOJURE_VERSION}.sh"
@@ -36,7 +36,7 @@ JDK_DIR=/opt/jdk
 # ARM64   : https://www.azul.com/downloads/zulu-community/?architecture=arm-64-bit&package=jdk
 PLATFORM=`uname -m`
 case "$PLATFORM" in
-	arm64|aarch64) ZULU_EMBEDDED_VERSION="zulu11.39.61-ca-jdk11.0.7-linux_aarch64" ;;
+	arm64|aarch64) ZULU_EMBEDDED_VERSION="zulu11.41.75-ca-jdk11.0.8-linux_aarch64" ;;
 	armv7*) ZULU_EMBEDDED_VERSION="zulu11.39.61-ca-jdk11.0.7-linux_aarch32hf" ;;
 	x86*) ZULU_EMBEDDED_VERSION="" ;;
 	*) echo "* Unsupported platform: $PLATFORM"; exit 1 ;;
