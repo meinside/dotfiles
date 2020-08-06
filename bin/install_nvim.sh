@@ -4,7 +4,7 @@
 # 
 # for building neovim from source code
 #
-# last update: 2020.06.16.
+# last update: 2020.08.06.
 # 
 # by meinside@gmail.com
 
@@ -32,7 +32,7 @@ RESET="\033[0m"
 
 TMP_DIR=/tmp/nvim
 
-NVIM_VERSION="v0.4.3"
+NVIM_VERSION="v0.4.4"
 
 function prep {
 	# install needed packages
