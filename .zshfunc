@@ -3,7 +3,7 @@
 # my zsh functions
 #
 # created on 2014.10.06.
-# updated on 2020.02.01.
+# updated on 2020.08.06.
 #
 # ... by meinside@gmail.com
 #
@@ -88,7 +88,7 @@ update-all () {
 	vi +PlugUpdate +qall
 
 	# upgrade oh-my-zsh
-	upgrade_oh_my_zsh
+	omz update
 }
 
 # list go imports
