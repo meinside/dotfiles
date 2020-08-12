@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2020.07.09.
+# last update: 2020.08.12.
 
 # unnecessary binary files
 *.o
@@ -197,7 +197,10 @@ mbox
 .oracle_jre_usage/
 .plotly/
 .putty/
+.RData
 .rest-client/
+.rnd
+.rstudio-desktop/
 .tooling/
 .vnc/
 .vim/
@@ -207,13 +210,11 @@ mbox
 .vscode-insiders/
 .vscode-server/
 .vscode-server-insiders/
-.RData
-.rnd
-.rstudio-desktop/
 .w3m/
 .wireshark-etc/
 .wireshark/
 .Xresources
+.yarnrc
 Calibre Library/
 Dropbox/
 Google Drive/
