@@ -4,7 +4,7 @@
 # 
 # for building neovim from source code
 #
-# last update: 2020.08.06.
+# last update: 2020.08.14.
 # 
 # by meinside@gmail.com
 
@@ -36,7 +36,7 @@ NVIM_VERSION="v0.4.4"
 
 function prep {
 	# install needed packages
-	sudo apt-get install -y libtool libtool-bin autoconf automake cmake g++ pkg-config unzip python-dev python3-pip gettext && \
+	sudo apt-get install -y libtool libtool-bin autoconf automake cmake g++ pkg-config unzip python3-dev python3-pip gettext && \
 		pip3 install --upgrade --user pynvim
 
 	# symlink .vimrc file
