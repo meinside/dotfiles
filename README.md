@@ -504,12 +504,23 @@ Install `WSL` on `Windows 10` with [this guide](https://docs.microsoft.com/en-us
 
 ### B. Install Terminal Emulator for WSL
 
-[felixse/FluentTerminal](https://chocolatey.org/packages/fluent-terminal) is recommended.
+[Windows Terminal](https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701) is recommended.
 
-#### 1. How to install fluent-terminal with chocolatey
+#### 1. Change starting directory for WSL
+
+Open Windows Terminal's settings(settings.json), and add following to your WSL profile:
 
 ```
-Shell> choco install fluent-terminal
+// e.g.
+{
+  "guid": "{07b52e3e-de2c-5db4-bd2d-ba144ed6c273}",
+  "hidden": false,
+  "name": "Ubuntu-20.04",
+  "source": "Windows.Terminal.Wsl",
+
+  // starting directory
+  "startingDirectory": "//wsl$/Ubuntu-20.04/home/MY_ACCOUNT"
+}
 ```
 
 ### Z. Trouble Shooting
