@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2020.08.10.
+" last update: 2020.08.28.
 "
 " NOTE: setup for nvim:
 "
@@ -78,6 +78,18 @@ Plug 'tpope/vim-sleuth'
 Plug 'johngrib/vim-f-hangul'	" can use f/t/;/, on Hangul characters
 Plug 'luochen1990/rainbow'     " rainbow-colored parentheses
 let g:rainbow_active = 1
+
+" For project management
+"
+" <ctrl-p> to start,
+" <ctrl-j/k> to navigate files,
+" <ctrl-t/v/x> to open a file in a new tab, vertical split, or horizontal split
+"
+Plug 'ctrlpvim/ctrlp.vim'
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_root_markers = ['pom.xml', 'go.mod']
 
 " For autocompletion
 if has('nvim')
