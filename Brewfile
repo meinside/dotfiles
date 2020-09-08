@@ -5,7 +5,7 @@
 # $ brew tap Homebrew/bundle
 # $ brew bundle
 # 
-# last update: 2020.04.16.
+# last update: 2020.09.08.
 
 ######## formulas
 
@@ -36,6 +36,7 @@ brew 'dart'
 # programming language: clojure
 brew 'leiningen'
 brew 'borkdude/brew/clj-kondo'
+brew 'borkdude/brew/babashka'
 brew 'candid82/brew/joker'
 brew 'clojure/tools/clojure'
 
