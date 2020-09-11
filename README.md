@@ -282,6 +282,37 @@ and add following lines:
 </service-group>
 ```
 
+#### d. Enable trim on an external SSD
+
+If the SSD [supports trim](https://www.jeffgeerling.com/blog/2020/enabling-trim-on-external-ssd-on-raspberry-pi),
+
+##### i. Add a udev rule
+
+Create `/etc/udev/rules.d/10-trim.rules` file with the following line:
+
+```
+ACTION=="add|change", ATTRS{idVendor}=="XXXX", ATTRS{idProduct}=="YYYY", SUBSYSTEM=="scsi_disk", ATTR{provisioning_mode}="unmap"
+```
+
+where **XXXX** is the vendor id and **YYYY** is the product id
+
+which can be retrieved from `lsusb` command:
+
+```
+Bus 002 Device 002: ID XXXX:YYYY My Lovely SSD
+Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+Bus 001 Device 002: ID 2109:3431 VIA Labs, Inc. Hub
+Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+```
+
+##### ii. Enable a timer
+
+For running `fstrim` automatically, enable a timer with:
+
+```bash
+$ sudo systemctl enable fstrim.timer
+```
+
 ### C. Etc. Tips
 
 #### a. Set static dns server even when using DHCP
