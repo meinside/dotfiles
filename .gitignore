@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2020.08.12.
+# last update: 2020.09.21.
 
 # unnecessary binary files
 *.o
@@ -24,6 +24,7 @@
 .lldb/
 .local/
 .lsp/
+.openjfx/
 .rncache/
 .rpi-firmware
 .sudo_as_admin_successful
