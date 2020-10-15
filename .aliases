@@ -2,7 +2,7 @@
 #
 # created by meinside@gmail.com
 #
-# last update: 2020.05.27.
+# last update: 2020.10.15.
 
 alias ll="ls -alF"
 
@@ -23,6 +23,6 @@ fi
 
 # suffix aliases (for zsh only)
 if [[ $SHELL == *"/bin/zsh"* ]]; then
-	alias -s {go,rs,clj,cljs,cljc,md,json,html,css}=vi
+	alias -s {go,rs,cljs,cljc,md,json,html,css}=vi
 fi
 
