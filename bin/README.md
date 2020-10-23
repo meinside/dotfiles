@@ -10,6 +10,10 @@ A script that checks for WiFi connectivity (with `ping`) and restart the interfa
 
 A script for generating self-signed certificates for development.
 
+## hack_macos.sh
+
+A script for macOS hacks (originates from https://gist.github.com/erikh/2260182).
+
 ## install_clojure.sh
 
 A script for installing [JDK](https://www.azul.com/downloads/zulu-embedded/), [clojure](https://clojure.org/guides/getting_started#_installation_on_linux), and [leiningen](https://leiningen.org/).
@@ -61,4 +65,8 @@ A script that will clone this repository and install things for Linux/WSL.
 ## prep_macos.sh
 
 A script that will clone this repository and install things for macOS.
+
+## update_motd.sh
+
+A script for updating MOTD.
 
