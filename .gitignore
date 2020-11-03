@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2020.09.21.
+# last update: 2020.11.03.
 
 # unnecessary binary files
 *.o
@@ -180,6 +180,7 @@ mbox
 .flutter
 .ganttproject
 .Genymobile/
+.ghidra/
 .heroku/
 .hoogle/
 .htoprc
