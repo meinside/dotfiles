@@ -2,7 +2,10 @@
 #
 # (copy as .gitconfig and customize it)
 #
-# last update: 2020.06.03.
+# last update: 2020.11.18.
+
+[init]
+  defaultBranch = master
 
 [alias]
 	# commands
