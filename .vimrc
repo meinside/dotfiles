@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2020.11.03.
+" last update: 2020.11.18.
 "
 " NOTE: setup for nvim:
 "
@@ -28,7 +28,7 @@ else	" settings for vim only
     set t_Co=256
 endif
 
-""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""
 " settings for vim-plug (https://github.com/junegunn/vim-plug)
 if has('nvim')
     " for nvim
@@ -53,33 +53,49 @@ else
     call plug#begin('~/.vim/plugged')
 endif
 
-""""""""
+""""""""""""""""""""""""""""""""
+"
 " plugins
 
 " colorschemes (https://github.com/rafi/awesome-vim-colorschemes)
+"
 Plug 'kristijanhusak/vim-hybrid-material'
 
-" Useful plugins
+" formatting
+"
 Plug 'jiangmiao/auto-pairs'
 Plug 'tmhedberg/matchit'
-Plug 'tpope/vim-ragtag' " TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
 Plug 'tpope/vim-surround' " cst'" => change ' to " / ds" => remove " / ysiw" => wrap text object with " / yss" => wrap line with "
 Plug 'tpope/vim-repeat'
-Plug 'tpope/vim-fugitive'
-Plug 'junegunn/gv.vim' " :GV, :GV!, :GV?
-Plug 'mtth/locate.vim' " :L xxx, :lclose, gl
-Plug 'vim-airline/vim-airline'
-let g:airline#extensions#ale#enabled = 1
+Plug 'tpope/vim-ragtag' " TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
 Plug 'Yggdroot/indentLine'
 let g:indentLine_char = '⎸'
 let g:indentLine_enabled = 0	" :IndentLinesToggle
 Plug 'docunext/closetag.vim'
 Plug 'tpope/vim-sleuth'
-Plug 'johngrib/vim-f-hangul'	" can use f/t/;/, on Hangul characters
 Plug 'luochen1990/rainbow'     " rainbow-colored parentheses
 let g:rainbow_active = 1
 
-" For project management
+" finder / locator
+"
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim' " :Files, :GFiles
+Plug 'mtth/locate.vim' " :L xxx, :lclose, gl
+Plug 'johngrib/vim-f-hangul'	" can use f/t/;/, on Hangul characters
+Plug 'majutsushi/tagbar'    " For source file browsing ($ sudo apt-get install vim-nox ctags)
+nmap <F8> :TagbarToggle<CR>
+
+" git
+"
+Plug 'junegunn/gv.vim' " :GV, :GV!, :GV?
+Plug 'tpope/vim-fugitive'
+
+" airline
+"
+Plug 'vim-airline/vim-airline'
+let g:airline#extensions#ale#enabled = 1
+
+" project management
 "
 " <ctrl-p> to start,
 " <ctrl-j/k> to navigate files,
@@ -93,7 +109,8 @@ let g:ctrlp_root_markers = ['pom.xml', 'go.mod']
 nnoremap <C-h> :tabprevious<CR> " <ctrl-h> for previous tab,
 nnoremap <C-l> :tabnext<CR> " <ctrl-l> for next tab,
 
-" For autocompletion
+" autocompletion
+"
 if has('nvim')
     Plug 'neoclide/coc.nvim', {'branch': 'release'} " XXX - nodejs needed!
 
@@ -183,7 +200,8 @@ if has('nvim')
 
 endif
 
-" For Linting
+" linting
+"
 if has('nvim')
     Plug 'dense-analysis/ale'
 
@@ -202,15 +220,13 @@ if has('nvim')
     nmap <silent> <C-j> <Plug>(ale_next_wrap)
 endif
 
-" For source file browsing, XXX: ctags and vim-nox is needed! ($ sudo apt-get install vim-nox ctags)
-Plug 'majutsushi/tagbar'
-nmap <F8> :TagbarToggle<CR>
-
-" For uploading Gist (:Gist / :Gist -p / ...)
+" gist (:Gist / :Gist -p / ...)
+"
 Plug 'mattn/webapi-vim'
 Plug 'mattn/gist-vim'
 
-" For Clojure
+" clojure
+"
 " $ go get github.com/cespare/goclj/cljfmt
 Plug 'dmac/vim-cljfmt'
 " >f, <f : move a form
@@ -224,14 +240,17 @@ Plug 'dmac/vim-cljfmt'
 Plug 'guns/vim-sexp'
 Plug 'tpope/vim-sexp-mappings-for-regular-people'
 
-" For Go
+" golang
+"
 Plug 'fatih/vim-go', {'for': 'go', 'do': ':GoInstallBinaries'}
 
-" For Ruby
+" ruby
+"
 Plug 'vim-ruby/vim-ruby'
 Plug 'tpope/vim-endwise'
 
-" For Rust
+" rust
+"
 Plug 'rust-lang/rust.vim'
 
 " XXX - do not load following plugins on machines with low performance:
@@ -239,7 +258,8 @@ Plug 'rust-lang/rust.vim'
 let lowperf=expand('~/.vimrc.lowperf')
 if !filereadable(lowperf)
 
-    " For syntax checking
+    " syntax checking
+    "
     Plug 'vim-syntastic/syntastic'
     set statusline+=%#warningmsg#
     if exists('*SyntasticStatuslineFlag')
@@ -251,13 +271,15 @@ if !filereadable(lowperf)
     let g:syntastic_check_on_open = 0
     let g:syntastic_check_on_wq = 0
 
-    " For gitgutter
+    " gitgutter
+    "
     Plug 'airblade/vim-gitgutter'        " [c, ]c for prev/next hunk
     let g:gitgutter_highlight_lines = 1
     let g:gitgutter_realtime = 0
     let g:gitgutter_eager = 0
 
-    " For Clojure
+    " clojure
+    "
     if has('nvim')
         " :help conjure
         "
@@ -268,7 +290,8 @@ if !filereadable(lowperf)
         Plug 'Olical/conjure', { 'tag': 'v4.8.0' } "https://github.com/Olical/conjure/releases
     endif
 
-    " For Go
+    " golang
+    "
     if has('nvim')
         " disable vim-go :GoDef short cut (gd), this is handled by LanguageClient [LC]
         let g:go_def_mapping_enabled = 0
@@ -287,7 +310,8 @@ if !filereadable(lowperf)
     let g:syntastic_go_checkers = ['go']	" XXX: 'golint' is too slow, use :GoLint manually.
     let g:syntastic_aggregate_errors = 1
 
-    " For Rust
+    " rust
+    "
     let g:rustfmt_autosave = 1 " :RustFmt
 
 endif
@@ -298,9 +322,9 @@ endif
 " Initialize plugin system
 call plug#end()
 "
-""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""
 
-" For Linting
+" linting
 "
 " * clojure:
 " $ npm install -g clj-kondo
@@ -379,6 +403,7 @@ else
 endif " has("autocmd")
 
 " set colorscheme
+"
 let g:hybrid_transparent_background = 1
 set background=dark
 colorscheme hybrid_reverse
