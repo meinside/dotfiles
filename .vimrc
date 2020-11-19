@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2020.11.18.
+" last update: 2020.11.19.
 "
 " NOTE: setup for nvim:
 "
@@ -228,7 +228,7 @@ Plug 'mattn/gist-vim'
 " clojure
 "
 " $ go get github.com/cespare/goclj/cljfmt
-Plug 'dmac/vim-cljfmt'
+Plug 'dmac/vim-cljfmt', { 'for': 'clojure' }
 " >f, <f : move a form
 " >e, <e : move an element
 " >), <), >(, <( : move a parenthesis
@@ -237,8 +237,8 @@ Plug 'dmac/vim-cljfmt'
 " cse(, cse), cseb : surround an element with parenthesis
 " cse[, cse] : surround an element with brackets
 " cse{, cse} : surround an element with braces
-Plug 'guns/vim-sexp'
-Plug 'tpope/vim-sexp-mappings-for-regular-people'
+Plug 'guns/vim-sexp', { 'for': 'clojure' }
+Plug 'tpope/vim-sexp-mappings-for-regular-people', { 'for': 'clojure' }
 
 " golang
 "
@@ -246,12 +246,12 @@ Plug 'fatih/vim-go', {'for': 'go', 'do': ':GoInstallBinaries'}
 
 " ruby
 "
-Plug 'vim-ruby/vim-ruby'
+Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
 Plug 'tpope/vim-endwise'
 
 " rust
 "
-Plug 'rust-lang/rust.vim'
+Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 
 " XXX - do not load following plugins on machines with low performance:
 " (touch '~/.vimrc.lowperf' for it)
@@ -287,7 +287,7 @@ if !filereadable(lowperf)
         " for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
         " for reloading everything: \rr
         " for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-        Plug 'Olical/conjure', { 'tag': 'v4.8.0' } "https://github.com/Olical/conjure/releases
+        Plug 'Olical/conjure', { 'for': 'clojure', 'tag': 'v4.8.0' } "https://github.com/Olical/conjure/releases
     endif
 
     " golang
