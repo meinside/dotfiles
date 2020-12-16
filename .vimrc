@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2020.11.19.
+" last update: 2020.12.16.
 "
 " NOTE: setup for nvim:
 "
@@ -341,6 +341,7 @@ set history=50	" keep 50 lines of command line history
 set ruler		" show the cursor position all the time
 set showcmd		" display incomplete commands
 set incsearch	" do incremental searching
+set smartcase   " smart case insensitive search
 set cindent
 set ai
 set smartindent
