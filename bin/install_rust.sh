@@ -2,10 +2,16 @@
 
 # install_rust.sh
 # 
-# Install Rust and its toolchain from rustup.rs
+# Install Rust and its toolchain from rustup.rs.
+#
+# For rust-analyzer, (https://rust-analyzer.github.io/manual.html#installation)
+#
+# $ git clone https://github.com/rust-analyzer/rust-analyzer.git
+# $ cd rust-analyzer/
+# $ cargo xtask install --server
 #
 # created on : 2019.02.18.
-# last update: 2020.02.06.
+# last update: 2021.01.08.
 # 
 # by meinside@gmail.com
 
