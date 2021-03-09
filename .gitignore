@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2021.03.05.
+# last update: 2021.03.09.
 
 # unnecessary binary files
 *.o
@@ -161,6 +161,7 @@ mbox
 .helm/
 .kube/
 .minikube/
+.vs-kubernetes/
 
 # history files
 .*history
