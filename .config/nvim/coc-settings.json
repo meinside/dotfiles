@@ -40,5 +40,12 @@
       "enable": false
     },
     "serverPath": "~/.cargo/bin/rust-analyzer"
+  },
+
+  "languageserver": {
+    "zls" : {
+      "command": "/opt/zls/zig-cache/bin/zls",
+      "filetypes": ["zig"]
+    }
   }
 }

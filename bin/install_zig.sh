@@ -22,7 +22,8 @@ TEMP_DIR="/tmp"
 INSTALLATION_DIR="/opt"
 
 # XXX - edit this for installing other versions
-INSTALL_VERSION="0.7.1"
+ZIG_VERSION="0.7.1"
+ZLS_VERSION="0.1.0"
 
 PLATFORM=`uname -m`     # armv7l, armv6l, ...
 case "$PLATFORM" in
@@ -35,21 +36,45 @@ function install_macos {
 
 	brew install zig
 
+	# install zls
+	install_zls
+
 }
 
 function install_linux {
 
-	TAR_URL="https://github.com/ziglang/zig/releases/download/${INSTALL_VERSION}/zig-linux-${PLATFORM}-${INSTALL_VERSION}.tar.xz"
-	ZIG_DIR="${INSTALLATION_DIR}/zig-${INSTALL_VERSION}"
+	TAR_URL="https://github.com/ziglang/zig/releases/download/${ZIG_VERSION}/zig-linux-${PLATFORM}-${ZIG_VERSION}.tar.xz"
+	ZIG_DIR="${INSTALLATION_DIR}/zig-${ZIG_VERSION}"
 
-	echo -e "${YELLOW}>>> Installing zig-${PLATFORM}-${INSTALL_VERSION}...${RESET}"
+	echo -e "${YELLOW}>>> Installing zig-${PLATFORM}-${ZIG_VERSION}...${RESET}"
 
 	# install the binary
 	sudo mkdir -p "${ZIG_DIR}" && \
 		wget -qO- "$TAR_URL" | sudo tar -xv -J --strip-components=1 -C $ZIG_DIR && \
 		sudo chown -R "$USER" "${ZIG_DIR}" && \
 		sudo ln -sfn "${ZIG_DIR}" "${INSTALLATION_DIR}/zig" && \
-		echo -e "${GREEN}>>> Installed zig-${PLATFORM}-${INSTALL_VERSION} on ${ZIG_DIR} ${RESET}"
+		echo -e "${GREEN}>>> Installed zig-${PLATFORM}-${ZIG_VERSION} on ${ZIG_DIR} ${RESET}"
+
+	# install zls
+	install_zls
+
+}
+
+function install_zls {
+
+	ZLS_DIR="${INSTALLATION_DIR}/zls"
+
+	echo -e "${YELLOW}>>> Installing zls-${ZLS_VERSION}...${RESET}"
+
+	sudo rm -rf "${ZLS_DIR}" && \
+		sudo mkdir -p "${ZLS_DIR}" && \
+		sudo chown -R "$USER" "${ZLS_DIR}" && \
+		git clone --recurse-submodules https://github.com/zigtools/zls "${ZLS_DIR}" && \
+		cd "${ZLS_DIR}" && \
+		git checkout ${ZLS_VERSION} && \
+		zig build -Drelease-safe && \
+		zig build config && \
+		echo -e "${GREEN}>>> Installed zls-${ZLS_VERSION} on ${ZLS_DIR} ${RESET}"
 
 }
 

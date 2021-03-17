@@ -253,6 +253,10 @@ Plug 'tpope/vim-endwise'
 "
 Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 
+" zig
+"
+Plug 'ziglang/zig.vim'
+
 " XXX - do not load following plugins on machines with low performance:
 " (touch '~/.vimrc.lowperf' for it)
 let lowperf=expand('~/.vimrc.lowperf')
