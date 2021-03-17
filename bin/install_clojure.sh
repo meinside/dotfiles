@@ -6,7 +6,7 @@
 #
 # (https://clojure.org/guides/getting_started#_installation_on_linux)
 # 
-# last update: 2021.03.05.
+# last update: 2021.03.17.
 # 
 # by meinside@gmail.com
 
@@ -19,7 +19,7 @@ GREEN="\033[0;32m"
 YELLOW="\033[0;33m"
 RESET="\033[0m"
 
-CLOJURE_VERSION="1.10.2.796"	# XXX - change clojure version
+CLOJURE_VERSION="1.10.3.814"	# XXX - change clojure version
 
 # https://clojure.org/guides/getting_started#_installation_on_linux
 CLOJURE_INSTALL_SCRIPT="https://download.clojure.org/install/linux-install-${CLOJURE_VERSION}.sh"
