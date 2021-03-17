@@ -47,6 +47,7 @@ function install_linux {
 	# install the binary
 	sudo mkdir -p "${ZIG_DIR}" && \
 		wget -qO- "$TAR_URL" | sudo tar -xv -J --strip-components=1 -C $ZIG_DIR && \
+		sudo chown -R "$USER" "${ZIG_DIR}" && \
 		sudo ln -sfn "${ZIG_DIR}" "${INSTALLATION_DIR}/zig" && \
 		echo -e "${GREEN}>>> Installed zig-${PLATFORM}-${INSTALL_VERSION} on ${ZIG_DIR} ${RESET}"
 
