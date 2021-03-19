@@ -21,13 +21,18 @@ RESET="\033[0m"
 TEMP_DIR="/tmp"
 INSTALLATION_DIR="/opt"
 
-# XXX - edit this for installing other versions
+# XXX - edit these for installing other versions
 ZIG_VERSION="0.7.1"
 ZLS_VERSION="0.1.0"
 
 PLATFORM=`uname -m`     # armv7l, armv6l, ...
 case "$PLATFORM" in
 	armv7*) PLATFORM="armv7a" ;;
+esac
+
+ZIG_BIN="${INSTALLATION_DIR}/zig/zig"
+case "$OSTYPE" in
+	darwin*) ZIG_BIN="/usr/local/bin/zig" ;;
 esac
 
 function install_macos {
@@ -62,7 +67,6 @@ function install_linux {
 
 function install_zls {
 
-	ZIG_BIN="${INSTALLATION_DIR}/zig/zig"
 	ZLS_DIR="${INSTALLATION_DIR}/zls"
 
 	echo -e "${YELLOW}>>> Installing zls-${ZLS_VERSION}...${RESET}"
