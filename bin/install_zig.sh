@@ -5,7 +5,7 @@
 # Install zig from binaries (https://github.com/ziglang/zig/releases)
 #
 # created on : 2021.03.17.
-# last update: 2021.03.17.
+# last update: 2021.03.19.
 #
 # by meinside@gmail.com
 
@@ -62,6 +62,7 @@ function install_linux {
 
 function install_zls {
 
+	ZIG_BIN="${INSTALLATION_DIR}/zig/zig"
 	ZLS_DIR="${INSTALLATION_DIR}/zls"
 
 	echo -e "${YELLOW}>>> Installing zls-${ZLS_VERSION}...${RESET}"
@@ -72,8 +73,8 @@ function install_zls {
 		git clone --recurse-submodules https://github.com/zigtools/zls "${ZLS_DIR}" && \
 		cd "${ZLS_DIR}" && \
 		git checkout ${ZLS_VERSION} && \
-		zig build -Drelease-safe && \
-		zig build config && \
+		$ZIG_BIN build -Drelease-safe && \
+		$ZIG_BIN build config && \
 		echo -e "${GREEN}>>> Installed zls-${ZLS_VERSION} on ${ZLS_DIR} ${RESET}"
 
 }
