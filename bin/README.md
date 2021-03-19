@@ -58,6 +58,10 @@ A script for installing [Rust](https://rustup.rs/).
 
 A script for installing [Tensorflow](https://www.tensorflow.org/install) on Raspbian.
 
+## install_zig.sh
+
+A script for installing [Zig](https://ziglang.org/).
+
 ## prep.sh
 
 A script that will clone this repository and install things for Linux/WSL.
