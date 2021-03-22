@@ -58,13 +58,18 @@ function install_macos {
 # $1: nightly or not
 function install_linux {
 
-	ZIG_DIR="${INSTALLATION_DIR}/zig-${ZIG_VERSION}"
-
 	if [[ $1 == "--nightly" ]]; then
-		TAR_URL=`XXX=`curl https://ziglang.org/download/index.json | jq -r '.["master"]["${PLATFORM}-linux"]["tarball"]'``
+		ZIG_VERSION="master"
+
+		sudo apt-get install jq -y
+
+		cmd="curl https://ziglang.org/download/index.json | jq -r '.[\"master\"][\"${PLATFORM}-linux\"][\"tarball\"]'"
+		TAR_URL=`${cmd}`
 	else
 		TAR_URL="https://github.com/ziglang/zig/releases/download/${ZIG_VERSION}/zig-linux-${PLATFORM}-${ZIG_VERSION}.tar.xz"
 	fi
+
+	ZIG_DIR="${INSTALLATION_DIR}/zig-${ZIG_VERSION}"
 
 	echo -e "${YELLOW}>>> Installing zig-${PLATFORM}-${ZIG_VERSION}...${RESET}"
 
