@@ -51,6 +51,7 @@ function clean {
 	sudo rm -rf $TMP_DIR
 }
 
+# $1: nightly or not
 function install {
 	tag=$NVIM_VERSION
 
@@ -73,12 +74,14 @@ function install {
 	sudo make install
 }
 
-# macOS
+# install for macOS
 function install_macos {
 	brew install neovim
 }
 
-# linux
+# install for linux
+#
+# $1: nightly or not
 function install_linux {
 	prep && install $1 && clean
 }

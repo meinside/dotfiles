@@ -1,13 +1,17 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # install_zig.sh
 #
 # Install zig from binaries (https://github.com/ziglang/zig/releases)
 #
 # created on : 2021.03.17.
-# last update: 2021.03.19.
+# last update: 2021.03.22.
 #
 # by meinside@gmail.com
+#
+# * To install nightly version:
+#
+# $ ./install_zig.sh --nightly
 
 # XXX - for making newly created files/directories less restrictive
 umask 0022
@@ -35,21 +39,32 @@ case "$OSTYPE" in
 	darwin*) ZIG_BIN="/usr/local/bin/zig" ;;
 esac
 
+# $1: nightly or not
 function install_macos {
 
 	xcode-select --install
 
-	brew install zig
+	if [[ $1 == "--nightly" ]]; then
+		brew install zig --HEAD
+	else
+		brew install zig
+	fi
 
 	# install zls
-	install_zls
+	install_zls $1
 
 }
 
+# $1: nightly or not
 function install_linux {
 
-	TAR_URL="https://github.com/ziglang/zig/releases/download/${ZIG_VERSION}/zig-linux-${PLATFORM}-${ZIG_VERSION}.tar.xz"
 	ZIG_DIR="${INSTALLATION_DIR}/zig-${ZIG_VERSION}"
+
+	if [[ $1 == "--nightly" ]]; then
+		TAR_URL=`XXX=`curl https://ziglang.org/download/index.json | jq -r '.["master"]["${PLATFORM}-linux"]["tarball"]'``
+	else
+		TAR_URL="https://github.com/ziglang/zig/releases/download/${ZIG_VERSION}/zig-linux-${PLATFORM}-${ZIG_VERSION}.tar.xz"
+	fi
 
 	echo -e "${YELLOW}>>> Installing zig-${PLATFORM}-${ZIG_VERSION}...${RESET}"
 
@@ -61,13 +76,18 @@ function install_linux {
 		echo -e "${GREEN}>>> Installed zig-${PLATFORM}-${ZIG_VERSION} on ${ZIG_DIR} ${RESET}"
 
 	# install zls
-	install_zls
+	install_zls $1
 
 }
 
+# $1: nightly or not
 function install_zls {
 
 	ZLS_DIR="${INSTALLATION_DIR}/zls"
+
+	if [[ $1 == "--nightly" ]]; then
+		ZLS_VERSION="master"
+	fi
 
 	echo -e "${YELLOW}>>> Installing zls-${ZLS_VERSION}...${RESET}"
 
@@ -84,8 +104,8 @@ function install_zls {
 }
 
 case "$OSTYPE" in
-	darwin*) install_macos ;;
-	linux*) install_linux ;;
+	darwin*) install_macos $1 ;;
+	linux*) install_linux $1 ;;
 	*) echo "* Unsupported os type: $OSTYPE" ;;
 esac
 
