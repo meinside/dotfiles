@@ -5,7 +5,7 @@
 # $ brew tap Homebrew/bundle
 # $ brew bundle
 # 
-# last update: 2020.09.08.
+# last update: 2021.03.22.
 
 ######## formulas
 
@@ -41,13 +41,13 @@ brew 'candid82/brew/joker'
 brew 'clojure/tools/clojure'
 
 # programming language: go
-brew 'go'
+#brew 'go'
 
 # programming language: node
-brew 'node'
+#brew 'node'
 
 # programming language: rust
-brew 'rustup-init'
+#brew 'rustup-init'
 
 # development tools
 brew 'curl'
