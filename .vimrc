@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2021.03.09.
+" last update: 2021.03.25.
 "
 " NOTE: setup for nvim:
 "
@@ -255,7 +255,7 @@ Plug 'rust-lang/rust.vim', { 'for': 'rust' }
 
 " zig
 "
-Plug 'ziglang/zig.vim'
+Plug 'ziglang/zig.vim', { 'for': 'zig' }
 
 " XXX - do not load following plugins on machines with low performance:
 " (touch '~/.vimrc.lowperf' for it)
@@ -277,7 +277,7 @@ if !filereadable(lowperf)
 
     " gitgutter
     "
-    Plug 'airblade/vim-gitgutter'        " [c, ]c for prev/next hunk
+    Plug 'airblade/vim-gitgutter'        " [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
     let g:gitgutter_highlight_lines = 1
     let g:gitgutter_realtime = 0
     let g:gitgutter_eager = 0
@@ -291,7 +291,7 @@ if !filereadable(lowperf)
         " for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
         " for reloading everything: \rr
         " for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-        Plug 'Olical/conjure', { 'for': 'clojure', 'tag': 'v4.15.0' } "https://github.com/Olical/conjure/releases
+        Plug 'Olical/conjure', { 'for': 'clojure', 'tag': 'v4.16.0' } "https://github.com/Olical/conjure/releases
     endif
 
     " golang
