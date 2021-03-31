@@ -5,8 +5,8 @@
 # Install babashka
 # (https://github.com/babashka/babashka#installation)
 #
-# created on : 2021.03.17.
-# last update: 2021.03.22.
+# created on : 2021.03.31.
+# last update: 2021.03.31.
 #
 # by meinside@gmail.com
 
@@ -34,7 +34,7 @@ function install_linux {
 	sudo rm -rf $BB_DIR && \
 		sudo mkdir -p $BB_DIR && \
 		curl https://raw.githubusercontent.com/babashka/babashka/master/install -sSf | \
-		sudo bash -s -- --dir $BB_DIR --download-dir $BB_DIR
+		sudo bash -s -- --dir $BB_DIR
 
 }
 
