@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2021.03.17.
+# updated on 2021.03.31.
 #
 # ... by meinside@gmail.com
 #
@@ -97,6 +97,11 @@ export PATH="/usr/local/sbin:$PATH"
 
 if [[ -z $TMUX ]]; then
 
+    # for Babashka
+    if [ -d /opt/babashka ]; then
+	export PATH=$PATH:/opt/babashka
+    fi
+
     # for Go
     if [ -d /opt/go/bin ]; then
 	export GOROOT=/opt/go
@@ -114,16 +119,22 @@ if [[ -z $TMUX ]]; then
     export LEIN_USE_BOOTCLASSPATH=no
 
     # for Node.js
-    export PATH=$PATH:/opt/node/bin
+    if [ -d /opt/node/bin ]; then
+	export PATH=$PATH:/opt/node/bin
+    fi
 
     # for Ruby (RVM)
     [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
     # for Rust
-    export PATH=$PATH:$HOME/.cargo/bin
+    if [ -d "$HOME/.cargo/bin" ]; then
+	export PATH=$PATH:$HOME/.cargo/bin
+    fi
 
     # for Zig
-    export PATH=$PATH:/opt/zig
+    if [ -d /opt/zig ]; then
+	export PATH=$PATH:/opt/zig
+    fi
 
     # additional paths
     export PATH="$PATH:$HOME/bin:$HOME/.local/bin"

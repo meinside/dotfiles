@@ -14,6 +14,10 @@ A script for generating self-signed certificates for development.
 
 A script for macOS hacks (originates from https://gist.github.com/erikh/2260182).
 
+## install_babashka.sh
+
+A script for installing [Babashka](https://github.com/babashka/babashka).
+
 ## install_clojure.sh
 
 A script for installing [JDK](https://www.azul.com/downloads/zulu-embedded/), [clojure](https://clojure.org/guides/getting_started#_installation_on_linux), and [leiningen](https://leiningen.org/).
