@@ -3,7 +3,7 @@
 # my zsh functions
 #
 # created on 2014.10.06.
-# updated on 2020.11.19.
+# updated on 2021.04.07.
 #
 # ... by meinside@gmail.com
 #
@@ -75,11 +75,15 @@ update-all () {
 		linux*) update-linux ;;
 	esac
 
-	# go get
+	# update go packages and clean module caches
 	if [[ -x `which goget` ]]; then
 		echo
 		echo "> updating go packages..."
 		goget
+
+		echo
+		echo "> cleaning go module caches..."
+		go clean -modcache
 	fi
 
 	# vim bundles
