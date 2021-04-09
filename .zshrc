@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2021.03.31.
+# updated on 2021.04.09.
 #
 # ... by meinside@gmail.com
 #
@@ -91,9 +91,6 @@ bindkey "^N" history-beginning-search-forward
 ######################
 ##  for development  #
 ######################
-
-# brew sbin
-export PATH="/usr/local/sbin:$PATH"
 
 if [[ -z $TMUX ]]; then
 
