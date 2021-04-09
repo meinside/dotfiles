@@ -4,7 +4,7 @@
 # 
 # for setting up environment for ruby
 # 
-# last update: 2020.02.01.
+# last update: 2021.04.09.
 # 
 # by meinside@gmail.com
 
@@ -18,15 +18,13 @@ YELLOW="\033[0;33m"
 RESET="\033[0m"
 
 function install_linux {
-	echo -e "${GREEN}>>> This script will help setting up rvm on this Raspberry Pi${RESET}\n"
+	echo -e "${GREEN}>>> This script will help setting up rvm on this machine.${RESET}\n"
 
 	# install RVM for multi-users
-	echo -e "${YELLOW}>>> installing RVM and Ruby for multi-users..${RESET}\n"
-	curl -#L https://get.rvm.io | sudo bash -s stable --autolibs=3 --ruby
-
-	# setting up permissions
-	sudo /usr/sbin/usermod -a -G rvm $USER
-	sudo chown root.rvm /etc/profile.d/rvm.sh
+	echo -e "${YELLOW}>>> Installing RVM and Ruby for multi-users..${RESET}\n"
+	curl -#L https://get.rvm.io | sudo bash -s stable --autolibs=3 --ruby && \
+		sudo /usr/sbin/usermod -a -G rvm $USER && \
+		sudo chown root.rvm /etc/profile.d/rvm.sh
 
 	# when stuck with permission problems, try:
 	# $ rvmsudo rvm fix-permissions system
