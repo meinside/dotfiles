@@ -23,6 +23,7 @@
   "coc": {
     "preferences": {
       "colorSupport": true,
+      "hoverTarget": "float",
       "snippets": {
 	"enable": false
       }

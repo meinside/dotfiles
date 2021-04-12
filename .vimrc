@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2021.03.25.
+" last update: 2021.04.12.
 "
 " NOTE: setup for nvim:
 "
@@ -192,6 +192,8 @@ if has('nvim')
     " - ruby: coc-solargraph ($ gem install solargraph)
     " - rust: coc-rust-analyzer ($ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer && cargo xtask install --server)
     let g:coc_global_extensions = [
+        \'coc-html',
+        \'coc-css',
         \'coc-json',
         \'coc-conjure',
         \'coc-go',
@@ -291,7 +293,7 @@ if !filereadable(lowperf)
         " for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
         " for reloading everything: \rr
         " for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-        Plug 'Olical/conjure', { 'for': 'clojure', 'tag': 'v4.16.0' } "https://github.com/Olical/conjure/releases
+        Plug 'Olical/conjure', { 'for': 'clojure', 'tag': 'v4.17.0' } "https://github.com/Olical/conjure/releases
     endif
 
     " golang
@@ -309,7 +311,8 @@ if !filereadable(lowperf)
     let g:go_highlight_operators = 1
     let g:go_highlight_structs = 1
     let g:go_highlight_types = 1
-    let g:go_auto_sameids = 1
+    let g:go_jump_to_error = 0
+    let g:go_auto_sameids = 0
     let g:go_auto_type_info = 1
     let g:syntastic_go_checkers = ['go']	" XXX: 'golint' is too slow, use :GoLint manually.
     let g:syntastic_aggregate_errors = 1
