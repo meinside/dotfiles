@@ -316,6 +316,9 @@ if !filereadable(lowperf)
     let g:go_auto_type_info = 1
     let g:syntastic_go_checkers = ['go']	" XXX: 'golint' is too slow, use :GoLint manually.
     let g:syntastic_aggregate_errors = 1
+    autocmd BufEnter *.go nmap <leader>ci  <Plug>(go-implements)    " \ci for implementations of given interface
+    autocmd BufEnter *.go nmap <leader>cc  <Plug>(go-callers)    " \cc for callers of given function
+    nmap <leader>cr <Plug>(coc-references)    " \cr for references of given type/function
 
     " rust
     "
