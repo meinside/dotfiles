@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2021.04.12.
+" last update: 2021.04.14.
 "
 " NOTE: setup for nvim:
 "
@@ -192,11 +192,11 @@ if has('nvim')
     " - ruby: coc-solargraph ($ gem install solargraph)
     " - rust: coc-rust-analyzer ($ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer && cargo xtask install --server)
     let g:coc_global_extensions = [
-        \'coc-html',
-        \'coc-css',
-        \'coc-json',
         \'coc-conjure',
+        \'coc-css',
         \'coc-go',
+        \'coc-html',
+        \'coc-json',
         \'coc-rust-analyzer',
         \'coc-solargraph']
 
