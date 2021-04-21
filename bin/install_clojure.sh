@@ -6,7 +6,7 @@
 #
 # (https://clojure.org/guides/getting_started#_installation_on_linux)
 # 
-# last update: 2021.04.07.
+# last update: 2021.04.21.
 # 
 # by meinside@gmail.com
 
@@ -36,7 +36,7 @@ JDK_DIR=/opt/jdk
 # ARM64   : https://www.azul.com/downloads/zulu-community/?architecture=arm-64-bit&package=jdk
 PLATFORM=`uname -m`
 case "$PLATFORM" in
-	arm64|aarch64) ZULU_EMBEDDED_VERSION="zulu11.45.27-ca-jdk11.0.10-linux_aarch64" ;;
+	arm64|aarch64) ZULU_EMBEDDED_VERSION="zulu11.48.21-ca-jdk11.0.11-linux_aarch64" ;;
 	armv7*) ZULU_EMBEDDED_VERSION="zulu11.45.27-ca-jdk11.0.10-linux_aarch32hf" ;;
 	x86*) ZULU_EMBEDDED_VERSION="" ;;
 	*) echo "* Unsupported platform: $PLATFORM"; exit 1 ;;
