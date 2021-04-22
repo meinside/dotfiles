@@ -3,31 +3,25 @@
 # $ go get -u github.com/meinside/goget
 # $ goget
 #
-# then it will automatically 'go get -u' all packages listed in this file(~/.gogets)
+# then it will automatically  `go install` or `go get -u` all packages listed in this file(~/.gogets)
 #
-# last update: 2020.01.31.
+# last update: 2020.04.22.
 
 # official packages
 golang.org/x/tools/cmd/godoc
-github.com/tools/godep
 
 # useful packages
 github.com/mailgun/godebug
-github.com/motemen/gore
-github.com/pkg/profile
+github.com/motemen/gore/cmd/gore
 github.com/tcnksm/gotests
 github.com/google/gops
 
 # for development
-github.com/asciimoo/wuzz
-github.com/astaxie/beego
-github.com/beego/bee
 github.com/davecheney/httpstat
-github.com/derekparker/delve/cmd/dlv
-github.com/y0ssar1an/q
-github.com/mattn/go-sqlite3
-github.com/gcla/termshark/cmd/termshark
+github.com/mdempsky/gocode
+github.com/jesseduffield/lazydocker
 github.com/cespare/goclj/cljfmt
+github.com/derekparker/delve/cmd/dlv
 
 # for development (VS Code)
 github.com/mdempsky/gocode
@@ -40,10 +34,10 @@ golang.org/x/tools/cmd/goimports
 github.com/zmb3/gogetdoc
 golang.org/x/lint/golint
 
-# for backup
-github.com/gdrive-org/gdrive
+# for backup/sync
+github.com/rclone/rclone
 
 # my packages
 github.com/meinside/gtmx
-github.com/meinside/goget
+github.com/meinside/goget@latest
 
