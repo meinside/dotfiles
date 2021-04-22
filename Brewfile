@@ -5,7 +5,7 @@
 # $ brew tap Homebrew/bundle
 # $ brew bundle
 # 
-# last update: 2021.03.22.
+# last update: 2021.04.22.
 
 ######## formulas
 
@@ -60,6 +60,7 @@ brew 'mkcert'
 brew 'opencv'
 brew 'wireshark'
 brew 'wrk'
+brew 'vale'
 
 # for docker (install Docker Desktop from https://download.docker.com/mac/stable/Docker.dmg)
 brew 'kubernetes-helm'
