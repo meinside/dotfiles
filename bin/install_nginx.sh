@@ -23,7 +23,7 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2020.04.29.
+# last update: 2021.05.04.
 # 
 # by meinside@gmail.com
 
@@ -203,6 +203,7 @@ After=syslog.target network.target remote-fs.target nss-lookup.target
 [Service]
 Type=forking
 PIDFile=/run/nginx.pid
+#ExecStartPre=/bin/mkdir -p /var/log/nginx
 ExecStartPre=/usr/local/sbin/nginx -t
 ExecStart=/usr/local/sbin/nginx
 ExecReload=/usr/local/sbin/nginx -s reload
