@@ -5,7 +5,7 @@
 # install docker and docker-compose
 # 
 # created on : 2018.08.02.
-# last update: 2020.02.01.
+# last update: 2021.05.08.
 # 
 # by meinside@gmail.com
 
@@ -26,8 +26,8 @@ function install_linux {
 		echo -e "${YELLOW}>>> Run: $ sudo systemctl enable docker && sudo systemctl start docker${RESET}"
 
 	# docker-compose
-	sudo apt-get install -y python-pip libffi-dev libssl-dev
-	pip install docker-compose --user && \
+	sudo apt-get install -y python3-pip libffi-dev libssl-dev && \
+		pip3 install docker-compose --user && \
 		echo -e "${GREEN}>>> Successfully installed docker-compose${RESET}"
 }
 
