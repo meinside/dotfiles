@@ -42,6 +42,8 @@
 
                          ;; https://github.com/vlaaad/reveal
                          [vlaaad/reveal "1.2.186"]]
+
+          ;; repl-options
           :repl-options {
                          ;; https://github.com/vlaaad/reveal
                          :nrepl-middleware [vlaaad.reveal.nrepl/middleware]}
