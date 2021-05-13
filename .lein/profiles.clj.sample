@@ -3,11 +3,6 @@
 ;; last update: 2021.05.13.
 
 {:user {
-        ;; repl-options
-        :repl-options {
-                       ;; timeout: 180 secs
-                       :timeout 180000}
-
         ;; plugins
         :plugins [
                   ;; https://github.com/kumarshantanu/lein-exec
@@ -30,6 +25,11 @@
                        ;; https://github.com/technomancy/slamhound (archived)
                        [slamhound "1.5.5"]]
 
+        ;; repl-options
+        :repl-options {
+                       ;; timeout: 180 secs
+                       :timeout 180000}
+
         ;; global variables
         :global-vars {*print-length* 20}}
 
@@ -45,6 +45,9 @@
 
           ;; repl-options
           :repl-options {
+                         ;; timeout: 60 secs
+                         :timeout 60000
+
                          ;; https://github.com/vlaaad/reveal
                          :nrepl-middleware [vlaaad.reveal.nrepl/middleware]}
 
