@@ -2,7 +2,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2021.04.14.
+" last update: 2021.05.13.
 "
 " NOTE: setup for nvim:
 "
@@ -293,7 +293,7 @@ if !filereadable(lowperf)
         " for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
         " for reloading everything: \rr
         " for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-        Plug 'Olical/conjure', { 'for': 'clojure', 'tag': 'v4.17.0' } "https://github.com/Olical/conjure/releases
+        Plug 'Olical/conjure', { 'for': 'clojure', 'tag': 'v4.18.0' } "https://github.com/Olical/conjure/releases
     endif
 
     " golang
