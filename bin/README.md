@@ -46,10 +46,6 @@ A script for installing [Node.js](https://nodejs.org/en/).
 
 A script for building and installing [neovim](https://neovim.io/).
 
-## install_opencv.sh
-
-A script for installing [OpenCV](http://opencv.org/) library.
-
 ## install_ruby.sh
 
 A script for installing [rvm](https://rvm.io/) and [Ruby](https://www.ruby-lang.org/en/).
@@ -57,10 +53,6 @@ A script for installing [rvm](https://rvm.io/) and [Ruby](https://www.ruby-lang.
 ## install_rust.sh
 
 A script for installing [Rust](https://rustup.rs/).
-
-## install_tensorflow.sh
-
-A script for installing [Tensorflow](https://www.tensorflow.org/install) on Raspbian.
 
 ## install_zig.sh
 
