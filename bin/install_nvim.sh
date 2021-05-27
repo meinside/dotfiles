@@ -4,7 +4,7 @@
 # 
 # for building neovim from source code
 #
-# last update: 2020.10.28.
+# last update: 2021.05.27.
 # 
 # by meinside@gmail.com
 
@@ -76,7 +76,11 @@ function install {
 
 # install for macOS
 function install_macos {
-	brew install neovim
+	if [[ $1 == "--nightly" ]]; then
+		brew install —-HEAD neovim
+	else
+		brew install neovim
+	fi
 }
 
 # install for linux
@@ -87,7 +91,7 @@ function install_linux {
 }
 
 case "$OSTYPE" in
-	darwin*) install_macos ;;
+	darwin*) install_macos $1 ;;
 	linux*) install_linux $1 ;;
 	*) echo "* Unsupported os type: $OSTYPE" ;;
 esac
