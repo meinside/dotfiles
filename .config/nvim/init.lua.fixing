@@ -97,6 +97,7 @@ require('packer').startup(function()
   use 'nvim-treesitter/playground'
   use 'neovim/nvim-lspconfig'
   use 'hrsh7th/nvim-compe'
+  vim.o.completeopt = 'menuone,noselect'
 
   -- linting
   -- TODO
