@@ -3,14 +3,14 @@
 " created by meinside@gmail.com,
 "
 " created on : 2021.05.27.
-" last update: 2021.05.27.
+" last update: 2021.05.28.
 
 """"""""""""""""""""""""""""""""
 " settings for vim-plug (https://github.com/junegunn/vim-plug)
 if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
-    silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
-        \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 " Specify a directory for plugins
@@ -111,7 +111,7 @@ Plug 'lewis6991/gitsigns.nvim'        " [c, ]c for prev/next hunk, \hp for previ
 Plug 'vim-syntastic/syntastic'
 set statusline+=%#warningmsg#
 if exists('*SyntasticStatuslineFlag')
-    set statusline+=%{SyntasticStatuslineFlag()}
+  set statusline+=%{SyntasticStatuslineFlag()}
 endif
 set statusline+=%*
 let g:syntastic_always_populate_loc_list = 1
@@ -158,21 +158,18 @@ call plug#end()
 
 
 """"""""""""""""""""""""""""""""
-" syntax highlighting
+" configuration with lua
 "
 lua << EOF
+------------------------
+-- treesitter for syntax highlighting
 require'nvim-treesitter.configs'.setup {
   ensure_installed = {'go', 'python', 'ruby', 'rust', 'zig'};
   highlight = {enable = true};
 }
-EOF
 
-
-""""""""""""""""""""""""""""""""
-" autocompletion
-"
-lua << EOF
--- Compe setup
+------------------------
+-- compe for autocompletion
 require'compe'.setup {
   enabled = true;
   autocomplete = true;
@@ -198,12 +195,12 @@ local t = function(str)
 end
 
 local check_back_space = function()
-    local col = vim.fn.col('.') - 1
-    if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
-        return true
-    else
-        return false
-    end
+  local col = vim.fn.col('.') - 1
+  if col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
+    return true
+  else
+    return false
+  end
 end
 
 -- Use (s-)tab to:
@@ -230,18 +227,12 @@ vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
 vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
 vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
 vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
-EOF
 
-
-""""""""""""""""""""""""""""""""
-" language servers
-"
-
-lua << EOF
+------------------------
+-- for language server configuration
 local nvim_lsp = require('lspconfig')
 
--- Use an on_attach function to only map the following keys
--- after the language server attaches to the current buffer
+-- default setup for language servers
 local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
@@ -289,6 +280,10 @@ require'lspconfig'.zls.setup{
   cmd = { '/opt/zls/zig-cache/bin/zls' };
   on_attach = on_attach;
 }
+
+------------------------
+-- gitgutter
+require('gitsigns').setup{}
 EOF
 
 " clojure
@@ -318,15 +313,8 @@ let g:rustfmt_autosave = 1 " :RustFmt
 " $ npm install -g clj-kondo
 " $ go get -d github.com/candid82/joker && cd $GOPATH/src/github.com/candid82/joker && ./run.sh --version && go install
 let g:ale_linters = {
-    \ 'clojure': ['clj-kondo', 'joker']
-    \}
-
-
-""""""""""""""""""""""""""""""""
-" gitgutter
-lua << EOF
-require('gitsigns').setup{}
-EOF
+  \ 'clojure': ['clj-kondo', 'joker']
+  \}
 
 
 """"""""""""""""""""""""""""""""
@@ -370,39 +358,39 @@ map Q gq
 " Switch syntax highlighting on, when the terminal has colors
 " Also switch on highlighting the last used search pattern.
 if &t_Co > 2 || has("gui_running")
-    syntax on
-    set hlsearch
+  syntax on
+  set hlsearch
 endif
 
 " Only do this part when compiled with support for autocommands.
 if has("autocmd")
-    " Put these in an autocmd group, so that we can delete them easily.
-    augroup vimrcEx
-        au!
+  " Put these in an autocmd group, so that we can delete them easily.
+  augroup vimrcEx
+    au!
 
-        " For all text files set 'textwidth' to 78 characters.
-        autocmd FileType text setlocal textwidth=78
+    " For all text files set 'textwidth' to 78 characters.
+    autocmd FileType text setlocal textwidth=78
 
-        " For html/javascript/css
-        autocmd FileType htm,html,js,json set ai sw=2 ts=2 sts=2 et
-        autocmd FileType css,scss set ai sw=2 ts=2 sts=2 et
+    " For html/javascript/css
+    autocmd FileType htm,html,js,json set ai sw=2 ts=2 sts=2 et
+    autocmd FileType css,scss set ai sw=2 ts=2 sts=2 et
 
-        " For programming languages
-        " Ruby
-        autocmd FileType ruby,eruby,yaml set ai sw=2 ts=2 sts=2 et
-        " Python
-        autocmd FileType python set ai sw=2 ts=2 sts=2 et
+    " For programming languages
+    " Ruby
+    autocmd FileType ruby,eruby,yaml set ai sw=2 ts=2 sts=2 et
+    " Python
+    autocmd FileType python set ai sw=2 ts=2 sts=2 et
 
-        " When editing a file, always jump to the last known cursor position.
-        " Don't do it when the position is invalid or when inside an event handler
-        " (happens when dropping a file on gvim).
-        autocmd BufReadPost *
-            \ if line("'\"") > 0 && line("'\"") <= line("$") |
-            \   exe "normal g`\"" |
-            \ endif
-    augroup END
+    " When editing a file, always jump to the last known cursor position.
+    " Don't do it when the position is invalid or when inside an event handler
+    " (happens when dropping a file on gvim).
+    autocmd BufReadPost *
+      \ if line("'\"") > 0 && line("'\"") <= line("$") |
+      \   exe "normal g`\"" |
+      \ endif
+  augroup END
 else
-    set autoindent		" always set autoindenting on
+  set autoindent		" always set autoindenting on
 endif " has("autocmd")
 
 " set colorscheme

@@ -1,57 +1,21 @@
-" meinside's .vimrc file for n/vim,
+" meinside's .vimrc file for vim
 "
 " created by meinside@gmail.com,
 "
-" last update: 2021.05.18.
-"
-" NOTE: setup for nvim:
-"
-" (linux)
-" $ sudo apt-get install python3-pip
-" $ pip3 install --upgrade --user pynvim
-"
-" (macOs)
-" $ pip3 install --upgrade pynvim
-"
-" NOTE: setup for coc.nvim:
-"
-" (linux)
-" $ bin/install_nodejs.sh
-"
-" (macOS)
-" $ brew install node
+" last update: 2021.05.28.
 
-if has('nvim')	" settings for nvim only
-    set mouse-=a	" not to enter visual mode when dragging text
-    let g:go_term_enabled = 1	" XXX - it needs to be set for 'delve' (2017.02.10.)
-else	" settings for vim only
-    set t_Co=256
-endif
+set t_Co=256
 
 """"""""""""""""""""""""""""""""
 " settings for vim-plug (https://github.com/junegunn/vim-plug)
-if has('nvim')
-    " for nvim
-    if empty(glob('~/.local/share/nvim/site/autoload/plug.vim'))
-        silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
-                    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-        autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-    endif
-else
-    " for vim
-    if empty(glob('~/.vim/autoload/plug.vim'))
-        silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-                    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-        autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-    endif
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
 " Specify a directory for plugins
-if has('nvim')
-    call plug#begin('~/.local/share/nvim/plugged')
-else
-    call plug#begin('~/.vim/plugged')
-endif
+call plug#begin('~/.vim/plugged')
 
 """"""""""""""""""""""""""""""""
 "
@@ -110,117 +74,8 @@ nnoremap <C-h> :tabprevious<CR> " <ctrl-h> for previous tab,
 nnoremap <C-l> :tabnext<CR> " <ctrl-l> for next tab,
 
 " autocompletion
-"
-if has('nvim')
-    Plug 'neoclide/coc.nvim', {'branch': 'release'} " XXX - nodejs needed!
-
-    " coc.nvim default settings
-    "
-    " if hidden is not set, TextEdit might fail.
-    set hidden
-    " Better display for messages
-    set cmdheight=2
-    " Smaller updatetime for CursorHold & CursorHoldI
-    set updatetime=300
-    " don't give |ins-completion-menu| messages.
-    set shortmess+=c
-    " always show signcolumns
-    set signcolumn=yes
-
-    " Use tab for trigger completion with characters ahead and navigate.
-    " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-    inoremap <silent><expr> <TAB>
-        \ pumvisible() ? "\<C-n>" :
-        \ <SID>check_back_space() ? "\<TAB>" :
-        \ coc#refresh()
-    inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-
-    function! s:check_back_space() abort
-        let col = col('.') - 1
-        return !col || getline('.')[col - 1]  =~# '\s'
-    endfunction
-
-    " Use <c-space> to trigger completion.
-    inoremap <silent><expr> <c-space> coc#refresh()
-
-    " Use `[d` and `]d` to navigate diagnostics
-    nmap <silent> [d <Plug>(coc-diagnostic-prev)
-    nmap <silent> ]d <Plug>(coc-diagnostic-next)
-
-    " Remap keys for gotos
-    nmap <silent> gd <Plug>(coc-definition)
-    nmap <silent> gy <Plug>(coc-type-definition)
-    nmap <silent> gi <Plug>(coc-implementation)
-    nmap <silent> gr <Plug>(coc-references)
-
-    " Remap for rename current word
-    nmap <leader>rn <Plug>(coc-rename)
-
-    " Remap for format selected region
-    vmap <leader>f  <Plug>(coc-format-selected)
-    nmap <leader>f  <Plug>(coc-format-selected)
-    " Show all diagnostics
-    nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
-    " Manage extensions
-    nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
-    " Show commands
-    nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
-    " Find symbol of current document
-    nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
-    " Search workspace symbols
-    nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
-    " Do default action for next item.
-    nnoremap <silent> <space>j  :<C-u>CocNext<CR>
-    " Do default action for previous item.
-    nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
-    " Resume latest coc list
-    nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
-
-    " float-preview
-    "Plug 'ncm2/float-preview.nvim'
-    "set completeopt-=preview
-
-    highlight link CocFloating markdown
-
-    " To close preview window after selection
-    autocmd CompleteDone * pclose
-
-    " coc extensions (:CocInstall <extension-name>)
-    "
-    " - clojure: coc-conjure
-    " - go: coc-go
-    " - ruby: coc-solargraph ($ gem install solargraph)
-    " - rust: coc-rust-analyzer ($ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer && cargo xtask install --server)
-    let g:coc_global_extensions = [
-        \'coc-conjure',
-        \'coc-css',
-        \'coc-go',
-        \'coc-html',
-        \'coc-json',
-        \'coc-rust-analyzer',
-        \'coc-solargraph']
-
-endif
 
 " linting
-"
-if has('nvim')
-    Plug 'dense-analysis/ale'
-
-    " show quickfix list
-    let g:ale_set_loclist = 0
-    let g:ale_open_list = 1
-    let g:ale_set_quickfix = 1
-
-    " lint only on save
-    let g:ale_lint_on_text_changed = 'never'
-    let g:ale_lint_on_insert_leave = 0
-    let g:ale_lint_on_enter = 0
-
-    " C-k, C-j for moving between errors
-    nmap <silent> <C-k> <Plug>(ale_previous_wrap)
-    nmap <silent> <C-j> <Plug>(ale_next_wrap)
-endif
 
 " gist (:Gist / :Gist -p / ...)
 "
@@ -285,23 +140,9 @@ if !filereadable(lowperf)
     let g:gitgutter_eager = 0
 
     " clojure
-    "
-    if has('nvim')
-        " :help conjure
-        "
-        " for auto completion: <C-x><C-o>
-        " for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
-        " for reloading everything: \rr
-        " for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-        Plug 'Olical/conjure', { 'for': 'clojure', 'tag': 'v4.19.0' } "https://github.com/Olical/conjure/releases
-    endif
 
     " golang
     "
-    if has('nvim')
-        " disable vim-go :GoDef short cut (gd), this is handled by LanguageClient [LC]
-        let g:go_def_mapping_enabled = 0
-    endif
     let g:go_fmt_command = "goimports"     " auto import dependencies
     let g:go_highlight_build_constraints = 1
     let g:go_highlight_extra_types = 1
