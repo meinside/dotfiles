@@ -1,5 +1,7 @@
 " meinside's .vimrc file for vim
 "
+" init.vim for neovim is located at: .config/nvim/init.vim
+"
 " created by meinside@gmail.com,
 "
 " last update: 2021.05.28.
