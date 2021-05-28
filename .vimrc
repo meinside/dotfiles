@@ -1,6 +1,6 @@
 " meinside's .vimrc file for vim
 "
-" init.vim for neovim is located at: .config/nvim/init.vim
+" init.vim for neovim is located at: .config/nvim/init.lua
 "
 " created by meinside@gmail.com,
 "
