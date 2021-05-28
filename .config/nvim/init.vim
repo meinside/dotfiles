@@ -266,17 +266,17 @@ end
 
 -- language servers with default setup
 local servers = {
-  "clojure_lsp",
-  "gopls",
-  "solargraph",
-  "rust_analyzer"
+  "clojure_lsp", -- clojure
+  "gopls", -- golang
+  "solargraph", -- ruby
+  "rust_analyzer" -- rust
 }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { on_attach = on_attach }
 end
 
 -- other language servers for custom setup
-require'lspconfig'.zls.setup{
+require'lspconfig'.zls.setup{ -- zig
   cmd = { '/opt/zls/zig-out/bin/zls' };
   on_attach = on_attach;
 }
