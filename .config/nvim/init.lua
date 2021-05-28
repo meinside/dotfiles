@@ -308,17 +308,10 @@ require('gitsigns').setup{}
 -- other settings
 
 g['go_term_enabled'] = 1  -- XXX - it needs to be set for 'delve' (2017.02.10.)
-opt('o', 'backspace', 'indent,eol,start')  -- allow backspacing over everything in insert mode
-opt('o', 'history', 50)  -- keep 50 lines of command line history
-opt('w', 'nu', true)
-opt('b', 'ts', 4)
-opt('b', 'sw', 4)
-opt('b', 'sts', 4)
-opt('o', 'fencs', 'ucs-bom,utf-8,korea')
-opt('o', 'showbreak', '↳')
-
 cmd [[set mouse-=a]]  -- not to enter visual mode when dragging text
+cmd [[set backspace=indent,eol,start]]  -- allow backspacing over everything in insert mode
 cmd [[set nobackup]]  -- do not keep a backup file, use versions instead
+cmd [[set history=50]]  -- keep 50 lines of command line history
 cmd [[set ruler]]  -- show the cursor position all the time
 cmd [[set showcmd]]  -- display incomplete commands
 cmd [[set incsearch]]  -- do incremental searching
@@ -326,10 +319,15 @@ cmd [[set smartcase]]  -- smart case insensitive search
 cmd [[set cindent]]
 cmd [[set ai]]
 cmd [[set smartindent]]
-cmd [[syntax on]]
-cmd [[set hlsearch]]
-cmd [[set breakindent]]
+cmd [[set nu]]
+cmd [[set ts=4]]
+cmd [[set sw=4]]
+cmd [[set sts=4]]
+cmd [[set fencs=ucs-bom,utf-8,korea]]
+cmd [[set termencoding=utf-8]]
+cmd [[set showbreak=↳]]
 cmd [[set wildmenu]]
+cmd [[set breakindent]]
 
 map('n', '<C-h>', ':tabprevious<CR>') -- <ctrl-h> for previous tab,
 map('n', '<C-l>', ':tabnext<CR>') -- <ctrl-l> for next tab,
@@ -365,6 +363,6 @@ vim.api.nvim_exec([[
 -- set colorscheme
 --
 g['hybrid_transparent_background'] = 1
-opt('o', 'background', 'dark')
+cmd [[set background=dark]]
 cmd [[colorscheme hybrid_reverse]]
 
