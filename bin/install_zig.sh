@@ -63,8 +63,7 @@ function install_linux {
 
 		sudo apt-get install jq -y
 
-		cmd="curl https://ziglang.org/download/index.json | jq -r '.[\"master\"][\"${PLATFORM}-linux\"][\"tarball\"]'"
-		TAR_URL=`${cmd}`
+		TAR_URL=$( curl -s https://ziglang.org/download/index.json | jq -r --arg PLATFORM "$PLATFORM" '.["master"]["\($PLATFORM)-linux"]["tarball"]' )
 	else
 		TAR_URL="https://github.com/ziglang/zig/releases/download/${ZIG_VERSION}/zig-linux-${PLATFORM}-${ZIG_VERSION}.tar.xz"
 	fi
