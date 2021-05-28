@@ -55,7 +55,9 @@ Plug 'tpope/vim-fugitive'
 " airline
 "
 Plug 'vim-airline/vim-airline'
-let g:airline#extensions#ale#enabled = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#show_buffers = 0
+let g:airline#extensions#tabline#tab_min_count = 2  " show tabline only when there are >=2
 
 " project management
 "
@@ -68,8 +70,6 @@ let g:ctrlp_map = '<c-p>'
 let g:ctrlp_cmd = 'CtrlP'
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_root_markers = ['pom.xml', 'go.mod']
-nnoremap <C-h> :tabprevious<CR> " <ctrl-h> for previous tab,
-nnoremap <C-l> :tabnext<CR> " <ctrl-l> for next tab,
 
 " autocompletion
 "
@@ -77,6 +77,7 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'nvim-treesitter/playground'
 Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/nvim-compe'
+set completeopt=longest,menuone
 
 " linting
 "
@@ -93,8 +94,8 @@ let g:ale_lint_on_insert_leave = 0
 let g:ale_lint_on_enter = 0
 
 " C-j, C-k for moving between errors
-nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 nmap <silent> <C-j> <Plug>(ale_next_wrap)
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
 
 " gist (:Gist / :Gist -p / ...)
 "
@@ -103,7 +104,6 @@ Plug 'mattn/gist-vim'
 
 " gitgutter
 "
-Plug 'nvim-lua/plenary.nvim'
 Plug 'lewis6991/gitsigns.nvim'        " [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
 
 " syntax checking
@@ -344,6 +344,9 @@ set termencoding=utf-8
 set wildmenu   " visual autocomplete for command menu
 set showbreak=↳
 set breakindent
+
+nnoremap <C-h> :tabprevious<CR> " <ctrl-h> for previous tab,
+nnoremap <C-l> :tabnext<CR> " <ctrl-l> for next tab,
 
 " file browser (netrw)
 " :Ex, :Sex, :Vex
