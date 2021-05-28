@@ -388,6 +388,9 @@ if has("autocmd")
       \ if line("'\"") > 0 && line("'\"") <= line("$") |
       \   exe "normal g`\"" |
       \ endif
+
+    " highlight yanked text
+    au TextYankPost * lua vim.highlight.on_yank {on_visual = false}
   augroup END
 else
   set autoindent		" always set autoindenting on
