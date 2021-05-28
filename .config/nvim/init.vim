@@ -277,7 +277,7 @@ end
 
 -- other language servers for custom setup
 require'lspconfig'.zls.setup{
-  cmd = { '/opt/zls/zig-cache/bin/zls' };
+  cmd = { '/opt/zls/zig-out/bin/zls' };
   on_attach = on_attach;
 }
 

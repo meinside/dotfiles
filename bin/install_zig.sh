@@ -102,7 +102,7 @@ function install_zls {
 		cd "${ZLS_DIR}" && \
 		git checkout ${ZLS_VERSION} && \
 		$ZIG_BIN build -Drelease-safe && \
-		$ZIG_BIN build config && \
+		${ZLS_DIR}/zig-out/bin/zls config && \
 		echo -e "${GREEN}>>> Installed zls-${ZLS_VERSION} on ${ZLS_DIR} ${RESET}"
 
 }
