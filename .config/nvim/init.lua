@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.05.28.
+-- last update: 2021.05.29.
 
 ------------------------------------------------
 -- helpers
@@ -34,8 +34,8 @@ if fn.empty(fn.glob(install_path)) > 0 then
 end
 
 ------------------------------------------------
+-- plugin packages
 --
--- plugins
 local use = require('packer').use
 require('packer').startup(function()
   use 'wbthomason/packer.nvim'
@@ -122,6 +122,84 @@ require('packer').startup(function()
   g['syntastic_check_on_open'] = 0
   g['syntastic_check_on_wq'] = 0
 
+  -- ruby
+  --
+  use 'vim-ruby/vim-ruby'
+  use 'tpope/vim-endwise'
+
+  -- zig
+  --
+  use 'ziglang/zig.vim'
+
+
+  ------------------------
+  -- for language server configuration
+  local nvim_lsp = require('lspconfig')
+
+  -- default setup for language servers
+  local on_attach = function(client, bufnr)
+    local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+    local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+    --Enable completion triggered by <c-x><c-o>
+    buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+    -- Mappings.
+    local opts = { noremap=true, silent=true }
+
+    -- See `:help vim.lsp.*` for documentation on any of the below functions
+    buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+    buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+    buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+    buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+    buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+    buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+    buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+    buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+    buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+    buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+    buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+    buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+    buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+    buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+    buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+    buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+    buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+
+  end
+
+  -- language servers with default setup
+  local servers = {
+    -- clojure
+    --
+    -- $ brew install clojure-lsp/brew/clojure-lsp-native
+    "clojure_lsp",
+
+    -- golang
+    --
+    -- $ go install golang.org/x/tools/gopls@latest
+    "gopls",
+
+    -- ruby
+    --
+    -- $ gem install --user-install solargraph
+    "solargraph",
+
+    -- rust
+    --
+    -- $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer/ && cargo xtask install --server
+    "rust_analyzer"
+  }
+  for _, lsp in ipairs(servers) do
+    nvim_lsp[lsp].setup { on_attach = on_attach }
+  end
+
+  -- other language servers for custom setup
+  require'lspconfig'.zls.setup{ -- zig
+    cmd = { '/opt/zls/zig-out/bin/zls' };
+    on_attach = on_attach;
+  }
+
   -- clojure
   --
   -- $ go get github.com/cespare/goclj/cljfmt
@@ -142,167 +220,88 @@ require('packer').startup(function()
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
   use {'Olical/conjure', tag = 'v4.19.0'} -- https://github.com/Olical/conjure/releases
 
-  -- ruby
-  --
-  use 'vim-ruby/vim-ruby'
-  use 'tpope/vim-endwise'
+  -- rust
+  g['rustfmt_autosave'] = 1 -- :RustFmt
 
-  -- zig
-  --
-  use 'ziglang/zig.vim'
+  ------------------------
+  -- treesitter for syntax highlighting
+  require'nvim-treesitter.configs'.setup {
+    ensure_installed = {'go', 'python', 'ruby', 'rust', 'zig'};
+    highlight = {enable = true};
+  }
+
+  ------------------------
+  -- compe for autocompletion
+  require'compe'.setup {
+    enabled = true;
+    autocomplete = true;
+    debug = false;
+    min_length = 1;
+    preselect = 'enable';
+    throttle_time = 80;
+    source_timeout = 200;
+    incomplete_delay = 400;
+    max_abbr_width = 100;
+    max_kind_width = 100;
+    max_menu_width = 100;
+    documentation = true;
+
+    source = {
+      path = true;
+      buffer = true;
+      calc = true;
+      nvim_lsp = true;
+      nvim_lua = true;
+    };
+  }
+
+  local t = function(str)
+    return vim.api.nvim_replace_termcodes(str, true, true, true)
+  end
+
+  local check_back_space = function()
+    local col = fn.col('.') - 1
+    if col == 0 or fn.getline('.'):sub(col, col):match('%s') then
+      return true
+    else
+      return false
+    end
+  end
+
+  -- Use (s-)tab to:
+  --- move to prev/next item in completion menuone
+  --- jump to prev/next snippet's placeholder
+  _G.tab_complete = function()
+    if fn.pumvisible() == 1 then
+      return t "<C-n>"
+    elseif check_back_space() then
+      return t "<Tab>"
+    else
+      return fn['compe#complete']()
+    end
+  end
+  _G.s_tab_complete = function()
+    if fn.pumvisible() == 1 then
+      return t "<C-p>"
+    else
+      return t "<S-Tab>"
+    end
+  end
+
+  vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
+  vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
+  vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
+  vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
+
+  ------------------------------------------------
+  -- linting
+  -- TODO
+
+  ------------------------
+  -- gitgutter
+  require('gitsigns').setup{}
 
 end)
-
-
-------------------------
--- for language server configuration
-local nvim_lsp = require('lspconfig')
-
--- default setup for language servers
-local on_attach = function(client, bufnr)
-  local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-  local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-
-  --Enable completion triggered by <c-x><c-o>
-  buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-  -- Mappings.
-  local opts = { noremap=true, silent=true }
-
-  -- See `:help vim.lsp.*` for documentation on any of the below functions
-  buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-  buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-  buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-  buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
-
-end
-
--- language servers with default setup
-local servers = {
-  "clojure_lsp", -- clojure
-  "gopls", -- golang
-  "solargraph", -- ruby
-  "rust_analyzer" -- rust
-}
-for _, lsp in ipairs(servers) do
-  nvim_lsp[lsp].setup { on_attach = on_attach }
-end
-
--- other language servers for custom setup
-require'lspconfig'.zls.setup{ -- zig
-  cmd = { '/opt/zls/zig-out/bin/zls' };
-  on_attach = on_attach;
-}
-
--- clojure
---
--- $ brew install clojure-lsp/brew/clojure-lsp-native
-
--- golang
---
--- $ go install golang.org/x/tools/gopls@latest
-
--- ruby
---
--- $ gem install --user-install solargraph
-
--- rust
---
--- $ git clone https://github.com/rust-analyzer/rust-analyzer.git
--- $ cd rust-analyzer/
--- $ cargo xtask install --server
-g['rustfmt_autosave'] = 1 -- :RustFmt
-
-------------------------
--- treesitter for syntax highlighting
-require'nvim-treesitter.configs'.setup {
-  ensure_installed = {'go', 'python', 'ruby', 'rust', 'zig'};
-  highlight = {enable = true};
-}
-
-------------------------
--- compe for autocompletion
-require'compe'.setup {
-  enabled = true;
-  autocomplete = true;
-  debug = false;
-  min_length = 1;
-  preselect = 'enable';
-  throttle_time = 80;
-  source_timeout = 200;
-  incomplete_delay = 400;
-  max_abbr_width = 100;
-  max_kind_width = 100;
-  max_menu_width = 100;
-  documentation = true;
-
-  source = {
-    path = true;
-    buffer = true;
-    calc = true;
-    nvim_lsp = true;
-    nvim_lua = true;
-  };
-}
-
-local t = function(str)
-  return vim.api.nvim_replace_termcodes(str, true, true, true)
-end
-
-local check_back_space = function()
-  local col = fn.col('.') - 1
-  if col == 0 or fn.getline('.'):sub(col, col):match('%s') then
-    return true
-  else
-    return false
-  end
-end
-
--- Use (s-)tab to:
---- move to prev/next item in completion menuone
---- jump to prev/next snippet's placeholder
-_G.tab_complete = function()
-  if fn.pumvisible() == 1 then
-    return t "<C-n>"
-  elseif check_back_space() then
-    return t "<Tab>"
-  else
-    return fn['compe#complete']()
-  end
-end
-_G.s_tab_complete = function()
-  if fn.pumvisible() == 1 then
-    return t "<C-p>"
-  else
-    return t "<S-Tab>"
-  end
-end
-
-vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
-vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
-vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
-vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
-
-------------------------------------------------
--- linting
--- TODO
-
-------------------------
--- gitgutter
-require('gitsigns').setup{}
 
 ------------------------------------------------
 -- other settings
