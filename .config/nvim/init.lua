@@ -63,7 +63,7 @@ require('packer').startup(function()
   --
   use 'nvim-lua/popup.nvim'
   use 'nvim-lua/plenary.nvim'
-  use 'nvim-telescope/telescope.nvim'
+  use 'nvim-telescope/telescope.nvim'  -- :Telescope <action>
   use 'mtth/locate.vim' -- :L xxx, :lclose, gl
   use 'johngrib/vim-f-hangul'	-- can use f/t/;/, on Hangul characters
 
@@ -127,16 +127,6 @@ require('packer').startup(function()
   g['syntastic_check_on_open'] = 0
   g['syntastic_check_on_wq'] = 0
 
-  -- ruby
-  --
-  use 'vim-ruby/vim-ruby'
-  use 'tpope/vim-endwise'
-
-  -- zig
-  --
-  use 'ziglang/zig.vim'
-
-
   ------------------------
   -- for language server configuration
   local nvim_lsp = require('lspconfig')
@@ -171,6 +161,35 @@ require('packer').startup(function()
     buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
     buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 
+    -- LSP Enable diagnostics
+    vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+      virtual_text = true,
+      underline = true,
+      signs = true,
+      update_in_insert = false
+    })
+
+    -- Send diagnostics to quickfix list
+    do
+      local method = "textDocument/publishDiagnostics"
+      local default_handler = vim.lsp.handlers[method]
+      vim.lsp.handlers[method] = function(err, method, result, client_id, bufnr, config)
+        default_handler(err, method, result, client_id, bufnr, config)
+        local diagnostics = vim.lsp.diagnostic.get_all()
+        local qflist = {}
+        for bufnr, diagnostic in pairs(diagnostics) do
+          for _, d in ipairs(diagnostic) do
+            d.bufnr = bufnr
+            d.lnum = d.range.start.line + 1
+            d.col = d.range.start.character + 1
+            d.text = d.message
+            table.insert(qflist, d)
+          end
+        end
+        vim.lsp.util.set_qflist(qflist)
+      end
+    end
+
   end
 
   -- language servers with default setup
@@ -196,11 +215,13 @@ require('packer').startup(function()
     "rust_analyzer"
   }
   for _, lsp in ipairs(servers) do
-    nvim_lsp[lsp].setup { on_attach = on_attach }
+    nvim_lsp[lsp].setup {
+      on_attach = on_attach;
+    }
   end
 
   -- other language servers for custom setup
-  require'lspconfig'.zls.setup{ -- zig
+  nvim_lsp['zls'].setup { -- zig
     cmd = { '/opt/zls/zig-out/bin/zls' };
     on_attach = on_attach;
   }
@@ -225,8 +246,33 @@ require('packer').startup(function()
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
   use {'Olical/conjure', tag = 'v4.19.0'} -- https://github.com/Olical/conjure/releases
 
+  -- go
+  use 'fatih/vim-go'  -- :GoInstallBinaries
+  g['go_fmt_command'] = 'goimports'
+  g['go_highlight_build_constraints'] = 1
+  g['go_highlight_extra_types'] = 1
+  g['go_highlight_fields'] = 1
+  g['go_highlight_functions'] = 1
+  g['go_highlight_methods'] = 1
+  g['go_highlight_operators'] = 1
+  g['go_highlight_structs'] = 1
+  g['go_highlight_types'] = 1
+  g['go_jump_to_error'] = 0
+  g['go_auto_sameids'] = 0
+  g['go_auto_type_info'] = 1
+  g['syntastic_go_checkers'] = {'go'}	-- XXX: 'golint' is too slow, use :GoLint manually.
+  g['syntastic_aggregate_errors'] = 1
+
+  -- ruby
+  use 'vim-ruby/vim-ruby'
+  use 'tpope/vim-endwise'
+
   -- rust
+  use 'rust-lang/rust.vim'
   g['rustfmt_autosave'] = 1 -- :RustFmt
+
+  -- zig
+  use 'ziglang/zig.vim'
 
   ------------------------
   -- treesitter for syntax highlighting
