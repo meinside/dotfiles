@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.05.29.
+-- last update: 2021.05.31.
 
 ------------------------------------------------
 -- helpers
@@ -109,7 +109,12 @@ require('packer').startup(function()
 
   -- gitgutter
   --
-  use 'lewis6991/gitsigns.nvim'	-- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
+  -- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
+  use {'lewis6991/gitsigns.nvim',
+    config = function()
+      require('gitsigns').setup{}
+    end
+  }
 
   -- syntax checking
   --
@@ -296,10 +301,6 @@ require('packer').startup(function()
   ------------------------------------------------
   -- linting
   -- TODO
-
-  ------------------------
-  -- gitgutter
-  require('gitsigns').setup{}
 
 end)
 
