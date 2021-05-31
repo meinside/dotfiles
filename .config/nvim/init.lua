@@ -96,7 +96,6 @@ require('packer').startup(function()
   g['ctrlp_root_markers'] = {'pom.xml', 'go.mod'}
 
   -- autocompletion
-  --
   use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
   use 'nvim-treesitter/playground'
   use 'neovim/nvim-lspconfig'
@@ -107,7 +106,6 @@ require('packer').startup(function()
   -- TODO
 
   -- gist (:Gist / :Gist -p / ...)
-  --
   use 'mattn/webapi-vim'
   use 'mattn/gist-vim'
 
@@ -115,8 +113,9 @@ require('packer').startup(function()
   --
   -- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
   use {'lewis6991/gitsigns.nvim',
+    requires = {'nvim-lua/plenary.nvim'},
     config = function()
-      require('gitsigns').setup{}
+      require('gitsigns').setup()
     end
   }
 
@@ -251,7 +250,7 @@ require('packer').startup(function()
   use {'Olical/conjure', tag = 'v4.19.0'} -- https://github.com/Olical/conjure/releases
 
   -- go
-  use 'fatih/vim-go'  -- :GoInstallBinaries
+  use {'fatih/vim-go', run = ':GoUpdateBinaries'}
   g['go_fmt_command'] = 'goimports'
   g['go_highlight_build_constraints'] = 1
   g['go_highlight_extra_types'] = 1
