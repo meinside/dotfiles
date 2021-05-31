@@ -3,7 +3,7 @@
 # my zsh functions
 #
 # created on 2014.10.06.
-# updated on 2021.04.07.
+# updated on 2021.05.31.
 #
 # ... by meinside@gmail.com
 #
@@ -85,11 +85,6 @@ update-all () {
 		echo "> cleaning go module caches..."
 		go clean -modcache
 	fi
-
-	# vim bundles
-	echo
-	echo "> updating vim bundles..."
-	vi +PlugUpdate! +qall
 
 	# upgrade oh-my-zsh
 	omz update
