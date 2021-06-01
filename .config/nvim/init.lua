@@ -132,6 +132,7 @@ require('packer').startup(function()
   g['syntastic_auto_loc_list'] = 1
   g['syntastic_check_on_open'] = 0
   g['syntastic_check_on_wq'] = 0
+  use 'ray-x/lsp_signature.nvim'
 
   ------------------------
   -- for language server configuration
@@ -195,6 +196,14 @@ require('packer').startup(function()
         vim.lsp.util.set_qflist(qflist)
       end
     end
+
+    -- lsp_signature
+    require'lsp_signature'.on_attach({
+      bind = true, -- This is mandatory, otherwise border config won't get registered.
+      handler_opts = {
+        border = "single"
+      }
+    })
 
   end
 
@@ -269,6 +278,8 @@ require('packer').startup(function()
   g['go_auto_type_info'] = 1
   g['syntastic_go_checkers'] = {'go'}	-- XXX: 'golint' is too slow, use :GoLint manually.
   g['syntastic_aggregate_errors'] = 1
+  cmd[[autocmd BufEnter *.go nmap <leader>ci  <Plug>(go-implements)]]    -- \ci for implementations of given interface
+  cmd[[autocmd BufEnter *.go nmap <leader>cc  <Plug>(go-callers)]]    -- \cc for callers of given function
 
   -- ruby
   use 'vim-ruby/vim-ruby'
@@ -346,10 +357,16 @@ require('packer').startup(function()
     end
   end
 
-  vim.api.nvim_set_keymap("i", "<Tab>", "v:lua.tab_complete()", {expr = true})
-  vim.api.nvim_set_keymap("s", "<Tab>", "v:lua.tab_complete()", {expr = true})
-  vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
-  vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
+  map('i', '<Tab>', 'v:lua.tab_complete()', {expr = true})
+  map('s', '<Tab>', 'v:lua.tab_complete()', {expr = true})
+  map('i', '<S-Tab>', 'v:lua.s_tab_complete()', {expr = true})
+  map('s', '<S-Tab>', 'v:lua.s_tab_complete()', {expr = true})
+
+  map('i', '<silent><expr> <C-Space>', 'compe#complete()')
+  map('i', '<silent><expr> <CR>', "compe#confirm('<CR>')")
+  map('i', '<silent><expr> <C-e>', "compe#close('<C-e>')")
+  map('i', '<silent><expr> <C-f>', "compe#scroll({ 'delta': +4 })")
+  map('i', '<silent><expr> <C-d>', "compe#scroll({ 'delta': -4 })")
 
 end)
 
@@ -405,6 +422,9 @@ vim.api.nvim_exec([[
 
     " highlight yanked text
     autocmd TextYankPost * lua vim.highlight.on_yank {on_visual = false}
+
+    autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
+    autocmd CursorHoldI * silent! lua vim.lsp.buf.signature_help()
   augroup end
 ]], false)
 
