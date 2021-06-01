@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.05.31.
+-- last update: 2021.06.01.
 
 ------------------------------------------------
 -- helpers
@@ -43,6 +43,9 @@ require('packer').startup(function()
   -- colorschemes (https://github.com/rafi/awesome-vim-colorschemes)
   --
   use 'kristijanhusak/vim-hybrid-material'
+  g['hybrid_transparent_background'] = 1
+  cmd [[set background=dark]]
+  cmd [[colorscheme hybrid_reverse]]
 
   -- formatting
   --
@@ -251,6 +254,7 @@ require('packer').startup(function()
 
   -- go
   use {'fatih/vim-go', run = ':GoUpdateBinaries'}
+  g['go_term_enabled'] = 1  -- XXX - it needs to be set for 'delve' (2017.02.10.)
   g['go_fmt_command'] = 'goimports'
   g['go_highlight_build_constraints'] = 1
   g['go_highlight_extra_types'] = 1
@@ -347,16 +351,11 @@ require('packer').startup(function()
   vim.api.nvim_set_keymap("i", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
   vim.api.nvim_set_keymap("s", "<S-Tab>", "v:lua.s_tab_complete()", {expr = true})
 
-  ------------------------------------------------
-  -- linting
-  -- TODO
-
 end)
 
 ------------------------------------------------
 -- other settings
 
-g['go_term_enabled'] = 1  -- XXX - it needs to be set for 'delve' (2017.02.10.)
 cmd [[set mouse-=a]]  -- not to enter visual mode when dragging text
 cmd [[set backspace=indent,eol,start]]  -- allow backspacing over everything in insert mode
 cmd [[set nobackup]]  -- do not keep a backup file, use versions instead
@@ -408,10 +407,4 @@ vim.api.nvim_exec([[
     autocmd TextYankPost * lua vim.highlight.on_yank {on_visual = false}
   augroup end
 ]], false)
-
--- set colorscheme
---
-g['hybrid_transparent_background'] = 1
-cmd [[set background=dark]]
-cmd [[colorscheme hybrid_reverse]]
 
