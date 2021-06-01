@@ -425,6 +425,11 @@ vim.api.nvim_exec([[
 
     autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
     autocmd CursorHoldI * silent! lua vim.lsp.buf.signature_help()
+
+    " gitsigns colors
+    autocmd BufRead * highlight GitSignsAdd ctermfg=Green ctermbg=none
+    autocmd BufRead * highlight GitSignsChange ctermfg=Blue ctermbg=none
+    autocmd BufRead * highlight GitSignsDelete ctermfg=Red ctermbg=none
   augroup end
 ]], false)
 
