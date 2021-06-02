@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.06.01.
+-- last update: 2021.06.02.
 
 ------------------------------------------------
 -- helpers
@@ -70,9 +70,13 @@ require('packer').startup(function()
     'nvim-telescope/telescope.nvim', -- :Telescope <action>
     requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}}
   }
+  map('n', '<leader>fb', '<cmd>lua require("telescope.builtin").file_browser()<CR>') -- \fb for `file_browser`
   map('n', '<leader>ff', '<cmd>lua require("telescope.builtin").find_files()<CR>') -- \ff for `find_files`
   map('n', '<leader>gc', '<cmd>lua require("telescope.builtin").git_commits()<CR>') -- \gc for `git_commits`
   map('n', '<leader>qf', '<cmd>lua require("telescope.builtin").quickfix()<CR>') -- \qf for `quickfix`
+  map('n', '<leader>lr', '<cmd>lua require("telescope.builtin").lsp_references()<CR>') -- \lr for `lsp_references`
+  map('n', '<leader>li', '<cmd>lua require("telescope.builtin").lsp_implementations()<CR>') -- \li for `lsp_implementations`
+  map('n', '<leader>ld', '<cmd>lua require("telescope.builtin").lsp_definitions()<CR>') -- \ld for `lsp_definitions`
 
   -- git
   --
@@ -278,8 +282,6 @@ require('packer').startup(function()
   g['go_auto_type_info'] = 1
   g['syntastic_go_checkers'] = {'go'}	-- XXX: 'golint' is too slow, use :GoLint manually.
   g['syntastic_aggregate_errors'] = 1
-  cmd[[autocmd BufEnter *.go nmap <leader>ci  <Plug>(go-implements)]]    -- \ci for implementations of given interface
-  cmd[[autocmd BufEnter *.go nmap <leader>cc  <Plug>(go-callers)]]    -- \cc for callers of given function
 
   -- ruby
   use 'vim-ruby/vim-ruby'
