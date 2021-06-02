@@ -3,7 +3,7 @@
 # my zsh functions
 #
 # created on 2014.10.06.
-# updated on 2021.05.31.
+# updated on 2021.06.02.
 #
 # ... by meinside@gmail.com
 #
@@ -84,6 +84,11 @@ update-all () {
 		echo
 		echo "> cleaning go module caches..."
 		go clean -modcache
+	fi
+
+	# update nvim packer plugins
+	if [[ -x `which nvim` ]]; then
+		nvim +'autocmd User PackerComplete sleep 100m | write /tmp/packer.txt | qall' +PackerSync && rm /tmp/packer.txt
 	fi
 
 	# upgrade oh-my-zsh
