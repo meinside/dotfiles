@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.06.02.
+-- last update: 2021.06.09.
 
 ------------------------------------------------
 -- helpers
@@ -263,7 +263,7 @@ require('packer').startup(function()
   -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
   -- for reloading everything: \rr
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-  use {'Olical/conjure', tag = 'v4.19.0'} -- https://github.com/Olical/conjure/releases
+  use {'Olical/conjure', tag = 'v4.20.1'} -- https://github.com/Olical/conjure/releases
 
   -- go
   use {'fatih/vim-go', run = ':GoUpdateBinaries'}
@@ -370,11 +370,15 @@ require('packer').startup(function()
   map('i', '<silent><expr> <C-f>', "compe#scroll({ 'delta': +4 })")
   map('i', '<silent><expr> <C-d>', "compe#scroll({ 'delta': -4 })")
 
+  map('n', '<C-h>', ':tabprevious<CR>') -- <ctrl-h> for previous tab,
+  map('n', '<C-l>', ':tabnext<CR>') -- <ctrl-l> for next tab,
+
 end)
 
 ------------------------------------------------
 -- other settings
 
+-- vim commands
 cmd [[set mouse-=a]]  -- not to enter visual mode when dragging text
 cmd [[set backspace=indent,eol,start]]  -- allow backspacing over everything in insert mode
 cmd [[set nobackup]]  -- do not keep a backup file, use versions instead
@@ -396,10 +400,7 @@ cmd [[set showbreak=↳]]
 cmd [[set wildmenu]]
 cmd [[set breakindent]]
 
-map('n', '<C-h>', ':tabprevious<CR>') -- <ctrl-h> for previous tab,
-map('n', '<C-l>', ':tabnext<CR>') -- <ctrl-l> for next tab,
-
--- vim autocmds (not yet supported)
+-- vim autocmds
 vim.api.nvim_exec([[
   augroup vimrcEx
     au!
