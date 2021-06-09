@@ -7,6 +7,7 @@
 
 ------------------------------------------------
 -- helpers
+--
 local cmd = vim.cmd  -- to execute Vim commands e.g. cmd('pwd')
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -25,13 +26,14 @@ end
 
 
 ------------------------------------------------
--- package manager
+-- plugin(package) manager
 --
--- :PackerInstall / :PackerUpdate / ...
+-- :PackerInstall / :PackerUpdate / :PackerSync / ...
 local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
 if fn.empty(fn.glob(install_path)) > 0 then
   fn.execute('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
 end
+
 
 ------------------------------------------------
 -- plugin packages
@@ -82,6 +84,12 @@ require('packer').startup(function()
   --
   use 'junegunn/gv.vim' -- :GV, :GV!, :GV?
   use 'tpope/vim-fugitive'
+  use {'lewis6991/gitsigns.nvim', -- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
+    requires = {'nvim-lua/plenary.nvim'},
+    config = function()
+      require('gitsigns').setup()
+    end
+  }
 
   -- airline
   --
@@ -103,6 +111,7 @@ require('packer').startup(function()
   g['ctrlp_root_markers'] = {'pom.xml', 'go.mod'}
 
   -- autocompletion
+  --
   use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
   use 'nvim-treesitter/playground'
   use 'neovim/nvim-lspconfig'
@@ -110,21 +119,13 @@ require('packer').startup(function()
   vim.o.completeopt = 'menuone,noselect'
 
   -- linting
+  --
   -- TODO
 
   -- gist (:Gist / :Gist -p / ...)
+  --
   use 'mattn/webapi-vim'
   use 'mattn/gist-vim'
-
-  -- gitgutter
-  --
-  -- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
-  use {'lewis6991/gitsigns.nvim',
-    requires = {'nvim-lua/plenary.nvim'},
-    config = function()
-      require('gitsigns').setup()
-    end
-  }
 
   -- syntax checking
   --
@@ -140,6 +141,7 @@ require('packer').startup(function()
 
   ------------------------
   -- for language server configuration
+  --
   local nvim_lsp = require('lspconfig')
 
   -- default setup for language servers
@@ -296,6 +298,7 @@ require('packer').startup(function()
 
   ------------------------
   -- treesitter for syntax highlighting
+  --
   require'nvim-treesitter.configs'.setup {
     ensure_installed = {'go', 'python', 'ruby', 'rust', 'zig'};
     highlight = {enable = true};
@@ -303,6 +306,7 @@ require('packer').startup(function()
 
   ------------------------
   -- compe for autocompletion
+  --
   require'compe'.setup {
     enabled = true;
     autocomplete = true;
@@ -370,13 +374,20 @@ require('packer').startup(function()
   map('i', '<silent><expr> <C-f>', "compe#scroll({ 'delta': +4 })")
   map('i', '<silent><expr> <C-d>', "compe#scroll({ 'delta': -4 })")
 
+
+  ------------------------
+  -- others
+
+  -- tab navigation
   map('n', '<C-h>', ':tabprevious<CR>') -- <ctrl-h> for previous tab,
   map('n', '<C-l>', ':tabnext<CR>') -- <ctrl-l> for next tab,
 
 end)
 
+
 ------------------------------------------------
 -- other settings
+--
 
 -- vim commands
 cmd [[set mouse-=a]]  -- not to enter visual mode when dragging text
@@ -402,20 +413,16 @@ cmd [[set breakindent]]
 
 -- vim autocmds
 vim.api.nvim_exec([[
-  augroup vimrcEx
+  " related to files and file types
+  augroup files
     au!
 
     " For all text files set 'textwidth' to 78 characters.
     autocmd FileType text setlocal textwidth=78
 
-    " html/javascript/css
     autocmd FileType htm,html,js,json set ai sw=2 ts=2 sts=2 et
     autocmd FileType css,scss set ai sw=2 ts=2 sts=2 et
-
-    " Ruby
     autocmd FileType ruby,eruby,yaml set ai sw=2 ts=2 sts=2 et
-
-    " Python
     autocmd FileType python set ai sw=2 ts=2 sts=2 et
 
     " When editing a file, always jump to the last known cursor position.
@@ -425,7 +432,13 @@ vim.api.nvim_exec([[
 
     " highlight yanked text
     autocmd TextYankPost * lua vim.highlight.on_yank {on_visual = false}
+  augroup end
 
+  " related to plugins
+  augroup plugins
+    au!
+
+    " lsp
     autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
     autocmd CursorHoldI * silent! lua vim.lsp.buf.signature_help()
 
