@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.06.09.
+-- last update: 2021.06.15.
 
 ------------------------------------------------
 -- helpers
@@ -265,7 +265,7 @@ require('packer').startup(function()
   -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
   -- for reloading everything: \rr
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-  use {'Olical/conjure', tag = 'v4.20.1'} -- https://github.com/Olical/conjure/releases
+  use {'Olical/conjure', tag = 'v4.21.0'} -- https://github.com/Olical/conjure/releases
 
   -- go
   use {'fatih/vim-go', run = ':GoUpdateBinaries'}
