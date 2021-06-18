@@ -32,16 +32,12 @@ RESET="\033[0m"
 
 TMP_DIR=/tmp/nvim
 
+# https://github.com/neovim/neovim/releases
 NVIM_VERSION="v0.4.4"
 
 function prep {
 	# install needed packages
-	sudo apt-get install -y ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip python3-dev python3-pip && \
-		pip3 install --upgrade --user pynvim
-
-	# symlink .vimrc file
-	mkdir -p ~/.config/nvim && \
-		ln -sf ~/.vimrc ~/.config/nvim/init.vim
+	sudo apt-get install -y ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip
 
 	# clean tmp directory
 	clean
