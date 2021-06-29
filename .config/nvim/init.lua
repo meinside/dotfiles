@@ -3,7 +3,54 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.06.15.
+-- last update: 2021.06.29.
+
+------------------------------------------------
+-- common settings
+--
+vim.api.nvim_exec([[
+  set mouse-=a  " not to enter visual mode when dragging text
+  set backspace=indent,eol,start  " allow backspacing over everything in insert mode
+  set nobackup  " do not keep a backup file, use versions instead
+  set history=50  " keep 50 lines of command line history
+  set ruler  " show the cursor position all the time
+  set showcmd  " display incomplete commands
+  set incsearch  " do incremental searching
+  set smartcase  " smart case insensitive search
+  set cindent
+  set ai
+  set smartindent
+  set nu
+  set ts=4
+  set sw=4
+  set sts=4
+  set fencs=ucs-bom,utf-8,korea
+  set termencoding=utf-8
+  set showbreak=↳
+  set wildmenu
+  set breakindent
+
+  " related to files and file types
+  augroup files
+    au!
+
+    " For all text files set 'textwidth' to 78 characters.
+    autocmd FileType text setlocal textwidth=78
+
+    autocmd FileType htm,html,js,json set ai sw=2 ts=2 sts=2 et
+    autocmd FileType css,scss set ai sw=2 ts=2 sts=2 et
+    autocmd FileType ruby,eruby,yaml set ai sw=2 ts=2 sts=2 et
+    autocmd FileType python set ai sw=2 ts=2 sts=2 et
+
+    " When editing a file, always jump to the last known cursor position.
+    " Don't do it when the position is invalid or when inside an event handler
+    " (happens when dropping a file on gvim).
+    autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g`\"" | endif
+
+    " highlight yanked text
+    autocmd TextYankPost * lua vim.highlight.on_yank {on_visual = false}
+  augroup end
+]], false)
 
 ------------------------------------------------
 -- helpers
@@ -90,6 +137,12 @@ require('packer').startup(function()
       require('gitsigns').setup()
     end
   }
+  -- gitsigns colors
+  vim.api.nvim_exec([[
+    autocmd BufRead * highlight GitSignsAdd ctermfg=Green ctermbg=none
+    autocmd BufRead * highlight GitSignsChange ctermfg=Blue ctermbg=none
+    autocmd BufRead * highlight GitSignsDelete ctermfg=Red ctermbg=none
+  ]], false)
 
   -- airline
   --
@@ -110,6 +163,12 @@ require('packer').startup(function()
   g['ctrlp_working_path_mode'] = 'ra'
   g['ctrlp_root_markers'] = {'pom.xml', 'go.mod'}
 
+  -- auto close
+  --
+  use 'cohama/lexima.vim'
+  g['lexima_no_default_rules'] = true
+  cmd [[call lexima#set_default_rules()]]
+
   -- autocompletion
   --
   use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
@@ -117,6 +176,22 @@ require('packer').startup(function()
   use 'neovim/nvim-lspconfig'
   use 'hrsh7th/nvim-compe'
   vim.o.completeopt = 'menuone,noselect'
+
+  -- snippets
+  --
+  use 'hrsh7th/vim-vsnip'
+  use 'kitagry/vs-snippets' -- various language snippets
+  -- https://github.com/hrsh7th/vim-vsnip#2-setting
+  vim.api.nvim_exec([[
+    " Ctrl + L for expand, or jump to next element
+    imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+    smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+    " Jump forward or backward
+    imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+    smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+    imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+    smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+  ]], false)
 
   -- linting
   --
@@ -137,11 +212,11 @@ require('packer').startup(function()
   g['syntastic_auto_loc_list'] = 1
   g['syntastic_check_on_open'] = 0
   g['syntastic_check_on_wq'] = 0
-  use 'ray-x/lsp_signature.nvim'
 
   ------------------------
   -- for language server configuration
   --
+  use 'ray-x/lsp_signature.nvim'
   local nvim_lsp = require('lspconfig')
 
   -- default setup for language servers
@@ -287,7 +362,6 @@ require('packer').startup(function()
 
   -- ruby
   use 'vim-ruby/vim-ruby'
-  use 'tpope/vim-endwise'
 
   -- rust
   use 'rust-lang/rust.vim'
@@ -295,6 +369,12 @@ require('packer').startup(function()
 
   -- zig
   use 'ziglang/zig.vim'
+
+  -- other lsp settings
+  vim.api.nvim_exec([[
+    autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
+    autocmd CursorHoldI * silent! lua vim.lsp.buf.signature_help()
+  ]], false)
 
   ------------------------
   -- treesitter for syntax highlighting
@@ -325,6 +405,7 @@ require('packer').startup(function()
       path = true;
       buffer = true;
       calc = true;
+      vsnip = true;
       nvim_lsp = true;
       nvim_lua = true;
     };
@@ -368,12 +449,16 @@ require('packer').startup(function()
   map('i', '<S-Tab>', 'v:lua.s_tab_complete()', {expr = true})
   map('s', '<S-Tab>', 'v:lua.s_tab_complete()', {expr = true})
 
-  map('i', '<silent><expr> <C-Space>', 'compe#complete()')
-  map('i', '<silent><expr> <CR>', "compe#confirm('<CR>')")
-  map('i', '<silent><expr> <C-e>', "compe#close('<C-e>')")
-  map('i', '<silent><expr> <C-f>', "compe#scroll({ 'delta': +4 })")
-  map('i', '<silent><expr> <C-d>', "compe#scroll({ 'delta': -4 })")
-
+  -- https://github.com/hrsh7th/nvim-compe#mappings
+  vim.api.nvim_exec([[
+    let g:lexima_no_default_rules = v:true
+    call lexima#set_default_rules()
+    inoremap <silent><expr> <C-Space> compe#complete()
+    inoremap <silent><expr> <CR>      compe#confirm(lexima#expand('<LT>CR>', 'i'))
+    inoremap <silent><expr> <C-e>     compe#close('<C-e>')
+    inoremap <silent><expr> <C-f>     compe#scroll({ 'delta': +4 })
+    inoremap <silent><expr> <C-d>     compe#scroll({ 'delta': -4 })
+  ]], false)
 
   ------------------------
   -- others
@@ -383,69 +468,4 @@ require('packer').startup(function()
   map('n', '<C-l>', ':tabnext<CR>') -- <ctrl-l> for next tab,
 
 end)
-
-
-------------------------------------------------
--- other settings
---
-
--- vim commands
-cmd [[set mouse-=a]]  -- not to enter visual mode when dragging text
-cmd [[set backspace=indent,eol,start]]  -- allow backspacing over everything in insert mode
-cmd [[set nobackup]]  -- do not keep a backup file, use versions instead
-cmd [[set history=50]]  -- keep 50 lines of command line history
-cmd [[set ruler]]  -- show the cursor position all the time
-cmd [[set showcmd]]  -- display incomplete commands
-cmd [[set incsearch]]  -- do incremental searching
-cmd [[set smartcase]]  -- smart case insensitive search
-cmd [[set cindent]]
-cmd [[set ai]]
-cmd [[set smartindent]]
-cmd [[set nu]]
-cmd [[set ts=4]]
-cmd [[set sw=4]]
-cmd [[set sts=4]]
-cmd [[set fencs=ucs-bom,utf-8,korea]]
-cmd [[set termencoding=utf-8]]
-cmd [[set showbreak=↳]]
-cmd [[set wildmenu]]
-cmd [[set breakindent]]
-
--- vim autocmds
-vim.api.nvim_exec([[
-  " related to files and file types
-  augroup files
-    au!
-
-    " For all text files set 'textwidth' to 78 characters.
-    autocmd FileType text setlocal textwidth=78
-
-    autocmd FileType htm,html,js,json set ai sw=2 ts=2 sts=2 et
-    autocmd FileType css,scss set ai sw=2 ts=2 sts=2 et
-    autocmd FileType ruby,eruby,yaml set ai sw=2 ts=2 sts=2 et
-    autocmd FileType python set ai sw=2 ts=2 sts=2 et
-
-    " When editing a file, always jump to the last known cursor position.
-    " Don't do it when the position is invalid or when inside an event handler
-    " (happens when dropping a file on gvim).
-    autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g`\"" | endif
-
-    " highlight yanked text
-    autocmd TextYankPost * lua vim.highlight.on_yank {on_visual = false}
-  augroup end
-
-  " related to plugins
-  augroup plugins
-    au!
-
-    " lsp
-    autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
-    autocmd CursorHoldI * silent! lua vim.lsp.buf.signature_help()
-
-    " gitsigns colors
-    autocmd BufRead * highlight GitSignsAdd ctermfg=Green ctermbg=none
-    autocmd BufRead * highlight GitSignsChange ctermfg=Blue ctermbg=none
-    autocmd BufRead * highlight GitSignsDelete ctermfg=Red ctermbg=none
-  augroup end
-]], false)
 
