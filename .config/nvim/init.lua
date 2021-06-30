@@ -429,8 +429,8 @@ end)
 local opt = vim.opt
 opt.mouse = opt.mouse - { 'a' } -- not to enter visual mode when dragging text
 opt.backspace = { 'indent', 'eol', 'start' } -- allow backspacing over everything in insert mode
---opt.nobackup = true -- do not keep a backup file, use versions instead
 opt.history = 50
+opt.number = true
 opt.ruler = true
 opt.showcmd = true
 opt.incsearch = true
@@ -441,12 +441,13 @@ opt.smartindent = true
 opt.tabstop = 4
 opt.shiftwidth = 4
 opt.softtabstop = 4
+opt.expandtab = true
 opt.fileencodings = { 'ucs-bom', 'utf-8', 'korea' }
---opt.termencoding = 'utf-8'
 opt.showbreak = '↳'
 opt.wildmenu = true
 opt.breakindent = true
-opt.number = true
+opt.splitbelow = true
+opt.splitright = true
 vim.api.nvim_exec([[
   " related to files and file types
   augroup files
