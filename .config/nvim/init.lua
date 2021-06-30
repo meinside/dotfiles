@@ -3,54 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.06.29.
-
-------------------------------------------------
--- common settings
---
-vim.api.nvim_exec([[
-  set mouse-=a  " not to enter visual mode when dragging text
-  set backspace=indent,eol,start  " allow backspacing over everything in insert mode
-  set nobackup  " do not keep a backup file, use versions instead
-  set history=50  " keep 50 lines of command line history
-  set ruler  " show the cursor position all the time
-  set showcmd  " display incomplete commands
-  set incsearch  " do incremental searching
-  set smartcase  " smart case insensitive search
-  set cindent
-  set ai
-  set smartindent
-  set nu
-  set ts=4
-  set sw=4
-  set sts=4
-  set fencs=ucs-bom,utf-8,korea
-  set termencoding=utf-8
-  set showbreak=↳
-  set wildmenu
-  set breakindent
-
-  " related to files and file types
-  augroup files
-    au!
-
-    " For all text files set 'textwidth' to 78 characters.
-    autocmd FileType text setlocal textwidth=78
-
-    autocmd FileType htm,html,js,json set ai sw=2 ts=2 sts=2 et
-    autocmd FileType css,scss set ai sw=2 ts=2 sts=2 et
-    autocmd FileType ruby,eruby,yaml set ai sw=2 ts=2 sts=2 et
-    autocmd FileType python set ai sw=2 ts=2 sts=2 et
-
-    " When editing a file, always jump to the last known cursor position.
-    " Don't do it when the position is invalid or when inside an event handler
-    " (happens when dropping a file on gvim).
-    autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g`\"" | endif
-
-    " highlight yanked text
-    autocmd TextYankPost * lua vim.highlight.on_yank {on_visual = false}
-  augroup end
-]], false)
+-- last update: 2021.06.30.
 
 ------------------------------------------------
 -- helpers
@@ -468,4 +421,52 @@ require('packer').startup(function()
   map('n', '<C-l>', ':tabnext<CR>') -- <ctrl-l> for next tab,
 
 end)
+
+
+------------------------------------------------
+-- other common settings
+--
+local opt = vim.opt
+opt.mouse = opt.mouse - { 'a' } -- not to enter visual mode when dragging text
+opt.backspace = { 'indent', 'eol', 'start' } -- allow backspacing over everything in insert mode
+--opt.nobackup = true -- do not keep a backup file, use versions instead
+opt.history = 50
+opt.ruler = true
+opt.showcmd = true
+opt.incsearch = true
+opt.smartcase = true
+opt.cindent = true
+opt.autoindent = true
+opt.smartindent = true
+opt.tabstop = 4
+opt.shiftwidth = 4
+opt.softtabstop = 4
+opt.fileencodings = { 'ucs-bom', 'utf-8', 'korea' }
+--opt.termencoding = 'utf-8'
+opt.showbreak = '↳'
+opt.wildmenu = true
+opt.breakindent = true
+opt.number = true
+vim.api.nvim_exec([[
+  " related to files and file types
+  augroup files
+    au!
+
+    " For all text files set 'textwidth' to 78 characters.
+    autocmd FileType text setlocal textwidth=78
+
+    autocmd FileType htm,html,js,json set ai sw=2 ts=2 sts=2 et
+    autocmd FileType css,scss set ai sw=2 ts=2 sts=2 et
+    autocmd FileType ruby,eruby,yaml set ai sw=2 ts=2 sts=2 et
+    autocmd FileType python set ai sw=2 ts=2 sts=2 et
+
+    " When editing a file, always jump to the last known cursor position.
+    " Don't do it when the position is invalid or when inside an event handler
+    " (happens when dropping a file on gvim).
+    autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g`\"" | endif
+
+    " highlight yanked text
+    autocmd TextYankPost * lua vim.highlight.on_yank {on_visual = false}
+  augroup end
+]], false)
 
