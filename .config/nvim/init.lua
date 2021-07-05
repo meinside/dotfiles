@@ -85,7 +85,6 @@ require('packer').startup(function()
   use 'tpope/vim-fugitive'
   -- git blamer
   use 'APZelos/blamer.nvim' -- :BlamerToggle, :BlamerShow, :BlamerHide
-  g['blamer_enabled'] = 1
   g['blamer_date_format'] = '%Y-%m-%d'
   g['blamer_prefix'] = ' > '
   vim.api.nvim_exec([[
