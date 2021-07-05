@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.06.30.
+-- last update: 2021.07.05.
 
 ------------------------------------------------
 -- helpers
@@ -57,7 +57,6 @@ require('packer').startup(function()
   use 'tpope/vim-repeat'
   use 'tpope/vim-ragtag' -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
   use 'lukas-reineke/indent-blankline.nvim'
-  use 'Yggdroot/indentLine'
   g['indentLine_char'] = '▏'
   use 'docunext/closetag.vim'
   use 'tpope/vim-sleuth'
@@ -84,13 +83,21 @@ require('packer').startup(function()
   --
   use 'junegunn/gv.vim' -- :GV, :GV!, :GV?
   use 'tpope/vim-fugitive'
+  -- git blamer
+  use 'APZelos/blamer.nvim' -- :BlamerToggle, :BlamerShow, :BlamerHide
+  g['blamer_enabled'] = 1
+  g['blamer_date_format'] = '%Y-%m-%d'
+  g['blamer_prefix'] = ' > '
+  vim.api.nvim_exec([[
+    autocmd BufRead * highlight Blamer ctermfg=Yellow ctermbg=none
+  ]], false)
+  -- git signs
   use {'lewis6991/gitsigns.nvim', -- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
     requires = {'nvim-lua/plenary.nvim'},
     config = function()
       require('gitsigns').setup()
     end
   }
-  -- gitsigns colors
   vim.api.nvim_exec([[
     autocmd BufRead * highlight GitSignsAdd ctermfg=Green ctermbg=none
     autocmd BufRead * highlight GitSignsChange ctermfg=Blue ctermbg=none
