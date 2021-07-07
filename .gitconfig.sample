@@ -2,7 +2,7 @@
 #
 # (copy as .gitconfig and customize it)
 #
-# last update: 2020.12.15.
+# last update: 2021.07.07.
 
 [init]
   defaultBranch = master
@@ -52,9 +52,18 @@
 [color]
   ui = auto
 [core]
+#  editor = nvim
   editor = vim
 [push]
 #  default = simple
+#[merge]
+#  tool = nvimdiff
+#[difftool]
+#  prompt = true
+#[diff]
+#  tool = nvimdiff
+#[difftool "nvimdiff"]
+#  cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 [merge]
   tool = vimdiff
 [branch]
