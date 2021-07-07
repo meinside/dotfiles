@@ -344,13 +344,8 @@ require('packer').startup(function()
   -- lualine settings
   require'lualine'.setup {
     options = {
-      icons_enabled = g['GuiLoaded'], -- enable icons only when GUI is loaded
       theme = 'seoul256',
-      component_separators = {'', ''},
-      section_separators = {'', ''},
-      disabled_filetypes = {}
     },
-    tabline = {},
     extensions = {'quickfix'}
   }
 
