@@ -5,7 +5,7 @@
 # $ brew tap Homebrew/bundle
 # $ brew bundle
 # 
-# last update: 2021.04.22.
+# last update: 2021.07.07.
 
 ######## formulas
 
@@ -84,10 +84,4 @@ cask 'java'
 #cask 'falcon-sql-client'
 #cask 'postico'
 #cask 'sequel-pro'
-
-# fonts
-tap 'homebrew/cask-fonts'
-cask 'font-hack'
-cask 'font-fira-code'
-cask 'font-jetbrains-mono'
 
