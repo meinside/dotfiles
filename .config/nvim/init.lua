@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.07.05.
+-- last update: 2021.07.07.
 
 ------------------------------------------------
 -- helpers
@@ -103,78 +103,39 @@ require('packer').startup(function()
     autocmd BufRead * highlight GitSignsDelete ctermfg=Red ctermbg=none
   ]], false)
 
-  -- airline
-  --
-  use 'vim-airline/vim-airline'
-  g['airline#extensions#tabline#enabled'] = 1
-  g['airline#extensions#tabline#show_buffers'] = 0
-  g['airline#extensions#tabline#tab_min_count'] = 2  -- show tabline only when there are >=2
-
-  -- project management
-  --
-  -- <ctrl-p> to start,
-  -- <ctrl-j/k> to navigate files,
-  -- <ctrl-t/v/x> to open a file in a new tab, vertical split, or horizontal split
-  --
-  use 'ctrlpvim/ctrlp.vim'
-  g['ctrlp_map'] = '<c-p>'
-  g['ctrlp_cmd'] = 'CtrlP'
-  g['ctrlp_working_path_mode'] = 'ra'
-  g['ctrlp_root_markers'] = {'pom.xml', 'go.mod'}
-
   -- auto close
   --
   use 'cohama/lexima.vim'
   g['lexima_no_default_rules'] = true
   cmd [[call lexima#set_default_rules()]]
 
-  -- autocompletion
+  -- statusline
   --
-  use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
-  use 'nvim-treesitter/playground'
-  use 'neovim/nvim-lspconfig'
-  use 'hrsh7th/nvim-compe'
-  vim.o.completeopt = 'menuone,noselect'
-
-  -- snippets
-  --
-  use 'hrsh7th/vim-vsnip'
-  use 'kitagry/vs-snippets' -- various language snippets
-  -- https://github.com/hrsh7th/vim-vsnip#2-setting
-  vim.api.nvim_exec([[
-    " Ctrl + L for expand, or jump to next element
-    imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-    smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
-    " Jump forward or backward
-    imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-    smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
-    imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-    smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
-  ]], false)
-
-  -- linting
-  --
-  -- TODO
+  use {
+    'hoob3rt/lualine.nvim',
+    requires = {'kyazdani42/nvim-web-devicons', opt = true}
+  }
+  require'lualine'.setup {
+    options = {
+      icons_enabled = false,
+      theme = 'seoul256',
+      component_separators = {'', ''},
+      section_separators = {'', ''},
+      disabled_filetypes = {}
+    },
+    tabline = {},
+    extensions = {'quickfix'}
+  }
 
   -- gist (:Gist / :Gist -p / ...)
   --
   use 'mattn/webapi-vim'
   use 'mattn/gist-vim'
 
-  -- syntax checking
-  --
-  use 'vim-syntastic/syntastic'
-  cmd [[set statusline+=%#warningmsg#]]
-  cmd [[set statusline+=%{SyntasticStatuslineFlag()}]]
-  cmd [[set statusline+=%*]]
-  g['syntastic_always_populate_loc_list'] = 1
-  g['syntastic_auto_loc_list'] = 1
-  g['syntastic_check_on_open'] = 0
-  g['syntastic_check_on_wq'] = 0
-
   ------------------------
-  -- for language server configuration
+  -- language server configuration
   --
+  use 'neovim/nvim-lspconfig'
   use 'ray-x/lsp_signature.nvim'
   local nvim_lsp = require('lspconfig')
 
@@ -316,8 +277,6 @@ require('packer').startup(function()
   g['go_jump_to_error'] = 0
   g['go_auto_sameids'] = 0
   g['go_auto_type_info'] = 1
-  g['syntastic_go_checkers'] = {'go'}	-- XXX: 'golint' is too slow, use :GoLint manually.
-  g['syntastic_aggregate_errors'] = 1
 
   -- ruby
   use 'vim-ruby/vim-ruby'
@@ -336,16 +295,10 @@ require('packer').startup(function()
   ]], false)
 
   ------------------------
-  -- treesitter for syntax highlighting
+  -- autocompletion
   --
-  require'nvim-treesitter.configs'.setup {
-    ensure_installed = {'go', 'python', 'ruby', 'rust', 'zig'};
-    highlight = {enable = true};
-  }
-
-  ------------------------
-  -- compe for autocompletion
-  --
+  use 'hrsh7th/nvim-compe'
+  vim.o.completeopt = 'menuone,noselect'
   require'compe'.setup {
     enabled = true;
     autocomplete = true;
@@ -420,7 +373,66 @@ require('packer').startup(function()
   ]], false)
 
   ------------------------
+  -- quick fix list
+  --
+  -- :Trouble [mode], :TroubleCloe, :TroubleToggle, :TroubleRefresh
+  use {
+    'folke/trouble.nvim',
+    requires = 'kyazdani42/nvim-web-devicons',
+    config = function()
+      require'trouble'.setup {
+        fold_open = 'v', -- icon used for open folds
+        fold_closed = '>', -- icon used for closed folds
+        indent_lines = false, -- add an indent guide below the fold icons
+        signs = {
+          -- icons / text used for a diagnostic
+          error = 'error',
+          warning = 'warn',
+          hint = 'hint',
+          information = 'info'
+        },
+        use_lsp_diagnostic_signs = true
+      }
+    end
+  }
+
+  ------------------------
+  -- snippets
+  --
+  use 'hrsh7th/vim-vsnip'
+  use 'kitagry/vs-snippets' -- various language snippets
+  -- https://github.com/hrsh7th/vim-vsnip#2-setting
+  vim.api.nvim_exec([[
+    " Ctrl + L for expand, or jump to next element
+    imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+    smap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
+    " Jump forward or backward
+    imap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+    smap <expr> <Tab>   vsnip#jumpable(1)   ? '<Plug>(vsnip-jump-next)'      : '<Tab>'
+    imap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+    smap <expr> <S-Tab> vsnip#jumpable(-1)  ? '<Plug>(vsnip-jump-prev)'      : '<S-Tab>'
+  ]], false)
+
+  ------------------------
+  -- syntax highlighting
+  --
+  use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
+  use 'nvim-treesitter/playground'
+  require'nvim-treesitter.configs'.setup {
+    ensure_installed = {'go', 'python', 'ruby', 'rust', 'zig'};
+    highlight = {enable = true};
+  }
+
+  ------------------------
+  -- syntax checking
+  --
+  use 'neomake/neomake'
+  vim.api.nvim_exec([[call neomake#configure#automake('nrwi', 500)]], false) -- https://github.com/neomake/neomake#setup
+  g['neomake_open_list'] = 2
+
+  ------------------------
   -- others
+  --
 
   -- tab navigation
   map('n', '<C-h>', ':tabprevious<CR>') -- <ctrl-h> for previous tab,
