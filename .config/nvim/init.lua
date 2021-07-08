@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.07.07.
+-- last update: 2021.07.08.
 
 ------------------------------------------------
 -- helpers
@@ -30,7 +30,7 @@ local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
-  --Enable completion triggered by <c-x><c-o>
+  -- Enable completion triggered by <c-x><c-o>
   buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   -- Mappings.
@@ -128,21 +128,17 @@ require('packer').startup(function()
 
 
   -- formatting
-  use 'jiangmiao/auto-pairs'
-  use 'tmhedberg/matchit'
   use 'tpope/vim-surround' -- cst'" => change ' to " / ds" => remove " / ysiw" => wrap text object with " / yss" => wrap line with "
-  use 'tpope/vim-repeat'
   use 'tpope/vim-ragtag' -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
   use 'lukas-reineke/indent-blankline.nvim'
   g['indentLine_char'] = '▏'
-  use 'docunext/closetag.vim'
   use 'tpope/vim-sleuth'
   use 'luochen1990/rainbow'
   g['rainbow_active'] = 1
 
 
   -- finder / locator
-  use 'mtth/locate.vim' -- :L xxx, :lclose, gl
+  use 'mtth/locate.vim' -- :L [query], :lclose, gl
   use 'johngrib/vim-f-hangul'	-- can use f/t/;/, on Hangul characters
   use {
     'nvim-telescope/telescope.nvim', -- :Telescope <action>
@@ -233,7 +229,6 @@ require('packer').startup(function()
   -- snippets
   use 'hrsh7th/vim-vsnip'
   use 'kitagry/vs-snippets' -- various language snippets
-  -- https://github.com/hrsh7th/vim-vsnip#2-setting
   vim.api.nvim_exec([[
     " Ctrl + L for expand, or jump to next element
     imap <expr> <C-l>   vsnip#available(1)  ? '<Plug>(vsnip-expand-or-jump)' : '<C-l>'
@@ -263,8 +258,7 @@ require('packer').startup(function()
 
   -- clojure
   --
-  -- $ go get github.com/cespare/goclj/cljfmt
-  use 'dmac/vim-cljfmt'
+  use 'dmac/vim-cljfmt' -- $ go install github.com/cespare/goclj/cljfmt
   -- >f, <f : move a form
   -- >e, <e : move an element
   -- >), <), >(, <( : move a parenthesis
@@ -290,12 +284,9 @@ require('packer').startup(function()
   g['go_highlight_extra_types'] = 1
   g['go_highlight_fields'] = 1
   g['go_highlight_functions'] = 1
-  g['go_highlight_methods'] = 1
   g['go_highlight_operators'] = 1
-  g['go_highlight_structs'] = 1
   g['go_highlight_types'] = 1
   g['go_jump_to_error'] = 0
-  g['go_auto_sameids'] = 0
   g['go_auto_type_info'] = 1
 
 
