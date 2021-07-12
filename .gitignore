@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2021.03.09.
+# last update: 2021.07.12.
 
 # unnecessary binary files
 *.o
@@ -87,6 +87,9 @@ snap/
 # golang files/dirs
 .gogets
 .gore/
+
+# haskell files/dirs
+.stack/
 
 # java files/dirs
 .gradle/
