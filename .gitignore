@@ -89,6 +89,7 @@ snap/
 .gore/
 
 # haskell files/dirs
+.ghc/
 .stack/
 
 # java files/dirs
