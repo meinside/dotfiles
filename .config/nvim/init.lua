@@ -275,8 +275,12 @@ require('packer').startup(function()
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
   use {'Olical/conjure', tag = 'v4.21.0'} -- https://github.com/Olical/conjure/releases
 
+  -- haskell
+  --
+  use { 'neovimhaskell/haskell-vim' }
 
   -- go
+  --
   use {'fatih/vim-go', run = ':GoUpdateBinaries'}
   g['go_term_enabled'] = 1  -- XXX - it needs to be set for 'delve' (2017.02.10.)
   g['go_fmt_command'] = 'goimports'
@@ -291,15 +295,18 @@ require('packer').startup(function()
 
 
   -- ruby
+  --
   use 'vim-ruby/vim-ruby'
 
 
   -- rust
+  --
   use 'rust-lang/rust.vim'
   g['rustfmt_autosave'] = 1 -- :RustFmt
 
 
   -- zig
+  --
   use 'ziglang/zig.vim'
 
 
@@ -319,7 +326,7 @@ require('packer').startup(function()
   -- other language servers for custom setup
   -- (haskell)
   nvim_lsp['hls'].setup {
-    cmd = { '/opt/hls/haskell-language-server-wrapper', '--lsp' };
+    cmd = { 'haskell-language-server-wrapper', '--lsp' };
     on_attach = on_attach;
   }
   -- (zig)
