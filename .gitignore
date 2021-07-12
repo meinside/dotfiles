@@ -90,6 +90,7 @@ snap/
 
 # haskell files/dirs
 .ghc/
+.ghcup/
 .stack/
 
 # java files/dirs
