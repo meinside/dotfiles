@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.07.08.
+-- last update: 2021.07.12.
 
 ------------------------------------------------
 -- helpers
@@ -317,7 +317,13 @@ require('packer').startup(function()
     }
   end
   -- other language servers for custom setup
-  nvim_lsp['zls'].setup { -- zig
+  -- (haskell)
+  nvim_lsp['hls'].setup {
+    cmd = { 'haskell-language-server-wrapper', '--lsp' };
+    on_attach = on_attach;
+  }
+  -- (zig)
+  nvim_lsp['zls'].setup {
     cmd = { '/opt/zls/zig-out/bin/zls' };
     on_attach = on_attach;
   }
