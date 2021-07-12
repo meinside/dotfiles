@@ -89,6 +89,7 @@ snap/
 .gore/
 
 # haskell files/dirs
+.cabal/
 .ghc/
 .ghcup/
 .stack/
