@@ -319,7 +319,7 @@ require('packer').startup(function()
   -- other language servers for custom setup
   -- (haskell)
   nvim_lsp['hls'].setup {
-    cmd = { 'haskell-language-server-wrapper', '--lsp' };
+    cmd = { '/opt/hls/haskell-language-server-wrapper', '--lsp' };
     on_attach = on_attach;
   }
   -- (zig)
