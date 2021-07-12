@@ -5,7 +5,7 @@
 # Install zig from binaries (https://github.com/ziglang/zig/releases)
 #
 # created on : 2021.03.17.
-# last update: 2021.03.22.
+# last update: 2021.07.12.
 #
 # by meinside@gmail.com
 #
@@ -61,9 +61,7 @@ function install_linux {
 	if [[ $1 == "--nightly" ]]; then
 		ZIG_VERSION="master"
 
-		sudo apt-get install jq -y
-
-		TAR_URL=$( curl -s https://ziglang.org/download/index.json | jq -r --arg PLATFORM "$PLATFORM" '.["master"]["\($PLATFORM)-linux"]["tarball"]' )
+		TAR_URL=$( curl -s https://ziglang.org/download/index.json | grep tarball | cut -d\" -f4 | grep linux | grep $PLATFORM | head -n 1 )
 	else
 		TAR_URL="https://github.com/ziglang/zig/releases/download/${ZIG_VERSION}/zig-linux-${PLATFORM}-${ZIG_VERSION}.tar.xz"
 	fi
