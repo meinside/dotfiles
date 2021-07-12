@@ -1,7 +1,7 @@
 # My .bashrc file
 #
 # created on 2012.05.31.
-# updated on 2021.03.31.
+# updated on 2021.07.12.
 #
 # ... by meinside@gmail.com
 
@@ -71,6 +71,12 @@ if [[ -z $TMUX ]]; then
     if [ -d $GOROOT ]; then
 	export GOPATH=$HOME/srcs/go
 	export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+    fi
+
+    # for Haskell
+    [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
+    if [ -d /opt/hls ]; then
+	export PATH=$PATH:/opt/hls
     fi
 
     # for Lein (Clojure)
