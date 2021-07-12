@@ -22,13 +22,12 @@ TMP_DIR="/tmp"
 OPT_DIR="/opt"
 
 function install_linux {
-	echo -e "${YELLOW}>>> installing with ghcup ...${RESET}"
+	echo -e "${YELLOW}>>> installing essential packages ...${RESET}"
+	sudo apt-get install -y build-essential curl libffi-dev libffi7 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
+
+	echo -e "${YELLOW}>>> installing ghcup ...${RESET}"
 	# TODO: not working on aarch64
 	curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
-
-	echo -e "${YELLOW}>>> installing haskell-language-server ...${RESET}"
-	# TODO: not working on aarch64
-	install_hls "Linux"
 }
 
 function install_macos {
