@@ -75,9 +75,6 @@ if [[ -z $TMUX ]]; then
 
     # for Haskell
     [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
-    if [ -d /opt/hls ]; then
-	export PATH=$PATH:/opt/hls
-    fi
 
     # for Lein (Clojure)
     export LEIN_JVM_OPTS=""

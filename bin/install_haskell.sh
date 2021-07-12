@@ -31,26 +31,8 @@ function install_linux {
 }
 
 function install_macos {
-	echo -e "${YELLOW}>>> installing stack ...${RESET}"
-	brew install haskell-stack
-
-	echo -e "${YELLOW}>>> updating/upgrading stack ...${RESET}"
-	stack update && stack upgrade
-
-	echo -e "${YELLOW}>>> installing haskell-language-server ...${RESET}"
-	install_hls "macOS"
-}
-
-function install_hls {
-	PLATFORM="$1"
-	HLS_DIR="$OPT_DIR/hls"
-	TAR_URL=$( curl -s https://api.github.com/repos/haskell/haskell-language-server/releases/latest | grep 'browser_' | cut -d\" -f4 | grep "$PLATFORM" | grep ".tar.gz" )
-
-	sudo mkdir -p "$HLS_DIR" && \
-		wget -qO- "$TAR_URL" | sudo tar -xzv -C "$HLS_DIR" && \
-		sudo chown -R "$USER" "$HLS_DIR" && \
-		sudo chmod +x $HLS_DIR/haskell-language-server-* && \
-		echo -e "${GREEN}>>> Installed haskell-language-server in: ${HLS_DIR} ${RESET}"
+	echo -e "${YELLOW}>>> installing ghcup ...${RESET}"
+	curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
 }
 
 case "$OSTYPE" in
