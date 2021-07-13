@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.07.12.
+-- last update: 2021.07.13.
 
 ------------------------------------------------
 -- helpers
@@ -360,7 +360,8 @@ require('packer').startup(function()
 
   -- treesitter settings
   require'nvim-treesitter.configs'.setup {
-    ensure_installed = {'go', 'python', 'ruby', 'rust', 'zig'};
+    -- NOTE: if installation fails on macOS, try `CC="gcc-11" nvim FILENAME`
+    ensure_installed = {'go', 'haskell', 'python', 'ruby', 'rust', 'zig'};
     highlight = {enable = true};
   }
 
