@@ -1,7 +1,7 @@
 # My .bashrc file
 #
 # created on 2012.05.31.
-# updated on 2021.07.12.
+# updated on 2021.07.13.
 #
 # ... by meinside@gmail.com
 
@@ -45,6 +45,17 @@ if [ -x /usr/bin/dircolors ]; then
     alias ls='ls --color=auto'
     alias grep="grep --color=auto"
 fi
+
+# OS-specific settings
+case "$OSTYPE" in
+    linux*)
+	;;
+    darwin*)
+	export CC="gcc-11"
+	;;
+    *)
+	;;
+esac
 
 # bash completion
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then

@@ -360,7 +360,6 @@ require('packer').startup(function()
 
   -- treesitter settings
   require'nvim-treesitter.configs'.setup {
-    -- NOTE: if installation fails on macOS, try `CC="gcc-11" nvim FILENAME`
     ensure_installed = {'go', 'haskell', 'python', 'ruby', 'rust', 'zig'};
     highlight = {enable = true};
   }
