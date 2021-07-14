@@ -22,8 +22,8 @@ TMP_DIR="/tmp"
 OPT_DIR="/opt"
 
 # NOTE: working fine on x64 with Ubuntu 20.04 LTS
-# NOTE: fails to install hls and stack on Raspberry Pi 4 with Ubuntu 21.04
-# NOTE: totally fails on Raspberry Pi 4 with RPiOS 64bit beta
+# NOTE: fails to install hls and stack on Raspberry Pi 4 with Ubuntu 21.04 (updated: 2021.07.14.)
+# NOTE: totally fails on Raspberry Pi 4 with RPiOS 64bit beta (updated: 2021.07.14.)
 function install_linux {
 	echo -e "${YELLOW}>>> installing essential packages ...${RESET}"
 	sudo apt-get install -y build-essential curl libffi-dev libffi7 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
