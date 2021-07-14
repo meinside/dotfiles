@@ -1,14 +1,14 @@
 # .custom_env.sample
 #
-# last update: 2020.01.31.
+# last update: 2021.07.14.
 
 # print go version of a compiled binary
 gobuildversion() {
-        if [ -e "$1" ]; then
-                gdb "$1" -ex "print 'runtime.buildVersion'" -ex quit 2> /dev/null | tail -n 1 | grep -o '".*"' | tr -d '"'
-        else
-                echo "Go binary '$1' does not exist."
-        fi
+    if [ -e "$1" ]; then
+        gdb "$1" -ex "print 'runtime.buildVersion'" -ex quit 2> /dev/null | tail -n 1 | grep -o '".*"' | tr -d '"'
+    else
+        echo "Go binary '$1' does not exist."
+    fi
 }
 
 # private go modules
