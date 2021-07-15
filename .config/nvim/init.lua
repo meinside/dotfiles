@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.07.13.
+-- last update: 2021.07.15.
 
 ------------------------------------------------
 -- helpers
@@ -278,6 +278,8 @@ require('packer').startup(function()
   -- haskell
   --
   use { 'neovimhaskell/haskell-vim' }
+  use { 'itchyny/vim-haskell-indent' }
+  use { 'alx741/vim-stylishask' }
 
   -- go
   --
