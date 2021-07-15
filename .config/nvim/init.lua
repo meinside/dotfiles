@@ -279,7 +279,9 @@ require('packer').startup(function()
   --
   use { 'neovimhaskell/haskell-vim' }
   use { 'itchyny/vim-haskell-indent' }
-  use { 'alx741/vim-stylishask' }
+  if vim.fn.executable("stylish-haskell") == 1 then
+    use { 'alx741/vim-stylishask' }
+  end
 
   -- go
   --
