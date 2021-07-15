@@ -164,6 +164,7 @@ mbox
 .boot2docker/
 .docker/
 .dockercfg
+.earthly/
 .helm/
 .kube/
 .minikube/

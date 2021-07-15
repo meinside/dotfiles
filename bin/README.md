@@ -26,6 +26,10 @@ A script for installing [JDK](https://www.azul.com/downloads/zulu-embedded/), [c
 
 A script for installing [Docker](https://www.docker.com/).
 
+## install_earthly.sh
+
+A script for installing [Earthly](https://earthly.dev/).
+
 ## install_ffmpeg.sh
 
 A script for building and installing latest [ffmpeg](https://www.ffmpeg.org/).
@@ -33,6 +37,10 @@ A script for building and installing latest [ffmpeg](https://www.ffmpeg.org/).
 ## install_go.sh
 
 A script for building and installing [Golang](https://golang.org/).
+
+## install_haskell.sh
+
+A script for installing [GHC](https://www.haskell.org/ghc/), [stack](https://github.com/commercialhaskell/stack), and [HLS](https://github.com/haskell/haskell-language-server).
 
 ## install_nginx.sh
 
