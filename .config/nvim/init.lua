@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.07.15.
+-- last update: 2021.07.16.
 
 ------------------------------------------------
 -- helpers
@@ -194,6 +194,7 @@ require('packer').startup(function()
 
   -- lsp
   use 'neovim/nvim-lspconfig'
+  use 'glepnir/lspsaga.nvim'
   use 'ray-x/lsp_signature.nvim'
 
 
@@ -256,6 +257,41 @@ require('packer').startup(function()
   map('n', '<C-l>', ':tabnext<CR>') -- <ctrl-l> for next tab,
 
 
+  -- lsp settings
+  local nvim_lsp = require('lspconfig')
+  local servers = { -- language servers with default setup
+    "clojure_lsp",  -- $ brew install clojure-lsp/brew/clojure-lsp-native
+    "gopls",  -- $ go install golang.org/x/tools/gopls@latest
+    "solargraph",  -- $ gem install --user-install solargraph
+    "rust_analyzer"  -- $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer/ && cargo xtask install --server
+  }
+  for _, lsp in ipairs(servers) do
+    nvim_lsp[lsp].setup {
+      on_attach = on_attach;
+    }
+  end
+  -- gh for lsp finder, \ca for code action
+  local saga = require('lspsaga')
+  saga.init_lsp_saga {
+    finder_action_keys = {
+      open = '<CR>',
+      vsplit = 's',
+      split = 'i',
+      quit = '<ESC>',
+      scroll_down = '<C-f>',
+      scroll_up = '<C-b>',
+    },
+    code_action_keys = {
+      quit = '<ESC>',
+      exec = '<CR>'
+    },
+  }
+  vim.api.nvim_exec([[
+    nnoremap <silent> gh :Lspsaga lsp_finder<CR>
+    nnoremap <silent><leader>ca :Lspsaga code_action<CR>
+  ]], false)
+
+
   -- clojure
   --
   use 'dmac/vim-cljfmt' -- $ go install github.com/cespare/goclj/cljfmt
@@ -275,6 +311,7 @@ require('packer').startup(function()
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
   use {'Olical/conjure', tag = 'v4.21.0'} -- https://github.com/Olical/conjure/releases
 
+
   -- haskell
   --
   use { 'neovimhaskell/haskell-vim' }
@@ -282,6 +319,7 @@ require('packer').startup(function()
   if vim.fn.executable("stylish-haskell") == 1 then
     use { 'alx741/vim-stylishask' }
   end
+
 
   -- go
   --
@@ -314,19 +352,6 @@ require('packer').startup(function()
   use 'ziglang/zig.vim'
 
 
-  -- lsp settings
-  local nvim_lsp = require('lspconfig')
-  local servers = { -- language servers with default setup
-    "clojure_lsp",  -- $ brew install clojure-lsp/brew/clojure-lsp-native
-    "gopls",  -- $ go install golang.org/x/tools/gopls@latest
-    "solargraph",  -- $ gem install --user-install solargraph
-    "rust_analyzer"  -- $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer/ && cargo xtask install --server
-  }
-  for _, lsp in ipairs(servers) do
-    nvim_lsp[lsp].setup {
-      on_attach = on_attach;
-    }
-  end
   -- other language servers for custom setup
   -- (haskell)
   nvim_lsp['hls'].setup {
@@ -338,6 +363,8 @@ require('packer').startup(function()
     cmd = { '/opt/zls/zig-out/bin/zls' };
     on_attach = on_attach;
   }
+
+
   -- other lsp settings
   vim.api.nvim_exec([[
     autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
