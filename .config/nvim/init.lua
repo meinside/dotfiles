@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.07.16.
+-- last update: 2021.07.19.
 
 ------------------------------------------------
 -- helpers
@@ -47,12 +47,13 @@ local on_attach = function(client, bufnr)
   --buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
   --buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
   buf_set_keymap('n', 'gt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-  --buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   --buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  buf_set_keymap('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  --buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   --buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
-  --buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  --buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
   --buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   buf_set_keymap('n', '<leader>ll', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   --buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
@@ -196,7 +197,6 @@ require('packer').startup(function()
 
   -- lsp
   use 'neovim/nvim-lspconfig'
-  use 'glepnir/lspsaga.nvim'
   use 'ray-x/lsp_signature.nvim'
 
 
@@ -272,29 +272,6 @@ require('packer').startup(function()
       on_attach = on_attach;
     }
   end
-  -- gh for lsp finder, \ca for code action, \rn for rename
-  local saga = require('lspsaga')
-  saga.init_lsp_saga {
-    finder_action_keys = {
-      open = '<CR>',
-      vsplit = 's',
-      split = 'i',
-      quit = '<ESC>',
-      scroll_down = '<C-f>',
-      scroll_up = '<C-b>',
-    },
-    code_action_keys = {
-      quit = '<ESC>',
-      exec = '<CR>'
-    },
-  }
-  vim.api.nvim_exec([[
-    nnoremap <silent> gh :Lspsaga lsp_finder<CR>
-    nnoremap <silent><leader>ca :Lspsaga code_action<CR>
-    nnoremap <silent><leader>rn :Lspsaga rename<CR>
-    nnoremap <silent> [d :Lspsaga diagnostic_jump_next<CR>
-    nnoremap <silent> ]d :Lspsaga diagnostic_jump_prev<CR>
-  ]], false)
 
 
   -- clojure
@@ -372,7 +349,7 @@ require('packer').startup(function()
 
   -- other lsp settings
   vim.api.nvim_exec([[
-    autocmd CursorHold * :Lspsaga show_line_diagnostics
+    autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
     autocmd CursorHoldI * silent! lua vim.lsp.buf.signature_help()
   ]], false)
 
