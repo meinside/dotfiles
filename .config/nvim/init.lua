@@ -41,34 +41,22 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
   buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
   buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+  --buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
   --buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
   --buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
   --buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
   --buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
   buf_set_keymap('n', 'gt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
   --buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
   --buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-  buf_set_keymap('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   --buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   --buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
   --buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   --buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev({ popup_opts = { border = "single" }})<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next({ popup_opts = { border = "single" }})<CR>', opts)
   --buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   buf_set_keymap('n', '<leader>ll', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   --buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
   buf_set_keymap("n", "<leader>fo", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
-
-  -- Bordered floating windows
-  vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-    border = "single"
-  })
-  vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-    border = "single"
-  })
 
   -- LSP Enable diagnostics
   vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
@@ -98,15 +86,6 @@ local on_attach = function(client, bufnr)
       vim.lsp.util.set_qflist(qflist)
     end
   end
-
-  -- lsp_signature
-  require'lsp_signature'.on_attach({
-    bind = true, -- This is mandatory, otherwise border config won't get registered.
-    handler_opts = {
-      border = "single"
-    }
-  })
-
 end
 
 local t = function(str)
@@ -210,6 +189,7 @@ require('packer').startup(function()
   -- lsp
   use 'neovim/nvim-lspconfig'
   use 'ray-x/lsp_signature.nvim'
+  use 'glepnir/lspsaga.nvim'
 
 
   -- autocompletion
@@ -271,21 +251,6 @@ require('packer').startup(function()
   map('n', '<C-l>', ':tabnext<CR>') -- <ctrl-l> for next tab,
 
 
-  -- lsp settings
-  local nvim_lsp = require('lspconfig')
-  local servers = { -- language servers with default setup
-    "clojure_lsp",  -- $ brew install clojure-lsp/brew/clojure-lsp-native
-    "gopls",  -- $ go install golang.org/x/tools/gopls@latest
-    "solargraph",  -- $ gem install --user-install solargraph
-    "rust_analyzer"  -- $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer/ && cargo xtask install --server
-  }
-  for _, lsp in ipairs(servers) do
-    nvim_lsp[lsp].setup {
-      on_attach = on_attach;
-    }
-  end
-
-
   -- clojure
   --
   use 'dmac/vim-cljfmt' -- $ go install github.com/cespare/goclj/cljfmt
@@ -308,16 +273,16 @@ require('packer').startup(function()
 
   -- haskell
   --
-  use { 'neovimhaskell/haskell-vim' }
-  use { 'itchyny/vim-haskell-indent' }
+  use 'neovimhaskell/haskell-vim'
+  use 'itchyny/vim-haskell-indent'
   if vim.fn.executable("stylish-haskell") == 1 then
-    use { 'alx741/vim-stylishask' }
+    use 'alx741/vim-stylishask'
   end
 
 
   -- go
   --
-  use { 'sebdah/vim-delve' } -- :DlvXXX
+  use 'sebdah/vim-delve'  -- :DlvXXX
   -- run `gofmt` on save
   vim.api.nvim_exec([[
     autocmd BufWritePre *.go lua vim.lsp.buf.formatting()
@@ -340,6 +305,23 @@ require('packer').startup(function()
   use 'ziglang/zig.vim'
 
 
+  -- ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ non-lazy `require` not allowed above ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑
+  -- ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ `use` not allowed below ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+
+
+  -- lsp settings
+  local nvim_lsp = require('lspconfig')
+  local lsp_servers = { -- language servers with default setup
+    "clojure_lsp",  -- $ brew install clojure-lsp/brew/clojure-lsp-native
+    "gopls",  -- $ go install golang.org/x/tools/gopls@latest
+    "solargraph",  -- $ gem install --user-install solargraph
+    "rust_analyzer"  -- $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer/ && cargo xtask install --server
+  }
+  for _, lsp in ipairs(lsp_servers) do
+    nvim_lsp[lsp].setup {
+      on_attach = on_attach;
+    }
+  end
   -- other language servers for custom setup
   -- (haskell)
   nvim_lsp['hls'].setup {
@@ -351,12 +333,40 @@ require('packer').startup(function()
     cmd = { '/opt/zls/zig-out/bin/zls' };
     on_attach = on_attach;
   }
-
-
-  -- other lsp settings
+  -- lsp_signature
+  require'lsp_signature'.on_attach({
+    bind = true, -- This is mandatory, otherwise border config won't get registered.
+    handler_opts = {
+      border = "single"
+    }
+  })
+  -- lspsaga
+  require'lspsaga'.init_lsp_saga {
+    finder_action_keys = {
+      open = '<CR>',
+      vsplit = 'v',
+      split = 's',
+      quit = '<ESC>',
+      scroll_down = '<C-f>',
+      scroll_up = '<C-b>',
+    },
+    code_action_keys = {
+      quit = '<ESC>',
+      exec = '<CR>',
+    },
+    rename_action_keys = {
+      quit = '<ESC>',
+      exec = '<CR>',
+    },
+  }
   vim.api.nvim_exec([[
-    autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics({ border = "single" })
-    autocmd CursorHoldI * silent! lua vim.lsp.buf.signature_help()
+    nnoremap <silent> gh :Lspsaga lsp_finder<CR>
+    nnoremap <silent><leader>ca :Lspsaga code_action<CR>
+    nnoremap <silent><leader>rn :Lspsaga rename<CR>
+    nnoremap <silent> [d :Lspsaga diagnostic_jump_next<CR>
+    nnoremap <silent> ]d :Lspsaga diagnostic_jump_prev<CR>
+
+    autocmd CursorHold * :Lspsaga show_line_diagnostics
   ]], false)
 
 
