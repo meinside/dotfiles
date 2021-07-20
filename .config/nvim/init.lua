@@ -58,6 +58,7 @@ local on_attach = function(client, bufnr)
   --buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   buf_set_keymap('n', '<leader>ll', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   --buf_set_keymap("n", "<space>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  buf_set_keymap("n", "<leader>fo", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 
   -- LSP Enable diagnostics
   vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
@@ -307,6 +308,10 @@ require('packer').startup(function()
   -- go
   --
   use { 'sebdah/vim-delve' } -- :DlvXXX
+  -- run `gofmt` on save
+  vim.api.nvim_exec([[
+    autocmd BufWritePre *.go lua vim.lsp.buf.formatting()
+  ]], false)
 
 
   -- ruby
