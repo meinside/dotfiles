@@ -21,6 +21,7 @@ github.com/davecheney/httpstat
 github.com/cespare/goclj/cljfmt
 golang.org/x/tools/gopls@latest
 github.com/go-delve/delve/cmd/dlv
+github.com/golangci/golangci-lint/cmd/golangci-lint@v1.41.1
 
 # for development (VS Code)
 github.com/mdempsky/gocode
