@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.07.19.
+-- last update: 2021.07.20.
 
 ------------------------------------------------
 -- helpers
@@ -306,17 +306,7 @@ require('packer').startup(function()
 
   -- go
   --
-  use {'fatih/vim-go', run = ':GoUpdateBinaries'}
-  g['go_term_enabled'] = 1  -- XXX - it needs to be set for 'delve' (2017.02.10.)
-  g['go_fmt_command'] = 'goimports'
-  g['go_highlight_build_constraints'] = 1
-  g['go_highlight_extra_types'] = 1
-  g['go_highlight_fields'] = 1
-  g['go_highlight_functions'] = 1
-  g['go_highlight_operators'] = 1
-  g['go_highlight_types'] = 1
-  g['go_jump_to_error'] = 0
-  g['go_auto_type_info'] = 1
+  use { 'sebdah/vim-delve' } -- :DlvXXX
 
 
   -- ruby
