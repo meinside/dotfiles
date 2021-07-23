@@ -119,7 +119,7 @@ require('packer').startup(function()
 
 
   -- colorschemes (https://github.com/rafi/awesome-vim-colorschemes)
-  use 'kristijanhusak/vim-hybrid-material'
+  use 'Iron-E/nvim-soluarized'
 
 
   -- formatting
@@ -450,9 +450,8 @@ require('packer').startup(function()
 
 
   -- color scheme
-  g['hybrid_transparent_background'] = 1
-  cmd [[set background=dark]]
-  cmd [[colorscheme hybrid_reverse]]
+  vim.o.background = 'dark'
+  cmd [[colorscheme soluarized]]
 
 end)
 
