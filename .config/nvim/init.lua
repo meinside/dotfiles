@@ -119,7 +119,7 @@ require('packer').startup(function()
 
 
   -- colorschemes (https://github.com/rafi/awesome-vim-colorschemes)
-  use 'projekt0n/github-nvim-theme'
+  use 'kristijanhusak/vim-hybrid-material'
 
 
   -- formatting
@@ -378,8 +378,7 @@ require('packer').startup(function()
   -- lualine settings
   require'lualine'.setup {
     options = {
-      -- projekt0n/github-nvim-theme
-      theme = 'github',
+      theme = 'seoul256',
     },
     extensions = {'quickfix'}
   }
@@ -451,10 +450,9 @@ require('packer').startup(function()
 
 
   -- color scheme
-  require('github-theme').setup {
-    transparent = true,
-    themeStyle = 'dark'
-  }
+  g['hybrid_transparent_background'] = 1
+  cmd [[set background=dark]]
+  cmd [[colorscheme hybrid_reverse]]
 
 end)
 
