@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.07.20.
+-- last update: 2021.07.23.
 
 ------------------------------------------------
 -- helpers
@@ -117,8 +117,9 @@ local use = require('packer').use
 require('packer').startup(function()
   use 'wbthomason/packer.nvim'
 
+
   -- colorschemes (https://github.com/rafi/awesome-vim-colorschemes)
-  use 'kristijanhusak/vim-hybrid-material'
+  use 'projekt0n/github-nvim-theme'
 
 
   -- formatting
@@ -377,7 +378,8 @@ require('packer').startup(function()
   -- lualine settings
   require'lualine'.setup {
     options = {
-      theme = 'seoul256',
+      -- projekt0n/github-nvim-theme
+      theme = 'github',
     },
     extensions = {'quickfix'}
   }
@@ -449,9 +451,10 @@ require('packer').startup(function()
 
 
   -- color scheme
-  g['hybrid_transparent_background'] = 1
-  cmd [[set background=dark]]
-  cmd [[colorscheme hybrid_reverse]]
+  require('github-theme').setup {
+    transparent = true,
+    themeStyle = 'dark'
+  }
 
 end)
 
@@ -484,11 +487,9 @@ opt.breakindent = true
 opt.splitbelow = true
 opt.splitright = true
 vim.api.nvim_exec([[
-  " related to files and file types
   augroup files
     au!
 
-    " For all text files set 'textwidth' to 78 characters.
     autocmd FileType text setlocal textwidth=78
 
     autocmd FileType htm,html,js,json set ai sw=2 ts=2 sts=2 et
@@ -496,12 +497,8 @@ vim.api.nvim_exec([[
     autocmd FileType ruby,eruby,yaml set ai sw=2 ts=2 sts=2 et
     autocmd FileType python set ai sw=2 ts=2 sts=2 et
 
-    " When editing a file, always jump to the last known cursor position.
-    " Don't do it when the position is invalid or when inside an event handler
-    " (happens when dropping a file on gvim).
     autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g`\"" | endif
 
-    " highlight yanked text
     autocmd TextYankPost * lua vim.highlight.on_yank {on_visual = false}
   augroup end
 ]], false)
