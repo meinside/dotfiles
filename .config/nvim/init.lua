@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.07.23.
+-- last update: 2021.07.26.
 
 ------------------------------------------------
 -- helpers
@@ -101,6 +101,46 @@ local check_back_space = function()
   end
 end
 
+-- split string
+function split(s, sep)
+    local fields = {}
+    local pattern = string.format("([^%s]+)", sep)
+    string.gsub(s, pattern, function(c) fields[#fields + 1] = c end)
+    return fields
+  end
+
+-- execute given command and return the output with exit status
+local function os_execute(cmd)
+  -- for Lua 5.2+
+  --local fileHandle = assert(io.popen(cmd, 'r'))
+  -- for Lua 5.1 or LuaJit 2.1.0
+  local fileHandle = assert(io.popen(cmd .. ';echo $?', 'r'))
+
+  local commandOutput = assert(fileHandle:read('*a'))
+  local returnTable = {fileHandle:close()}
+
+  -- for Lua 5.2+
+  --return commandOutput, returnTable[3]
+  -- for Lua 5.1 or LuaJit 2.1.0
+  local lines = split(commandOutput, '\n')
+  local exit = lines[#lines]
+  return commandOutput:gsub(exit, ''), tonumber(exit)
+end
+
+-- check if current process is connected through mosh
+-- FIXME: mosh 1.3.2 still not support 24bit-colors
+local function mosh_connected()
+  if os.getenv('TMUX') then
+    pid, _ = os_execute("tmux list-clients -t \"`tmux display-message -p '#S'`\" -F '#{client_pid}'")
+  else
+    pid, _ = os_execute('head /proc/self/stat | cut -d " " -f1')
+  end
+
+  _, exit = os_execute(string.format("pstree -ps %s | grep mosh-server", pid:gsub('\n', '')))
+
+  return exit == 0
+end
+
 --
 ------------------------------------------------
 
@@ -120,6 +160,7 @@ require('packer').startup(function()
 
   -- colorschemes (https://github.com/rafi/awesome-vim-colorschemes)
   use 'Iron-E/nvim-soluarized'
+  use 'projekt0n/github-nvim-theme'
 
 
   -- formatting
@@ -450,8 +491,22 @@ require('packer').startup(function()
 
 
   -- color scheme
-  vim.o.background = 'dark'
-  cmd [[colorscheme soluarized]]
+  -- FIXME: mosh 1.3.2 still not support 24bit-colors
+  if mosh_connected() then
+    --print "mosh connected!"
+
+    -- 8bit-colors colorscheme
+    vim.o.background = 'dark'
+    cmd [[colorscheme soluarized]]
+  else
+    --print "mosh not connected!"
+
+    -- 24bit-colors colorscheme
+    require('github-theme').setup {
+      transparent = true,
+      themeStyle = 'dark'
+    }
+  end
 
 end)
 
