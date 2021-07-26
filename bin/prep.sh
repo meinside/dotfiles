@@ -6,7 +6,7 @@
 #
 # (https://raw.githubusercontent.com/meinside/rpi-configs/master/bin/prep.sh)
 # 
-# last update: 2020.02.01.
+# last update: 2021.07.26.
 # 
 # by meinside@gmail.com
 
@@ -49,7 +49,7 @@ sudo apt-get -y upgrade
 
 # install other essential packages
 echo -e "${YELLOW}>>> installing other essential packages...${RESET}"
-sudo apt-get -y install zsh vim tmux mosh
+sudo apt-get -y install zsh vim tmux mosh psmisc
 
 # cleanup
 echo -e "${YELLOW}>>> cleaning up...${RESET}"
