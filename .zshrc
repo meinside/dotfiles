@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2021.07.13.
+# updated on 2021.07.26.
 #
 # ... by meinside@gmail.com
 #
@@ -80,12 +80,12 @@ fi
 # OS-specific settings
 case "$OSTYPE" in
     linux*)
-	;;
+        ;;
     darwin*)
-	export CC="gcc-11"
-	;;
+        export CC="gcc-11"
+        ;;
     *)
-	;;
+        ;;
 esac
 
 # key bindings
@@ -107,18 +107,18 @@ if [[ -z $TMUX ]]; then
 
     # for Babashka
     if [ -d /opt/babashka ]; then
-	export PATH=$PATH:/opt/babashka
+        export PATH=$PATH:/opt/babashka
     fi
 
     # for Go
     if [ -d /opt/go/bin ]; then
-	export GOROOT=/opt/go
+        export GOROOT=/opt/go
     elif [ -x "`which go`" ]; then
-	export GOROOT=`go env GOROOT`
+        export GOROOT=`go env GOROOT`
     fi
     if [ -d $GOROOT ]; then
-	export GOPATH=$HOME/srcs/go
-	export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+        export GOPATH=$HOME/srcs/go
+        export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
     fi
 
     # for Haskell
@@ -131,7 +131,7 @@ if [[ -z $TMUX ]]; then
 
     # for Node.js
     if [ -d /opt/node/bin ]; then
-	export PATH=$PATH:/opt/node/bin
+        export PATH=$PATH:/opt/node/bin
     fi
 
     # for Ruby (RVM)
@@ -139,12 +139,12 @@ if [[ -z $TMUX ]]; then
 
     # for Rust
     if [ -d "$HOME/.cargo/bin" ]; then
-	export PATH=$PATH:$HOME/.cargo/bin
+        export PATH=$PATH:$HOME/.cargo/bin
     fi
 
     # for Zig
     if [ -d /opt/zig ]; then
-	export PATH=$PATH:/opt/zig
+        export PATH=$PATH:/opt/zig
     fi
 
     # additional paths

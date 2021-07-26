@@ -1,7 +1,7 @@
 # My .bashrc file
 #
 # created on 2012.05.31.
-# updated on 2021.07.13.
+# updated on 2021.07.26.
 #
 # ... by meinside@gmail.com
 
@@ -27,15 +27,15 @@ source ~/.bash/colors
 source ~/.bash/git-prompt
 case ${TERM} in
     xterm*|rxvt*|Eterm|aterm|kterm|gnome*|screen*)
-	if [ `whoami` = "root" ]; then
-	    PS1="\[$bldred\]\u@\h\[$txtrst\]:\[$bldblu\]\w\[$txtgrn\]\$git_branch\[$txtylw\]\$git_dirty\[$txtrst\]\$ "
-	else
-	    PS1="\[$bldgrn\]\u@\h\[$txtrst\]:\[$bldblu\]\w\[$txtgrn\]\$git_branch\[$txtylw\]\$git_dirty\[$txtrst\]\$ "
-	fi
-	;;
+        if [ `whoami` = "root" ]; then
+            PS1="\[$bldred\]\u@\h\[$txtrst\]:\[$bldblu\]\w\[$txtgrn\]\$git_branch\[$txtylw\]\$git_dirty\[$txtrst\]\$ "
+        else
+            PS1="\[$bldgrn\]\u@\h\[$txtrst\]:\[$bldblu\]\w\[$txtgrn\]\$git_branch\[$txtylw\]\$git_dirty\[$txtrst\]\$ "
+        fi
+        ;;
     *)
-	PS1='\u@\h \w \$ '
-	;;
+        PS1='\u@\h \w \$ '
+        ;;
 esac
 export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"; find_git_branch; find_git_dirty;'
 
@@ -49,12 +49,12 @@ fi
 # OS-specific settings
 case "$OSTYPE" in
     linux*)
-	;;
+        ;;
     darwin*)
-	export CC="gcc-11"
-	;;
+        export CC="gcc-11"
+        ;;
     *)
-	;;
+        ;;
 esac
 
 # bash completion
@@ -70,18 +70,18 @@ if [[ -z $TMUX ]]; then
 
     # for Babashka
     if [ -d /opt/babashka ]; then
-	export PATH=$PATH:/opt/babashka
+        export PATH=$PATH:/opt/babashka
     fi
 
     # for Go
     if [ -d /opt/go/bin ]; then
-	export GOROOT=/opt/go
+        export GOROOT=/opt/go
     elif [ -x "`which go`" ]; then
-	export GOROOT=`go env GOROOT`
+        export GOROOT=`go env GOROOT`
     fi
     if [ -d $GOROOT ]; then
-	export GOPATH=$HOME/srcs/go
-	export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+        export GOPATH=$HOME/srcs/go
+        export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
     fi
 
     # for Haskell
@@ -94,7 +94,7 @@ if [[ -z $TMUX ]]; then
 
     # for Node.js
     if [ -d /opt/node/bin ]; then
-	export PATH=$PATH:/opt/node/bin
+        export PATH=$PATH:/opt/node/bin
     fi
 
     # for RVM
@@ -102,12 +102,12 @@ if [[ -z $TMUX ]]; then
 
     # for Rust
     if [ -d "$HOME/.cargo/bin" ]; then
-	export PATH=$PATH:$HOME/.cargo/bin
+        export PATH=$PATH:$HOME/.cargo/bin
     fi
 
     # for Zig
     if [ -d /opt/zig ]; then
-	export PATH=$PATH:/opt/zig
+        export PATH=$PATH:/opt/zig
     fi
 
     # additional paths
