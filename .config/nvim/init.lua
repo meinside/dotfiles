@@ -158,9 +158,9 @@ require('packer').startup(function()
   use 'wbthomason/packer.nvim'
 
 
-  -- colorschemes (https://github.com/rafi/awesome-vim-colorschemes)
+  -- colorschemes (https://github.com/rockerBOO/awesome-neovim#colorscheme)
   use 'Iron-E/nvim-soluarized'
-  use 'projekt0n/github-nvim-theme'
+  use 'marko-cerovac/material.nvim'
 
 
   -- formatting
@@ -501,11 +501,12 @@ require('packer').startup(function()
   else
     --print "mosh not connected!"
 
+    vim.o.termguicolors = true
+
     -- 24bit-colors colorscheme
-    require('github-theme').setup {
-      transparent = true,
-      themeStyle = 'dark'
-    }
+    vim.g.material_style = 'darker'
+    vim.g.material_disable_background = true
+    require('material').set()
   end
 
 end)
