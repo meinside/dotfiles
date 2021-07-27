@@ -1,0 +1,16 @@
+-- .ghci
+--
+-- created on:  2021.07.27.
+-- last update: 2021.07.27.
+
+:set +s
+:set +t
+
+-- warning/error options
+:set -Wall
+:set -Wcompat
+:set -Wincomplete-record-updates
+:set -Wincomplete-uni-patterns
+:set -Wredundant-constraints
+:set -fdefer-type-errors
+
