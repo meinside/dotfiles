@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.07.26.
+-- last update: 2021.07.27.
 
 ------------------------------------------------
 -- helpers
@@ -133,7 +133,7 @@ local function mosh_connected()
   if os.getenv('TMUX') then
     pid, _ = os_execute("tmux list-clients -t \"`tmux display-message -p '#S'`\" -F '#{client_pid}'")
   else
-    pid, _ = os_execute('head /proc/self/stat | cut -d " " -f1')
+    pid, _ = os_execute('echo $$')
   end
 
   _, exit = os_execute(string.format("pstree -ps %s | grep mosh-server", pid:gsub('\n', '')))
