@@ -5,7 +5,7 @@
 # install pre-built Node.js (LTS) for Linux from: https://nodejs.org/dist
 # 
 # created on : 2013.07.19.
-# last update: 2021.07.06.
+# last update: 2021.07.30.
 # 
 # by meinside@gmail.com
 
@@ -18,7 +18,7 @@ GREEN="\033[0;32m"
 YELLOW="\033[0;33m"
 RESET="\033[0m"
 
-VERSION="14.17.3"	# XXX - edit this for other versions
+VERSION="14.17.4"	# XXX - edit this for other versions
 PLATFORM=`uname -m`	# armv7l, armv6l, ...
 
 # x86_64 = x64, aarch64 = arm64
