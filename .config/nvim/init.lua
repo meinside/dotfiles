@@ -90,7 +90,7 @@ local on_attach = function(client, bufnr)
   -- auto formatting on save
   if client.resolved_capabilities.document_formatting then
     vim.api.nvim_exec([[
-      autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting()
+      autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()
     ]], false)
   end
 end
