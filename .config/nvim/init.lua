@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.07.27.
+-- last update: 2021.08.04.
 
 ------------------------------------------------
 -- helpers
@@ -86,6 +86,13 @@ local on_attach = function(client, bufnr)
       vim.lsp.util.set_qflist(qflist)
     end
   end
+
+  -- auto formatting on save
+  if client.resolved_capabilities.document_formatting then
+    vim.api.nvim_exec([[
+      autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting()
+    ]], false)
+  end
 end
 
 local t = function(str)
@@ -156,6 +163,10 @@ end
 local use = require('packer').use
 require('packer').startup(function()
   use 'wbthomason/packer.nvim'
+
+
+  -- startup time
+  use 'dstein64/vim-startuptime'  -- :StartupTime
 
 
   -- colorschemes (https://github.com/rockerBOO/awesome-neovim#colorscheme)
@@ -325,10 +336,6 @@ require('packer').startup(function()
   -- go
   --
   use 'sebdah/vim-delve'  -- :DlvXXX
-  -- run `gofmt` on save
-  vim.api.nvim_exec([[
-    autocmd BufWritePre *.go lua vim.lsp.buf.formatting()
-  ]], false)
 
 
   -- ruby
@@ -339,7 +346,6 @@ require('packer').startup(function()
   -- rust
   --
   use 'rust-lang/rust.vim'
-  g['rustfmt_autosave'] = 1 -- :RustFmt
 
 
   -- zig
