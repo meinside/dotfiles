@@ -42,6 +42,10 @@ A script for building and installing [Golang](https://golang.org/).
 
 A script for installing [GHC](https://www.haskell.org/ghc/), [stack](https://github.com/commercialhaskell/stack), and [HLS](https://github.com/haskell/haskell-language-server).
 
+## install_mosh.sh
+
+A script for installing [mosh](https://github.com/mobile-shell/mosh/issues/928), for 24-bit colors' support.
+
 ## install_nginx.sh
 
 A script for installing [Nginx](https://www.nginx.com/).
@@ -73,6 +77,10 @@ A script that will clone this repository and install things for Linux/WSL.
 ## prep_macos.sh
 
 A script that will clone this repository and install things for macOS.
+
+## test_colors.sh
+
+A script for testing colors in the terminal.
 
 ## update_motd.sh
 

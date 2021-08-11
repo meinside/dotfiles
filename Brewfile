@@ -5,7 +5,7 @@
 # $ brew tap Homebrew/bundle
 # $ brew bundle
 # 
-# last update: 2021.07.07.
+# last update: 2021.08.11.
 
 ######## formulas
 
@@ -19,7 +19,7 @@ brew 'htop'
 brew 'lnav'
 brew 'm-cli'
 brew 'mas'	# for Mac App Store
-brew 'mobile-shell'
+brew 'mosh', args: ['HEAD']
 brew 'ngrep'
 brew 'neovim'
 brew 'pstree'
