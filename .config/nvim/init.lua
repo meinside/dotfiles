@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.08.04.
+-- last update: 2021.08.11.
 
 ------------------------------------------------
 -- helpers
@@ -217,11 +217,6 @@ require('packer').startup(function()
       require('gitsigns').setup()
     end
   }
-  vim.api.nvim_exec([[
-    autocmd BufRead * highlight GitSignsAdd ctermfg=Green ctermbg=none
-    autocmd BufRead * highlight GitSignsChange ctermfg=Blue ctermbg=none
-    autocmd BufRead * highlight GitSignsDelete ctermfg=Red ctermbg=none
-  ]], false)
   -- gist (:Gist / :Gist -p / ...)
   use 'mattn/webapi-vim'
   use 'mattn/gist-vim'
@@ -504,6 +499,13 @@ require('packer').startup(function()
     -- 8bit-colors colorscheme
     vim.o.background = 'dark'
     cmd [[colorscheme soluarized]]
+
+    -- for gitsigns
+    vim.api.nvim_exec([[
+      autocmd BufRead * highlight GitSignsAdd ctermfg=Green ctermbg=none
+      autocmd BufRead * highlight GitSignsChange ctermfg=Blue ctermbg=none
+      autocmd BufRead * highlight GitSignsDelete ctermfg=Red ctermbg=none
+    ]], false)
   else
     --print "mosh not connected!"
 
