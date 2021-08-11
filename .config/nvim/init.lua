@@ -134,20 +134,6 @@ local function os_execute(cmd)
   return commandOutput:gsub(exit, ''), tonumber(exit)
 end
 
--- check if current process is connected through mosh
--- FIXME: mosh 1.3.2 still not support 24bit-colors
-local function mosh_connected()
-  if os.getenv('TMUX') then
-    pid, _ = os_execute("tmux list-clients -t \"`tmux display-message -p '#S'`\" -F '#{client_pid}'")
-  else
-    pid, _ = os_execute('echo $$')
-  end
-
-  _, exit = os_execute(string.format("pstree -ps %s | grep mosh-server", pid:gsub('\n', '')))
-
-  return exit == 0
-end
-
 --
 ------------------------------------------------
 
@@ -491,31 +477,11 @@ require('packer').startup(function()
   ]], false)
 
 
-  -- color scheme
-  -- FIXME: mosh 1.3.2 still not support 24bit-colors
-  if mosh_connected() then
-    --print "mosh connected!"
-
-    -- 8bit-colors colorscheme
-    vim.o.background = 'dark'
-    cmd [[colorscheme soluarized]]
-
-    -- for gitsigns
-    vim.api.nvim_exec([[
-      autocmd BufRead * highlight GitSignsAdd ctermfg=Green ctermbg=none
-      autocmd BufRead * highlight GitSignsChange ctermfg=Blue ctermbg=none
-      autocmd BufRead * highlight GitSignsDelete ctermfg=Red ctermbg=none
-    ]], false)
-  else
-    --print "mosh not connected!"
-
-    vim.o.termguicolors = true
-
-    -- 24bit-colors colorscheme
-    vim.g.material_style = 'darker'
-    vim.g.material_disable_background = true
-    require('material').set()
-  end
+  -- color scheme (24bit-colors)
+  vim.o.termguicolors = true
+  vim.g.material_style = 'darker'
+  vim.g.material_disable_background = true
+  require('material').set()
 
 end)
 
