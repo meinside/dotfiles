@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2021.07.12.
+# last update: 2021.08.20.
 
 # unnecessary binary files
 *.o
@@ -187,6 +187,7 @@ mbox
 .dropbox-master/
 .eclipse/
 .ethash/
+.fastlane/
 .flutter
 .ganttproject
 .Genymobile/
