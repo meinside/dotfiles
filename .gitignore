@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2021.08.20.
+# last update: 2021.08.23.
 
 # unnecessary binary files
 *.o
@@ -150,6 +150,7 @@ srcs/
 .gnupg
 .gtmx.json
 .lsp/
+.oci/
 .oh-my-zsh/
 .selected_editor
 .srcclr/
