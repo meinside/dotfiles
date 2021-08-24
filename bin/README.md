@@ -58,6 +58,10 @@ A script for installing [Node.js](https://nodejs.org/en/).
 
 A script for building and installing [neovim](https://neovim.io/).
 
+## install_pico_sdk.sh
+
+A script for installing sdk and sample codes for [raspberry pi pico](https://datasheets.raspberrypi.org/pico/getting-started-with-pico.pdf).
+
 ## install_ruby.sh
 
 A script for installing [rvm](https://rvm.io/) and [Ruby](https://www.ruby-lang.org/en/).
