@@ -7,7 +7,7 @@
 # https://datasheets.raspberrypi.org/pico/getting-started-with-pico.pdf
 #
 # created on: 2021.08.24.
-# updated on: 2021.08.24.
+# updated on: 2021.08.26.
 #
 # by meinside@gmail.com
 
@@ -40,7 +40,7 @@ function pull_repositories {
 function show_guides {
 	echo -e "${RED}>>> $ export PICO_SDK_PATH=$PICO_SDK_DIR${RESET}" && \
 		echo -e "${GREEN}>>> Get cmake ready: $ cd $PICO_EXAMPLES_DIR && mkdir build && cd build && cmake ..${RESET}" && \
-		echo -e "${GREEN}>>> Then build any example: $ cd $PICO_EXAMPLES_DIR/build/blink && make -j4${RESET}"
+		echo -e "${GREEN}>>> Then build any example: $ cd $PICO_EXAMPLES_DIR/build/blink && cmake --build .${RESET}"
 }
 
 function install_macos_packages {
