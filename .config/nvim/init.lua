@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.08.25.
+-- last update: 2021.08.26.
 
 ------------------------------------------------
 -- helpers
@@ -365,6 +365,12 @@ require('packer').startup(function()
   use {'Olical/conjure', tag = 'v4.21.0'} -- https://github.com/Olical/conjure/releases
 
 
+  -- go
+  --
+  use 'ray-x/go.nvim'
+  use 'sebdah/vim-delve'  -- :DlvXXX
+
+
   -- haskell
   --
   use 'neovimhaskell/haskell-vim'
@@ -372,11 +378,6 @@ require('packer').startup(function()
   if vim.fn.executable("stylish-haskell") == 1 then
     use 'alx741/vim-stylishask'
   end
-
-
-  -- go
-  --
-  use 'sebdah/vim-delve'  -- :DlvXXX
 
 
   -- ruby
@@ -458,6 +459,10 @@ require('packer').startup(function()
 
     autocmd CursorHold * :Lspsaga show_line_diagnostics
   ]], false)
+
+
+  -- go.nvim settings
+  require'go'.setup()
 
 
   -- lualine settings
