@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.08.26.
+-- last update: 2021.08.27.
 
 ------------------------------------------------
 -- helpers
@@ -231,6 +231,10 @@ require('packer').startup(function()
     'hoob3rt/lualine.nvim',
     requires = {'kyazdani42/nvim-web-devicons', opt = true}
   }
+
+
+  -- auto pair/close
+  use 'windwp/nvim-autopairs'
 
 
   -- lsp
@@ -489,6 +493,9 @@ require('packer').startup(function()
   require("luasnip/loaders/from_vscode").lazy_load()
 
 
+  -- auto pair/close settings
+  require'nvim-autopairs'.setup{}
+
   -- color scheme (24bit-colors)
   vim.o.termguicolors = true
   vim.g.material_style = 'darker'
@@ -539,21 +546,6 @@ vim.api.nvim_exec([[
     autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g`\"" | endif
 
     autocmd TextYankPost * lua vim.highlight.on_yank {on_visual = false}
-  augroup end
-
-  augroup autoclose
-    au!
-
-    inoremap ( ()<left>
-    inoremap [ []<left>
-    inoremap { {}<left>
-    inoremap {<CR> {<CR>}<ESC>O
-    inoremap {;<CR> {<CR>};<ESC>O
-    inoremap <expr> ) strpart(getline('.'), col('.')-1, 1) == ")" ? "\<Right>" : ")"
-    inoremap <expr> } strpart(getline('.'), col('.')-1, 1) == "}" ? "\<Right>" : "}"
-    inoremap <expr> ] strpart(getline('.'), col('.')-1, 1) == "]" ? "\<Right>" : "]"
-    inoremap <expr> ' strpart(getline('.'), col('.')-1, 1) == "\'" ? "\<Right>" : "\'\'\<Left>"
-    inoremap <expr> " strpart(getline('.'), col('.')-1, 1) == "\"" ? "\<Right>" : "\"\"\<Left>"
   augroup end
 ]], false)
 
