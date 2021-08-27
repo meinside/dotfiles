@@ -400,7 +400,7 @@ require('packer').startup(function()
 
 
   -- ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ non-lazy `require` not allowed above ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑
-  -- ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓ `use` not allowed below ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+  -- ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓      `use` not allowed below         ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
 
 
   -- lsp settings
@@ -496,6 +496,7 @@ require('packer').startup(function()
   -- auto pair/close settings
   require'nvim-autopairs'.setup{}
 
+
   -- color scheme (24bit-colors)
   vim.o.termguicolors = true
   vim.g.material_style = 'darker'
@@ -506,6 +507,7 @@ end)
 
 --
 ------------------------------------------------
+
 
 ------------------------------------------------
 -- other common settings
