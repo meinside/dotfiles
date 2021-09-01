@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.08.27.
+-- last update: 2021.09.01.
 
 ------------------------------------------------
 -- helpers
@@ -126,32 +126,6 @@ local check_back_space = function()
   end
 end
 
--- split string
-function split(s, sep)
-    local fields = {}
-    local pattern = string.format("([^%s]+)", sep)
-    string.gsub(s, pattern, function(c) fields[#fields + 1] = c end)
-    return fields
-  end
-
--- execute given command and return the output with exit status
-local function os_execute(cmd)
-  -- for Lua 5.2+
-  --local fileHandle = assert(io.popen(cmd, 'r'))
-  -- for Lua 5.1 or LuaJit 2.1.0
-  local fileHandle = assert(io.popen(cmd .. ';echo $?', 'r'))
-
-  local commandOutput = assert(fileHandle:read('*a'))
-  local returnTable = {fileHandle:close()}
-
-  -- for Lua 5.2+
-  --return commandOutput, returnTable[3]
-  -- for Lua 5.1 or LuaJit 2.1.0
-  local lines = split(commandOutput, '\n')
-  local exit = lines[#lines]
-  return commandOutput:gsub(exit, ''), tonumber(exit)
-end
-
 --
 ------------------------------------------------
 
@@ -174,8 +148,7 @@ require('packer').startup(function()
 
 
   -- colorschemes (https://github.com/rockerBOO/awesome-neovim#colorscheme)
-  use 'Iron-E/nvim-soluarized'
-  use 'marko-cerovac/material.nvim'
+  use 'projekt0n/github-nvim-theme'
 
 
   -- formatting
@@ -498,10 +471,10 @@ require('packer').startup(function()
 
 
   -- color scheme (24bit-colors)
-  vim.o.termguicolors = true
-  vim.g.material_style = 'darker'
-  vim.g.material_disable_background = true
-  require('material').set()
+  require('github-theme').setup({
+    themeStyle = 'dark',
+    transparent = 'true',
+  })
 
 end)
 
