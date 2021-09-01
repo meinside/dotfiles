@@ -214,6 +214,7 @@ require('packer').startup(function()
   use 'neovim/nvim-lspconfig'
   use 'ray-x/lsp_signature.nvim'
   use 'glepnir/lspsaga.nvim'
+  use 'onsails/lspkind-nvim'
 
 
   -- snippets
@@ -224,18 +225,28 @@ require('packer').startup(function()
   -- autocompletion
   use {
     'hrsh7th/nvim-cmp',
+    requires = {
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-nvim-lua',
+      'saadparwaiz1/cmp_luasnip',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-calc',
+    },
     config = function ()
       local cmp = require'cmp'
       local luasnip = require'luasnip'
+      local lspkind = require'lspkind'
       cmp.setup {
+        completion = {
+          completeopt = 'menuone,noselect'
+        },
         snippet = {
           expand = function(args)
             require('luasnip').lsp_expand(args.body)
           end,
         },
         mapping = {
-          ['<C-p>'] = cmp.mapping.select_prev_item(),
-          ['<C-n>'] = cmp.mapping.select_next_item(),
           ['<C-d>'] = cmp.mapping.scroll_docs(-4),
           ['<C-f>'] = cmp.mapping.scroll_docs(4),
           ['<C-Space>'] = cmp.mapping.complete(),
@@ -270,17 +281,16 @@ require('packer').startup(function()
           { name = 'luasnip' },
           { name = 'path' },
           { name = 'calc' },
-        }
+        },
+        formatting = {
+          format = function(entry, vim_item)
+            vim_item.kind = lspkind.presets.default[vim_item.kind] .. " " .. vim_item.kind
+            return vim_item
+          end
+        },
       }
     end
   }
-  use 'hrsh7th/cmp-nvim-lsp'
-  use 'hrsh7th/cmp-buffer'
-  use 'hrsh7th/cmp-nvim-lua'
-  use 'saadparwaiz1/cmp_luasnip'
-  use 'hrsh7th/cmp-path'
-  use 'hrsh7th/cmp-calc'
-  vim.o.completeopt = 'menuone,noselect'
 
 
   -- quick fix list
