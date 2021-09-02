@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.09.01.
+-- last update: 2021.09.02.
 
 ------------------------------------------------
 -- helpers
@@ -332,6 +332,11 @@ require('packer').startup(function()
   map('n', '<C-l>', ':tabnext<CR>') -- <ctrl-l> for next tab,
 
 
+  -- bash
+  --
+  use 'bash-lsp/bash-language-server'
+
+
   -- clojure
   --
   use 'dmac/vim-cljfmt' -- $ go install github.com/cespare/goclj/cljfmt
@@ -389,10 +394,11 @@ require('packer').startup(function()
   -- lsp settings
   local nvim_lsp = require('lspconfig')
   local lsp_servers = { -- language servers with default setup
-    "clojure_lsp",  -- $ brew install clojure-lsp/brew/clojure-lsp-native
-    "gopls",  -- $ go install golang.org/x/tools/gopls@latest
-    "solargraph",  -- $ gem install --user-install solargraph
-    "rust_analyzer"  -- $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer/ && cargo xtask install --server
+    'bashls', -- $ npm i -g bash-language-server
+    'clojure_lsp',  -- $ brew install clojure-lsp/brew/clojure-lsp-native
+    'gopls',  -- $ go install golang.org/x/tools/gopls@latest
+    'solargraph',  -- $ gem install --user-install solargraph
+    'rust_analyzer'  -- $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer/ && cargo xtask install --server
   }
   for _, lsp in ipairs(lsp_servers) do
     nvim_lsp[lsp].setup {
