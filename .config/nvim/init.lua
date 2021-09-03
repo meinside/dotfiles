@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.09.02.
+-- last update: 2021.09.03.
 
 ------------------------------------------------
 -- helpers
@@ -539,6 +539,10 @@ vim.api.nvim_exec([[
     autocmd TextYankPost * lua vim.highlight.on_yank {on_visual = false}
   augroup end
 ]], false)
+
+-- disable unneeded providers
+vim.g['loaded_python_provider'] = 0
+vim.g['loaded_perl_provider'] = 0
 
 --
 ------------------------------------------------
