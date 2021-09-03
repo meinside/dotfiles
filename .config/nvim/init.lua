@@ -151,6 +151,15 @@ require('packer').startup(function()
   use 'projekt0n/github-nvim-theme'
 
 
+  -- show key bindings
+  use {
+    'folke/which-key.nvim',
+    config = function()
+      require("which-key").setup {}
+    end
+  }
+
+
   -- formatting
   use 'tpope/vim-surround' -- cst'" => change ' to " / ds" => remove " / ysiw" => wrap text object with " / yss" => wrap line with "
   use 'tpope/vim-ragtag' -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
