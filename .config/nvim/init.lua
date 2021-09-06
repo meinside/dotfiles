@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.09.03.
+-- last update: 2021.09.06.
 
 ------------------------------------------------
 -- helpers
@@ -404,6 +404,7 @@ require('packer').startup(function()
   local nvim_lsp = require('lspconfig')
   local lsp_servers = { -- language servers with default setup
     'bashls', -- $ npm i -g bash-language-server
+    'ccls', -- $ brew install ccls
     'clojure_lsp',  -- $ brew install clojure-lsp/brew/clojure-lsp-native
     'gopls',  -- $ go install golang.org/x/tools/gopls@latest
     'solargraph',  -- $ gem install --user-install solargraph
