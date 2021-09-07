@@ -56,12 +56,10 @@
   editor = vim
 [push]
 #  default = simple
-#[merge]
+#[diff]
 #  tool = nvimdiff
 #[difftool]
 #  prompt = true
-#[diff]
-#  tool = nvimdiff
 #[difftool "nvimdiff"]
 #  cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 [merge]
