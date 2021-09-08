@@ -1,7 +1,7 @@
 # My .bashrc file
 #
 # created on 2012.05.31.
-# updated on 2021.07.26.
+# updated on 2021.09.08.
 #
 # ... by meinside@gmail.com
 
@@ -14,8 +14,8 @@ export EDITOR="/usr/bin/vim"
 export SVN_EDITOR="/usr/bin/vim"
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
-export TERM="screen-256color"
 export CLICOLOR=true
+export TERM="xterm-256color" # XXX: set terminal setting to 'xterm-256color' for italic fonts
 
 HISTCONTROL=ignoreboth
 
