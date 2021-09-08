@@ -5,7 +5,7 @@
 # for setting up various things automatically in macOS
 # (https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep_macos.sh)
 # 
-# last update: 2020.02.01.
+# last update: 2021.09.08.
 # 
 # by meinside@gmail.com
 
@@ -25,6 +25,9 @@ git clone $REPOSITORY $TMP_DIR
 shopt -s dotglob nullglob
 mv $TMP_DIR/* $HOME/
 rm -rf $TMP_DIR
+
+# install terminfos
+~/bin/enable_italic_fonts.sh
 
 # install Homebrew
 echo -e "\033[33m>>> installing Homebrew...\033[0m"

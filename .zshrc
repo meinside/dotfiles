@@ -62,7 +62,6 @@ export EDITOR="/usr/bin/vim"
 export SVN_EDITOR="/usr/bin/vim"
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
-export TERM="screen-256color"
 export CLICOLOR=true
 export HISTCONTROL=erasedups
 export HISTSIZE=10000

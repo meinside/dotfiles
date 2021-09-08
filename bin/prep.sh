@@ -6,7 +6,7 @@
 #
 # (https://raw.githubusercontent.com/meinside/rpi-configs/master/bin/prep.sh)
 # 
-# last update: 2021.07.26.
+# last update: 2021.09.08.
 # 
 # by meinside@gmail.com
 
@@ -41,6 +41,9 @@ git clone $REPOSITORY $TMP_DIR
 shopt -s dotglob nullglob
 mv $TMP_DIR/* $HOME/
 rm -rf $TMP_DIR
+
+# install terminfos
+~/bin/enable_italic_fonts.sh
 
 # upgrade packages
 echo -e "${YELLOW}>>> upgrading installed packages...${RESET}"
