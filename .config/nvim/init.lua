@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.09.06.
+-- last update: 2021.09.09.
 
 ------------------------------------------------
 -- helpers
@@ -148,7 +148,11 @@ require('packer').startup(function()
 
 
   -- colorschemes (https://github.com/rockerBOO/awesome-neovim#colorscheme)
+  --
+  -- for 24bit-colors (default)
   use 'projekt0n/github-nvim-theme'
+  -- for 256-colors
+  use 'kristijanhusak/vim-hybrid-material'
 
 
   -- show key bindings
@@ -501,6 +505,11 @@ require('packer').startup(function()
     themeStyle = 'dark',
     transparent = 'true',
   })
+  -- color scheme (256-colors)
+  vim.g['enable_bold_font'] = 1
+  vim.g['enable_italic_font'] = 1
+  vim.g['hybrid_transparent_background'] = 1
+  --vim.api.nvim_exec [[colorscheme hybrid_material]]
 
 end)
 
