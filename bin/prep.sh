@@ -30,11 +30,6 @@ if [ -z $TERMUX_VERSION ]; then  # not in termux
 	sudo -l > /dev/null
 fi
 
-pull_configs && \
-	install_packages && \
-	cleanup && \
-	show_guide
-
 function pull_configs {
 	check_git
 
@@ -132,3 +127,8 @@ function show_guide_macos {
 	echo -e "${GREEN}  $ brew bundle ${RESET}"
 	echo
 }
+
+pull_configs && \
+	install_packages && \
+	cleanup && \
+	show_guide
