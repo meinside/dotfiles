@@ -80,11 +80,7 @@ A script for installing [Zig](https://ziglang.org/).
 
 ## prep.sh
 
-A script that will clone this repository and install things for Linux/WSL.
-
-## prep_macos.sh
-
-A script that will clone this repository and install things for macOS.
+A script that will clone this repository and install things.
 
 ## test_colors.sh
 

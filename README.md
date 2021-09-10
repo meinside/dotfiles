@@ -1,4 +1,4 @@
-# My dot/config files for macOS, Linux, Raspberry Pi, or WSL
+# My dot/config files for macOS, Linux, Raspberry Pi, WSL, and Termux
 
 by Sungjin Han <meinside@gmail.com>
 
@@ -6,10 +6,11 @@ by Sungjin Han <meinside@gmail.com>
 
 My personal dot/config files for:
 
-- macOS (**Catalina**)
+- macOS (**Big Sur**)
 - Raspberry Pi (**Raspbian Buster**)
 - Linux (**Debian/Ubuntu**)
 - WSL 2 (**Windows 10**)
+- Termux (**Android / F-Droid**)
 
 ---
 
@@ -19,23 +20,10 @@ My personal dot/config files for:
 
 Prep scripts will clone dot/config files from the repository and install several things automatically.
 
-#### a. On Linux / Raspberry Pi / WSL
-
 ```bash
 $ cd ~
 $ wget -O - "https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh" | bash
 ```
-
-It will also install some useful packages.
-
-#### b. On macOS
-
-```bash
-$ cd ~
-$ wget -O - "https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep_macos.sh" | bash
-```
-
-It will also install **Homebrew**.
 
 ---
 
