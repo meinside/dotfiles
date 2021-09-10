@@ -83,7 +83,11 @@ function install_macos {
 #
 # $1: nightly or not
 function install_linux {
-	prep && install $1 && clean
+	if [ -z $TERMUX_VERSION ]; then
+		prep && install $1 && clean
+	else  # termux
+		pkg install neovim
+	fi
 }
 
 case "$OSTYPE" in

@@ -11,7 +11,7 @@
 # $ cargo xtask install --server
 #
 # created on : 2019.02.18.
-# last update: 2021.01.08.
+# last update: 2021.09.10.
 # 
 # by meinside@gmail.com
 
@@ -19,7 +19,11 @@
 umask 0022
 
 function install_linux {
-	curl https://sh.rustup.rs -sSf | sh
+	if [ -z $TERMUX_VERSION ]; then
+		curl https://sh.rustup.rs -sSf | sh
+	else  # termux
+		pkg install rust
+	fi
 }
 
 function install_macos {

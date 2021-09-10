@@ -11,7 +11,7 @@
 # *** Another Note: `aarch64` is not supported in golang 1.4, so it will be bootstrapped with package manager's version.
 # 
 # created on : 2014.07.01.
-# last update: 2021.08.17.
+# last update: 2021.09.10.
 # 
 # by meinside@gmail.com
 
@@ -151,7 +151,11 @@ function install_go_macos {
 
 # for linux
 function install_go_linux {
-	prep && bootstrap && install_go && clean_bootstrap
+	if [ -z $TERMUX_VERSION ]; then
+		prep && bootstrap && install_go && clean_bootstrap
+	else  # termux
+		pkg install golang
+	fi
 }
 
 case "$OSTYPE" in

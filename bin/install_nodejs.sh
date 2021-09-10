@@ -5,7 +5,7 @@
 # install pre-built Node.js (LTS) for Linux from: https://nodejs.org/dist
 # 
 # created on : 2013.07.19.
-# last update: 2021.09.01.
+# last update: 2021.09.10.
 # 
 # by meinside@gmail.com
 
@@ -35,18 +35,22 @@ INSTALLATION_DIR="/opt"
 NODEJS_DIR="$INSTALLATION_DIR/`basename $FILENAME .tar.gz`"
 
 function install_linux {
-	echo -e "${YELLOW}>>> downloading version $VERSION ...${RESET}"
+	if [ -z $TERMUX_VERSION ]; then
+		echo -e "${YELLOW}>>> downloading version $VERSION ...${RESET}"
 
-	wget "$DOWNLOAD_PATH" -P "$TEMP_DIR"
+		wget "$DOWNLOAD_PATH" -P "$TEMP_DIR"
 
-	echo -e "${YELLOW}>>> extracting to: $NODEJS_DIR ...${RESET}"
+		echo -e "${YELLOW}>>> extracting to: $NODEJS_DIR ...${RESET}"
 
-	sudo mkdir -p "$INSTALLATION_DIR"
-	sudo tar -xzvf "$TEMP_DIR/$FILENAME" -C "$INSTALLATION_DIR"
-	sudo chown -R $USER "$NODEJS_DIR"
-	sudo ln -sfn "$NODEJS_DIR" "$INSTALLATION_DIR/node"
+		sudo mkdir -p "$INSTALLATION_DIR"
+		sudo tar -xzvf "$TEMP_DIR/$FILENAME" -C "$INSTALLATION_DIR"
+		sudo chown -R $USER "$NODEJS_DIR"
+		sudo ln -sfn "$NODEJS_DIR" "$INSTALLATION_DIR/node"
 
-	echo -e "${GREEN}>>> nodejs v$VERSION was installed at: $NODEJS_DIR ${RESET}"
+		echo -e "${GREEN}>>> nodejs v$VERSION was installed at: $NODEJS_DIR ${RESET}"
+	else  # termux
+		pkg install nodejs
+	fi
 }
 
 function install_macos {

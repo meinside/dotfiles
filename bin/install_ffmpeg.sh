@@ -6,7 +6,7 @@
 #
 # (pass '--do-not-clean' argument for preserving files after install)
 # 
-# last update: 2020.06.18.
+# last update: 2021.09.10.
 # 
 # by meinside@gmail.com
 
@@ -60,13 +60,17 @@ function install {
 }
 
 function install_linux {
-	prep && install
+	if [ -z $TERMUX_VERSION ]; then
+		prep && install
 
-	# check if '--do-not-clean' argument was given
-	if [[ $1 != '--do-not-clean' ]]; then
-		clean
-	else
-		echo ">>> ffmpeg files remain in $TMP_DIR"
+		# check if '--do-not-clean' argument was given
+		if [[ $1 != '--do-not-clean' ]]; then
+			clean
+		else
+			echo ">>> ffmpeg files remain in $TMP_DIR"
+		fi
+	else  # termux
+		echo "${RED}* ffmpeg doesn't support termux yet.${RESET}"
 	fi
 }
 

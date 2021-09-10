@@ -6,7 +6,7 @@
 #
 # (https://clojure.org/guides/getting_started#_installation_on_linux)
 # 
-# last update: 2021.05.26.
+# last update: 2021.09.10.
 # 
 # by meinside@gmail.com
 
@@ -99,7 +99,11 @@ function clean {
 }
 
 function install_linux {
-	prep && install_clojure && install_leiningen && clean
+	if [ -z $TERMUX_VERSION ]; then
+		prep && install_clojure && install_leiningen && clean
+	else  # termux
+		echo "${RED}* clojure doesn't support termux yet.${RESET}"
+	fi
 }
 
 function install_macos {

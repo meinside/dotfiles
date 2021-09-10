@@ -5,7 +5,7 @@
 # Install zig from binaries (https://github.com/ziglang/zig/releases)
 #
 # created on : 2021.03.17.
-# last update: 2021.07.12.
+# last update: 2021.09.10.
 #
 # by meinside@gmail.com
 #
@@ -58,27 +58,31 @@ function install_macos {
 # $1: nightly or not
 function install_linux {
 
-	if [[ $1 == "--nightly" ]]; then
-		ZIG_VERSION="master"
+	if [ -z $TERMUX_VERSION ]; then
+		if [[ $1 == "--nightly" ]]; then
+			ZIG_VERSION="master"
 
-		TAR_URL=$( curl -s https://ziglang.org/download/index.json | grep tarball | cut -d\" -f4 | grep linux | grep $PLATFORM | head -n 1 )
-	else
-		TAR_URL="https://github.com/ziglang/zig/releases/download/${ZIG_VERSION}/zig-linux-${PLATFORM}-${ZIG_VERSION}.tar.xz"
+			TAR_URL=$( curl -s https://ziglang.org/download/index.json | grep tarball | cut -d\" -f4 | grep linux | grep $PLATFORM | head -n 1 )
+		else
+			TAR_URL="https://github.com/ziglang/zig/releases/download/${ZIG_VERSION}/zig-linux-${PLATFORM}-${ZIG_VERSION}.tar.xz"
+		fi
+
+		ZIG_DIR="${INSTALLATION_DIR}/zig-${ZIG_VERSION}"
+
+		echo -e "${YELLOW}>>> Installing zig-${PLATFORM}-${ZIG_VERSION}...${RESET}"
+
+		# install the binary
+		sudo mkdir -p "${ZIG_DIR}" && \
+			wget -qO- "$TAR_URL" | sudo tar -xv -J --strip-components=1 -C $ZIG_DIR && \
+			sudo chown -R "$USER" "${ZIG_DIR}" && \
+			sudo ln -sfn "${ZIG_DIR}" "${INSTALLATION_DIR}/zig" && \
+			echo -e "${GREEN}>>> Installed zig-${PLATFORM}-${ZIG_VERSION} on ${ZIG_DIR} ${RESET}"
+
+		# install zls
+		install_zls $1
+	else  # termux
+		echo "${RED}* zig doesn't support termux yet.${RESET}"
 	fi
-
-	ZIG_DIR="${INSTALLATION_DIR}/zig-${ZIG_VERSION}"
-
-	echo -e "${YELLOW}>>> Installing zig-${PLATFORM}-${ZIG_VERSION}...${RESET}"
-
-	# install the binary
-	sudo mkdir -p "${ZIG_DIR}" && \
-		wget -qO- "$TAR_URL" | sudo tar -xv -J --strip-components=1 -C $ZIG_DIR && \
-		sudo chown -R "$USER" "${ZIG_DIR}" && \
-		sudo ln -sfn "${ZIG_DIR}" "${INSTALLATION_DIR}/zig" && \
-		echo -e "${GREEN}>>> Installed zig-${PLATFORM}-${ZIG_VERSION} on ${ZIG_DIR} ${RESET}"
-
-	# install zls
-	install_zls $1
 
 }
 

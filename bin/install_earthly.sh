@@ -5,7 +5,7 @@
 # install pre-built Earthly binary from: https://github.com/earthly/earthly/releases
 #
 # created on : 2021.07.15.
-# last update: 2021.07.15.
+# last update: 2021.09.10.
 #
 # by meinside@gmail.com
 
@@ -28,7 +28,11 @@ case "$PLATFORM" in
 esac
 
 function install_linux {
-	sudo /bin/sh -c "wget https://github.com/earthly/earthly/releases/latest/download/earthly-linux-${PLATFORM} -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly && /usr/local/bin/earthly bootstrap --with-autocomplete"
+	if [ -z $TERMUX_VERSION ]; then
+		sudo /bin/sh -c "wget https://github.com/earthly/earthly/releases/latest/download/earthly-linux-${PLATFORM} -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly && /usr/local/bin/earthly bootstrap --with-autocomplete"
+	else
+		echo "${RED}* earthly doesn't support termux yet.${RESET}"
+	fi
 }
 
 function install_macos {

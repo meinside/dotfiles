@@ -23,7 +23,7 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2021.05.04.
+# last update: 2021.09.10.
 # 
 # by meinside@gmail.com
 
@@ -229,7 +229,11 @@ function clean {
 
 # linux
 function install_linux {
-    prep && build && configure && clean
+    if [ -z $TERMUX_VERSION ]; then
+	prep && build && configure && clean
+    else  # termux
+	pkg install nginx
+    fi
 }
 
 case "$OSTYPE" in
