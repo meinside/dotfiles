@@ -81,7 +81,7 @@ function install_linux {
 		# install zls
 		install_zls $1
 	else  # termux
-		echo "${RED}* zig doesn't support termux yet.${RESET}"
+		echo -e "${RED}* zig doesn't support termux yet.${RESET}"
 	fi
 
 }

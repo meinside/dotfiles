@@ -61,9 +61,13 @@ function install_linux_packages {
 }
 
 function install_linux {
-	install_linux_packages && \
-		pull_repositories && \
-		show_guides
+	if [ -z $TERMUX_VERSION ]; then
+		install_linux_packages && \
+			pull_repositories && \
+			show_guides
+	else  # termux
+		echo -e "${RED}* pico doesn't support termux yet.${RESET}"
+	fi
 }
 
 case "$OSTYPE" in

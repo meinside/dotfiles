@@ -32,7 +32,7 @@ function install_linux {
 		echo -e "${YELLOW}>>> installing ghcup ...${RESET}"
 		curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
 	else  # termux
-		echo "${RED}* haskell doesn't support termux yet.${RESET}"
+		echo -e "${RED}* haskell doesn't support termux yet.${RESET}"
 	fi
 }
 

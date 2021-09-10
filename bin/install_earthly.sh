@@ -31,7 +31,7 @@ function install_linux {
 	if [ -z $TERMUX_VERSION ]; then
 		sudo /bin/sh -c "wget https://github.com/earthly/earthly/releases/latest/download/earthly-linux-${PLATFORM} -O /usr/local/bin/earthly && chmod +x /usr/local/bin/earthly && /usr/local/bin/earthly bootstrap --with-autocomplete"
 	else
-		echo "${RED}* earthly doesn't support termux yet.${RESET}"
+		echo -e "${RED}* earthly doesn't support termux yet.${RESET}"
 	fi
 }
 

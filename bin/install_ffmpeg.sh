@@ -70,7 +70,7 @@ function install_linux {
 			echo ">>> ffmpeg files remain in $TMP_DIR"
 		fi
 	else  # termux
-		echo "${RED}* ffmpeg doesn't support termux yet.${RESET}"
+		echo -e "${RED}* ffmpeg doesn't support termux yet.${RESET}"
 	fi
 }
 

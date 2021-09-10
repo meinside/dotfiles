@@ -102,7 +102,7 @@ function install_linux {
 	if [ -z $TERMUX_VERSION ]; then
 		prep && install_clojure && install_leiningen && clean
 	else  # termux
-		echo "${RED}* clojure doesn't support termux yet.${RESET}"
+		echo -e "${RED}* clojure doesn't support termux yet.${RESET}"
 	fi
 }
 

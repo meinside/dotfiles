@@ -34,7 +34,7 @@ function install_linux {
 			curl https://raw.githubusercontent.com/babashka/babashka/master/install -sSf | \
 			sudo bash -s -- --dir $BB_DIR
 	else  # termux
-		echo "${RED}* babashka doesn't support termux yet.${RESET}"
+		echo -e "${RED}* babashka doesn't support termux yet.${RESET}"
 	fi
 }
 
