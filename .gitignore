@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2021.09.10.
+# last update: 2021.09.23.
 
 # unnecessary binary files
 *.o
@@ -216,6 +216,7 @@ mbox
 .rest-client/
 .rnd
 .rstudio-desktop/
+.swiftpm/
 .terminfo/
 .termux/
 .tooling/
