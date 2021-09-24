@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2021.09.23.
+# last update: 2021.09.24.
 
 # unnecessary binary files
 *.o
@@ -246,4 +246,5 @@ pprof/
 .sleep
 bin/
 files/
+storage/
 
