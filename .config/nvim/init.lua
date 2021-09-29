@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.09.28.
+-- last update: 2021.09.29.
 
 ------------------------------------------------
 -- helpers
@@ -47,7 +47,8 @@ local on_attach = function(client, bufnr)
   --buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
   buf_set_keymap('n', 'gt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
   buf_set_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-  buf_set_keymap('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  --buf_set_keymap('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+  buf_set_keymap('n', '<leader>ca', '<cmd>CodeActionMenu<CR>', opts)
   --buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
   buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
@@ -336,6 +337,10 @@ require('packer').startup(function()
   -- tab navigation
   map('n', '<C-h>', ':tabprevious<CR>') -- <ctrl-h> for previous tab,
   map('n', '<C-l>', ':tabnext<CR>') -- <ctrl-l> for next tab,
+
+
+  -- code action
+  use { 'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu' } -- '\ca'
 
 
   -- bash
