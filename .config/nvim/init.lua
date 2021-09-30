@@ -475,7 +475,7 @@ require('packer').startup(function()
       'lua',
       'python',
       'ruby', 'rust',
-      'swift',
+      --'swift',
       'toml',
       'typescript',
       'yaml',
