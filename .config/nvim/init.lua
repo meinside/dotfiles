@@ -163,7 +163,6 @@ require('packer').startup(function()
   use 'tpope/vim-surround' -- cst'" => change ' to " / ds" => remove " / ysiw" => wrap text object with " / yss" => wrap line with "
   use 'tpope/vim-ragtag' -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
   use 'lukas-reineke/indent-blankline.nvim'
-  g['indentLine_char'] = '▏'
   use 'tpope/vim-sleuth'
   use 'p00f/nvim-ts-rainbow'
 
@@ -451,6 +450,13 @@ require('packer').startup(function()
       theme = 'seoul256',
     },
     extensions = {'quickfix'}
+  }
+
+
+  -- blankline
+  require("indent_blankline").setup {
+    char = '▏',
+    buftype_exclude = {"terminal"}
   }
 
 
