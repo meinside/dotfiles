@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.09.29.
+-- last update: 2021.09.30.
 
 ------------------------------------------------
 -- helpers
@@ -165,8 +165,7 @@ require('packer').startup(function()
   use 'lukas-reineke/indent-blankline.nvim'
   g['indentLine_char'] = '▏'
   use 'tpope/vim-sleuth'
-  use 'luochen1990/rainbow'
-  g['rainbow_active'] = 1
+  use 'p00f/nvim-ts-rainbow'
 
 
   -- finder / locator
@@ -472,6 +471,15 @@ require('packer').startup(function()
 
   -- auto pair/close settings
   require'nvim-autopairs'.setup{}
+
+
+  -- rainbow parentheses
+  require'nvim-treesitter.configs'.setup {
+    rainbow = {
+      enable = true,
+      extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
+    }
+  }
 
 
   -- color scheme (24bit-colors)
