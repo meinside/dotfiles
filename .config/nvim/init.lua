@@ -466,7 +466,21 @@ require('packer').startup(function()
 
   -- treesitter settings
   require'nvim-treesitter.configs'.setup {
-    ensure_installed = {'go', 'haskell', 'python', 'ruby', 'rust', 'zig'};
+    ensure_installed = {
+      'bash',
+      'c', 'clojure', 'cpp', 'css',
+      'go', 'gomod',
+      'haskell', 'html',
+      'java', 'javascript', 'json',
+      'lua',
+      'python',
+      'ruby', 'rust',
+      'swift',
+      'toml',
+      'typescript',
+      'yaml',
+      'zig',
+    };
     highlight = {enable = true};
   }
 
