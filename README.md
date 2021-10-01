@@ -9,8 +9,8 @@ My personal dot/config files for:
 - macOS (**Big Sur**)
 - Raspberry Pi (**Raspbian Buster**)
 - Linux (**Debian/Ubuntu**)
-- WSL 2 (**Windows 10**)
-- Termux (**Android / F-Droid**)
+- WSL2 (**Windows 10**)
+- Termux (**Android / [F-Droid](https://f-droid.org/en/packages/com.termux/)**)
 
 ---
 
@@ -136,26 +136,26 @@ ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
 
 network={
-        ssid="YOUR-SSID"
-        psk=YOUR-PSK
+  ssid="YOUR-SSID"
+  psk=YOUR-PSK
 
-        # Protocol type can be: RSN (for WP2) and WPA (for WPA1)
-        proto=RSN
+  # Protocol type can be: RSN (for WP2) and WPA (for WPA1)
+  proto=RSN
 
-        # Key management type can be: WPA-PSK or WPA-EAP (Pre-Shared or Enterprise)
-        key_mgmt=WPA-PSK
+  # Key management type can be: WPA-PSK or WPA-EAP (Pre-Shared or Enterprise)
+  key_mgmt=WPA-PSK
 
-        # Pairwise can be CCMP or TKIP (for WPA2 or WPA1)
-        pairwise=CCMP
+  # Pairwise can be CCMP or TKIP (for WPA2 or WPA1)
+  pairwise=CCMP
 
-        # Authorization option should be OPEN for both WPA1/WPA2 (in less commonly used are SHARED and LEAP)
-        auth_alg=OPEN
+  # Authorization option should be OPEN for both WPA1/WPA2 (in less commonly used are SHARED and LEAP)
+  auth_alg=OPEN
 
-        # SSID scan technique (0 for broadcast, 1 for hidden)
-        scan_ssid=1
+  # SSID scan technique (0 for broadcast, 1 for hidden)
+  scan_ssid=1
 
-        # Priority
-        priority=1
+  # Priority
+  priority=1
 }
 ```
 
@@ -249,24 +249,24 @@ and add following lines:
 <?xml version="1.0" standalone='no'?><!--*-nxml-*-->
 <!DOCTYPE service-group SYSTEM "avahi-service.dtd">
 <service-group>
-    <name replace-wildcards="yes">%h</name>
-    <service>
-        <type>_afpovertcp._tcp</type>
-        <port>548</port>
-    </service>
-    <service>
-        <type>_http._tcp</type>
-        <port>80</port>
-    </service>
-    <service>
-        <type>_ssh._tcp</type>
-        <port>22</port>
-    </service>
-    <service>
-        <type>_device-info._tcp</type>
-        <port>0</port>
-        <txt-record>model=Xserve</txt-record>
-    </service>
+  <name replace-wildcards="yes">%h</name>
+  <service>
+    <type>_afpovertcp._tcp</type>
+    <port>548</port>
+  </service>
+  <service>
+    <type>_http._tcp</type>
+    <port>80</port>
+  </service>
+  <service>
+    <type>_ssh._tcp</type>
+    <port>22</port>
+  </service>
+  <service>
+    <type>_device-info._tcp</type>
+    <port>0</port>
+    <txt-record>model=Xserve</txt-record>
+  </service>
 </service-group>
 ```
 
@@ -387,9 +387,9 @@ HID2HCI_ENABLED=1
 
 # add static device information
 device 01:23:45:AB:CD:EF {
-    name "Bluetooth Device Name";
-    auth enable;
-    encrypt enable;
+  name "Bluetooth Device Name";
+  auth enable;
+  encrypt enable;
 }
 ```
 
