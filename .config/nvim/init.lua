@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.09.30.
+-- last update: 2021.10.07.
 
 ------------------------------------------------
 -- helpers
@@ -288,10 +288,7 @@ require('packer').startup(function()
           { name = 'calc' },
         },
         formatting = {
-          format = function(entry, vim_item)
-            vim_item.kind = lspkind.presets.default[vim_item.kind] .. " " .. vim_item.kind
-            return vim_item
-          end
+          format = lspkind.cmp_format(),
         },
       }
 
