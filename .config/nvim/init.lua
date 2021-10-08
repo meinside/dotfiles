@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.10.07.
+-- last update: 2021.10.08.
 
 ------------------------------------------------
 -- helpers
@@ -309,7 +309,7 @@ require('packer').startup(function()
 
   -- quick fix list
   --
-  -- :Trouble [mode], :TroubleCloe, :TroubleToggle, :TroubleRefresh
+  -- :Trouble [mode], :TroubleClose, :TroubleToggle, :TroubleRefresh
   use {
     'folke/trouble.nvim',
     requires = 'kyazdani42/nvim-web-devicons',
