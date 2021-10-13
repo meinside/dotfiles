@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.10.08.
+-- last update: 2021.10.13.
 
 ------------------------------------------------
 -- helpers
@@ -261,8 +261,8 @@ require('packer').startup(function()
             select = true,
           },
           ['<Tab>'] = function(fallback)
-            if vim.fn.pumvisible() == 1 then
-              vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-n>', true, true, true), 'n')
+            if cmp.visible() == 1 then
+              cmp.select_next_item()
             elseif luasnip.expand_or_jumpable() then
               vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-expand-or-jump', true, true, true), '')
             else
@@ -270,8 +270,8 @@ require('packer').startup(function()
             end
           end,
           ['<S-Tab>'] = function(fallback)
-            if vim.fn.pumvisible() == 1 then
-              vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<C-p>', true, true, true), 'n')
+            if cmp.visible() == 1 then
+              cmp.select_prev_item()
             elseif luasnip.jumpable(-1) then
               vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-jump-prev', true, true, true), '')
             else
