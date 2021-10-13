@@ -194,7 +194,8 @@ require('packer').startup(function()
     autocmd BufRead * highlight Blamer ctermfg=Yellow ctermbg=none
   ]], false)
   -- git signs
-  use {'lewis6991/gitsigns.nvim', -- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
+  use {
+    'lewis6991/gitsigns.nvim', -- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
     requires = {'nvim-lua/plenary.nvim'},
     config = function()
       require('gitsigns').setup()
@@ -293,7 +294,7 @@ require('packer').startup(function()
       }
 
       -- autopairs
-      require("nvim-autopairs.completion.cmp").setup({
+      require'nvim-autopairs.completion.cmp'.setup({
         map_cr = true, --  map <CR> on insert mode
         map_complete = true, -- it will auto insert `(` (map_char) after select function or method item
         auto_select = true, -- automatically select the first item
@@ -332,7 +333,10 @@ require('packer').startup(function()
 
 
   -- syntax highlighting
-  use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
+  use {
+    'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate'
+  }
   use 'nvim-treesitter/playground'
 
 
@@ -372,7 +376,10 @@ require('packer').startup(function()
   -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
   -- for reloading everything: \rr
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-  use {'Olical/conjure', tag = 'v4.23.0'} -- https://github.com/Olical/conjure/releases
+  use {
+    'Olical/conjure',
+    tag = 'v4.25.0' -- https://github.com/Olical/conjure/releases
+  }
 
 
   -- go
@@ -385,7 +392,7 @@ require('packer').startup(function()
   --
   use 'neovimhaskell/haskell-vim'
   use 'itchyny/vim-haskell-indent'
-  if vim.fn.executable("stylish-haskell") == 1 then
+  if vim.fn.executable('stylish-haskell') == 1 then
     use 'alx741/vim-stylishask'
   end
 
@@ -437,7 +444,7 @@ require('packer').startup(function()
     on_attach = on_attach;
   }
   -- lsp_signature
-  require'lsp_signature'.on_attach({
+  require'lsp_signature'.setup({
     bind = true, -- This is mandatory, otherwise border config won't get registered.
     handler_opts = {
       border = "single"
@@ -463,9 +470,9 @@ require('packer').startup(function()
 
 
   -- blankline
-  require("indent_blankline").setup {
+  require'indent_blankline'.setup {
     char = '▏',
-    buftype_exclude = {"terminal"}
+    buftype_exclude = {'terminal'}
   }
 
 
@@ -495,7 +502,7 @@ require('packer').startup(function()
 
 
   -- snippets settings
-  require("luasnip/loaders/from_vscode").lazy_load()
+  require'luasnip/loaders/from_vscode'.lazy_load()
 
 
   -- auto pair/close settings
@@ -512,7 +519,7 @@ require('packer').startup(function()
 
 
   -- color scheme (24bit-colors)
-  require('github-theme').setup({
+  require'github-theme'.setup({
     theme_style = 'dark',
     transparent = 'true',
   })
