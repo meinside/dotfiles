@@ -2,15 +2,14 @@
 #
 # created by meinside@gmail.com
 #
-# last update: 2020.10.15.
+# last update: 2021.10.14.
 
 alias ll="ls -alF"
 
 alias ngrep="sudo ngrep -q -W byline"
 alias ctags='ctags -R --totals=yes'
 
-# $ ruby -rwebrick -e's=WEBrick::HTTPServer.new(Port:8080,DocumentRoot:Dir.pwd);trap("INT"){s.shutdown};s.start'
-alias httpserver="ruby -rwebrick -e's=WEBrick::HTTPServer.new(Port:8080,DocumentRoot:Dir.pwd);trap(\"INT\"){s.shutdown};s.start'"
+alias httpserver="python3 -m http.server 8888"
 
 # referenced: https://thorsten-hans.com/5-types-of-zsh-aliases
 
@@ -23,6 +22,6 @@ fi
 
 # suffix aliases (for zsh only)
 if [[ $SHELL == *"/bin/zsh"* ]]; then
-	alias -s {go,rs,cljs,cljc,md,json,html,css}=vi
+	alias -s {go,rs,cljs,cljc,c,cpp,zig,md,json,html,css}=vi
 fi
 
