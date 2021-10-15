@@ -6,7 +6,7 @@
 #
 # (https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh)
 # 
-# last update: 2021.09.10.
+# last update: 2021.10.15.
 # 
 # by meinside@gmail.com
 
@@ -76,9 +76,10 @@ function install_packages {
 
 function install_packages_linux {
 	if [ -z $TERMUX_VERSION ]; then
-		sudo apt-get update
-		sudo apt-get -y upgrade
-		sudo apt-get -y install zsh vim tmux psmisc
+		sudo apt-get update && \
+			sudo apt-get -y upgrade && \
+			sudo apt-get -y install zsh vim tmux psmisc locales && \
+			sudo locale-gen en_US.UTF-8
 	else  # termux
 		pkg install zsh tmux psmisc
 	fi

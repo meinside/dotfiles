@@ -5,7 +5,7 @@
 # Install mosh from master branch. (1.3.2 doesn't support 24-bit colors yet)
 #
 # created on : 2021.08.11.
-# last update: 2021.09.10.
+# last update: 2021.10.15.
 
 # XXX - for making newly created files/directories less restrictive
 umask 0022
@@ -31,7 +31,7 @@ function install_linux {
 		sudo apt-get -y purge mosh
 
 		echo -e "${GREEN}>>> Installing essential packages...${RESET}" && \
-			sudo apt-get -y install protobuf-compiler libncurses5-dev zlib1g-dev libssl-dev libprotobuf-dev && \
+			sudo apt-get -y install autoconf protobuf-compiler libncurses5-dev zlib1g-dev libssl-dev libprotobuf-dev && \
 			echo -e "${GREEN}>>> Cloning: $MOSH_REPO${RESET}" && \
 			cd $TMP_DIR && \
 			git clone $MOSH_REPO && \
