@@ -31,7 +31,7 @@ function install_linux {
 		sudo apt-get -y purge mosh
 
 		echo -e "${GREEN}>>> Installing essential packages...${RESET}" && \
-			sudo apt-get -y install build-essential autoconf protobuf-compiler libncurses5-dev zlib1g-dev libssl-dev libprotobuf-dev && \
+			sudo apt-get -y install build-essential pkg-config autoconf protobuf-compiler libncurses5-dev zlib1g-dev libssl-dev libprotobuf-dev && \
 			echo -e "${GREEN}>>> Cloning: $MOSH_REPO${RESET}" && \
 			cd $TMP_DIR && \
 			git clone $MOSH_REPO && \
