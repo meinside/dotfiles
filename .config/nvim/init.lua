@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.10.13.
+-- last update: 2021.10.18.
 
 ------------------------------------------------
 -- helpers
@@ -521,7 +521,7 @@ require('packer').startup(function()
   -- color scheme (24bit-colors)
   require'github-theme'.setup({
     theme_style = 'dark',
-    transparent = 'true',
+    transparent = true,
   })
 
 end)
