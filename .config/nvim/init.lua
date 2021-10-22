@@ -456,7 +456,9 @@ require('packer').startup(function()
 
 
   -- go.nvim settings
-  require'go'.setup()
+  require'go'.setup {
+    gofmt = 'gopls',
+  }
 
 
   -- lualine settings
