@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.10.18.
+-- last update: 2021.10.22.
 
 ------------------------------------------------
 -- helpers
@@ -354,13 +354,17 @@ require('packer').startup(function()
   use { 'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu' } -- '\ca'
 
 
+  -- debug adapter
+  use { 'rcarriga/nvim-dap-ui', requires = { 'mfussenegger/nvim-dap' } }
+  use 'theHamsta/nvim-dap-virtual-text'
+  vim.g['dap_virtual_text'] = true
+
+
   -- bash
-  --
   use 'bash-lsp/bash-language-server'
 
 
   -- clojure
-  --
   use 'dmac/vim-cljfmt' -- $ go install github.com/cespare/goclj/cljfmt
   -- >f, <f : move a form
   -- >e, <e : move an element
@@ -383,13 +387,10 @@ require('packer').startup(function()
 
 
   -- go
-  --
   use 'ray-x/go.nvim'
-  use 'sebdah/vim-delve'  -- :DlvXXX
 
 
   -- haskell
-  --
   use 'neovimhaskell/haskell-vim'
   use 'itchyny/vim-haskell-indent'
   if vim.fn.executable('stylish-haskell') == 1 then
@@ -398,7 +399,6 @@ require('packer').startup(function()
 
 
   -- ruby
-  --
   use 'vim-ruby/vim-ruby'
 
 
@@ -408,7 +408,6 @@ require('packer').startup(function()
 
 
   -- zig
-  --
   use 'ziglang/zig.vim'
 
 
