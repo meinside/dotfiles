@@ -2,18 +2,19 @@
 #
 # by meinside@gmail.com
 #
-# last update: 2020.02.01.
+# last update: 2021.10.26.
 
-# colors
-#
-# https://jonasjacek.github.io/colors/
 set-option -g default-terminal "screen-256color"
-set -g status-style fg=black,bg=red
-set-window-option -g window-status-style fg=black,bg=red
-set-window-option -g window-status-current-style fg=white,bg=red,bold
-set -g message-style fg=black,bg=red
-set -g pane-active-border-style fg=red
 
-# status
-set -g status-right '#[fg=white]#h#[fg=black] %b/%d (%a) %R '
+set -g message-command-style fg=colour255,bg=colour235
+set -g message-style fg=colour222,bg=colour235
+set -g pane-active-border-style fg=colour160
+set -g status-style fg=colour255,bg=colour235
+
+set -g status-left '#[fg=colour232,bg=colour1] #S #[fg=colour1,bg=colour235,nobold,nounderscore,noitalics]'
+set -g status-right '#[fg=colour235,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour121,bg=colour235] %R  %b/%d (%a) #[fg=colour1,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour232,bg=colour1] #H '
+
+setw -g window-status-separator ''
+setw -g window-status-format '#{?window_activity_flag,#[fg=colour235 bg=colour255 bold],#[fg=colour245 bg=colour235 nobold nounderscore noitalics]} #I #W '
+setw -g window-status-current-format '#[fg=colour222,bg=colour235,bold] #I #W '
 
