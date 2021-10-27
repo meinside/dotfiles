@@ -2,7 +2,7 @@
 #
 # by meinside@gmail.com
 #
-# last update: 2021.10.26.
+# last update: 2021.10.27.
 
 set-option -g default-terminal "screen-256color"
 
@@ -11,6 +11,7 @@ set -g message-style fg=colour222,bg=colour235
 set -g pane-active-border-style fg=colour160
 set -g status-style fg=colour255,bg=colour235
 
+set -g status-left-length 30
 set -g status-left '#[fg=colour232,bg=colour1] #S #[fg=colour1,bg=colour235,nobold,nounderscore,noitalics]'
 set -g status-right '#[fg=colour235,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour121,bg=colour235] %R  %b/%d (%a) #[fg=colour1,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour232,bg=colour1] #H '
 
