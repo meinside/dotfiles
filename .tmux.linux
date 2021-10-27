@@ -12,8 +12,8 @@ set -g pane-active-border-style fg=colour160
 set -g status-style fg=colour255,bg=colour235
 
 set -g status-left-length 30
-set -g status-left '#[fg=colour232,bg=colour1] #S #[fg=colour1,bg=colour235,nobold,nounderscore,noitalics]'
-set -g status-right '#[fg=colour235,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour121,bg=colour235] %R  %b/%d (%a) #[fg=colour1,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour232,bg=colour1] #H '
+set -g status-left '#[fg=colour232,bg=colour196] #S #[fg=colour196,bg=colour235,nobold,nounderscore,noitalics]'
+set -g status-right '#[fg=colour235,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour121,bg=colour235] %R  %b/%d (%a) #[fg=colour196,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour232,bg=colour196] #H '
 
 setw -g window-status-separator ''
 setw -g window-status-format '#{?window_activity_flag,#[fg=colour235 bg=colour255 bold],#[fg=colour245 bg=colour235 nobold nounderscore noitalics]} #I #W '
