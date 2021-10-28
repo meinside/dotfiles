@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.10.22.
+-- last update: 2021.10.28.
 
 ------------------------------------------------
 -- helpers
@@ -403,12 +403,15 @@ require('packer').startup(function()
 
 
   -- rust
-  --
   use 'rust-lang/rust.vim'
 
 
   -- zig
   use 'ziglang/zig.vim'
+
+
+  -- github copilog
+  use 'github/copilot.vim' -- :Copilot setup
 
 
   -- ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ non-lazy `require` not allowed above ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑
