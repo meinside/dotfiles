@@ -2,18 +2,18 @@
 #
 # by meinside@gmail.com
 #
-# last update: 2021.10.27.
+# last update: 2021.10.28.
 
-set -g message-command-style fg=colour255,bg=colour235
-set -g message-style fg=colour222,bg=colour235
-set -g pane-active-border-style fg=colour160
-set -g status-style fg=colour255,bg=colour235
+set -g message-command-style fg=color255,bg=color235
+set -g message-style fg=color255,bg=color235
+set -g pane-active-border-style fg=color160
+set -g status-style fg=color255,bg=color235
 
 set -g status-left-length 30
-set -g status-left '#[fg=colour232,bg=colour245] #S #[fg=colour245,bg=colour235,nobold,nounderscore,noitalics]'
-set -g status-right '#[fg=colour235,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour121,bg=colour235] %R  %b/%d (%a) #[fg=colour245,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour232,bg=colour245] #H '
+set -g status-left '#[fg=color232,bg=color66] #S #[fg=color66,bg=color235,nobold,nounderscore,noitalics]'
+set -g status-right '#[fg=color235,bg=color235,nobold,nounderscore,noitalics]#[fg=color121,bg=color235] %R  %b/%d (%a) #[fg=color66,bg=color235,nobold,nounderscore,noitalics]#[fg=color232,bg=color66] #H '
 
 setw -g window-status-separator ''
-setw -g window-status-format '#{?window_activity_flag,#[fg=colour235 bg=colour255 bold],#[fg=colour245 bg=colour235 nobold nounderscore noitalics]} #I #W '
-setw -g window-status-current-format '#[fg=colour222,bg=colour235,bold] #I #W '
+setw -g window-status-format '#{?window_activity_flag,#[fg=color235 bg=color66 bold],#[fg=color66 bg=color235 nobold nounderscore noitalics]} #I #W '
+setw -g window-status-current-format '#[fg=color226,bg=color235,bold] #I #W '
 
