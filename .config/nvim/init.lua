@@ -492,6 +492,7 @@ require('packer').startup(function()
       'go', 'gomod',
       'haskell', 'html',
       'java', 'javascript', 'json',
+      'kotlin',
       'lua',
       'python',
       'ruby', 'rust',
@@ -525,15 +526,23 @@ require('packer').startup(function()
   -- github copilot settings
   vim.api.nvim_exec([[
     let g:copilot_filetypes = {
-      \'*': v:false,
-      \'sh': v:true,
-      \'clojure': v:true,
-      \'go': v:true,
-      \'haskell': v:true,
-      \'lua': v:true,
-      \'ruby': v:true,
-      \'python': v:true,
-      \'zig': v:true,
+      \ '*': v:false,
+      \ 'c': v:true,
+      \ 'clojure': v:true,
+      \ 'css': v:true,
+      \ 'go': v:true,
+      \ 'haskell': v:true,
+      \ 'html': v:true,
+      \ 'javascript': v:true,
+      \ 'java': v:true,
+      \ 'kotlin': v:true,
+      \ 'lua': v:true,
+      \ 'python': v:true,
+      \ 'objc': v:true,
+      \ 'ruby': v:true,
+      \ 'sh': v:true,
+      \ 'swift': v:true,
+      \ 'zig': v:true,
     \}
   ]], false)
 
