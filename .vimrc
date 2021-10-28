@@ -4,7 +4,7 @@
 "
 " created by meinside@gmail.com,
 "
-" last update: 2021.05.28.
+" last update: 2021.10.28.
 
 set t_Co=256
 
@@ -59,7 +59,6 @@ Plug 'tpope/vim-fugitive'
 " airline
 "
 Plug 'vim-airline/vim-airline'
-let g:airline#extensions#ale#enabled = 1
 
 " project management
 "
@@ -75,99 +74,31 @@ let g:ctrlp_root_markers = ['pom.xml', 'go.mod']
 nnoremap <C-h> :tabprevious<CR> " <ctrl-h> for previous tab,
 nnoremap <C-l> :tabnext<CR> " <ctrl-l> for next tab,
 
-" autocompletion
-
-" linting
-
 " gist (:Gist / :Gist -p / ...)
 "
 Plug 'mattn/webapi-vim'
 Plug 'mattn/gist-vim'
 
-" clojure
+
+" syntax checking
 "
-" $ go get github.com/cespare/goclj/cljfmt
-Plug 'dmac/vim-cljfmt', { 'for': 'clojure' }
-" >f, <f : move a form
-" >e, <e : move an element
-" >), <), >(, <( : move a parenthesis
-" <I, >I : insert at the beginning or end of a form
-" dsf : remove surroundings
-" cse(, cse), cseb : surround an element with parenthesis
-" cse[, cse] : surround an element with brackets
-" cse{, cse} : surround an element with braces
-Plug 'guns/vim-sexp', { 'for': 'clojure' }
-Plug 'tpope/vim-sexp-mappings-for-regular-people', { 'for': 'clojure' }
-
-" golang
-"
-Plug 'fatih/vim-go', {'for': 'go', 'do': ':GoInstallBinaries'}
-
-" ruby
-"
-Plug 'vim-ruby/vim-ruby', { 'for': 'ruby' }
-Plug 'tpope/vim-endwise'
-
-" rust
-"
-Plug 'rust-lang/rust.vim', { 'for': 'rust' }
-
-" zig
-"
-Plug 'ziglang/zig.vim', { 'for': 'zig' }
-
-" XXX - do not load following plugins on machines with low performance:
-" (touch '~/.vimrc.lowperf' for it)
-let lowperf=expand('~/.vimrc.lowperf')
-if !filereadable(lowperf)
-
-    " syntax checking
-    "
-    Plug 'vim-syntastic/syntastic'
-    set statusline+=%#warningmsg#
-    if exists('*SyntasticStatuslineFlag')
-        set statusline+=%{SyntasticStatuslineFlag()}
-    endif
-    set statusline+=%*
-    let g:syntastic_always_populate_loc_list = 1
-    let g:syntastic_auto_loc_list = 1
-    let g:syntastic_check_on_open = 0
-    let g:syntastic_check_on_wq = 0
-
-    " gitgutter
-    "
-    Plug 'airblade/vim-gitgutter'        " [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
-    let g:gitgutter_highlight_lines = 1
-    let g:gitgutter_realtime = 0
-    let g:gitgutter_eager = 0
-
-    " clojure
-
-    " golang
-    "
-    let g:go_fmt_command = "goimports"     " auto import dependencies
-    let g:go_highlight_build_constraints = 1
-    let g:go_highlight_extra_types = 1
-    let g:go_highlight_fields = 1
-    let g:go_highlight_functions = 1
-    let g:go_highlight_methods = 1
-    let g:go_highlight_operators = 1
-    let g:go_highlight_structs = 1
-    let g:go_highlight_types = 1
-    let g:go_jump_to_error = 0
-    let g:go_auto_sameids = 0
-    let g:go_auto_type_info = 1
-    let g:syntastic_go_checkers = ['go']	" XXX: 'golint' is too slow, use :GoLint manually.
-    let g:syntastic_aggregate_errors = 1
-    autocmd BufEnter *.go nmap <leader>ci  <Plug>(go-implements)    " \ci for implementations of given interface
-    autocmd BufEnter *.go nmap <leader>cc  <Plug>(go-callers)    " \cc for callers of given function
-    nmap <leader>cr <Plug>(coc-references)    " \cr for references of given type/function
-
-    " rust
-    "
-    let g:rustfmt_autosave = 1 " :RustFmt
-
+Plug 'vim-syntastic/syntastic'
+set statusline+=%#warningmsg#
+if exists('*SyntasticStatuslineFlag')
+    set statusline+=%{SyntasticStatuslineFlag()}
 endif
+set statusline+=%*
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
+
+" gitgutter
+"
+Plug 'airblade/vim-gitgutter'        " [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
+let g:gitgutter_highlight_lines = 1
+let g:gitgutter_realtime = 0
+let g:gitgutter_eager = 0
 
 "
 """"""""
@@ -176,15 +107,6 @@ endif
 call plug#end()
 "
 """"""""""""""""""""""""""""""""
-
-" linting
-"
-" * clojure:
-" $ npm install -g clj-kondo
-" $ go get -d github.com/candid82/joker && cd $GOPATH/src/github.com/candid82/joker && ./run.sh --version && go install
-let g:ale_linters = {
-    \ 'clojure': ['clj-kondo', 'joker']
-    \}
 
 " allow backspacing over everything in insert mode
 set backspace=indent,eol,start
