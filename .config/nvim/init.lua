@@ -357,7 +357,7 @@ require('packer').startup(function()
   -- debug adapter
   use { 'rcarriga/nvim-dap-ui', requires = { 'mfussenegger/nvim-dap' } }
   use 'theHamsta/nvim-dap-virtual-text'
-  vim.g['dap_virtual_text'] = true
+  g['dap_virtual_text'] = true
 
 
   -- bash
@@ -602,8 +602,8 @@ vim.api.nvim_exec([[
 ]], false)
 
 -- disable unneeded providers
-vim.g['loaded_python_provider'] = 0
-vim.g['loaded_perl_provider'] = 0
+g['loaded_python_provider'] = 0
+g['loaded_perl_provider'] = 0
 
 --
 ------------------------------------------------
