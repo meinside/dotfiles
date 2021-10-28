@@ -522,6 +522,22 @@ require('packer').startup(function()
   }
 
 
+  -- github copilot settings
+  vim.api.nvim_exec([[
+    let g:copilot_filetypes = {
+      \'*': v:false,
+      \'sh': v:true,
+      \'clojure': v:true,
+      \'go': v:true,
+      \'haskell': v:true,
+      \'lua': v:true,
+      \'ruby': v:true,
+      \'python': v:true,
+      \'zig': v:true,
+    \}
+  ]], false)
+
+
   -- color scheme (24bit-colors)
   require'github-theme'.setup({
     theme_style = 'dark',
