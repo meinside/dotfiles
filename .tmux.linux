@@ -2,7 +2,7 @@
 #
 # by meinside@gmail.com
 #
-# last update: 2021.10.27.
+# last update: 2021.10.28.
 
 set-option -g default-terminal "screen-256color"
 
@@ -12,10 +12,10 @@ set -g pane-active-border-style fg=colour160
 set -g status-style fg=colour255,bg=colour235
 
 set -g status-left-length 30
-set -g status-left '#[fg=colour232,bg=colour196] #S #[fg=colour196,bg=colour235,nobold,nounderscore,noitalics]'
-set -g status-right '#[fg=colour235,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour121,bg=colour235] %R  %b/%d (%a) #[fg=colour196,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour232,bg=colour196] #H '
+set -g status-left '#[fg=colour232,bg=colour124] #S #[fg=colour124,bg=colour235,nobold,nounderscore,noitalics]'
+set -g status-right '#[fg=colour235,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour121,bg=colour235] %R  %b/%d (%a) #[fg=colour124,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour232,bg=colour124] #H '
 
 setw -g window-status-separator ''
 setw -g window-status-format '#{?window_activity_flag,#[fg=colour235 bg=colour255 bold],#[fg=colour245 bg=colour235 nobold nounderscore noitalics]} #I #W '
-setw -g window-status-current-format '#[fg=colour222,bg=colour235,bold] #I #W '
+setw -g window-status-current-format '#[fg=colour226,bg=colour235,bold] #I #W '
 
