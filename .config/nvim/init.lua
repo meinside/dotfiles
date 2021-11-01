@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.10.29.
+-- last update: 2021.11.01.
 
 ------------------------------------------------
 -- helpers
@@ -349,7 +349,6 @@ require('packer').startup(function()
   -- debug adapter
   use { 'rcarriga/nvim-dap-ui', requires = { 'mfussenegger/nvim-dap' } }
   use 'theHamsta/nvim-dap-virtual-text'
-  g['dap_virtual_text'] = true
 
 
   -- bash
@@ -448,6 +447,11 @@ require('packer').startup(function()
   vim.api.nvim_exec([[
     autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
   ]], false)
+
+
+  -- debug adapter
+  require'nvim-dap-virtual-text'.setup {
+  }
 
 
   -- go.nvim settings
