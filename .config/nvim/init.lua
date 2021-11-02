@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.11.01.
+-- last update: 2021.11.02.
 
 ------------------------------------------------
 -- helpers
@@ -401,7 +401,7 @@ require('packer').startup(function()
   use 'ziglang/zig.vim'
 
 
-  -- github copilog
+  -- github copilot
   use 'github/copilot.vim' -- :Copilot setup
 
 
