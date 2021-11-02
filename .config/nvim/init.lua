@@ -519,8 +519,10 @@ require('packer').startup(function()
   }
 
 
-  -- github copilot settings
+  -- github copilot settings (ctrl+L for applying)
   vim.api.nvim_exec([[
+    imap <silent><script><expr> <C-L> copilot#Accept()
+    let g:copilot_no_tab_map = v:true
     let g:copilot_filetypes = {
       \ '*': v:false,
       \ 'c': v:true,
