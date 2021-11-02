@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2021.07.26.
+# updated on 2021.11.02.
 #
 # ... by meinside@gmail.com
 #
@@ -47,13 +47,10 @@ HIST_STAMPS="yyyy-mm-dd"
 plugins=(osx history history-substring-search mosh git git-flow docker copydir colored-man-pages encode64 urltools sudo web-search)
 
 # Search for oh-my-zsh.sh
-if [ -f $ZSH/oh-my-zsh.sh ]; then
-    source $ZSH/oh-my-zsh.sh
-else
-    echo "> Install oh-my-zsh:"
-    echo "$ git clone git://github.com/robbyrussell/oh-my-zsh.git ~/.oh-my-zsh"
-    echo
+if ! [ -f $ZSH/oh-my-zsh.sh ]; then
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" -s '--keep-zshrc'
 fi
+source $ZSH/oh-my-zsh.sh
 
 # User configuration
 #umask 027
