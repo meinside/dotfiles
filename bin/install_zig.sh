@@ -5,7 +5,7 @@
 # Install zig from binaries (https://github.com/ziglang/zig/releases)
 #
 # created on : 2021.03.17.
-# last update: 2021.09.10.
+# last update: 2021.11.03.
 #
 # by meinside@gmail.com
 #
@@ -26,7 +26,7 @@ TEMP_DIR="/tmp"
 INSTALLATION_DIR="/opt"
 
 # XXX - edit these for installing other versions
-ZIG_VERSION="0.7.1"
+ZIG_VERSION="0.8.1"
 ZLS_VERSION="0.1.0"
 
 PLATFORM=`uname -m`     # armv7l, armv6l, ...
