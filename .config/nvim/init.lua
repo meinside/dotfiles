@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.11.02.
+-- last update: 2021.11.08.
 
 ------------------------------------------------
 -- helpers
@@ -366,6 +366,7 @@ require('packer').startup(function()
   -- cse[, cse] : surround an element with brackets
   -- cse{, cse} : surround an element with braces
   use 'guns/vim-sexp'
+  g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
   use 'tpope/vim-sexp-mappings-for-regular-people'
   -- for auto completion: <C-x><C-o>
   -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
