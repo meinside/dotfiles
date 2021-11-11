@@ -1,7 +1,7 @@
 # My .bashrc file
 #
 # created on 2012.05.31.
-# updated on 2021.09.08.
+# updated on 2021.11.11.
 #
 # ... by meinside@gmail.com
 
@@ -111,7 +111,7 @@ if [[ -z $TMUX ]]; then
     fi
 
     # additional paths
-    export PATH="$PATH:$HOME/bin:$HOME/.local/bin"
+    export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$PATH:$HOME/.rvm/bin"
 
 fi
 

@@ -4,7 +4,7 @@
 # 
 # for setting up environment for ruby
 # 
-# last update: 2021.09.10.
+# last update: 2021.11.11.
 # 
 # by meinside@gmail.com
 
@@ -23,9 +23,8 @@ function install_linux {
 
 		# install RVM for multi-users
 		echo -e "${YELLOW}>>> Installing RVM and Ruby for multi-users..${RESET}\n"
-		curl -#L https://get.rvm.io | sudo bash -s stable --autolibs=3 --ruby && \
-			sudo /usr/sbin/usermod -a -G rvm $USER && \
-			sudo chown root.rvm /etc/profile.d/rvm.sh
+		curl -#L https://get.rvm.io | bash -s stable --autolibs=3 --ruby && \
+			sudo /usr/sbin/usermod -a -G rvm $USER
 
 		# when stuck with permission problems, try:
 		# $ rvmsudo rvm fix-permissions system
