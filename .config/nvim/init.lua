@@ -3,21 +3,14 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.11.09.
+-- last update: 2021.11.11.
 
 ------------------------------------------------
 -- helpers
 --
 
-local cmd = vim.cmd  -- to execute Vim commands e.g. cmd('pwd')
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
-local scopes = {o = vim.o, b = vim.bo, w = vim.wo}
-
-local function opt(scope, key, value)
-  scopes[scope][key] = value
-  if scope ~= 'o' then scopes['o'][key] = value end
-end
 
 local function map(mode, lhs, rhs, opts)
   local options = {noremap = true}
@@ -107,19 +100,6 @@ local on_attach = function(client, bufnr)
     vim.api.nvim_exec([[
       autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()
     ]], false)
-  end
-end
-
-local t = function(str)
-  return vim.api.nvim_replace_termcodes(str, true, true, true)
-end
-
-local check_back_space = function()
-  local col = fn.col('.') - 1
-  if col == 0 or fn.getline('.'):sub(col, col):match('%s') then
-    return true
-  else
-    return false
   end
 end
 
@@ -265,7 +245,7 @@ require('packer').startup(function()
             if cmp.visible() == 1 then
               cmp.select_next_item()
             elseif luasnip.expand_or_jumpable() then
-              vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-expand-or-jump', true, true, true), '')
+              fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-expand-or-jump', true, true, true), '')
             else
               fallback()
             end
@@ -274,7 +254,7 @@ require('packer').startup(function()
             if cmp.visible() == 1 then
               cmp.select_prev_item()
             elseif luasnip.jumpable(-1) then
-              vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-jump-prev', true, true, true), '')
+              fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-jump-prev', true, true, true), '')
             else
               fallback()
             end
@@ -382,7 +362,7 @@ require('packer').startup(function()
   -- haskell
   use 'neovimhaskell/haskell-vim'
   use 'itchyny/vim-haskell-indent'
-  if vim.fn.executable('stylish-haskell') == 1 then
+  if fn.executable('stylish-haskell') == 1 then
     use 'alx741/vim-stylishask'
   end
 
