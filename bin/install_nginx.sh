@@ -23,7 +23,7 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2021.11.03.
+# last update: 2021.11.22.
 # 
 # by meinside@gmail.com
 
@@ -43,13 +43,14 @@ TEMP_DIR="/tmp"
 NGINX_VERSION="1.20.1"
 OPENSSL_VERSION="1.1.1g"
 ZLIB_VERSION="1.2.11"
-PCRE_VERSION="8.44"
+PCRE_VERSION="8.45"
 
 # source files
 NGINX_SRC_URL="https://github.com/nginx/nginx/archive/release-${NGINX_VERSION}.tar.gz"
 OPENSSL_SRC_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
 ZLIB_SRC_URL="http://www.zlib.net/zlib-${ZLIB_VERSION}.tar.gz"
-PCRE_SRC_URL="https://ftp.pcre.org/pub/pcre/pcre-${PCRE_VERSION}.tar.gz"
+#PCRE_SRC_URL="https://ftp.pcre.org/pub/pcre/pcre-${PCRE_VERSION}.tar.gz" # XXX: not working
+PCRE_SRC_URL="https://jaist.dl.sourceforge.net/project/pcre/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz"
 
 # extracted dirs
 NGINX_SRC_DIR="${TEMP_DIR}/nginx-release-${NGINX_VERSION}"
