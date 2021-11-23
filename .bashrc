@@ -1,7 +1,7 @@
 # My .bashrc file
 #
 # created on 2012.05.31.
-# updated on 2021.11.11.
+# updated on 2021.11.23.
 #
 # ... by meinside@gmail.com
 
@@ -102,7 +102,7 @@ if [[ -z $TMUX ]]; then
 
     # for Rust
     if [ -d "$HOME/.cargo/bin" ]; then
-        export PATH=$PATH:$HOME/.cargo/bin
+        . "$HOME/.cargo/env"
     fi
 
     # for Zig

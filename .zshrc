@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2021.11.11.
+# updated on 2021.11.23.
 #
 # ... by meinside@gmail.com
 #
@@ -136,7 +136,7 @@ if [[ -z $TMUX ]]; then
 
     # for Rust
     if [ -d "$HOME/.cargo/bin" ]; then
-        export PATH=$PATH:$HOME/.cargo/bin
+        . "$HOME/.cargo/env"
     fi
 
     # for Zig
