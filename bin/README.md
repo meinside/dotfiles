@@ -34,6 +34,10 @@ A script for installing [Docker](https://www.docker.com/).
 
 A script for installing [Earthly](https://earthly.dev/).
 
+## install_fennel.sh
+
+A script for installing [fennel](https://fennel-lang.org/setup#downloading-fennel).
+
 ## install_ffmpeg.sh
 
 A script for building and installing latest [ffmpeg](https://www.ffmpeg.org/).

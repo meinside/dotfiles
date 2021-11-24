@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.11.11.
+-- last update: 2021.11.24.
 
 ------------------------------------------------
 -- helpers
@@ -355,6 +355,10 @@ require('packer').startup(function()
   use 'Olical/conjure'
 
 
+  -- fennel
+  use 'bakpakin/fennel.vim'
+
+
   -- go
   use 'ray-x/go.nvim'
 
@@ -464,6 +468,7 @@ require('packer').startup(function()
       'bash',
       'c', 'clojure', 'cmake', 'comment', 'cpp', 'css',
       'dart', 'dockerfile',
+      'fennel',
       'go', 'gomod',
       'haskell', 'html',
       'java', 'javascript', 'jsdoc', 'json', 'json5', 'jsonc', 'julia',
@@ -506,6 +511,7 @@ require('packer').startup(function()
       \ 'c': v:true,
       \ 'clojure': v:true,
       \ 'css': v:true,
+      \ 'fennel': v:true,
       \ 'go': v:true,
       \ 'haskell': v:true,
       \ 'html': v:true,
