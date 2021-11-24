@@ -5,14 +5,14 @@
 #
 # then it will automatically  `go install` or `go get -u` all packages listed in this file(~/.gogets)
 #
-# last update: 2021.07.20.
+# last update: 2021.11.24.
 
 # official packages
 golang.org/x/tools/cmd/godoc
 
-# useful packages
+# useful packages/tools
 github.com/mailgun/godebug
-github.com/motemen/gore/cmd/gore
+github.com/x-motemen/gore/cmd/gore
 github.com/tcnksm/gotests
 github.com/google/gops
 
