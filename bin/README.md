@@ -66,6 +66,11 @@ A script for building and installing [neovim](https://neovim.io/).
 
 A script for installing sdk and sample codes for [raspberry pi pico](https://datasheets.raspberrypi.org/pico/getting-started-with-pico.pdf).
 
+
+## install_racket.sh
+
+A script for installing [racket](https://docs.racket-lang.org/racket-build-guide/build.html).
+
 ## install_ruby.sh
 
 A script for installing [rvm](https://rvm.io/) and [Ruby](https://www.ruby-lang.org/en/).

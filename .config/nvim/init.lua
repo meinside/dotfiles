@@ -371,6 +371,10 @@ require('packer').startup(function()
   end
 
 
+  -- racket
+  use 'wlangstroth/vim-racket'
+
+
   -- ruby
   use 'vim-ruby/vim-ruby'
 
@@ -399,6 +403,7 @@ require('packer').startup(function()
     'clojure_lsp',  -- $ brew install clojure-lsp/brew/clojure-lsp-native
     'gopls',  -- $ go install golang.org/x/tools/gopls@latest
     'solargraph',  -- $ gem install --user-install solargraph
+    'racket_langserver', -- $ raco pkg install racket-langserver
     'rust_analyzer'  -- $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer/ && cargo xtask install --server
   }
   for _, lsp in ipairs(lsp_servers) do
@@ -521,6 +526,7 @@ require('packer').startup(function()
       \ 'lua': v:true,
       \ 'python': v:true,
       \ 'objc': v:true,
+      \ 'racket': v:true,
       \ 'ruby': v:true,
       \ 'sh': v:true,
       \ 'swift': v:true,

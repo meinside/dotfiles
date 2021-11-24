@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2021.11.23.
+# updated on 2021.11.24.
 #
 # ... by meinside@gmail.com
 #
@@ -129,6 +129,11 @@ if [[ -z $TMUX ]]; then
     # for Node.js
     if [ -d /opt/node/bin ]; then
         export PATH=$PATH:/opt/node/bin
+    fi
+
+    # for Racket
+    if [ -d /opt/racket/bin ]; then
+        export PATH=$PATH:/opt/racket/bin
     fi
 
     # for Ruby (RVM)
