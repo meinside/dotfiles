@@ -28,7 +28,7 @@ function prep_linux {
 	# install essential packages
 	echo -e "${YELLOW}>>> Installing essential packages...${RESET}"
 
-	sudo apt-get install -y lua
+	sudo apt-get install -y lua5.1
 }
 
 # install
