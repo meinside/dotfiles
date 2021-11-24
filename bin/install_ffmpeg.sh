@@ -6,7 +6,7 @@
 #
 # (pass '--do-not-clean' argument for preserving files after install)
 # 
-# last update: 2021.09.10.
+# last update: 2021.11.24.
 # 
 # by meinside@gmail.com
 
@@ -53,7 +53,7 @@ function install {
 		--enable-libmp3lame \
 		--enable-libvorbis \
 		--enable-libopus
-	make -j4
+	make -j$(nproc)
 
 	# install
 	sudo make install

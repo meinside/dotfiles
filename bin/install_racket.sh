@@ -50,7 +50,7 @@ function build_and_install {
 
 	# build
 	cd "$SRC_DIR/" && \
-		make -j2 && \
+		make -j$(nproc) && \
 		sudo make unix-style PREFIX="$RACKET_DIR" && \
 		sudo chown -R "$USER" "$RACKET_DIR" && \
 		sudo ln -sfn "$RACKET_DIR" "$INSTALLATION_DIR/racket"
