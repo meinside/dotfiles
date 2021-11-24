@@ -30,7 +30,7 @@ function prep {
 	# install essential packages
 	echo -e "${YELLOW}>>> Installing essential packages...${RESET}"
 
-	sudo apt-get install -y git gcc libc6-dev libcairo2-dev libpango1.0-dev
+	sudo apt-get install -y git gcc libc6-dev libcairo2-dev libpango1.0-dev libjpeg62-dev
 }
 
 function clone_repo {
@@ -50,8 +50,7 @@ function build_and_install {
 
 	# build
 	cd "$SRC_DIR/" && \
-		make -j$(nproc) && \
-		sudo make unix-style PREFIX="$RACKET_DIR" && \
+		sudo make -j$(nproc) unix-style PREFIX="$RACKET_DIR" && \
 		sudo chown -R "$USER" "$RACKET_DIR" && \
 		sudo ln -sfn "$RACKET_DIR" "$INSTALLATION_DIR/racket"
 }
