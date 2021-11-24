@@ -30,10 +30,6 @@ A script for installing [JDK](https://www.azul.com/downloads/zulu-embedded/), [c
 
 A script for installing [Docker](https://www.docker.com/).
 
-## install_earthly.sh
-
-A script for installing [Earthly](https://earthly.dev/).
-
 ## install_fennel.sh
 
 A script for installing [fennel](https://fennel-lang.org/setup#downloading-fennel).
