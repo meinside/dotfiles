@@ -30,7 +30,7 @@ function prep {
 	# install essential packages
 	echo -e "${YELLOW}>>> Installing essential packages...${RESET}"
 
-	sudo apt-get install -y git gcc libc6-dev
+	sudo apt-get install -y git gcc libc6-dev libcairo2-dev libpango1.0-dev
 }
 
 function clone_repo {
