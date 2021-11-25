@@ -27,7 +27,7 @@ OPT_DIR="/opt"
 function install_linux {
 	if [ -z $TERMUX_VERSION ]; then
 		echo -e "${YELLOW}>>> installing essential packages ...${RESET}"
-		sudo apt-get install -y build-essential curl libffi-dev libffi7 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5 llvm stylish-haskell
+		sudo apt-get install -y build-essential curl libffi-dev libffi7 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5 llvm libnuma-dev stylish-haskell
 
 		echo -e "${YELLOW}>>> installing ghcup ...${RESET}"
 		curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
