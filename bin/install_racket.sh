@@ -5,7 +5,7 @@
 # Build and install Racket from the official repository.
 #
 # created on : 2021.11.24.
-# last update: 2021.11.24.
+# last update: 2021.11.25.
 #
 # by meinside@gmail.com
 
@@ -26,29 +26,35 @@ REPOSITORY="https://github.com/racket/racket.git"
 # XXX - edit for different version
 VERSION="8.3"
 
+# install essential packages
 function prep {
-	# install essential packages
 	echo -e "${YELLOW}>>> Installing essential packages...${RESET}"
 
-	sudo apt-get install -y git gcc libc6-dev libcairo2-dev libpango1.0-dev libjpeg62-dev
+	if [[ $(apt-cache search --names-only 'libjpeg62-turbo-dev') ]]; then
+		sudo apt-get install -y -m git gcc libc6-dev libcairo2-dev libpango1.0-dev libjpeg62-turbo-dev
+	elif [[ $(apt-cache search --names-only 'libjpeg62-dev') ]]; then
+		sudo apt-get install -y -m git gcc libc6-dev libcairo2-dev libpango1.0-dev libjpeg62-dev
+	else
+		sudo apt-get install -y -m git gcc libc6-dev libcairo2-dev libpango1.0-dev
+	fi
 }
 
+# clone the repository with the specified version
 function clone_repo {
 	echo -e "${YELLOW}>>> Cloning repository...(version: $VERSION)${RESET}"
 
 	SRC_DIR="$TEMP_DIR/racket-$VERSION"
 
-	# clone the repository
 	rm -rf "$SRC_DIR" && \
 		git clone -b "v$VERSION" "$REPOSITORY" "$SRC_DIR"
 }
 
+# build and install binaries
 function build_and_install {
 	echo -e "${YELLOW}>>> Building Racket...${RESET}"
 
 	RACKET_DIR="${INSTALLATION_DIR}/racket-${VERSION}"
 
-	# build
 	cd "$SRC_DIR/" && \
 		sudo make -j$(nproc) unix-style PREFIX="$RACKET_DIR" && \
 		sudo chown -R "$USER" "$RACKET_DIR" && \
