@@ -45,7 +45,7 @@ function clone_repo {
 
 	SRC_DIR="$TEMP_DIR/racket-$VERSION"
 
-	rm -rf "$SRC_DIR" && \
+	sudo rm -rf "$SRC_DIR" && \
 		git clone -b "v$VERSION" "$REPOSITORY" "$SRC_DIR"
 }
 
