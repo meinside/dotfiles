@@ -5,7 +5,7 @@
 # Install haskell and its tools.
 # 
 # created on : 2021.07.12.
-# last update: 2021.09.10.
+# last update: 2021.11.25.
 # 
 # by meinside@gmail.com
 
@@ -22,12 +22,11 @@ TMP_DIR="/tmp"
 OPT_DIR="/opt"
 
 # NOTE: working fine on x64 with Ubuntu 20.04 LTS
-# NOTE: fails to install hls and stack on Raspberry Pi 4 with Ubuntu 21.04 (updated: 2021.07.14.)
-# NOTE: totally fails on Raspberry Pi 4 with RPiOS 64bit beta (updated: 2021.07.14.)
+# NOTE: working fine on Raspberry Pi 4 (ARM64) with Raspberry Pi OS Bullseye (updated: 2021.11.25.)
 function install_linux {
 	if [ -z $TERMUX_VERSION ]; then
 		echo -e "${YELLOW}>>> installing essential packages ...${RESET}"
-		sudo apt-get install -y build-essential curl libffi-dev libffi7 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5 stylish-haskell
+		sudo apt-get install -y build-essential curl libffi-dev libffi7 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5 llvm stylish-haskell
 
 		echo -e "${YELLOW}>>> installing ghcup ...${RESET}"
 		curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
