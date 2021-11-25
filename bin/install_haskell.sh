@@ -22,7 +22,8 @@ TMP_DIR="/tmp"
 OPT_DIR="/opt"
 
 # NOTE: working fine on x64 with Ubuntu 20.04 LTS
-# NOTE: working fine on Raspberry Pi 4 (ARM64) with Raspberry Pi OS Bullseye (updated: 2021.11.25.)
+# NOTE: working fine on arm64 with Ubuntu 20.04 LTS (update: 2021.11.25.)
+# NOTE: working fine on Raspberry Pi 4 (arm64) with Raspberry Pi OS Bullseye (updated: 2021.11.25.)
 function install_linux {
 	if [ -z $TERMUX_VERSION ]; then
 		echo -e "${YELLOW}>>> installing essential packages ...${RESET}"
