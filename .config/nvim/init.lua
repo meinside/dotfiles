@@ -398,13 +398,22 @@ require('packer').startup(function()
   -- lsp settings
   local nvim_lsp = require('lspconfig')
   local lsp_servers = { -- language servers with default setup
-    'bashls', -- $ npm i -g bash-language-server
-    'ccls', -- $ brew install ccls
-    'clojure_lsp',  -- $ brew install clojure-lsp/brew/clojure-lsp-native
-    'gopls',  -- $ go install golang.org/x/tools/gopls@latest
-    'solargraph',  -- $ gem install --user-install solargraph
-    'racket_langserver', -- $ raco pkg install racket-langserver
-    'rust_analyzer'  -- $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer/ && cargo xtask install --server
+    -- $ npm i -g bash-language-server
+    'bashls',
+    -- $ brew install ccls
+    -- $ sudo apt install ccls
+    'ccls',
+    -- $ brew install clojure-lsp/brew/clojure-lsp-native
+    -- $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
+    'clojure_lsp',
+    -- $ go install golang.org/x/tools/gopls@latest
+    'gopls',
+    -- $ gem install --user-install solargraph
+    'solargraph',
+    -- $ raco pkg install racket-langserver
+    'racket_langserver',
+    -- $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer/ && cargo xtask install --server
+    'rust_analyzer'
   }
   for _, lsp in ipairs(lsp_servers) do
     nvim_lsp[lsp].setup {
