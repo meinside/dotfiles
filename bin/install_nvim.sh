@@ -4,22 +4,13 @@
 # 
 # for building neovim from source code
 #
-# last update: 2021.09.27.
+# last update: 2021.11.29.
 # 
 # by meinside@gmail.com
 
 # * To install nightly version:
 #
 # $ ./install_nvim.sh --nightly
-#
-# * Update alternatives with:
-#
-# $ sudo update-alternatives --install /usr/bin/vi vi /usr/local/bin/nvim 60
-# $ sudo update-alternatives --config vi
-# $ sudo update-alternatives --install /usr/bin/vim vim /usr/local/bin/nvim 60
-# $ sudo update-alternatives --config vim
-# $ sudo update-alternatives --install /usr/bin/editor editor /usr/local/bin/nvim 60
-# $ sudo update-alternatives --config editor
 
 # XXX - for making newly created files/directories less restrictive
 umask 0022
@@ -84,10 +75,20 @@ function install_macos {
 # $1: nightly or not
 function install_linux {
 	if [ -z $TERMUX_VERSION ]; then
-		prep && install $1 && clean
+		prep && install $1 && clean && update_alternatives
 	else  # termux
-		pkg install neovim
+		pkg install neovim && update_alternatives
 	fi
+}
+
+function update_alternatives {
+	NVIM_BIN_PATH="/usr/local/bin/nvim" && \
+		sudo update-alternatives --install /usr/bin/vi vi $NVIM_BIN_PATH 60 && \
+		sudo update-alternatives --set vi $NVIM_BIN_PATH && \
+		sudo update-alternatives --install /usr/bin/vim vim $NVIM_BIN_PATH 60 && \
+		sudo update-alternatives --set vim $NVIM_BIN_PATH && \
+		sudo update-alternatives --install /usr/bin/editor editor $NVIM_BIN_PATH 60 && \
+		sudo update-alternatives --set editor $NVIM_BIN_PATH
 }
 
 case "$OSTYPE" in
