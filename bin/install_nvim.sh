@@ -77,7 +77,7 @@ function install_linux {
 	if [ -z $TERMUX_VERSION ]; then
 		prep && install $1 && clean && update_alternatives
 	else  # termux
-		pkg install neovim && update_alternatives
+		pkg install neovim
 	fi
 }
 
