@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.11.27.
+-- last update: 2021.11.30.
 
 ------------------------------------------------
 -- helpers
@@ -191,6 +191,10 @@ require('packer').startup(function()
     'hoob3rt/lualine.nvim',
     requires = {'kyazdani42/nvim-web-devicons', opt = true}
   }
+
+
+  -- dim inactive window
+  use 'sunjon/shade.nvim'
 
 
   -- auto pair/close
@@ -393,6 +397,13 @@ require('packer').startup(function()
 
   -- ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ non-lazy `require` not allowed above ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑
   -- ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓      `use` not allowed below         ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
+
+
+  -- shade.nvim
+  require'shade'.setup({
+    overlay_opacity = 50,
+    opacity_step = 1
+  })
 
 
   -- lsp settings
