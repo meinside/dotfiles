@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2021.11.24.
+# updated on 2021.12.01.
 #
 # ... by meinside@gmail.com
 #
@@ -120,6 +120,11 @@ if [[ -z $TMUX ]]; then
 
     # for Haskell
     [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
+
+    # for Julia
+    if [ -d /opt/julia/bin ]; then
+        export PATH=$PATH:/opt/julia/bin
+    fi
 
     # for Lein (Clojure)
     export LEIN_JVM_OPTS=""

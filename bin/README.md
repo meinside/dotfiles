@@ -46,6 +46,10 @@ A script for building and installing [Golang](https://golang.org/).
 
 A script for installing [GHC](https://www.haskell.org/ghc/), [stack](https://github.com/commercialhaskell/stack), and [HLS](https://github.com/haskell/haskell-language-server).
 
+## install_julia.sh
+
+A script for installing [Julia](https://julialang.org/downloads/).
+
 ## install_mosh.sh
 
 A script for installing [mosh](https://github.com/mobile-shell/mosh/issues/928), for 24-bit colors' support.
