@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
 # install_nodejs.sh
-# 
+#
 # install pre-built Node.js (LTS) for Linux from: https://nodejs.org/dist
-# 
+#
 # created on : 2013.07.19.
-# last update: 2021.10.27.
-# 
+# last update: 2021.12.01.
+#
 # by meinside@gmail.com
 
 # XXX - for making newly created files/directories less restrictive
@@ -36,18 +36,14 @@ NODEJS_DIR="$INSTALLATION_DIR/`basename $FILENAME .tar.gz`"
 
 function install_linux {
 	if [ -z $TERMUX_VERSION ]; then
-		echo -e "${YELLOW}>>> downloading version $VERSION ...${RESET}"
-
-		wget "$DOWNLOAD_PATH" -P "$TEMP_DIR"
-
-		echo -e "${YELLOW}>>> extracting to: $NODEJS_DIR ...${RESET}"
-
-		sudo mkdir -p "$INSTALLATION_DIR"
-		sudo tar -xzvf "$TEMP_DIR/$FILENAME" -C "$INSTALLATION_DIR"
-		sudo chown -R $USER "$NODEJS_DIR"
-		sudo ln -sfn "$NODEJS_DIR" "$INSTALLATION_DIR/node"
-
-		echo -e "${GREEN}>>> nodejs v$VERSION was installed at: $NODEJS_DIR ${RESET}"
+		echo -e "${YELLOW}>>> downloading version $VERSION ...${RESET}" && \
+			wget "$DOWNLOAD_PATH" -P "$TEMP_DIR" && \
+			echo -e "${YELLOW}>>> extracting to: $NODEJS_DIR ...${RESET}" && \
+			sudo mkdir -p "$INSTALLATION_DIR" && \
+			sudo tar -xzvf "$TEMP_DIR/$FILENAME" -C "$INSTALLATION_DIR" && \
+			sudo chown -R $USER "$NODEJS_DIR" && \
+			sudo ln -sfn "$NODEJS_DIR" "$INSTALLATION_DIR/node" && \
+			echo -e "${GREEN}>>> nodejs v$VERSION was installed at: $NODEJS_DIR ${RESET}"
 	else  # termux
 		pkg install nodejs
 	fi
