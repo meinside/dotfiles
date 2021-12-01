@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.11.30.
+-- last update: 2021.12.01.
 
 ------------------------------------------------
 -- helpers
@@ -227,6 +227,7 @@ require('packer').startup(function()
       local cmp = require'cmp'
       local luasnip = require'luasnip'
       local lspkind = require'lspkind'
+
       cmp.setup {
         completion = {
           completeopt = 'menuone,noselect'
@@ -245,24 +246,24 @@ require('packer').startup(function()
             behavior = cmp.ConfirmBehavior.Replace,
             select = true,
           },
-          ['<Tab>'] = function(fallback)
+          ['<Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() == 1 then
               cmp.select_next_item()
             elseif luasnip.expand_or_jumpable() then
-              fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-expand-or-jump', true, true, true), '')
+              luasnip.expand_or_jump()
             else
               fallback()
             end
-          end,
-          ['<S-Tab>'] = function(fallback)
+          end, { 'i', 's' }),
+          ['<S-Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() == 1 then
               cmp.select_prev_item()
             elseif luasnip.jumpable(-1) then
-              fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-jump-prev', true, true, true), '')
+              luasnip.jump(-1)
             else
               fallback()
             end
-          end,
+          end, { 'i', 's' }),
         },
         sources = {
           { name = 'nvim_lsp' },
