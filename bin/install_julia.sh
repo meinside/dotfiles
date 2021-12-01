@@ -39,6 +39,10 @@ INSTALLATION_DIR="/opt"
 JULIA_DIR="$INSTALLATION_DIR/julia-${VERSION}"
 
 function install_linux {
+	if [ -n $TERMUX_VERSION ]; then
+		TEMP_DIR="$PREFIX/tmp"
+	fi
+
 	echo -e "${YELLOW}>>> downloading version $VERSION ...${RESET}" && \
 		wget "$DOWNLOAD_PATH" -P "$TEMP_DIR" && \
 		echo -e "${YELLOW}>>> extracting to: $JULIA_DIR ...${RESET}" && \
