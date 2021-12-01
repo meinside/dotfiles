@@ -420,12 +420,14 @@ require('packer').startup(function()
     'clojure_lsp',
     -- $ go install golang.org/x/tools/gopls@latest
     'gopls',
-    -- $ gem install --user-install solargraph
-    'solargraph',
+    -- $ julia --project=~/.julia/environments/nvim-lspconfig -e 'using Pkg; Pkg.add("LanguageServer")'
+    'julials',
     -- $ raco pkg install racket-langserver
     'racket_langserver',
     -- $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer/ && cargo xtask install --server
-    'rust_analyzer'
+    'rust_analyzer',
+    -- $ gem install --user-install solargraph
+    'solargraph',
   }
   for _, lsp in ipairs(lsp_servers) do
     nvim_lsp[lsp].setup {
@@ -436,13 +438,14 @@ require('packer').startup(function()
   -- other language servers for custom setup
   -- (haskell)
   nvim_lsp['hls'].setup {
-    cmd = { 'haskell-language-server-wrapper', '--lsp' };
     on_attach = on_attach;
+    capabilities = capabilities;
   }
   -- (zig)
   nvim_lsp['zls'].setup {
     cmd = { '/opt/zls/zig-out/bin/zls' };
     on_attach = on_attach;
+    capabilities = capabilities;
   }
   -- lsp_signature
   require'lsp_signature'.setup({

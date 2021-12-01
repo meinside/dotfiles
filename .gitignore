@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2021.09.24.
+# last update: 2021.12.01.
 
 # unnecessary binary files
 *.o
@@ -92,11 +92,17 @@ snap/
 .cabal/
 .ghc/
 .ghcup/
+.hoogle/
 .stack/
 
 # java files/dirs
 .gradle/
 .m2/
+.oracle_jre_usage/
+
+
+# julia files/dirs
+.julia/
 
 # node.js files/dirs
 .babel.json
@@ -195,12 +201,10 @@ mbox
 .Genymobile/
 .ghidra/
 .heroku/
-.hoogle/
 .htoprc
 .httpie/
 .ipfs/
 .itmstransporter/
-.julia/
 .keras/
 .lesshst
 .lnav/
@@ -209,7 +213,6 @@ mbox
 .mitmproxy/
 .netrc
 .ngrok2/
-.oracle_jre_usage/
 .plotly/
 .putty/
 .RData
@@ -224,10 +227,7 @@ mbox
 .vim/
 .viminfo
 .vimrc.lowperf
-.vscode/
-.vscode-insiders/
-.vscode-server/
-.vscode-server-insiders/
+.vscode*/
 .w3m/
 .wireshark-etc/
 .wireshark/
