@@ -39,18 +39,18 @@ INSTALLATION_DIR="/opt"
 JULIA_DIR="$INSTALLATION_DIR/julia-${VERSION}"
 
 function install_linux {
-	if [ -n $TERMUX_VERSION ]; then
-		TEMP_DIR="$PREFIX/tmp"
+	if [ -z $TERMUX_VERSION ]; then
+		echo -e "${YELLOW}>>> downloading version $VERSION ...${RESET}" && \
+			wget "$DOWNLOAD_PATH" -P "$TEMP_DIR" && \
+			echo -e "${YELLOW}>>> extracting to: $JULIA_DIR ...${RESET}" && \
+			sudo mkdir -p "$INSTALLATION_DIR" && \
+			sudo tar -xzvf "$TEMP_DIR/$FILENAME" -C "$INSTALLATION_DIR" && \
+			sudo chown -R $USER "$JULIA_DIR" && \
+			sudo ln -sfn "$JULIA_DIR" "$INSTALLATION_DIR/julia" && \
+			echo -e "${GREEN}>>> julia v$VERSION was installed at: $JULIA_DIR ${RESET}"
+	else # termux
+		echo "* Termux not supported yet."
 	fi
-
-	echo -e "${YELLOW}>>> downloading version $VERSION ...${RESET}" && \
-		wget "$DOWNLOAD_PATH" -P "$TEMP_DIR" && \
-		echo -e "${YELLOW}>>> extracting to: $JULIA_DIR ...${RESET}" && \
-		sudo mkdir -p "$INSTALLATION_DIR" && \
-		sudo tar -xzvf "$TEMP_DIR/$FILENAME" -C "$INSTALLATION_DIR" && \
-		sudo chown -R $USER "$JULIA_DIR" && \
-		sudo ln -sfn "$JULIA_DIR" "$INSTALLATION_DIR/julia" && \
-		echo -e "${GREEN}>>> julia v$VERSION was installed at: $JULIA_DIR ${RESET}"
 }
 
 function install_macos {
