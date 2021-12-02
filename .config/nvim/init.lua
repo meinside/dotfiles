@@ -54,6 +54,7 @@ local on_attach = function(client, bufnr)
     virtual_text = false,
     signs = true,
     severity_sort = true,
+    update_in_insert = false,
   })
   fn.sign_define('DiagnosticSignError', { text = '✗', texthl = 'DiagnosticSignError' })
   fn.sign_define('DiagnosticSignWarn', { text = '!', texthl = 'DiagnosticSignWarn' })
