@@ -27,7 +27,7 @@ local on_attach = function(client, bufnr)
   buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   -- Mappings.
-  local opts = { noremap=true, silent=true }
+  local opts = { noremap = true, silent = true }
 
   -- See `:help vim.lsp.*` for documentation on any of the below functions
   buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
@@ -43,18 +43,22 @@ local on_attach = function(client, bufnr)
   --buf_set_keymap('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   buf_set_keymap('n', '<leader>ca', '<cmd>CodeActionMenu<CR>', opts)
   --buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<leader>ll', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', '<leader>ll', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
   buf_set_keymap("n", "<leader>fo", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 
-  -- LSP Enable diagnostics
-  vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-    virtual_text = true,
-    underline = true,
+  -- diagnostics configuration
+  vim.diagnostic.config({
+    underline = false,
+    virtual_text = false,
     signs = true,
-    update_in_insert = false
+    severity_sort = true,
   })
+  fn.sign_define('DiagnosticSignError', { text = '✗', texthl = 'DiagnosticSignError' })
+  fn.sign_define('DiagnosticSignWarn', { text = '!', texthl = 'DiagnosticSignWarn' })
+  fn.sign_define('DiagnosticSignInformation', { text = '', texthl = 'DiagnosticSignInfo' })
+  fn.sign_define('DiagnosticSignHint', { text = '', texthl = 'DiagnosticSignHint' })
 
   -- LSP capabilities
   local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -74,31 +78,24 @@ local on_attach = function(client, bufnr)
     },
   }
 
-  -- Send diagnostics to quickfix list
-  do
-    local method = "textDocument/publishDiagnostics"
-    local default_handler = vim.lsp.handlers[method]
-    vim.lsp.handlers[method] = function(err, method, result, client_id, bufnr, config)
-      default_handler(err, method, result, client_id, bufnr, config)
-      local diagnostics = vim.lsp.diagnostic.get_all()
-      local qflist = {}
-      for bufnr, diagnostic in pairs(diagnostics) do
-        for _, d in ipairs(diagnostic) do
-          d.bufnr = bufnr
-          d.lnum = d.range.start.line + 1
-          d.col = d.range.start.character + 1
-          d.text = d.message
-          table.insert(qflist, d)
-        end
-      end
-      vim.lsp.util.set_qflist(qflist)
-    end
-  end
-
   -- auto formatting on save
   if client.resolved_capabilities.document_formatting then
     vim.api.nvim_exec([[
       autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()
+    ]], false)
+  end
+
+  -- highlight current variable
+  if client.resolved_capabilities.document_highlight then
+    vim.api.nvim_exec([[
+      hi link LspReferenceRead Visual
+      hi link LspReferenceText Visual
+      hi link LspReferenceWrite Visual
+      augroup lsp_document_highlight
+        autocmd! * <buffer>
+        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+      augroup END
     ]], false)
   end
 end
@@ -191,10 +188,6 @@ require('packer').startup(function()
     'hoob3rt/lualine.nvim',
     requires = {'kyazdani42/nvim-web-devicons', opt = true}
   }
-
-
-  -- dim inactive window
-  use 'sunjon/shade.nvim'
 
 
   -- auto pair/close
@@ -400,13 +393,6 @@ require('packer').startup(function()
   -- ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓      `use` not allowed below         ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
 
 
-  -- shade.nvim
-  require'shade'.setup({
-    overlay_opacity = 50,
-    opacity_step = 1
-  })
-
-
   -- lsp settings
   local nvim_lsp = require('lspconfig')
   local lsp_servers = { -- language servers with default setup
@@ -456,7 +442,7 @@ require('packer').startup(function()
   })
   -- diagnostics
   vim.api.nvim_exec([[
-    autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()
+    autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false, close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' }, border = 'rounded', source = 'always', prefix = ' ' })
   ]], false)
 
 
