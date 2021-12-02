@@ -128,6 +128,10 @@ require('packer').startup(function()
   use 'projekt0n/github-nvim-theme'
 
 
+  -- dim inactive window
+  use 'blueyed/vim-diminactive'
+
+
   -- show key bindings
   use {
     'folke/which-key.nvim',
