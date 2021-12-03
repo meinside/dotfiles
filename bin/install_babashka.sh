@@ -6,18 +6,11 @@
 # (https://github.com/babashka/babashka#installation)
 #
 # created on : 2021.03.31.
-# last update: 2021.09.10.
+# last update: 2021.12.03.
 #
 # by meinside@gmail.com
 
-# XXX - for making newly created files/directories less restrictive
-umask 0022
-
-# colors
-RED="\033[0;31m"
-GREEN="\033[0;32m"
-YELLOW="\033[0;33m"
-RESET="\033[0m"
+source ./common.sh
 
 INSTALLATION_DIR="/opt"
 
@@ -34,13 +27,13 @@ function install_linux {
 			curl https://raw.githubusercontent.com/babashka/babashka/master/install -sSf | \
 			sudo bash -s -- --dir $BB_DIR
 	else  # termux
-		echo -e "${RED}* babashka doesn't support termux yet.${RESET}"
+		error "* termux not supported yet."
 	fi
 }
 
 case "$OSTYPE" in
 	darwin*) install_macos ;;
 	linux*) install_linux ;;
-	*) echo "* Unsupported os type: $OSTYPE" ;;
+	*) error "* not supported yet: $OSTYPE" ;;
 esac
 

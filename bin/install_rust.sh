@@ -11,28 +11,27 @@
 # $ cargo xtask install --server
 #
 # created on : 2019.02.18.
-# last update: 2021.09.10.
+# last update: 2021.12.03.
 # 
 # by meinside@gmail.com
 
-# XXX - for making newly created files/directories less restrictive
-umask 0022
+source ./common.sh
 
 function install_linux {
-	if [ -z $TERMUX_VERSION ]; then
-		curl https://sh.rustup.rs -sSf | sh
-	else  # termux
-		pkg install rust
-	fi
+    if [ -z $TERMUX_VERSION ]; then
+	curl https://sh.rustup.rs -sSf | sh
+    else  # termux
+	pkg install rust
+    fi
 }
 
 function install_macos {
-	brew install rustup-init
+    brew install rustup-init
 }
 
 case "$OSTYPE" in
-	darwin*) install_macos ;;
-	linux*) install_linux ;;
-	*) echo "* Unsupported os type: $OSTYPE" ;;
+    darwin*) install_macos ;;
+    linux*) install_linux ;;
+    *) error "* not supported yet: $OSTYPE" ;;
 esac
 

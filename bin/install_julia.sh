@@ -5,18 +5,11 @@
 # install pre-built Julia (https://julialang.org/downloads/)
 #
 # created on : 2021.12.01.
-# last update: 2021.12.01.
+# last update: 2021.12.03.
 #
 # by meinside@gmail.com
 
-# XXX - for making newly created files/directories less restrictive
-umask 0022
-
-# colors
-RED="\033[0;31m"
-GREEN="\033[0;32m"
-YELLOW="\033[0;33m"
-RESET="\033[0m"
+source ./common.sh
 
 # XXX - edit these for other versions
 VERSION="1.7.0"
@@ -40,16 +33,16 @@ JULIA_DIR="$INSTALLATION_DIR/julia-${VERSION}"
 
 function install_linux {
 	if [ -z $TERMUX_VERSION ]; then
-		echo -e "${YELLOW}>>> downloading version $VERSION ...${RESET}" && \
+		warn ">>> downloading version $VERSION..." && \
 			wget "$DOWNLOAD_PATH" -P "$TEMP_DIR" && \
-			echo -e "${YELLOW}>>> extracting to: $JULIA_DIR ...${RESET}" && \
+			warn ">>> extracting to: $JULIA_DIR..." && \
 			sudo mkdir -p "$INSTALLATION_DIR" && \
 			sudo tar -xzvf "$TEMP_DIR/$FILENAME" -C "$INSTALLATION_DIR" && \
 			sudo chown -R $USER "$JULIA_DIR" && \
 			sudo ln -sfn "$JULIA_DIR" "$INSTALLATION_DIR/julia" && \
-			echo -e "${GREEN}>>> julia v$VERSION was installed at: $JULIA_DIR ${RESET}"
+			info ">>> julia v$VERSION was installed at: $JULIA_DIR"
 	else # termux
-		echo "* Termux not supported yet."
+		error "* termux not supported yet."
 	fi
 }
 
@@ -60,5 +53,5 @@ function install_macos {
 case "$OSTYPE" in
 	darwin*) install_macos ;;
 	linux*) install_linux ;;
-	*) echo "* Unsupported os type: $OSTYPE" ;;
+	*) error "* not supported yet: $OSTYPE" ;;
 esac

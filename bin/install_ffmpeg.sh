@@ -6,12 +6,11 @@
 #
 # (pass '--do-not-clean' argument for preserving files after install)
 # 
-# last update: 2021.11.24.
+# last update: 2021.12.03.
 # 
 # by meinside@gmail.com
 
-# XXX - for making newly created files/directories less restrictive
-umask 0022
+source ./common.sh
 
 # https://github.com/FFmpeg/FFmpeg/tags
 FFMPEG_VERSION="n4.3" # XXX - update this
@@ -67,10 +66,10 @@ function install_linux {
 		if [[ $1 != '--do-not-clean' ]]; then
 			clean
 		else
-			echo ">>> ffmpeg files remain in $TMP_DIR"
+			warn ">>> ffmpeg files remain in $TMP_DIR"
 		fi
 	else  # termux
-		echo -e "${RED}* ffmpeg doesn't support termux yet.${RESET}"
+		error "* termux not supported yet."
 	fi
 }
 
@@ -81,6 +80,6 @@ function install_macos {
 case "$OSTYPE" in
 	darwin*) install_macos ;;
 	linux*) install_linux ;;
-	*) echo "* Unsupported os type: $OSTYPE" ;;
+	*) error "* not supported yet: $OSTYPE" ;;
 esac
 

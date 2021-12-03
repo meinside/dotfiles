@@ -5,18 +5,11 @@
 # Install haskell and its tools.
 # 
 # created on : 2021.07.12.
-# last update: 2021.11.25.
+# last update: 2021.12.03.
 # 
 # by meinside@gmail.com
 
-# XXX - for making newly created files/directories less restrictive
-umask 0022
-
-# colors
-RED="\033[0;31m"
-GREEN="\033[0;32m"
-YELLOW="\033[0;33m"
-RESET="\033[0m"
+source ./common.sh
 
 TMP_DIR="/tmp"
 OPT_DIR="/opt"
@@ -26,21 +19,21 @@ OPT_DIR="/opt"
 # NOTE: working fine on Raspberry Pi 4 (arm64) with Raspberry Pi OS Bullseye (updated: 2021.11.25.)
 function install_linux {
 	if [ -z $TERMUX_VERSION ]; then
-		echo -e "${YELLOW}>>> installing essential packages ...${RESET}"
+		warn ">>> installing essential packages..."
 		sudo apt-get install -y build-essential curl libffi-dev libffi7 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5 llvm libnuma-dev stylish-haskell
 
-		echo -e "${YELLOW}>>> installing ghcup ...${RESET}"
+		warn ">>> installing ghcup..."
 		curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
 	else  # termux
-		echo -e "${RED}* haskell doesn't support termux yet.${RESET}"
+		error "* termux not supported yet."
 	fi
 }
 
 function install_macos {
-	echo -e "${YELLOW}>>> installing ghcup ...${RESET}"
+	warn ">>> installing ghcup..."
 	curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
 
-	echo -e "${YELLOW}>>> installing stylish-haskell ...${RESET}"
+	warn ">>> installing stylish-haskell..."
 	LATEST_ZIP=`curl -s "https://api.github.com/repos/haskell/stylish-haskell/releases" | grep "https" | grep "darwin" | grep "$PLATFORM" | cut -d \" -f4 | head -n 1`
 	STYLISH_HASKELL_BIN="$HOME/.ghcup/bin/stylish-haskell"
 	DOWNLOADED_ZIP="$STYLISH_HASKELL_BIN".zip
@@ -53,6 +46,6 @@ function install_macos {
 case "$OSTYPE" in
 	darwin*) install_macos ;;
 	linux*) install_linux ;;
-	*) echo "* Unsupported os type: $OSTYPE" ;;
+	*) error "* not supported yet: $OSTYPE" ;;
 esac
 

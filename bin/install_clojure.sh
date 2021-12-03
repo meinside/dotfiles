@@ -6,18 +6,11 @@
 #
 # (https://clojure.org/guides/getting_started#_installation_on_linux)
 # 
-# last update: 2021.10.25.
+# last update: 2021.12.03.
 # 
 # by meinside@gmail.com
 
-# XXX - for making newly created files/directories less restrictive
-umask 0022
-
-# colors
-RED="\033[0;31m"
-GREEN="\033[0;32m"
-YELLOW="\033[0;33m"
-RESET="\033[0m"
+source ./common.sh
 
 CLOJURE_VERSION="1.10.3.986"	# XXX - change clojure version
 
@@ -39,13 +32,13 @@ case "$PLATFORM" in
 	arm64|aarch64) ZULU_EMBEDDED_VERSION="zulu11.52.13-ca-jdk11.0.13-linux_aarch64" ;;
 	armv7*) ZULU_EMBEDDED_VERSION="zulu11.50.19-ca-jdk11.0.12-linux_aarch32hf" ;;
 	x86*) ZULU_EMBEDDED_VERSION="" ;;
-	*) echo "* Unsupported platform: $PLATFORM"; exit 1 ;;
+	*) error "* unsupported platform: $PLATFORM"; exit 1 ;;
 esac
 ZULU_EMBEDDED_TGZ="http://cdn.azul.com/zulu-embedded/bin/${ZULU_EMBEDDED_VERSION}.tar.gz"
 
 function install_zulu_jdk {
 	if [ -x  "${JDK_DIR}/${ZULU_EMBEDDED_VERSION}/bin/javac" ]; then
-		echo -e "${YELLOW}>>> JDK already installed at: ${JDK_DIR}/${ZULU_EMBEDDED_VERSION}${RESET}"
+		warn ">>> JDK already installed at: ${JDK_DIR}/${ZULU_EMBEDDED_VERSION}"
 		return 0
 	fi
 
@@ -56,7 +49,7 @@ function install_zulu_jdk {
 		sudo tar -xzvf "${ZULU_EMBEDDED_VERSION}.tar.gz" && \
 		sudo update-alternatives --install /usr/bin/java java ${JDK_DIR}/${ZULU_EMBEDDED_VERSION}/bin/java 181 && \
 		sudo update-alternatives --install /usr/bin/javac javac ${JDK_DIR}/${ZULU_EMBEDDED_VERSION}/bin/javac 181 && \
-		echo -e "${GREEN}>>> Installed JDK at: ${JDK_DIR}/${ZULU_EMBEDDED_VERSION}${RESET}"
+		info ">>> installed JDK at: ${JDK_DIR}/${ZULU_EMBEDDED_VERSION}"
 }
 
 function install_openjdk {
@@ -72,18 +65,18 @@ function prep {
 
 function install_clojure {
 	if [ -x "${CLOJURE_BIN}" ]; then
-		echo -e "${YELLOW}>>> clojure already installed at: ${CLOJURE_BIN}${RESET}"
+		warn ">>> clojure already installed at: ${CLOJURE_BIN}"
 		return 0
 	fi
 
 	sudo apt-get -y install rlwrap && \
 		wget -O - ${CLOJURE_INSTALL_SCRIPT} | sudo bash && \
-		echo -e "${GREEN}>>> ${CLOJURE_BIN} was installed.${RESET}"
+		info ">>> ${CLOJURE_BIN} was installed."
 }
 
 function install_leiningen {
 	if [ -x "${LEIN_BIN}" ]; then
-		echo -e "${YELLOW}>>> leiningen already installed at: ${LEIN_BIN}${RESET}"
+		warn ">>> leiningen already installed at: ${LEIN_BIN}"
 		return 0
 	fi
 
@@ -91,7 +84,7 @@ function install_leiningen {
 	sudo wget "$LEIN_SRC" -O "$LEIN_BIN" && \
 		sudo chown $USER.$USER "$LEIN_BIN" && \
 		sudo chmod uog+x "$LEIN_BIN" && \
-		echo -e "${GREEN}>>> ${LEIN_BIN} was installed.${RESET}"
+		info ">>> ${LEIN_BIN} was installed."
 }
 
 function clean {
@@ -102,7 +95,7 @@ function install_linux {
 	if [ -z $TERMUX_VERSION ]; then
 		prep && install_clojure && install_leiningen && clean
 	else  # termux
-		echo -e "${RED}* clojure doesn't support termux yet.${RESET}"
+		error "* termux not supported yet."
 	fi
 }
 
@@ -116,6 +109,6 @@ function install_macos {
 case "$OSTYPE" in
 	darwin*) install_macos ;;
 	linux*) install_linux ;;
-	*) echo "* Unsupported os type: $OSTYPE" ;;
+	*) error "* not supported yet: $OSTYPE" ;;
 esac
 

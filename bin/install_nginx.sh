@@ -23,18 +23,11 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2021.11.22.
+# last update: 2021.12.03.
 # 
 # by meinside@gmail.com
 
-# XXX - for making newly created files/directories less restrictive
-umask 0022
-
-# colors
-RED="\033[0;31m"
-GREEN="\033[0;32m"
-YELLOW="\033[0;33m"
-RESET="\033[0m"
+source ./common.sh
 
 # temporary directory
 TEMP_DIR="/tmp"
@@ -66,10 +59,10 @@ NGINX_SITES_DIR="/etc/nginx/sites-enabled"
 NGINX_SERVICE_FILE="/lib/systemd/system/nginx.service"
 
 function prep {
-    echo -e "${YELLOW}>>> Preparing for essential libraries...${RESET}"
+    warn ">>> preparing for essential libraries..."
 
     # openssl: download and unzip
-    echo -e "${YELLOW}>>> Downloading OpenSSL...${RESET}"
+    warn ">>> downloading OpenSSL..."
     url=$OPENSSL_SRC_URL
     file=`basename $url`
     cd $TEMP_DIR && \
@@ -77,7 +70,7 @@ function prep {
 	tar -xzvf $file
 
     # zlib: download and unzip
-    echo -e "${YELLOW}>>> Downloading Zlib...${RESET}"
+    warn ">>> downloading Zlib..."
     url=$ZLIB_SRC_URL
     file=`basename $url`
     cd $TEMP_DIR && \
@@ -85,7 +78,7 @@ function prep {
 	tar -xzvf $file
 
     # pcre: download and unzip
-    echo -e "${YELLOW}>>> Downloading PCRE...${RESET}"
+    warn ">>> downloading PCRE..."
     url=$PCRE_SRC_URL
     file=`basename $url`
     cd $TEMP_DIR && \
@@ -103,7 +96,7 @@ function build {
 	cd $NGINX_SRC_DIR
 
     # configure,
-    echo -e "${YELLOW}>>> Configuring Nginx...${RESET}"
+    warn ">>> configuring nginx..."
     ./auto/configure \
 	--user=www-data \
 	--group=www-data \
@@ -123,18 +116,18 @@ function build {
 	--with-zlib="${ZLIB_SRC_DIR}"
 
     # make
-    echo -e "${YELLOW}>>> Building Nginx...${RESET}"
+    warn ">>> building nginx..."
     make
 
     # make install
-    echo -e "${YELLOW}>>> Installing...${RESET}"
+    warn ">>> installing..."
     sudo make install
 }
 
 function configure {
     # create sample sites
     sudo mkdir -p "$NGINX_SITES_DIR"
-    echo -e "${YELLOW}>>> Creating sample site files in $NGINX_SITES_DIR/ ...${RESET}"
+    warn ">>> creating sample site files in $NGINX_SITES_DIR/ ..."
     sudo bash -c "cat > $NGINX_SITES_DIR/example.com" <<EOF
 # An example for a reverse-proxy (http://localhost:8080 => https://example.com:443)
 #
@@ -194,7 +187,7 @@ EOF
     #
     # https://www.nginx.com/resources/wiki/start/topics/examples/systemd/
     if [ ! -e $NGINX_SERVICE_FILE ]; then
-	echo -e "${YELLOW}>>> Creating systemd service file: ${NGINX_SERVICE_FILE}...${RESET}"
+	warn ">>> creating systemd service file: ${NGINX_SERVICE_FILE}..."
 
 	sudo bash -c "cat > $NGINX_SERVICE_FILE" <<EOF
 [Unit]
@@ -218,7 +211,7 @@ EOF
 }
 
 function clean {
-    echo -e "${YELLOW}>>> Cleaning...${RESET}"
+    warn ">>> cleaning..."
 
     # delete files
     cd $TEMP_DIR
@@ -239,6 +232,6 @@ function install_linux {
 
 case "$OSTYPE" in
     linux*) install_linux ;;
-    *) echo "* Unsupported os type: $OSTYPE" ;;
+    *) error "* not supported yet: $OSTYPE" ;;
 esac
 

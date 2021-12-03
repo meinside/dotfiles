@@ -6,7 +6,7 @@
 #
 # (https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh)
 # 
-# last update: 2021.10.15.
+# last update: 2021.12.03.
 # 
 # by meinside@gmail.com
 
@@ -16,6 +16,18 @@ GREEN="\033[0;32m"
 YELLOW="\033[0;33m"
 RESET="\033[0m"
 
+# functions for pretty-printing
+function error {
+	echo -e "${RED}$1${RESET}"
+}
+function info {
+	echo -e "${GREEN}$1${RESET}"
+}
+function warn {
+	echo -e "${YELLOW}$1${RESET}"
+}
+
+# check if it is me!
 if [ `whoami` == 'meinside' ]; then
 	REPOSITORY="git@github.com:meinside/dotfiles.git"
 else
@@ -23,7 +35,8 @@ else
 fi
 TMP_DIR="$HOME/configs.tmp"
 
-echo -e "${GREEN}>>> This script will setup several things for you...${RESET}\n"
+info ">>> this script will setup several things for you..."
+info
 
 # authenticate for sudo if needed
 if [ -z $TERMUX_VERSION ]; then  # not in termux
@@ -44,7 +57,7 @@ function pull_configs {
 }
 
 function check_git {
-	echo -e "${YELLOW}>>> Checking git...${RESET}"
+	warn ">>> checking git..."
 
 	case "$OSTYPE" in
 		linux*) check_git_linux ;;
@@ -53,7 +66,7 @@ function check_git {
 
 function check_git_linux {
 	if ! which git > /dev/null; then
-		echo -e "${YELLOW}>>> Installing git...${RESET}"
+		warning ">>> installing git..."
 
 		if [ -z $TERMUX_VERSION ]; then
 			sudo apt-get update
@@ -65,12 +78,12 @@ function check_git_linux {
 }
 
 function install_packages {
-	echo -e "${YELLOW}>>> Installing other essential packages...${RESET}"
+	warn ">>> installing other essential packages..."
 
 	case "$OSTYPE" in
 		darwin*) install_packages_macos ;;
 		linux*) install_packages_linux ;;
-		*) echo "* Unsupported os type: $OSTYPE" ;;
+		*) echo "* not supported yet: $OSTYPE" ;;
 	esac
 }
 
@@ -91,7 +104,7 @@ function install_packages_macos {
 }
 
 function cleanup {
-	echo -e "${YELLOW}>>> Cleaning up...${RESET}"
+	warn ">>> cleaning up..."
 
 	case "$OSTYPE" in
 		linux*) cleanup_linux ;;
@@ -109,24 +122,24 @@ function show_guide {
 	case "$OSTYPE" in
 		darwin*) show_guide_macos ;;
 		linux*) show_guide_linux ;;
-		*) echo "* Unsupported os type: $OSTYPE" ;;
+		*) error "* not supported yet: $OSTYPE" ;;
 	esac
 }
 
 function show_guide_linux {
-	echo
-	echo -e "${RED}*** NOTICE: logout, and login again for reloading configs ***${RESET}"
-	echo
+	error
+	error "*** NOTICE: logout, and login again for reloading configs ***"
+	error
 }
 
 function show_guide_macos {
-	echo
-	echo -e "${RED}*** Logout, and login again for reloading configs ***${RESET}"
-	echo
-	echo -e "${GREEN}For installing brew bundles: ${RESET}"
-	echo -e "${GREEN}  $ brew tap Homebrew/bundle ${RESET}"
-	echo -e "${GREEN}  $ brew bundle ${RESET}"
-	echo
+	error
+	error "*** logout, and login again for reloading configs ***"
+	error
+	info "for installing brew bundles:"
+	info "  $ brew tap Homebrew/bundle"
+	info "  $ brew bundle"
+	info
 }
 
 pull_configs && \
