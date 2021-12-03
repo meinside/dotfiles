@@ -250,13 +250,7 @@ require('packer').startup(function()
             elseif luasnip.expand_or_jumpable() then
               luasnip.expand_or_jump()
             else
-              -- for copilot's tab completion
-              local copilot_keys = fn["copilot#Accept"]()
-              if copilot_keys ~= "" then
-                  vim.api.nvim_feedkeys(copilot_keys, 'i', true)
-              else
-                  fallback()
-              end
+              fallback()
             end
           end, { 'i', 's' }),
           ['<S-Tab>'] = cmp.mapping(function(fallback)
@@ -549,11 +543,10 @@ require('packer').startup(function()
   }
 
 
-  -- github copilot settings
-  g['copilot_no_tab_map'] = true
-  g['copilot_assume_mapped'] = true
-  g['copilot_tab_fallback'] = true
+  -- github copilot settings (ctrl+L for applying)
   vim.api.nvim_exec([[
+    imap <silent><script><expr> <C-L> copilot#Accept("<CR>")
+    let g:copilot_no_tab_map = v:true
     let g:copilot_filetypes = {
       \ '*': v:false,
       \ 'c': v:true,
