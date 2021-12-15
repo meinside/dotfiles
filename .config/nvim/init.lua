@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.12.03.
+-- last update: 2021.12.15.
 
 ------------------------------------------------
 -- helpers
@@ -301,7 +301,7 @@ require('packer').startup(function()
           hint = 'hint',
           information = 'info'
         },
-        use_lsp_diagnostic_signs = true
+        use_diagnostic_signs = true,
       }
     end
   }
