@@ -6,7 +6,7 @@
 #
 # (https://clojure.org/guides/getting_started#_installation_on_linux)
 # 
-# last update: 2021.12.03.
+# last update: 2021.12.16.
 # 
 # by meinside@gmail.com
 
@@ -39,7 +39,7 @@ function warn {
 ################################
 
 
-CLOJURE_VERSION="1.10.3.986"	# XXX - change clojure version
+CLOJURE_VERSION="1.10.3.1040"	# XXX - change clojure version
 
 # https://clojure.org/guides/getting_started#_installation_on_linux
 CLOJURE_INSTALL_SCRIPT="https://download.clojure.org/install/linux-install-${CLOJURE_VERSION}.sh"

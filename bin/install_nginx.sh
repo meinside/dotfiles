@@ -23,7 +23,7 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2021.12.03.
+# last update: 2021.12.16.
 # 
 # by meinside@gmail.com
 
@@ -60,7 +60,7 @@ function warn {
 TEMP_DIR="/tmp"
 
 # versions
-NGINX_VERSION="1.20.1"
+NGINX_VERSION="1.20.2"
 OPENSSL_VERSION="1.1.1g"
 ZLIB_VERSION="1.2.11"
 PCRE_VERSION="8.45"
