@@ -4,7 +4,7 @@
 #
 # meinside@gmail.com
 #
-# last update: 2020.01.31.
+# last update: 2021.12.16.
 
 # $ gem install solargraph
 
@@ -21,7 +21,7 @@ end
 
 # monkey-patch for `Object`
 class Object
-  def own_methods(omit_superclass_methods = true)
+  def own_methods(omit_superclass_methods: true)
     if omit_superclass_methods
       (methods - self.class.superclass.instance_methods).sort
     else
@@ -30,7 +30,11 @@ class Object
   end
 
   def ri(obj = self)
-    puts `ri '#{obj.is_a?(String) ? obj : (if obj.class == Class then obj else obj.class end)}'`
+    puts `ri '#{if obj.is_a?(String)
+                  obj
+                else
+                  (obj.instance_of?(Class) ? obj : obj.class)
+                end}'`
   end
 end
 
