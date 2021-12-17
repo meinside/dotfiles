@@ -5,9 +5,16 @@
 # Build and install Racket from the official repository.
 #
 # created on : 2021.11.24.
-# last update: 2021.12.03.
+# last update: 2021.12.17.
 #
 # by meinside@gmail.com
+
+
+################################
+#
+# frequently updated values
+
+VERSION="8.3"	# XXX - edit for different version
 
 
 ################################
@@ -25,13 +32,13 @@ RESET="\033[0m"
 
 # functions for pretty-printing
 function error {
-	echo -e "${RED}$1${RESET}"
+    echo -e "${RED}$1${RESET}"
 }
 function info {
-	echo -e "${GREEN}$1${RESET}"
+    echo -e "${GREEN}$1${RESET}"
 }
 function warn {
-	echo -e "${YELLOW}$1${RESET}"
+    echo -e "${YELLOW}$1${RESET}"
 }
 
 #
@@ -42,9 +49,6 @@ TEMP_DIR="/tmp"
 INSTALLATION_DIR="/opt"
 
 REPOSITORY="https://github.com/racket/racket.git"
-
-# XXX - edit for different version
-VERSION="8.3"
 
 # install essential packages
 function prep {

@@ -7,7 +7,7 @@
 # https://datasheets.raspberrypi.org/pico/getting-started-with-pico.pdf
 #
 # created on: 2021.08.24.
-# updated on: 2021.12.03.
+# updated on: 2021.12.17.
 #
 # by meinside@gmail.com
 
@@ -27,13 +27,13 @@ RESET="\033[0m"
 
 # functions for pretty-printing
 function error {
-	echo -e "${RED}$1${RESET}"
+    echo -e "${RED}$1${RESET}"
 }
 function info {
-	echo -e "${GREEN}$1${RESET}"
+    echo -e "${GREEN}$1${RESET}"
 }
 function warn {
-	echo -e "${YELLOW}$1${RESET}"
+    echo -e "${YELLOW}$1${RESET}"
 }
 
 #

@@ -4,13 +4,21 @@
 # 
 # for building neovim from source code
 #
-# last update: 2021.12.03.
+# last update: 2021.12.17.
 # 
 # by meinside@gmail.com
 
 # * To install nightly version:
 #
 # $ ./install_nvim.sh --nightly
+
+
+################################
+#
+# frequently updated values
+
+# https://github.com/neovim/neovim/releases
+NVIM_VERSION="v0.6.0"	# XXX - edit for other versions
 
 
 ################################
@@ -28,13 +36,13 @@ RESET="\033[0m"
 
 # functions for pretty-printing
 function error {
-	echo -e "${RED}$1${RESET}"
+    echo -e "${RED}$1${RESET}"
 }
 function info {
-	echo -e "${GREEN}$1${RESET}"
+    echo -e "${GREEN}$1${RESET}"
 }
 function warn {
-	echo -e "${YELLOW}$1${RESET}"
+    echo -e "${YELLOW}$1${RESET}"
 }
 
 #
@@ -42,9 +50,6 @@ function warn {
 
 
 TMP_DIR=/tmp/nvim
-
-# https://github.com/neovim/neovim/releases
-NVIM_VERSION="v0.6.0"
 
 function prep {
     # install needed packages

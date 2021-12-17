@@ -5,9 +5,16 @@
 # Install fennel script or binary.
 #
 # created on : 2021.11.24.
-# last update: 2021.12.03.
+# last update: 2021.12.17.
 #
 # by meinside@gmail.com
+
+
+################################
+#
+# frequently updated values
+
+VERSION="1.0.0"	# XXX - edit for different version
 
 
 ################################
@@ -37,9 +44,6 @@ function warn {
 #
 ################################
 
-
-# XXX - edit for different version
-VERSION="1.0.0"
 
 INSTALLATION_PATH="/usr/local/bin/fennel"
 

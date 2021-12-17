@@ -5,9 +5,16 @@
 # install pre-built Node.js (LTS) for Linux from: https://nodejs.org/dist
 #
 # created on : 2013.07.19.
-# last update: 2021.12.03.
+# last update: 2021.12.17.
 #
 # by meinside@gmail.com
+
+
+################################
+#
+# frequently updated values
+
+VERSION="16.13.1"	# XXX - edit this for other versions
 
 
 ################################
@@ -25,20 +32,19 @@ RESET="\033[0m"
 
 # functions for pretty-printing
 function error {
-	echo -e "${RED}$1${RESET}"
+    echo -e "${RED}$1${RESET}"
 }
 function info {
-	echo -e "${GREEN}$1${RESET}"
+    echo -e "${GREEN}$1${RESET}"
 }
 function warn {
-	echo -e "${YELLOW}$1${RESET}"
+    echo -e "${YELLOW}$1${RESET}"
 }
 
 #
 ################################
 
 
-VERSION="16.13.1"	# XXX - edit this for other versions
 PLATFORM=`uname -m`	# armv7l, armv6l, ...
 
 # x86_64 = x64, aarch64 = arm64

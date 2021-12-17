@@ -11,7 +11,7 @@
 # $ cargo xtask install --server
 #
 # created on : 2019.02.18.
-# last update: 2021.12.03.
+# last update: 2021.12.17.
 # 
 # by meinside@gmail.com
 
@@ -31,13 +31,13 @@ RESET="\033[0m"
 
 # functions for pretty-printing
 function error {
-	echo -e "${RED}$1${RESET}"
+    echo -e "${RED}$1${RESET}"
 }
 function info {
-	echo -e "${GREEN}$1${RESET}"
+    echo -e "${GREEN}$1${RESET}"
 }
 function warn {
-	echo -e "${YELLOW}$1${RESET}"
+    echo -e "${YELLOW}$1${RESET}"
 }
 
 #

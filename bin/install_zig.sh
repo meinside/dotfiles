@@ -5,13 +5,22 @@
 # Install zig from binaries (https://github.com/ziglang/zig/releases)
 #
 # created on : 2021.03.17.
-# last update: 2021.12.03.
+# last update: 2021.12.17.
 #
 # by meinside@gmail.com
 #
 # * To install nightly version:
 #
 # $ ./install_zig.sh --nightly
+
+
+################################
+#
+# frequently updated values
+
+# XXX - edit these for installing other versions
+ZIG_VERSION="0.8.1"
+ZLS_VERSION="0.1.0"
 
 
 ################################
@@ -29,13 +38,13 @@ RESET="\033[0m"
 
 # functions for pretty-printing
 function error {
-	echo -e "${RED}$1${RESET}"
+    echo -e "${RED}$1${RESET}"
 }
 function info {
-	echo -e "${GREEN}$1${RESET}"
+    echo -e "${GREEN}$1${RESET}"
 }
 function warn {
-	echo -e "${YELLOW}$1${RESET}"
+    echo -e "${YELLOW}$1${RESET}"
 }
 
 #
@@ -44,10 +53,6 @@ function warn {
 
 TEMP_DIR="/tmp"
 INSTALLATION_DIR="/opt"
-
-# XXX - edit these for installing other versions
-ZIG_VERSION="0.8.1"
-ZLS_VERSION="0.1.0"
 
 PLATFORM=`uname -m`     # armv7l, armv6l, ...
 case "$PLATFORM" in

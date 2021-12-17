@@ -23,9 +23,20 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2021.12.16.
+# last update: 2021.12.17.
 # 
 # by meinside@gmail.com
+
+
+################################
+#
+# frequently updated values
+
+# nginx/library versions
+NGINX_VERSION="1.20.2"
+OPENSSL_VERSION="1.1.1g"
+ZLIB_VERSION="1.2.11"
+PCRE_VERSION="8.45"
 
 
 ################################
@@ -43,13 +54,13 @@ RESET="\033[0m"
 
 # functions for pretty-printing
 function error {
-	echo -e "${RED}$1${RESET}"
+    echo -e "${RED}$1${RESET}"
 }
 function info {
-	echo -e "${GREEN}$1${RESET}"
+    echo -e "${GREEN}$1${RESET}"
 }
 function warn {
-	echo -e "${YELLOW}$1${RESET}"
+    echo -e "${YELLOW}$1${RESET}"
 }
 
 #
@@ -58,12 +69,6 @@ function warn {
 
 # temporary directory
 TEMP_DIR="/tmp"
-
-# versions
-NGINX_VERSION="1.20.2"
-OPENSSL_VERSION="1.1.1g"
-ZLIB_VERSION="1.2.11"
-PCRE_VERSION="8.45"
 
 # source files
 NGINX_SRC_URL="https://github.com/nginx/nginx/archive/release-${NGINX_VERSION}.tar.gz"

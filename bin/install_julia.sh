@@ -5,9 +5,18 @@
 # install pre-built Julia (https://julialang.org/downloads/)
 #
 # created on : 2021.12.01.
-# last update: 2021.12.03.
+# last update: 2021.12.17.
 #
 # by meinside@gmail.com
+
+
+################################
+#
+# frequently updated values
+
+# XXX - edit these for other versions
+VERSION="1.7.0"
+VERSION_SHORT="1.7"
 
 
 ################################
@@ -37,10 +46,6 @@ function warn {
 #
 ################################
 
-
-# XXX - edit these for other versions
-VERSION="1.7.0"
-VERSION_SHORT="1.7"
 
 PLATFORM=`uname -m`	# armv7l, armv6l, ...
 PLATFORM_SHORT="$PLATFORM"
