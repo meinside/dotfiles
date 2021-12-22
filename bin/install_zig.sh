@@ -4,8 +4,10 @@
 #
 # Install zig from binaries (https://github.com/ziglang/zig/releases)
 #
+# NOTE: currently not working for non-nightly versions (bootstrapping needed)
+#
 # created on : 2021.03.17.
-# last update: 2021.12.17.
+# last update: 2021.12.22.
 #
 # by meinside@gmail.com
 #
@@ -19,7 +21,7 @@
 # frequently updated values
 
 # XXX - edit these for installing other versions
-ZIG_VERSION="0.8.1"
+ZIG_VERSION="0.9.0"
 ZLS_VERSION="0.1.0"
 
 
