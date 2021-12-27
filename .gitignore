@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2021.12.01.
+# last update: 2021.12.27.
 
 # unnecessary binary files
 *.o
@@ -206,11 +206,13 @@ mbox
 .ipfs/
 .itmstransporter/
 .keras/
+.landscape/
 .lesshst
 .lnav/
 .magick/
 .matplotlib/
 .mitmproxy/
+.motd_shown
 .netrc
 .ngrok2/
 .plotly/
