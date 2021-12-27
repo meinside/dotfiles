@@ -510,26 +510,15 @@ $ sudo dpkg-reconfigure tzdata
 
 Install `WSL` on `Windows 11` with [this guide](https://docs.microsoft.com/en-us/windows/wsl/install).
 
-### B. Install Terminal Emulator for WSL
+### B. Terminal Emulator for WSL
 
 [Windows Terminal](https://www.microsoft.com/store/productId/9N0DX20HK701) is recommended.
 
 #### 1. Change starting directory for WSL
 
-Open Windows Terminal's settings(settings.json), and add following to your WSL profile:
+Open Windows Terminal's settings and change 'Starting Directory' to: `\\wsl$\LINUX-DISTRO\home\USERNAME`
 
-```
-// e.g.
-{
-  "guid": "{07b52e3e-de2c-5db4-bd2d-ba144ed6c273}",
-  "hidden": false,
-  "name": "Ubuntu-20.04",
-  "source": "Windows.Terminal.Wsl",
-
-  // starting directory
-  "startingDirectory": "//wsl$/Ubuntu-20.04/home/MY_ACCOUNT"
-}
-```
+where *LINUX-DISTRO* is your Linux distro's name (eg. Ubuntu), and *USERNAME* is your linux username.
 
 ### C. Package Manager
 
@@ -543,20 +532,7 @@ $ winget install tailscale
 
 ### Z. Trouble Shooting
 
-#### 1. `Hash Sum Mismatch` on apt-get update
-
-```bash
-$ sudo rm -rf /var/lib/apt/lists/partial
-$ sudo apt-get update -o Acquire::CompressionTypes::Order::=gz
-```
-
-#### 2. `cannot allocate memory` when forking a new process
-
-Try appending the following line to `/etc/sysctl.conf` file:
-
-```bash
-vm.overcommit_memory = 2
-```
+-
 
 ---
 
