@@ -9,7 +9,7 @@ My personal dot/config files for:
 - macOS (**Big Sur**)
 - Raspberry Pi (**Raspbian Buster**)
 - Linux (**Debian/Ubuntu**)
-- WSL2 (**Windows 10**)
+- WSL2 (**Windows 11**)
 - Termux (**Android / [F-Droid](https://f-droid.org/en/packages/com.termux/)**)
 
 ---
@@ -506,24 +506,13 @@ $ sudo dpkg-reconfigure tzdata
 
 ## 4. Tips for WSL
 
-### A. Prerequisite: Install Chocolatey and WSL
+### A. Install WSL
 
-#### 1. Install Chocolatey
-
-As [this installation guide](https://chocolatey.org/docs/installation) says, run **PowerShell** as administrator, and type following things:
-
-```
-Shell> Set-ExecutionPolicy AllSigned
-Shell> Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-```
-
-#### 2. Install WSL
-
-Install `WSL` on `Windows 10` with [this guide](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
+Install `WSL` on `Windows 11` with [this guide](https://docs.microsoft.com/en-us/windows/wsl/install).
 
 ### B. Install Terminal Emulator for WSL
 
-[Windows Terminal](https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701) is recommended.
+[Windows Terminal](https://www.microsoft.com/store/productId/9N0DX20HK701) is recommended.
 
 #### 1. Change starting directory for WSL
 
@@ -540,6 +529,16 @@ Open Windows Terminal's settings(settings.json), and add following to your WSL p
   // starting directory
   "startingDirectory": "//wsl$/Ubuntu-20.04/home/MY_ACCOUNT"
 }
+```
+
+### C. Package Manager
+
+Use `winget`: [Windows Package Manager](https://www.microsoft.com/store/productId/9NBLGGH4NNS1).
+
+```bash
+# eg.
+$ winget search tailscale
+$ winget install tailscale
 ```
 
 ### Z. Trouble Shooting
