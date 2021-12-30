@@ -5,7 +5,7 @@
 # install pre-built Julia (https://julialang.org/downloads/)
 #
 # created on : 2021.12.01.
-# last update: 2021.12.17.
+# last update: 2021.12.30.
 #
 # by meinside@gmail.com
 
@@ -15,7 +15,7 @@
 # frequently updated values
 
 # XXX - edit these for other versions
-VERSION="1.7.0"
+VERSION="1.7.1"
 VERSION_SHORT="1.7"
 
 
@@ -55,7 +55,6 @@ case "$PLATFORM" in
 	x86_64) PLATFORM_SHORT="x64" ;;
 esac
 
-# https://julialang-s3.julialang.org/bin/linux/aarch64/1.7/julia-1.7.0-linux-aarch64.tar.gz
 JULIA_DIST_BASEURL="https://julialang-s3.julialang.org/bin/linux"
 TEMP_DIR="/tmp"
 FILENAME="julia-${VERSION}-linux-${PLATFORM}.tar.gz"
