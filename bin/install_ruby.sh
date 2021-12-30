@@ -4,7 +4,7 @@
 # 
 # for setting up environment for ruby
 # 
-# last update: 2021.12.17.
+# last update: 2021.12.30.
 # 
 # by meinside@gmail.com
 
@@ -37,12 +37,24 @@ function warn {
 ################################
 
 
+function install_macos {
+    # install RVM for multi-users
+    warn ">>> installing RVM and ruby locally..."
+    warn
+    curl -#L https://get.rvm.io | bash
+
+    # re-login for loading rvm and installing ruby
+    error
+    error "*** logout, and login again for using rvm ***"
+    error
+}
+
 function install_linux {
     if [ -z $TERMUX_VERSION ]; then
 	info ">>> this script will help setting up rvm on this machine."
 	info
 
-	# install RVM for multi-users
+	# install RVM locally
 	warn ">>> installing RVM and ruby locally..."
 	warn
 	curl -#L https://get.rvm.io | bash -s stable --autolibs=3 --ruby && \
@@ -54,7 +66,7 @@ function install_linux {
 	# or retry after:
 	# $ rvmsudo rvm cleanup all
 
-	# re-login for loading rvm and installing ruby
+	# re-login for loading rvm
 	error
 	error "*** logout, and login again for using ruby ***"
 	error
@@ -64,6 +76,7 @@ function install_linux {
 }
 
 case "$OSTYPE" in
+    darwin*) install_macos ;;
     linux*) install_linux ;;
     *) error "* not supported yet: $OSTYPE" ;;
 esac
