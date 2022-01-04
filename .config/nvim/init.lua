@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2021.12.15.
+-- last update: 2022.01.04.
 
 ------------------------------------------------
 -- helpers
@@ -515,7 +515,9 @@ require('packer').startup(function()
       'java', 'javascript', 'jsdoc', 'json', 'json5', 'jsonc', 'julia',
       'kotlin',
       'llvm', 'lua',
+      'make', 'markdown',
       'perl', 'php', 'python',
+      'query',
       'r', 'ruby', 'rust',
       --'swift',
       'toml', 'typescript',
