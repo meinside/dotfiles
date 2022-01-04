@@ -374,6 +374,10 @@ require('packer').startup(function()
   end
 
 
+  -- julia
+  use 'JuliaEditorSupport/julia-vim'
+
+
   -- racket
   use 'wlangstroth/vim-racket'
 
@@ -558,8 +562,9 @@ require('packer').startup(function()
       \ 'go': v:true,
       \ 'haskell': v:true,
       \ 'html': v:true,
-      \ 'javascript': v:true,
       \ 'java': v:true,
+      \ 'javascript': v:true,
+      \ 'julia': v:true,
       \ 'kotlin': v:true,
       \ 'lua': v:true,
       \ 'python': v:true,
