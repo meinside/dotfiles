@@ -630,19 +630,15 @@ opt.breakindent = true
 opt.splitbelow = true
 opt.splitright = true
 vim.api.nvim_exec([[
-  augroup files
+  augroup etc
     au!
 
-    autocmd FileType text setlocal textwidth=78
-
-    autocmd FileType htm,html,js,json set ai sw=2 ts=2 sts=2 et
-    autocmd FileType css,scss set ai sw=2 ts=2 sts=2 et
-    autocmd FileType ruby,eruby,yaml set ai sw=2 ts=2 sts=2 et
-    autocmd FileType python set ai sw=2 ts=2 sts=2 et
-
+    " go to the last position of a file
     autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g`\"" | endif
 
+    " highlight on yank
     autocmd TextYankPost * lua vim.highlight.on_yank {on_visual = false}
+
   augroup end
 ]], false)
 
