@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.01.04.
+-- last update: 2022.01.05.
 
 ------------------------------------------------
 -- helpers
@@ -405,22 +405,40 @@ require('packer').startup(function()
   -- lsp settings
   local nvim_lsp = require('lspconfig')
   local lsp_servers = { -- language servers with default setup
+    -- (bash)
     -- $ npm i -g bash-language-server
     'bashls',
+
+    -- (clang)
     -- $ brew install ccls
     -- $ sudo apt install ccls
     'ccls',
+
+    -- (clojure)
     -- $ brew install clojure-lsp/brew/clojure-lsp-native
     -- $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
     'clojure_lsp',
+
+    -- (go)
     -- $ go install golang.org/x/tools/gopls@latest
     'gopls',
+
+    -- (haskell)
+    'hls',
+
+    -- (julia)
     -- $ julia --project=~/.julia/environments/nvim-lspconfig -e 'using Pkg; Pkg.add("LanguageServer")'
     'julials',
+
+    -- (racket)
     -- $ raco pkg install racket-langserver
     'racket_langserver',
+
+    -- (rust)
     -- $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer/ && cargo xtask install --server
     'rust_analyzer',
+
+    -- (ruby)
     -- $ gem install --user-install solargraph
     'solargraph',
   }
@@ -431,11 +449,6 @@ require('packer').startup(function()
     }
   end
   -- other language servers for custom setup
-  -- (haskell)
-  nvim_lsp['hls'].setup {
-    on_attach = on_attach;
-    capabilities = capabilities;
-  }
   -- (zig)
   nvim_lsp['zls'].setup {
     cmd = { '/opt/zls/zig-out/bin/zls' };
