@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2021.12.01.
+# updated on 2022.01.07.
 #
 # ... by meinside@gmail.com
 #
@@ -130,6 +130,11 @@ if [[ -z $TMUX ]]; then
     export LEIN_JVM_OPTS=""
     # https://github.com/venantius/ultra/issues/108
     export LEIN_USE_BOOTCLASSPATH=no
+
+    # for Lua
+    if [ -d /opt/lua-language-server/bin ]; then
+        export PATH=$PATH:/opt/lua-language-server/bin
+    fi
 
     # for Node.js
     if [ -d /opt/node/bin ]; then

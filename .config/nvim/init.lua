@@ -80,24 +80,6 @@ local on_attach = function(client, bufnr)
   fn.sign_define('DiagnosticSignInformation', { text = '', texthl = 'DiagnosticSignInfo' })
   fn.sign_define('DiagnosticSignHint', { text = '', texthl = 'DiagnosticSignHint' })
 
-  -- LSP capabilities
-  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
-  capabilities.textDocument.completion.completionItem.documentationFormat = { 'markdown', 'plaintext' }
-  capabilities.textDocument.completion.completionItem.snippetSupport = true
-  capabilities.textDocument.completion.completionItem.preselectSupport = true
-  capabilities.textDocument.completion.completionItem.insertReplaceSupport = true
-  capabilities.textDocument.completion.completionItem.labelDetailsSupport = true
-  capabilities.textDocument.completion.completionItem.deprecatedSupport = true
-  capabilities.textDocument.completion.completionItem.commitCharactersSupport = true
-  capabilities.textDocument.completion.completionItem.tagSupport = { valueSet = { 1 } }
-  capabilities.textDocument.completion.completionItem.resolveSupport = {
-    properties = {
-      'documentation',
-      'detail',
-      'additionalTextEdits',
-    },
-  }
-
   -- auto formatting on save
   if client.resolved_capabilities.document_formatting then
     vim.api.nvim_exec([[
@@ -273,7 +255,7 @@ require('packer').startup(function()
       local luasnip = require'luasnip'
       local lspkind = require'lspkind'
 
-      cmp.setup {
+      cmp.setup({
         completion = {
           completeopt = 'menuone,noselect'
         },
@@ -321,7 +303,7 @@ require('packer').startup(function()
         formatting = {
           format = lspkind.cmp_format(),
         },
-      }
+      })
 
       -- setup autopairs
       local cmp_autopairs = require('nvim-autopairs.completion.cmp')
@@ -449,8 +431,26 @@ require('packer').startup(function()
   -- ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓      `use` not allowed below         ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
 
 
+  ----------------
   -- lsp settings
+  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  capabilities.textDocument.completion.completionItem.documentationFormat = { 'markdown', 'plaintext' }
+  capabilities.textDocument.completion.completionItem.snippetSupport = true
+  capabilities.textDocument.completion.completionItem.preselectSupport = true
+  capabilities.textDocument.completion.completionItem.insertReplaceSupport = true
+  capabilities.textDocument.completion.completionItem.labelDetailsSupport = true
+  capabilities.textDocument.completion.completionItem.deprecatedSupport = true
+  capabilities.textDocument.completion.completionItem.commitCharactersSupport = true
+  capabilities.textDocument.completion.completionItem.tagSupport = { valueSet = { 1 } }
+  capabilities.textDocument.completion.completionItem.resolveSupport = {
+    properties = {
+      'documentation',
+      'detail',
+      'additionalTextEdits',
+    },
+  }
   local nvim_lsp = require('lspconfig')
+  ---------------- language servers with default setup
   local lsp_servers = { -- language servers with default setup
     -- (bash)
     -- $ npm i -g bash-language-server
@@ -495,13 +495,34 @@ require('packer').startup(function()
       capabilities = capabilities;
     }
   end
-  -- other language servers for custom setup
+  ---------------- other language servers for custom setup
+  -- (lua)
+  --
+  -- # for macOS
+  -- $ brew install lua-language-server
+  --
+  -- # for linux
+  -- $ DIR=/opt/lua-language-server; sudo mkdir -p $DIR && sudo chown -R "$USER" $DIR && git clone https://github.com/sumneko/lua-language-server $DIR && cd $DIR && git submodule update --init --recursive && cd 3rd/luamake/ && compile/install.sh && cd ../.. && 3rd/luamake/luamake rebuild
+  local runtime_path = vim.split(package.path, ';')
+  table.insert(runtime_path, "lua/?.lua")
+  table.insert(runtime_path, "lua/?/init.lua")
+  nvim_lsp['sumneko_lua'].setup {
+    settings = { Lua = {
+      runtime = { version = 'LuaJIT', path = runtime_path },
+      diagnostics = { globals = {'vim'} },
+      workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+      telemetry = { enable = false },
+    } },
+  }
   -- (zig)
   nvim_lsp['zls'].setup {
     cmd = { '/opt/zls/zig-out/bin/zls' };
     on_attach = on_attach;
     capabilities = capabilities;
   }
+
+
+  ----------------
   -- lsp_signature
   require'lsp_signature'.setup({
     bind = true, -- This is mandatory, otherwise border config won't get registered.
@@ -509,12 +530,16 @@ require('packer').startup(function()
       border = "single"
     }
   })
+
+
+  ----------------
   -- diagnostics
   vim.api.nvim_exec([[
     autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false, close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' }, border = 'rounded', source = 'always', prefix = ' ' })
   ]], false)
 
 
+  ----------------
   -- lspkind colors
   vim.api.nvim_exec([[
     " gray
@@ -536,17 +561,20 @@ require('packer').startup(function()
   ]], false)
 
 
+  ----------------
   -- debug adapter
   require'nvim-dap-virtual-text'.setup {
   }
 
 
+  ----------------
   -- go.nvim settings
   require'go'.setup {
     gofmt = 'gopls',
   }
 
 
+  ----------------
   -- lualine settings
   require'lualine'.setup {
     options = {
@@ -556,6 +584,7 @@ require('packer').startup(function()
   }
 
 
+  ----------------
   -- blankline
   require'indent_blankline'.setup {
     char = '▏',
@@ -563,10 +592,12 @@ require('packer').startup(function()
   }
 
 
+  ----------------
   -- neomake settings
   vim.api.nvim_exec([[call neomake#configure#automake('nrwi', 500)]], false)
 
 
+  ----------------
   -- treesitter settings
   require'nvim-treesitter.configs'.setup {
     ensure_installed = {
@@ -592,14 +623,17 @@ require('packer').startup(function()
   }
 
 
+  ----------------
   -- snippets settings
   require'luasnip/loaders/from_vscode'.lazy_load()
 
 
+  ----------------
   -- auto pair/close settings
   require'nvim-autopairs'.setup{}
 
 
+  ----------------
   -- rainbow parentheses
   require'nvim-treesitter.configs'.setup {
     rainbow = {
@@ -609,6 +643,7 @@ require('packer').startup(function()
   }
 
 
+  ----------------
   -- github copilot settings (ctrl+L for applying)
   vim.api.nvim_exec([[
     imap <silent><script><expr> <C-L> copilot#Accept("<CR>")
@@ -639,6 +674,7 @@ require('packer').startup(function()
   ]], false)
 
 
+  ----------------
   -- color scheme (24bit-colors)
   require'github-theme'.setup({
     theme_style = 'dark',
