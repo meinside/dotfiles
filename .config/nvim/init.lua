@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.01.05.
+-- last update: 2022.01.07.
 
 ------------------------------------------------
 -- helpers
@@ -139,6 +139,33 @@ require('packer').startup(function()
       require("which-key").setup {}
     end
   }
+
+  -- fold and preview
+  --
+  -- zc for closing, zo for opening
+  -- zM for closing all, zR opening all
+  use {
+    'anuvyklack/pretty-fold.nvim',
+    config = function()
+      require('pretty-fold').setup {
+        keep_indentation = false,
+        fill_char = '━',
+        sections = {
+          left = {
+            '━ ', function() return string.rep('*', vim.v.foldlevel) end, ' ━┫', 'content', '┣'
+          },
+          right = {
+            '┫ ', 'number_of_folded_lines', ': ', 'percentage', ' ┣━━',
+          }
+        }
+      }
+      require('pretty-fold.preview').setup_keybinding('l') -- will float preview when pressing 'l' on folds
+    end
+  }
+  vim.api.nvim_exec([[
+    set foldmethod=indent " automatically fold on indent
+    set foldlevelstart=20 " but open all folds on file open
+  ]], false)
 
 
   -- formatting
