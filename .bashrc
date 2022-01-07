@@ -122,7 +122,7 @@ if [[ -z $TMUX ]]; then
 
     # for Zig
     if [ -d /opt/zig ]; then
-        export PATH=$PATH:/opt/zig
+        export PATH=$PATH:/opt/zig:/opt/zls/zig-out/bin
     fi
 
     # additional paths

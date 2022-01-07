@@ -488,6 +488,9 @@ require('packer').startup(function()
     -- (ruby)
     -- $ gem install --user-install solargraph
     'solargraph',
+
+    -- (zig)
+    'zls',
   }
   for _, lsp in ipairs(lsp_servers) do
     nvim_lsp[lsp].setup {
@@ -513,12 +516,6 @@ require('packer').startup(function()
       workspace = { library = vim.api.nvim_get_runtime_file("", true) },
       telemetry = { enable = false },
     } },
-  }
-  -- (zig)
-  nvim_lsp['zls'].setup {
-    cmd = { '/opt/zls/zig-out/bin/zls' };
-    on_attach = on_attach;
-    capabilities = capabilities;
   }
 
 
