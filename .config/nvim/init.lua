@@ -22,12 +22,11 @@ end
 local on_attach = function(client, bufnr)
   -- Enable completion triggered by <c-x><c-o>
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-  -- Mappings.
-  local opts = { remap = false, silent = true }
-
   -- See `:help vim.lsp.*` for documentation on any of the below functions
-  if vim.keymap.set then
+  if vim.keymap then
+    -- Mappings.
+    local opts = { remap = false, silent = true }
+
     vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
@@ -46,6 +45,9 @@ local on_attach = function(client, bufnr)
     vim.keymap.set('n', '<leader>ll', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
     vim.keymap.set("n", "<leader>fo", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
   else -- XXX: NOTE: remove following codes when neovim 0.7 becomes stable (https://github.com/neovim/neovim/pull/16591)
+    -- Mappings.
+    local opts = { noremap = true, silent = true }
+
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
 
     buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
