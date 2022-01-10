@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.01.07.
+-- last update: 2022.01.10.
 
 ------------------------------------------------
 -- helpers
@@ -135,7 +135,8 @@ require('packer').startup(function()
 
   -- show key bindings
   use {
-    'folke/which-key.nvim',
+    --'folke/which-key.nvim',
+    'zeertzjq/which-key.nvim', -- XXX: replace with above when fixed
     config = function()
       require("which-key").setup {}
     end
