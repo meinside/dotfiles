@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.01.10.
+-- last update: 2022.01.11.
 
 ------------------------------------------------
 -- helpers
@@ -135,14 +135,14 @@ require('packer').startup(function()
   use 'blueyed/vim-diminactive'
 
 
+  -- NOTE: TODO: uncomment when fixed
   -- show key bindings
-  use {
-    --'folke/which-key.nvim',
-    'zeertzjq/which-key.nvim', -- XXX: replace with above when fixed
-    config = function()
-      require("which-key").setup {}
-    end
-  }
+--  use {
+--    'folke/which-key.nvim',
+--    config = function()
+--      require("which-key").setup {}
+--    end
+--  }
 
 
   -- fold and preview
