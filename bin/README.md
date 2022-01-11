@@ -62,7 +62,7 @@ A script for installing [Nginx](https://www.nginx.com/).
 
 A script for installing [Node.js](https://nodejs.org/en/).
 
-## install_nvim.sh
+## install_neovim.sh
 
 A script for building and installing [neovim](https://neovim.io/).
 

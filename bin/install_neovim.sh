@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# install_nvim.sh
+# install_neovim.sh
 # 
 # for building neovim from source code
 #
@@ -10,7 +10,7 @@
 
 # * To install nightly version:
 #
-# $ ./install_nvim.sh --nightly
+# $ ./install_neovim.sh --nightly
 
 
 ################################
