@@ -2,10 +2,10 @@
 
 # install_mosh.sh
 #
-# Install mosh from master branch. (1.3.2 doesn't support 24-bit colors yet)
+# Manually build mosh from `master` branch. (1.3.2 doesn't support 24-bit colors yet)
 #
 # created on : 2021.08.11.
-# last update: 2021.12.03.
+# last update: 2022.01.12.
 
 
 ################################

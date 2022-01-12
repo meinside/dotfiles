@@ -6,7 +6,7 @@
 #
 # (pass '--do-not-clean' argument for preserving files after install)
 # 
-# last update: 2021.12.17.
+# last update: 2022.01.12.
 # 
 # by meinside@gmail.com
 
@@ -16,7 +16,7 @@
 # frequently updated values
 
 # https://github.com/FFmpeg/FFmpeg/tags
-FFMPEG_VERSION="n4.3" # XXX - edit for newer ffmpeg version
+FFMPEG_VERSION="n4.4.1" # XXX - edit for newer ffmpeg version
 
 
 ################################
