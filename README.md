@@ -6,8 +6,8 @@ by Sungjin Han <meinside@gmail.com>
 
 My personal dot/config files for:
 
-- macOS (**Big Sur**)
-- Raspberry Pi (**Raspbian Buster**)
+- macOS (**Monterey**)
+- Raspberry Pi (**Raspbian Bullseye**)
 - Linux (**Debian/Ubuntu**)
 - WSL2 (**Windows 11**)
 - Termux (**Android / [F-Droid](https://f-droid.org/en/packages/com.termux/)**)
@@ -270,9 +270,23 @@ and add following lines:
 </service-group>
 ```
 
-#### d. Enable trim on an external SSD
+#### d. Increase performance/lifespan of storage
 
-If the SSD [supports trim](https://www.jeffgeerling.com/blog/2020/enabling-trim-on-external-ssd-on-raspberry-pi),
+Try mounting frequently-written directories (including /tmp) to tmpfs.
+
+For example, this is a part of my `/etc/fstab` file:
+
+```
+# tmpfs (https://wiki.archlinux.org/title/tmpfs)
+tmpfs    /tmp    tmpfs    defaults,noatime,nosuid,size=1536m    0 0
+tmpfs    /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=128m    0 0
+```
+
+See [this article](https://haydenjames.io/increase-performance-lifespan-ssds-sd-cards/).
+
+#### e. Enable TRIM on an external SSD
+
+If the SSD [supports TRIM](https://www.jeffgeerling.com/blog/2020/enabling-trim-on-external-ssd-on-raspberry-pi),
 
 ##### i. Add a udev rule
 
