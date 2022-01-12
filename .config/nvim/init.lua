@@ -135,15 +135,14 @@ require('packer').startup(function()
   use 'blueyed/vim-diminactive'
 
 
-  -- show key bindings
-  use {
-    --'folke/which-key.nvim',
-    -- NOTE: TODO: change when fixed
-    'zeertzjq/which-key.nvim', branch = 'patch-1',
-    config = function()
-      require("which-key").setup {}
-    end
-  }
+  -- NOTE: TODO: uncomment when fixed
+--  -- show key bindings
+--  use {
+--    'folke/which-key.nvim',
+--    config = function()
+--      require("which-key").setup {}
+--    end
+--  }
 
 
   -- fold and preview
