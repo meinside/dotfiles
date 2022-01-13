@@ -210,20 +210,20 @@ and add following lines:
 
 ```
 [mysql]
-default-character-set = utf8
+default-character-set = utf8mb4
  
 [client]
-default-character-set = utf8
+default-character-set = utf8mb4
  
 [mysqld]
 character-set-client-handshake=FALSE
-init_connect="SET collation_connection = utf8_general_ci"
-init_connect="SET NAMES utf8"
-character-set-server = utf8
-collation-server = utf8_general_ci
+init_connect="SET collation_connection = utf8mb4_unicode_ci
+init_connect="SET NAMES utf8mb4"
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
  
 [mysqldump]
-default-character-set = utf8
+default-character-set = utf8mb4
 ```
 
 #### c. AFP & Zero-conf DNS configuration
