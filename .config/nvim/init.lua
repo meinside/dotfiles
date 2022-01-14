@@ -135,15 +135,6 @@ require('packer').startup(function()
   use 'blueyed/vim-diminactive'
 
 
-  -- show key bindings
-  use {
-    'folke/which-key.nvim',
-    config = function()
-      require("which-key").setup {}
-    end
-  }
-
-
   -- fold and preview
   --
   -- zc for closing, zo for opening
