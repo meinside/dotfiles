@@ -2,7 +2,7 @@
 #
 # (copy as .gitconfig and customize it)
 #
-# last update: 2021.07.07.
+# last update: 2022.01.14.
 
 [init]
   defaultBranch = master
@@ -45,6 +45,8 @@
   g = "grep --break --heading --line-number"
 [status]
   showUntrackedFiles = all
+[commit]
+  template = .git-commit-template
 [grep]
   extendRegexp = true
   lineNumber = true
