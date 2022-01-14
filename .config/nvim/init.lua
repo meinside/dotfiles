@@ -70,13 +70,7 @@ local on_attach = function(client, bufnr)
   end
 
   -- diagnostics configuration
-  vim.diagnostic.config({
-    underline = false,
-    virtual_text = false,
-    signs = true,
-    severity_sort = true,
-    update_in_insert = false,
-  })
+  vim.diagnostic.config({ underline = false, virtual_text = false, signs = true, severity_sort = true, update_in_insert = false })
   fn.sign_define('DiagnosticSignError', { text = '✗', texthl = 'DiagnosticSignError' })
   fn.sign_define('DiagnosticSignWarn', { text = '!', texthl = 'DiagnosticSignWarn' })
   fn.sign_define('DiagnosticSignInformation', { text = '', texthl = 'DiagnosticSignInfo' })
@@ -126,8 +120,6 @@ require('packer').startup(function()
 
 
   -- colorschemes (https://github.com/rockerBOO/awesome-neovim#colorscheme)
-  --
-  -- for 24bit-colors (default)
   use 'projekt0n/github-nvim-theme'
 
 
@@ -137,8 +129,7 @@ require('packer').startup(function()
 
   -- fold and preview
   --
-  -- zc for closing, zo for opening
-  -- zM for closing all, zR opening all
+  -- zc for closing, zo for opening / zM for closing all, zR opening all
   use {
     'anuvyklack/pretty-fold.nvim',
     config = function()
@@ -146,12 +137,8 @@ require('packer').startup(function()
         keep_indentation = false,
         fill_char = '━',
         sections = {
-          left = {
-            '━ ', function() return string.rep('*', vim.v.foldlevel) end, ' ━┫', 'content', '┣'
-          },
-          right = {
-            '┫ ', 'number_of_folded_lines', ': ', 'percentage', ' ┣━━',
-          }
+          left = { '━ ', function() return string.rep('*', vim.v.foldlevel) end, ' ━┫', 'content', '┣' },
+          right = { '┫ ', 'number_of_folded_lines', ': ', 'percentage', ' ┣━━' }
         }
       }
       require('pretty-fold.preview').setup_keybinding('l') -- will float preview when pressing 'l' on folds
@@ -249,9 +236,7 @@ require('packer').startup(function()
       local lspkind = require'lspkind'
 
       cmp.setup({
-        completion = {
-          completeopt = 'menuone,noselect'
-        },
+        completion = { completeopt = 'menuone,noselect' },
         snippet = {
           expand = function(args)
             luasnip.lsp_expand(args.body)
@@ -293,9 +278,7 @@ require('packer').startup(function()
           { name = 'path' },
           { name = 'calc' },
         },
-        formatting = {
-          format = lspkind.cmp_format(),
-        },
+        formatting = { format = lspkind.cmp_format() },
       })
 
       -- setup autopairs
@@ -487,8 +470,8 @@ require('packer').startup(function()
   }
   for _, lsp in ipairs(lsp_servers) do
     nvim_lsp[lsp].setup {
-      on_attach = on_attach;
-      capabilities = capabilities;
+      on_attach = on_attach,
+      capabilities = capabilities,
     }
   end
   ---------------- other language servers for custom setup
@@ -516,9 +499,7 @@ require('packer').startup(function()
   -- lsp_signature
   require'lsp_signature'.setup({
     bind = true, -- This is mandatory, otherwise border config won't get registered.
-    handler_opts = {
-      border = "single"
-    }
+    handler_opts = { border = "single" }
   })
 
 
@@ -567,9 +548,7 @@ require('packer').startup(function()
   ----------------
   -- lualine settings
   require'lualine'.setup {
-    options = {
-      theme = 'seoul256',
-    },
+    options = { theme = 'seoul256' },
     extensions = {'quickfix'}
   }
 
@@ -578,7 +557,7 @@ require('packer').startup(function()
   -- blankline
   require'indent_blankline'.setup {
     char = '▏',
-    buftype_exclude = {'terminal'},
+    buftype_exclude = { 'terminal' },
     show_current_context = true,
     show_current_context_start = true,
   }
