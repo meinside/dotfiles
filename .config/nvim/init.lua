@@ -652,6 +652,7 @@ require('packer').startup(function()
       \ 'julia': v:true,
       \ 'kotlin': v:true,
       \ 'lua': v:true,
+      \ 'markdown': v:true,
       \ 'python': v:true,
       \ 'objc': v:true,
       \ 'racket': v:true,
