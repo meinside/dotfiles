@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.01.14.
+-- last update: 2022.01.17.
 
 ------------------------------------------------
 -- helpers
@@ -618,32 +618,32 @@ require('packer').startup(function()
   -- github copilot settings (ctrl+L for applying)
   vim.api.nvim_exec([[
     imap <silent><script><expr> <C-L> copilot#Accept("<CR>")
-    let g:copilot_no_tab_map = v:true
-    let g:copilot_filetypes = {
-      \ '*': v:false,
-      \ 'c': v:true,
-      \ 'clojure': v:true,
-      \ 'css': v:true,
-      \ 'fennel': v:true,
-      \ 'go': v:true,
-      \ 'haskell': v:true,
-      \ 'html': v:true,
-      \ 'java': v:true,
-      \ 'javascript': v:true,
-      \ 'julia': v:true,
-      \ 'kotlin': v:true,
-      \ 'lua': v:true,
-      \ 'markdown': v:true,
-      \ 'python': v:true,
-      \ 'objc': v:true,
-      \ 'racket': v:true,
-      \ 'ruby': v:true,
-      \ 'rust': v:true,
-      \ 'sh': v:true,
-      \ 'swift': v:true,
-      \ 'zig': v:true,
-    \}
   ]], false)
+  g['copilot_no_tab_map'] = true
+  g['copilot_filetypes'] = {
+    ['*'] = false,
+    ['c'] = true,
+    ['clojure'] = true,
+    ['css'] = true,
+    ['fennel'] = true,
+    ['go'] = true,
+    ['haskell'] = true,
+    ['html'] = true,
+    ['java'] = true,
+    ['javascript'] = true,
+    ['julia'] = true,
+    ['kotlin'] = true,
+    ['lua'] = true,
+    ['markdown'] = true,
+    ['python'] = true,
+    ['objc'] = true,
+    ['racket'] = true,
+    ['ruby'] = true,
+    ['rust'] = true,
+    ['sh'] = true,
+    ['swift'] = true,
+    ['zig'] = true,
+  }
 
 
   ----------------
