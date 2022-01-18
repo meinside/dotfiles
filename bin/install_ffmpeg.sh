@@ -6,7 +6,7 @@
 #
 # (pass '--do-not-clean' argument for preserving files after install)
 # 
-# last update: 2022.01.12.
+# last update: 2022.01.18.
 # 
 # by meinside@gmail.com
 
@@ -16,7 +16,7 @@
 # frequently updated values
 
 # https://github.com/FFmpeg/FFmpeg/tags
-FFMPEG_VERSION="n4.4.1" # XXX - edit for newer ffmpeg version
+FFMPEG_VERSION="n5.0" # XXX - edit for newer ffmpeg version
 
 
 ################################
@@ -55,9 +55,11 @@ function prep {
 		libx264-dev \
 		libx265-dev libnuma-dev \
 		libvpx-dev \
+		libfdk-aac-dev \
 		libmp3lame-dev \
 		libvorbis-dev \
-		libopus-dev
+		libopus-dev \
+		libdav1d-dev
 
 	clean
 }
@@ -81,9 +83,11 @@ function install {
 		--enable-libx264 \
 		--enable-libx265 \
 		--enable-libvpx \
+		--enable-libfdk-aac \
 		--enable-libmp3lame \
 		--enable-libvorbis \
-		--enable-libopus
+		--enable-libopus \
+		--enable-libdav1d
 	make -j$(nproc)
 
 	# install
