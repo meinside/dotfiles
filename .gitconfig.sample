@@ -2,7 +2,7 @@
 #
 # (copy as .gitconfig and customize it)
 #
-# last update: 2022.01.14.
+# last update: 2022.01.19.
 
 [init]
   defaultBranch = master
@@ -46,7 +46,7 @@
 [status]
   showUntrackedFiles = all
 [commit]
-  template = .git-commit-template
+  template = ~/.git-commit-template
 [grep]
   extendRegexp = true
   lineNumber = true
