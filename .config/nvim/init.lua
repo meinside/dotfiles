@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.01.17.
+-- last update: 2022.01.19.
 
 ------------------------------------------------
 -- helpers
@@ -576,7 +576,7 @@ require('packer').startup(function()
       'c', 'clojure', 'cmake', 'comment', 'cpp', 'css',
       'dart', 'dockerfile',
       'fennel',
-      'go', 'gomod',
+      'go', 'gomod', 'gowork',
       'haskell', 'html',
       'java', 'javascript', 'jsdoc', 'json', 'json5', 'jsonc', 'julia',
       'kotlin',
