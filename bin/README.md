@@ -6,10 +6,6 @@ These are my helper scripts that make my life a lot happier:
 
 A script that checks for WiFi connectivity (with `ping`) and restart the interface when needed.
 
-## enable_italic_fonts.sh
-
-Install terminfos for displaying italic fonts in terminals.
-
 ## gen_selfsigned_certs.sh
 
 A script for generating self-signed certificates for development.
@@ -69,7 +65,6 @@ A script for building and installing [neovim](https://neovim.io/).
 ## install_pico_sdk.sh
 
 A script for installing sdk and sample codes for [raspberry pi pico](https://datasheets.raspberrypi.org/pico/getting-started-with-pico.pdf).
-
 
 ## install_racket.sh
 
