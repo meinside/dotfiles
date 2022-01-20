@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.01.19.
+-- last update: 2022.01.20.
 
 ------------------------------------------------
 -- helpers
@@ -317,7 +317,7 @@ require('packer').startup(function()
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate'
   }
-  use 'nvim-treesitter/playground'
+  --use 'nvim-treesitter/playground'
 
 
   -- syntax checking
@@ -589,8 +589,8 @@ require('packer').startup(function()
       'toml', 'typescript',
       'yaml',
       'zig',
-    };
-    highlight = {enable = true};
+    },
+    highlight = {enable = true},
   }
 
 
