@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.01.20.
+-- last update: 2022.01.24.
 
 ------------------------------------------------
 -- helpers
@@ -125,6 +125,15 @@ require('packer').startup(function()
 
   -- dim inactive window
   use 'blueyed/vim-diminactive'
+
+
+  -- show key bindings
+  use {
+    'folke/which-key.nvim',
+    config = function()
+      require("which-key").setup {}
+    end
+  }
 
 
   -- fold and preview
