@@ -1,7 +1,7 @@
-# My .bashrc file
+# .bashrc
 #
 # created on 2012.05.31.
-# updated on 2022.01.21.
+# updated on 2022.01.25.
 #
 # ... by meinside@gmail.com
 
@@ -68,9 +68,11 @@ fi
 
 if [[ -z $TMUX ]]; then
 
+    # NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
+
     # for Babashka
-    if [ -d /opt/babashka ]; then
-        export PATH=$PATH:/opt/babashka
+    if [ -d $PREFIX/opt/babashka ]; then
+        export PATH=$PATH:$PREFIX/opt/babashka
     fi
 
     # for Go
@@ -88,8 +90,8 @@ if [[ -z $TMUX ]]; then
     [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
 
     # for Julia
-    if [ -d /opt/julia/bin ]; then
-        export PATH=$PATH:/opt/julia/bin
+    if [ -d $PREFIX/opt/julia/bin ]; then
+        export PATH=$PATH:$PREFIX/opt/julia/bin
     fi
 
     # for Lein (Clojure)

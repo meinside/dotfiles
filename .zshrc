@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2022.01.21.
+# updated on 2022.01.25.
 #
 # ... by meinside@gmail.com
 #
@@ -102,9 +102,11 @@ bindkey "^N" history-beginning-search-forward
 
 if [[ -z $TMUX ]]; then
 
+    # NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
+
     # for Babashka
-    if [ -d /opt/babashka ]; then
-        export PATH=$PATH:/opt/babashka
+    if [ -d $PREFIX/opt/babashka ]; then
+        export PATH=$PATH:$PREFIX/opt/babashka
     fi
 
     # for Go
@@ -122,8 +124,8 @@ if [[ -z $TMUX ]]; then
     [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
 
     # for Julia
-    if [ -d /opt/julia/bin ]; then
-        export PATH=$PATH:/opt/julia/bin
+    if [ -d $PREFIX/opt/julia/bin ]; then
+        export PATH=$PATH:$PREFIX/opt/julia/bin
     fi
 
     # for Lein (Clojure)

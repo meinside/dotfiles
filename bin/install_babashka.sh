@@ -6,7 +6,7 @@
 # (https://github.com/babashka/babashka#installation)
 #
 # created on : 2021.03.31.
-# last update: 2021.12.03.
+# last update: 2022.01.25.
 #
 # by meinside@gmail.com
 
@@ -38,23 +38,24 @@ function warn {
 #
 ################################
 
-
-INSTALLATION_DIR="/opt"
-
 function install_macos {
 	brew install borkdude/brew/babashka
 }
 
 function install_linux {
-	if [ -z $TERMUX_VERSION ]; then
-		BB_DIR="${INSTALLATION_DIR}/babashka"
+	INSTALLATION_DIR="$PREFIX/opt" # NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
+	BB_DIR="${INSTALLATION_DIR}/babashka"
 
+	if [ -z $TERMUX_VERSION ]; then
 		sudo rm -rf $BB_DIR && \
 			sudo mkdir -p $BB_DIR && \
 			curl https://raw.githubusercontent.com/babashka/babashka/master/install -sSf | \
 			sudo bash -s -- --dir $BB_DIR
 	else  # termux
-		error "* termux not supported yet."
+		rm -rf $BB_DIR && \
+			mkdir -p $BB_DIR && \
+			curl https://raw.githubusercontent.com/babashka/babashka/master/install -sSf | \
+			bash -s -- --dir $BB_DIR
 	fi
 }
 

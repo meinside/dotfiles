@@ -5,7 +5,7 @@
 # install pre-built Julia (https://julialang.org/downloads/)
 #
 # created on : 2021.12.01.
-# last update: 2021.12.30.
+# last update: 2022.01.25.
 #
 # by meinside@gmail.com
 
@@ -59,7 +59,7 @@ JULIA_DIST_BASEURL="https://julialang-s3.julialang.org/bin/linux"
 TEMP_DIR="/tmp"
 FILENAME="julia-${VERSION}-linux-${PLATFORM}.tar.gz"
 DOWNLOAD_PATH="${JULIA_DIST_BASEURL}/${PLATFORM_SHORT}/${VERSION_SHORT}/$FILENAME"
-INSTALLATION_DIR="/opt"
+INSTALLATION_DIR="$PREFIX/opt"	# NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
 JULIA_DIR="$INSTALLATION_DIR/julia-${VERSION}"
 
 function install_linux {
@@ -73,7 +73,14 @@ function install_linux {
 			sudo ln -sfn "$JULIA_DIR" "$INSTALLATION_DIR/julia" && \
 			info ">>> julia v$VERSION was installed at: $JULIA_DIR"
 	else # termux
-		error "* termux not supported yet."
+		warn ">>> downloading version $VERSION..." && \
+			wget "$DOWNLOAD_PATH" -P "$TEMP_DIR" && \
+			warn ">>> extracting to: $JULIA_DIR..." && \
+			mkdir -p "$INSTALLATION_DIR" && \
+			tar -xzvf "$TEMP_DIR/$FILENAME" -C "$INSTALLATION_DIR" && \
+			chown -R $USER "$JULIA_DIR" && \
+			ln -sfn "$JULIA_DIR" "$INSTALLATION_DIR/julia" && \
+			info ">>> julia v$VERSION was installed at: $JULIA_DIR"
 	fi
 }
 
