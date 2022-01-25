@@ -75,13 +75,15 @@ function install_linux {
 			sudo ln -sfn "$JULIA_DIR" "$INSTALLATION_DIR/julia" && \
 			info ">>> julia v$VERSION was installed at: $JULIA_DIR"
 	else # termux
-		warn ">>> downloading version $VERSION..." && \
-			wget "$DOWNLOAD_PATH" -P "$TEMP_DIR" && \
-			warn ">>> extracting to: $JULIA_DIR..." && \
-			mkdir -p "$INSTALLATION_DIR" && \
-			tar -xzvf "$TEMP_DIR/$FILENAME" -C "$INSTALLATION_DIR" && \
-			ln -sfn "$JULIA_DIR" "$INSTALLATION_DIR/julia" && \
-			info ">>> julia v$VERSION was installed at: $JULIA_DIR"
+		error "* termux not supported yet."
+
+		#warn ">>> downloading version $VERSION..." && \
+		#	wget "$DOWNLOAD_PATH" -P "$TEMP_DIR" && \
+		#	warn ">>> extracting to: $JULIA_DIR..." && \
+		#	mkdir -p "$INSTALLATION_DIR" && \
+		#	tar -xzvf "$TEMP_DIR/$FILENAME" -C "$INSTALLATION_DIR" && \
+		#	ln -sfn "$JULIA_DIR" "$INSTALLATION_DIR/julia" && \
+		#	info ">>> julia v$VERSION was installed at: $JULIA_DIR"
 	fi
 }
 

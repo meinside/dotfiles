@@ -52,10 +52,12 @@ function install_linux {
 			curl https://raw.githubusercontent.com/babashka/babashka/master/install -sSf | \
 			sudo bash -s -- --dir $BB_DIR
 	else  # termux
-		rm -rf $BB_DIR && \
-			mkdir -p $BB_DIR && \
-			curl https://raw.githubusercontent.com/babashka/babashka/master/install -sSf | \
-			bash -s -- --dir $BB_DIR
+		error "* termux not supported yet."
+
+		#rm -rf $BB_DIR && \
+		#	mkdir -p $BB_DIR && \
+		#	curl https://raw.githubusercontent.com/babashka/babashka/master/install -sSf | \
+		#	bash -s -- --dir $BB_DIR
 	fi
 }
 
