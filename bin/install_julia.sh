@@ -56,10 +56,12 @@ case "$PLATFORM" in
 esac
 
 JULIA_DIST_BASEURL="https://julialang-s3.julialang.org/bin/linux"
-TEMP_DIR="/tmp"
 FILENAME="julia-${VERSION}-linux-${PLATFORM}.tar.gz"
 DOWNLOAD_PATH="${JULIA_DIST_BASEURL}/${PLATFORM_SHORT}/${VERSION_SHORT}/$FILENAME"
-INSTALLATION_DIR="$PREFIX/opt"	# NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
+
+# NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
+INSTALLATION_DIR="$PREFIX/opt"
+TEMP_DIR="$PREFIX/tmp"
 JULIA_DIR="$INSTALLATION_DIR/julia-${VERSION}"
 
 function install_linux {
