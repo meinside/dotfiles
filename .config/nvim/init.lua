@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.01.24.
+-- last update: 2022.01.25.
 
 ------------------------------------------------
 -- helpers
@@ -44,7 +44,7 @@ local on_attach = function(client, bufnr)
     vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
     vim.keymap.set('n', '<leader>ll', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
     vim.keymap.set("n", "<leader>fo", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
-  else -- XXX: NOTE: remove following codes when neovim 0.7 becomes stable (https://github.com/neovim/neovim/pull/16591)
+  else -- FIXME: NOTE: remove following codes when neovim 0.7 becomes stable (https://github.com/neovim/neovim/pull/16591)
     -- Mappings.
     local opts = { noremap = true, silent = true }
 
@@ -231,6 +231,7 @@ require('packer').startup(function()
   -- autocompletion
   use {
     'hrsh7th/nvim-cmp',
+    commit = 'f960d4829e9fce0fbe265279e05a49b814b0525f', -- FIXME: remove this when fixed
     requires = {
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-buffer',
@@ -252,10 +253,14 @@ require('packer').startup(function()
           end,
         },
         mapping = {
-          ['<C-d>'] = cmp.mapping.scroll_docs(-4),
-          ['<C-f>'] = cmp.mapping.scroll_docs(4),
-          ['<C-Space>'] = cmp.mapping.complete(),
-          ['<C-e>'] = cmp.mapping.close(),
+          ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
+          ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
+          ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+          ['<C-y>'] = cmp.config.disable,
+          ['<C-e>'] = cmp.mapping({
+            i = cmp.mapping.abort(),
+            c = cmp.mapping.close(),
+          }),
           ['<CR>'] = cmp.mapping.confirm {
             behavior = cmp.ConfirmBehavior.Replace,
             select = true,
