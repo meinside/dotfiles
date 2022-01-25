@@ -80,7 +80,6 @@ function install_linux {
 			warn ">>> extracting to: $JULIA_DIR..." && \
 			mkdir -p "$INSTALLATION_DIR" && \
 			tar -xzvf "$TEMP_DIR/$FILENAME" -C "$INSTALLATION_DIR" && \
-			chown -R $USER "$JULIA_DIR" && \
 			ln -sfn "$JULIA_DIR" "$INSTALLATION_DIR/julia" && \
 			info ">>> julia v$VERSION was installed at: $JULIA_DIR"
 	fi
