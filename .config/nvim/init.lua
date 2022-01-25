@@ -231,7 +231,6 @@ require('packer').startup(function()
   -- autocompletion
   use {
     'hrsh7th/nvim-cmp',
-    commit = 'f960d4829e9fce0fbe265279e05a49b814b0525f', -- FIXME: remove this when fixed
     requires = {
       'hrsh7th/cmp-nvim-lsp',
       'hrsh7th/cmp-buffer',
