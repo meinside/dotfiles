@@ -5,7 +5,7 @@
 # Manually build mosh from `master` branch. (1.3.2 doesn't support 24-bit colors yet)
 #
 # created on : 2021.08.11.
-# last update: 2022.01.12.
+# last update: 2022.01.26.
 
 
 ################################
@@ -67,7 +67,8 @@ function install_linux {
 			rm -rf mosh && \
 			error ">>> removed temporary directory."
 	else  # termux
-		pkg install termux
+		# NOTE: termux's latest mosh doesn't support 24-bit colors yet.
+		pkg install mosh
 	fi
 }
 
