@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.01.25.
+-- last update: 2022.01.27.
 
 ------------------------------------------------
 -- helpers
@@ -54,15 +54,9 @@ local on_attach = function(client, bufnr)
     buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
     buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
     buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-    --buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-    --buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-    --buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-    --buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
     buf_set_keymap('n', 'gt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
     buf_set_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    --buf_set_keymap('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
     buf_set_keymap('n', '<leader>ca', '<cmd>CodeActionMenu<CR>', opts)
-    --buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
     buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
     buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
     buf_set_keymap('n', '<leader>ll', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
@@ -171,16 +165,15 @@ require('packer').startup(function()
   use 'mtth/locate.vim' -- :L [query], :lclose, gl
   use 'johngrib/vim-f-hangul'	-- can use f/t/;/, on Hangul characters
   use {
-    'nvim-telescope/telescope.nvim', -- :Telescope <action>
+    'nvim-telescope/telescope.nvim',
     requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}}
   }
-  map('n', '<leader>fb', '<cmd>lua require("telescope.builtin").file_browser()<CR>') -- \fb for `file_browser`
-  map('n', '<leader>ff', '<cmd>lua require("telescope.builtin").find_files()<CR>') -- \ff for `find_files`
-  map('n', '<leader>gc', '<cmd>lua require("telescope.builtin").git_commits()<CR>') -- \gc for `git_commits`
-  map('n', '<leader>qf', '<cmd>lua require("telescope.builtin").quickfix()<CR>') -- \qf for `quickfix`
-  map('n', '<leader>lr', '<cmd>lua require("telescope.builtin").lsp_references()<CR>') -- \lr for `lsp_references`
-  map('n', '<leader>li', '<cmd>lua require("telescope.builtin").lsp_implementations()<CR>') -- \li for `lsp_implementations`
-  map('n', '<leader>ld', '<cmd>lua require("telescope.builtin").lsp_definitions()<CR>') -- \ld for `lsp_definitions`
+  map('n', '<leader>ff', '<cmd>Telescope find_files<CR>')
+  map('n', '<leader>gc', '<cmd>Telescope git_commits<CR>')
+  map('n', '<leader>qf', '<cmd>Telescope quickfix<CR>')
+  map('n', '<leader>lr', '<cmd>Telescope lsp_references<CR>')
+  map('n', '<leader>li', '<cmd>Telescope lsp_implementations<CR>')
+  map('n', '<leader>ld', '<cmd>Telescope lsp_definitions<CR>')
 
 
   -- git
@@ -302,11 +295,10 @@ require('packer').startup(function()
     requires = 'kyazdani42/nvim-web-devicons',
     config = function()
       require'trouble'.setup {
-        fold_open = 'v', -- icon used for open folds
-        fold_closed = '>', -- icon used for closed folds
-        indent_lines = false, -- add an indent guide below the fold icons
+        fold_open = 'v',
+        fold_closed = '>',
+        indent_lines = false,
         signs = {
-          -- icons / text used for a diagnostic
           error = 'error',
           warning = 'warn',
           hint = 'hint',
@@ -323,7 +315,6 @@ require('packer').startup(function()
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate'
   }
-  --use 'nvim-treesitter/playground'
 
 
   -- syntax checking
@@ -331,13 +322,13 @@ require('packer').startup(function()
   g['neomake_open_list'] = 2
 
 
-  -- tab navigation
-  map('n', '<C-h>', ':tabprevious<CR>') -- <ctrl-h> for previous tab,
-  map('n', '<C-l>', ':tabnext<CR>') -- <ctrl-l> for next tab,
+  -- tab navigation; <ctrl-h> for previous tab, <ctrl-l> for next tab
+  map('n', '<C-h>', ':tabprevious<CR>')
+  map('n', '<C-l>', ':tabnext<CR>')
 
 
-  -- code action
-  use { 'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu' } -- '\ca'
+  -- code action: `\ca`
+  use { 'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu' }
 
 
   -- debug adapter
@@ -504,8 +495,8 @@ require('packer').startup(function()
   ----------------
   -- lsp_signature
   require'lsp_signature'.setup({
-    bind = true, -- This is mandatory, otherwise border config won't get registered.
-    handler_opts = { border = "single" }
+    bind = true,
+    handler_opts = {border = 'single'}
   })
 
 
@@ -554,7 +545,7 @@ require('packer').startup(function()
   ----------------
   -- lualine settings
   require'lualine'.setup {
-    options = { theme = 'seoul256' },
+    options = {theme = 'seoul256'},
     extensions = {'quickfix'}
   }
 
@@ -563,7 +554,7 @@ require('packer').startup(function()
   -- blankline
   require'indent_blankline'.setup {
     char = '▏',
-    buftype_exclude = { 'terminal' },
+    buftype_exclude = {'terminal'},
     show_current_context = true,
     show_current_context_start = true,
   }
@@ -613,10 +604,7 @@ require('packer').startup(function()
   ----------------
   -- rainbow parentheses
   require'nvim-treesitter.configs'.setup {
-    rainbow = {
-      enable = true,
-      extended_mode = true, -- Also highlight non-bracket delimiters like html tags, boolean or table: lang -> boolean
-    }
+    rainbow = {enable = true, extended_mode = true}
   }
 
 
@@ -628,36 +616,25 @@ require('packer').startup(function()
   g['copilot_no_tab_map'] = true
   g['copilot_filetypes'] = {
     ['*'] = false,
-    ['c'] = true,
-    ['clojure'] = true,
-    ['css'] = true,
+    ['c'] = true, ['clojure'] = true, ['css'] = true,
     ['fennel'] = true,
     ['go'] = true,
-    ['haskell'] = true,
-    ['html'] = true,
-    ['java'] = true,
-    ['javascript'] = true,
-    ['julia'] = true,
+    ['haskell'] = true, ['html'] = true,
+    ['java'] = true, ['javascript'] = true, ['julia'] = true,
     ['kotlin'] = true,
     ['lua'] = true,
     ['markdown'] = true,
-    ['python'] = true,
     ['objc'] = true,
-    ['racket'] = true,
-    ['ruby'] = true,
-    ['rust'] = true,
-    ['sh'] = true,
-    ['swift'] = true,
+    ['python'] = true,
+    ['racket'] = true, ['ruby'] = true, ['rust'] = true,
+    ['sh'] = true, ['swift'] = true,
     ['zig'] = true,
   }
 
 
   ----------------
   -- color scheme (24bit-colors)
-  require'github-theme'.setup({
-    theme_style = 'dark',
-    transparent = true,
-  })
+  require'github-theme'.setup {theme_style = 'dark', transparent = true}
 
 end)
 
