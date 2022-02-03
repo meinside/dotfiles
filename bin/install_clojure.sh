@@ -6,7 +6,7 @@
 #
 # (https://clojure.org/guides/getting_started#_installation_on_linux)
 # 
-# last update: 2022.01.06.
+# last update: 2022.02.03.
 # 
 # by meinside@gmail.com
 
@@ -54,14 +54,14 @@ LEIN_BIN="/usr/local/bin/lein"
 
 JDK_DIR=/opt/jdk
 
-# (for ARM devices)
+# JDK LTS (for ARM devices)
 #
 # ARM32 HF: https://www.azul.com/downloads/zulu-community/?architecture=arm-32-bit-hf&package=jdk
 # ARM64   : https://www.azul.com/downloads/zulu-community/?architecture=arm-64-bit&package=jdk
 PLATFORM=`uname -m`
 case "$PLATFORM" in
-	arm64|aarch64) ZULU_EMBEDDED_VERSION="zulu11.52.13-ca-jdk11.0.13-linux_aarch64" ;;
-	armv7*) ZULU_EMBEDDED_VERSION="zulu11.50.19-ca-jdk11.0.12-linux_aarch32hf" ;;
+	arm64|aarch64) ZULU_EMBEDDED_VERSION="zulu17.32.13-ca-jdk17.0.2-linux_aarch64" ;;
+	armv7*) ZULU_EMBEDDED_VERSION="zulu17.32.13-ca-jdk17.0.2-linux_aarch32hf" ;;
 	x86*) ZULU_EMBEDDED_VERSION="" ;;
 	*) error "* unsupported platform: $PLATFORM"; exit 1 ;;
 esac
@@ -73,7 +73,7 @@ function install_zulu_jdk {
 		return 0
 	fi
 
-	# install zulue-embedded java
+	# install zulu-embedded java
 	sudo mkdir -p "$JDK_DIR" && \
 		cd "$JDK_DIR" && \
 		sudo wget "$ZULU_EMBEDDED_TGZ" && \
