@@ -84,7 +84,7 @@ function install_zulu_jdk {
 }
 
 function install_openjdk {
-	sudo apt-get -y install openjdk-8-jdk
+	sudo apt-get -y install openjdk-17-jdk
 }
 
 function prep {
