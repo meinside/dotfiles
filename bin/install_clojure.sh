@@ -60,27 +60,27 @@ JDK_DIR=/opt/jdk
 # ARM64   : https://www.azul.com/downloads/zulu-community/?architecture=arm-64-bit&package=jdk
 PLATFORM=`uname -m`
 case "$PLATFORM" in
-	arm64|aarch64) ZULU_EMBEDDED_VERSION="zulu17.32.13-ca-jdk17.0.2-linux_aarch64" ;;
-	armv7*) ZULU_EMBEDDED_VERSION="zulu17.32.13-ca-jdk17.0.2-linux_aarch32hf" ;;
-	x86*) ZULU_EMBEDDED_VERSION="" ;;
+	arm64|aarch64) ZULU_VERSION="zulu17.32.13-ca-jdk17.0.2-linux_aarch64" ;;
+	armv7*) ZULU_VERSION="zulu17.32.13-ca-jdk17.0.2-linux_aarch32hf" ;;
+	x86*) ZULU_VERSION="" ;;
 	*) error "* unsupported platform: $PLATFORM"; exit 1 ;;
 esac
-ZULU_EMBEDDED_TGZ="http://cdn.azul.com/zulu-embedded/bin/${ZULU_EMBEDDED_VERSION}.tar.gz"
+ZULU_TGZ="https://cdn.azul.com/zulu/bin/${ZULU_VERSION}.tar.gz"
 
 function install_zulu_jdk {
-	if [ -x  "${JDK_DIR}/${ZULU_EMBEDDED_VERSION}/bin/javac" ]; then
-		warn ">>> JDK already installed at: ${JDK_DIR}/${ZULU_EMBEDDED_VERSION}"
+	if [ -x  "${JDK_DIR}/${ZULU_VERSION}/bin/javac" ]; then
+		warn ">>> JDK already installed at: ${JDK_DIR}/${ZULU_VERSION}"
 		return 0
 	fi
 
-	# install zulu-embedded java
+	# install zulu-jdk
 	sudo mkdir -p "$JDK_DIR" && \
 		cd "$JDK_DIR" && \
-		sudo wget "$ZULU_EMBEDDED_TGZ" && \
-		sudo tar -xzvf "${ZULU_EMBEDDED_VERSION}.tar.gz" && \
-		sudo update-alternatives --install /usr/bin/java java ${JDK_DIR}/${ZULU_EMBEDDED_VERSION}/bin/java 181 && \
-		sudo update-alternatives --install /usr/bin/javac javac ${JDK_DIR}/${ZULU_EMBEDDED_VERSION}/bin/javac 181 && \
-		info ">>> installed JDK at: ${JDK_DIR}/${ZULU_EMBEDDED_VERSION}"
+		sudo wget "$ZULU_TGZ" && \
+		sudo tar -xzvf "${ZULU_VERSION}.tar.gz" && \
+		sudo update-alternatives --install /usr/bin/java java ${JDK_DIR}/${ZULU_VERSION}/bin/java 181 && \
+		sudo update-alternatives --install /usr/bin/javac javac ${JDK_DIR}/${ZULU_VERSION}/bin/javac 181 && \
+		info ">>> installed JDK at: ${JDK_DIR}/${ZULU_VERSION}"
 }
 
 function install_openjdk {
@@ -119,7 +119,7 @@ function install_leiningen {
 }
 
 function clean {
-	sudo rm -f "${JDK_DIR}/${ZULU_EMBEDDED_TGZ}.tar.gz"
+	sudo rm -f "${JDK_DIR}/${ZULU_VERSION}.tar.gz"
 }
 
 function install_linux {
