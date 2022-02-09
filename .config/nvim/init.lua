@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.02.03.
+-- last update: 2022.02.09.
 
 ------------------------------------------------
 -- helpers
@@ -540,6 +540,7 @@ require('packer').startup(function()
   require'go'.setup {
     gofmt = 'gopls',
   }
+  vim.api.nvim_exec([[ autocmd BufWritePre *.go :silent! lua require('go.format').goimport() ]], false)
 
 
   ----------------
