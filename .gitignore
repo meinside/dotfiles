@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2021.12.27.
+# last update: 2022.02.13.
 
 # unnecessary binary files
 *.o
@@ -73,6 +73,9 @@ snap/
 .dbus/
 .Xauthority
 .xsession-errors
+
+# c/c++
+.ccls-cache/
 
 # clojure files/dirs
 .clojure/
