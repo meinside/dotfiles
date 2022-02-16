@@ -2,12 +2,10 @@
 
 # install_zig.sh
 #
-# Install zig from binaries (https://github.com/ziglang/zig/releases)
-#
-# NOTE: currently not working for non-nightly versions (bootstrapping needed)
+# Install zig from binaries (https://ziglang.org/download/)
 #
 # created on : 2021.03.17.
-# last update: 2021.12.22.
+# last update: 2022.02.16.
 #
 # by meinside@gmail.com
 #
@@ -21,7 +19,7 @@
 # frequently updated values
 
 # XXX - edit these for installing other versions
-ZIG_VERSION="0.9.0"
+ZIG_VERSION="0.9.1"
 ZLS_VERSION="0.1.0"
 
 
@@ -91,7 +89,7 @@ function install_linux {
 
 	    TAR_URL=$( curl -s https://ziglang.org/download/index.json | grep tarball | cut -d\" -f4 | grep linux | grep $PLATFORM | head -n 1 )
 	else
-	    TAR_URL="https://github.com/ziglang/zig/releases/download/${ZIG_VERSION}/zig-linux-${PLATFORM}-${ZIG_VERSION}.tar.xz"
+	    TAR_URL=$( curl -s https://ziglang.org/download/index.json | grep tarball | cut -d\" -f4 | grep linux | grep $PLATFORM | grep $ZIG_VERSION )
 	fi
 
 	ZIG_DIR="${INSTALLATION_DIR}/zig-${ZIG_VERSION}"
