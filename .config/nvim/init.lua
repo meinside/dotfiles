@@ -132,7 +132,7 @@ require('packer').startup(function()
 
   -- markdown preview
   --
-  use {'iamcco/markdown-preview.nvim', run = 'cd app && yarn install', cmd = 'MarkdownPreview'}
+  use {'iamcco/markdown-preview.nvim', run = 'cd app && npm install'}
 
 
   -- fold and preview
