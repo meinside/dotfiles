@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.02.09.
+-- last update: 2022.02.18.
 
 ------------------------------------------------
 -- helpers
@@ -128,6 +128,11 @@ require('packer').startup(function()
       require("which-key").setup {}
     end
   }
+
+
+  -- markdown preview
+  --
+  use {'iamcco/markdown-preview.nvim', run = 'cd app && yarn install', cmd = 'MarkdownPreview'}
 
 
   -- fold and preview
