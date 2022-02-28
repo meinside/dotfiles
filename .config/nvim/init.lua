@@ -1,9 +1,9 @@
--- My .config/nvim/init.lua file for neovim (0.7+/nightly)
+-- My .config/nvim/init.lua file for neovim 0.7+
 --
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.02.18.
+-- last update: 2022.02.28.
 
 ------------------------------------------------
 -- helpers
@@ -19,49 +19,31 @@ local function map(mode, lhs, rhs, opts)
 end
 
 -- default setup for language servers
-local on_attach = function(client, bufnr)
+local lsp_on_attach = function(client, bufnr)
   -- Enable completion triggered by <c-x><c-o>
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+
   -- See `:help vim.lsp.*` for documentation on any of the below functions
-  if vim.keymap then
-    -- Mappings.
-    local opts = { remap = false, silent = true }
+  -- Mappings.
+  local opts = { remap = false, silent = true }
 
-    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-    --vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-    --vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
-    --vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
-    --vim.keymap.set('n', '<space>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, opts)
-    vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, opts)
-    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
-    --vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-    vim.keymap.set('n', '<leader>ca', '<cmd>CodeActionMenu<CR>', opts)
-    --vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-    vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-    vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-    vim.keymap.set('n', '<leader>ll', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-    vim.keymap.set("n", "<leader>fo", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
-  else -- FIXME: NOTE: remove following codes when neovim 0.7 becomes stable (https://github.com/neovim/neovim/pull/16591)
-    -- Mappings.
-    local opts = { noremap = true, silent = true }
-
-    local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-
-    buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-    buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-    buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-    buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-    buf_set_keymap('n', 'gt', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-    buf_set_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-    buf_set_keymap('n', '<leader>ca', '<cmd>CodeActionMenu<CR>', opts)
-    buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-    buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-    buf_set_keymap('n', '<leader>ll', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-    buf_set_keymap("n", "<leader>fo", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
-  end
+  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+  vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+  --vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+  --vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
+  --vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
+  --vim.keymap.set('n', '<space>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, opts)
+  vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, opts)
+  vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+  --vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+  vim.keymap.set('n', '<leader>ca', '<cmd>CodeActionMenu<CR>', opts)
+  --vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+  vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+  vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+  vim.keymap.set('n', '<leader>ll', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+  vim.keymap.set("n", "<leader>fo", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
 
   -- diagnostics configuration
   vim.diagnostic.config({ underline = false, virtual_text = false, signs = true, severity_sort = true, update_in_insert = false })
@@ -189,7 +171,37 @@ require('packer').startup(function()
     'lewis6991/gitsigns.nvim', -- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
     requires = {'nvim-lua/plenary.nvim'},
     config = function()
-      require('gitsigns').setup({numhl = true})
+      require('gitsigns').setup({
+        numhl = true,
+        on_attach = function(bufnr)
+          local gs = package.loaded.gitsigns
+          local function m(mode, l, r, opts)
+            opts = opts or {}
+            opts.buffer = bufnr
+            vim.keymap.set(mode, l, r, opts)
+          end
+
+          -- Navigation
+          m('n', ']c', "&diff ? ']c' : '<cmd>Gitsigns next_hunk<CR>'", {expr=true})
+          m('n', '[c', "&diff ? '[c' : '<cmd>Gitsigns prev_hunk<CR>'", {expr=true})
+
+          -- Actions
+          m({'n', 'v'}, '<leader>hs', ':Gitsigns stage_hunk<CR>')
+          m({'n', 'v'}, '<leader>hr', ':Gitsigns reset_hunk<CR>')
+          m('n', '<leader>hS', gs.stage_buffer)
+          m('n', '<leader>hu', gs.undo_stage_hunk)
+          m('n', '<leader>hR', gs.reset_buffer)
+          m('n', '<leader>hp', gs.preview_hunk)
+          m('n', '<leader>hb', function() gs.blame_line{full=true} end)
+          m('n', '<leader>tb', gs.toggle_current_line_blame)
+          m('n', '<leader>hd', gs.diffthis)
+          m('n', '<leader>hD', function() gs.diffthis('~') end)
+          m('n', '<leader>td', gs.toggle_deleted)
+
+          -- Text object
+          m({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+        end
+      })
     end
   }
   -- gist (:Gist / :Gist -p / ...)
@@ -472,7 +484,7 @@ require('packer').startup(function()
   }
   for _, lsp in ipairs(lsp_servers) do
     nvim_lsp[lsp].setup {
-      on_attach = on_attach,
+      on_attach = lsp_on_attach,
       capabilities = capabilities,
     }
   end
