@@ -59,11 +59,14 @@ local lsp_on_attach = function(client, bufnr)
 
   -- highlight current variable
   if client.resolved_capabilities.document_highlight then
-    vim.api.nvim_exec([[
-      hi link LspReferenceRead Visual
-      hi link LspReferenceText Visual
-      hi link LspReferenceWrite Visual
-    ]], false)
+--    vim.api.nvim_exec([[
+--      hi link LspReferenceRead Visual
+--      hi link LspReferenceText Visual
+--      hi link LspReferenceWrite Visual
+--    ]], false)
+    vim.api.nvim_set_hl(0, 'LspReferenceRead', {link = 'Visual'})
+    vim.api.nvim_set_hl(0, 'LspReferenceText', {link = 'Visual'})
+    vim.api.nvim_set_hl(0, 'LspReferenceWrite', {link = 'Visual'})
     vim.api.nvim_create_augroup('lsp_document_highlight', {clear = true})
     vim.api.nvim_create_autocmd('CursorHold', {group = 'lsp_document_highlight', callback = function() vim.lsp.buf.document_highlight() end})
     vim.api.nvim_create_autocmd('CursorMoved', {group = 'lsp_document_highlight', callback = function() vim.lsp.buf.clear_references() end})
