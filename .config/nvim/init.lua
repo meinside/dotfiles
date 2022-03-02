@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.02.28.
+-- last update: 2022.03.02.
 
 ------------------------------------------------
 -- helpers
@@ -54,9 +54,7 @@ local lsp_on_attach = function(client, bufnr)
 
   -- auto formatting on save
   if client.resolved_capabilities.document_formatting then
-    vim.api.nvim_exec([[
-      autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()
-    ]], false)
+    vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.formatting_sync() end})
   end
 
   -- highlight current variable
@@ -65,12 +63,9 @@ local lsp_on_attach = function(client, bufnr)
       hi link LspReferenceRead Visual
       hi link LspReferenceText Visual
       hi link LspReferenceWrite Visual
-      augroup lsp_document_highlight
-        autocmd! * <buffer>
-        autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
-        autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
-      augroup END
     ]], false)
+    vim.api.nvim_create_autocmd('CursorHold', {callback = function() vim.lsp.buf.document_highlight() end})
+    vim.api.nvim_create_autocmd('CursorMoved', {callback = function() vim.lsp.buf.clear_references() end})
   end
 end
 
@@ -519,9 +514,9 @@ require('packer').startup(function()
 
   ----------------
   -- diagnostics
-  vim.api.nvim_exec([[
-    autocmd CursorHold * lua vim.diagnostic.open_float(nil, { focusable = false, close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' }, border = 'rounded', source = 'always', prefix = ' ' })
-  ]], false)
+  vim.api.nvim_create_autocmd('CursorHold', {pattern = '*', callback = function()
+    vim.diagnostic.open_float(nil, { focusable = false, close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' }, border = 'rounded', source = 'always', prefix = ' ' })
+  end})
 
 
   ----------------
@@ -557,7 +552,7 @@ require('packer').startup(function()
   require'go'.setup {
     gofmt = 'gopls',
   }
-  vim.api.nvim_exec([[ autocmd BufWritePre *.go :silent! lua require('go.format').goimport() ]], false)
+  vim.api.nvim_create_autocmd('BufWritePre', {pattern = '*.go', callback = require('go.format').goimport})
 
 
   ----------------
@@ -685,18 +680,16 @@ opt.wildmenu = true
 opt.breakindent = true
 opt.splitbelow = true
 opt.splitright = true
-vim.api.nvim_exec([[
-  augroup etc
-    au!
-
-    " go to the last position of a file
-    autocmd BufReadPost * if line("'\"") > 0 && line("'\"") <= line("$") | exe "normal g`\"" | endif
-
-    " highlight on yank
-    autocmd TextYankPost * lua vim.highlight.on_yank {on_visual = false}
-
-  augroup end
-]], false)
+-- go to the last position of a file
+vim.api.nvim_create_autocmd('BufReadPost', {pattern = '*', callback = function()
+  if vim.fn.line('.') > 0 and vim.fn.line('.') <= vim.fn.line('$') then
+    vim.cmd([[exe "normal g`\""]])
+  end
+end})
+-- highlight on yank
+vim.api.nvim_create_autocmd('TextYankPost', {pattern = '*', callback = function()
+  vim.highlight.on_yank({on_visual = false})
+end})
 
 -- disable unneeded providers
 g['loaded_python_provider'] = 0
