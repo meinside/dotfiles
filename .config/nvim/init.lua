@@ -64,8 +64,9 @@ local lsp_on_attach = function(client, bufnr)
       hi link LspReferenceText Visual
       hi link LspReferenceWrite Visual
     ]], false)
-    vim.api.nvim_create_autocmd('CursorHold', {callback = function() vim.lsp.buf.document_highlight() end})
-    vim.api.nvim_create_autocmd('CursorMoved', {callback = function() vim.lsp.buf.clear_references() end})
+    vim.api.nvim_create_augroup('lsp_document_highlight', {clear = true})
+    vim.api.nvim_create_autocmd('CursorHold', {group = 'lsp_document_highlight', callback = function() vim.lsp.buf.document_highlight() end})
+    vim.api.nvim_create_autocmd('CursorMoved', {group = 'lsp_document_highlight', callback = function() vim.lsp.buf.clear_references() end})
   end
 end
 
@@ -501,11 +502,27 @@ require('packer').startup(function()
 
 
   ----------------
-  -- lsp_signature
+  -- lsp_signature and lspkind settings
   require'lsp_signature'.setup({
     bind = true,
     handler_opts = {border = 'single'}
   })
+  -- (gray)
+  vim.api.nvim_set_hl(0, 'CmpItemAbbrDeprecated', {bg = 'NONE', fg = '#808080', strikethrough = true})
+  -- (blue)
+  vim.api.nvim_set_hl(0, 'CmpItemAbbrMatch', {bg = 'NONE', fg = '#569CD6'})
+  vim.api.nvim_set_hl(0, 'CmpItemAbbrMatchFuzzy', {bg = 'NONE', fg = '#569CD6'})
+  -- (light blue)
+  vim.api.nvim_set_hl(0, 'CmpItemKindVariable', {bg = 'NONE', fg = '#9CDCFE'})
+  vim.api.nvim_set_hl(0, 'CmpItemKindInterface', {bg = 'NONE', fg = '#9CDCFE'})
+  vim.api.nvim_set_hl(0, 'CmpItemKindText', {bg = 'NONE', fg = '#9CDCFE'})
+  -- (pink)
+  vim.api.nvim_set_hl(0, 'CmpItemKindFunction', {bg = 'NONE', fg = '#C586C0'})
+  vim.api.nvim_set_hl(0, 'CmpItemKindMethod', {bg = 'NONE', fg = '#C586C0'})
+  -- (front)
+  vim.api.nvim_set_hl(0, 'CmpItemKindKeyword', {bg = 'NONE', fg = '#D4D4D4'})
+  vim.api.nvim_set_hl(0, 'CmpItemKindProperty', {bg = 'NONE', fg = '#D4D4D4'})
+  vim.api.nvim_set_hl(0, 'CmpItemKindUnit', {bg = 'NONE', fg = '#D4D4D4'})
 
 
   ----------------
@@ -513,28 +530,6 @@ require('packer').startup(function()
   vim.api.nvim_create_autocmd('CursorHold', {pattern = '*', callback = function()
     vim.diagnostic.open_float(nil, { focusable = false, close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' }, border = 'rounded', source = 'always', prefix = ' ' })
   end})
-
-
-  ----------------
-  -- lspkind colors
-  vim.api.nvim_exec([[
-    " gray
-    highlight! CmpItemAbbrDeprecated guibg=NONE gui=strikethrough guifg=#808080
-    " blue
-    highlight! CmpItemAbbrMatch guibg=NONE guifg=#569CD6
-    highlight! CmpItemAbbrMatchFuzzy guibg=NONE guifg=#569CD6
-    " light blue
-    highlight! CmpItemKindVariable guibg=NONE guifg=#9CDCFE
-    highlight! CmpItemKindInterface guibg=NONE guifg=#9CDCFE
-    highlight! CmpItemKindText guibg=NONE guifg=#9CDCFE
-    " pink
-    highlight! CmpItemKindFunction guibg=NONE guifg=#C586C0
-    highlight! CmpItemKindMethod guibg=NONE guifg=#C586C0
-    " front
-    highlight! CmpItemKindKeyword guibg=NONE guifg=#D4D4D4
-    highlight! CmpItemKindProperty guibg=NONE guifg=#D4D4D4
-    highlight! CmpItemKindUnit guibg=NONE guifg=#D4D4D4
-  ]], false)
 
 
   ----------------
@@ -679,15 +674,13 @@ opt.splitright = true
 opt.foldmethod = 'indent' -- automatically fold on indent
 opt.foldlevelstart = 20 -- but open all folds on file open
 
--- go to the last position of a file
-vim.api.nvim_create_autocmd('BufReadPost', {pattern = '*', callback = function()
+vim.api.nvim_create_augroup("etc", {clear = true})
+vim.api.nvim_create_autocmd('BufReadPost', {group = 'etc', pattern = '*', callback = function() -- go to the last position of a file
   if vim.fn.line('.') > 0 and vim.fn.line('.') <= vim.fn.line('$') then
     vim.cmd([[exe "normal g`\""]])
   end
 end})
-
--- highlight on yank
-vim.api.nvim_create_autocmd('TextYankPost', {pattern = '*', callback = function()
+vim.api.nvim_create_autocmd('TextYankPost', {group = 'etc', pattern = '*', callback = function() -- highlight on yank
   vim.highlight.on_yank({on_visual = false})
 end})
 
