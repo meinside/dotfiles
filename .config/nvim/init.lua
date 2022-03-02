@@ -129,10 +129,6 @@ require('packer').startup(function()
       require('pretty-fold.preview').setup_keybinding('l') -- will float preview when pressing 'l' on folds
     end
   }
-  vim.api.nvim_exec([[
-    set foldmethod=indent " automatically fold on indent
-    set foldlevelstart=20 " but open all folds on file open
-  ]], false)
 
 
   -- formatting
@@ -680,12 +676,16 @@ opt.wildmenu = true
 opt.breakindent = true
 opt.splitbelow = true
 opt.splitright = true
+opt.foldmethod = 'indent' -- automatically fold on indent
+opt.foldlevelstart = 20 -- but open all folds on file open
+
 -- go to the last position of a file
 vim.api.nvim_create_autocmd('BufReadPost', {pattern = '*', callback = function()
   if vim.fn.line('.') > 0 and vim.fn.line('.') <= vim.fn.line('$') then
     vim.cmd([[exe "normal g`\""]])
   end
 end})
+
 -- highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {pattern = '*', callback = function()
   vim.highlight.on_yank({on_visual = false})
