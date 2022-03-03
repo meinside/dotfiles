@@ -5,7 +5,7 @@
 # Build and install Racket from the official repository.
 #
 # created on : 2021.11.24.
-# last update: 2022.01.12.
+# last update: 2022.03.03.
 #
 # by meinside@gmail.com
 
@@ -15,7 +15,7 @@
 # frequently updated values
 
 # https://download.racket-lang.org/
-VERSION="8.3"	# XXX - edit for different version
+VERSION="8.4"	# XXX - edit for different version
 
 
 ################################
