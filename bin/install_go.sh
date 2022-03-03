@@ -11,7 +11,7 @@
 # *** Another Note: `aarch64` is not supported in golang 1.4, so it will be bootstrapped with package manager's version.
 # 
 # created on : 2014.07.01.
-# last update: 2022.01.07.
+# last update: 2022.03.03.
 # 
 # by meinside@gmail.com
 
@@ -22,7 +22,7 @@
 
 # XXX - edit for different version of Go (see: https://go.googlesource.com/go/+refs)
 #INSTALL_BRANCH="release-branch.go1.6"	# branch
-INSTALL_BRANCH="go1.17.6"	# tag
+INSTALL_BRANCH="go1.17.7"	# tag
 
 
 ################################
