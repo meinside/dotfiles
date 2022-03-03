@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.03.02.
+-- last update: 2022.03.03.
 
 ------------------------------------------------
 -- helpers
@@ -323,10 +323,7 @@ require('packer').startup(function()
 
 
   -- syntax highlighting
-  use {
-    'nvim-treesitter/nvim-treesitter',
-    run = ':TSUpdate'
-  }
+  use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
 
 
   -- syntax checking
@@ -334,17 +331,12 @@ require('packer').startup(function()
   g['neomake_open_list'] = 2
 
 
-  -- tab navigation; <ctrl-h> for previous tab, <ctrl-l> for next tab
-  map('n', '<C-h>', ':tabprevious<CR>')
-  map('n', '<C-l>', ':tabnext<CR>')
-
-
   -- code action: `\ca`
-  use { 'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu' }
+  use {'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu'}
 
 
   -- debug adapter
-  use { 'rcarriga/nvim-dap-ui', requires = { 'mfussenegger/nvim-dap' } }
+  use {'rcarriga/nvim-dap-ui', requires = {'mfussenegger/nvim-dap'}}
   use 'theHamsta/nvim-dap-virtual-text'
 
 
@@ -353,7 +345,36 @@ require('packer').startup(function()
 
 
   -- clojure
-  use 'dmac/vim-cljfmt' -- $ go install github.com/cespare/goclj/cljfmt
+  use {'dmac/vim-cljfmt', ft = {'clojure'}} -- $ go install github.com/cespare/goclj/cljfmt
+  -- for auto completion: <C-x><C-o>
+  -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
+  -- for reloading everything: \rr
+  -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
+  use {'Olical/conjure', ft = {'clojure'}}
+
+
+  -- fennel
+  use {'bakpakin/fennel.vim', ft = {'fennel'}}
+
+
+  -- go
+  use 'ray-x/go.nvim'
+
+
+  -- haskell
+  use {'neovimhaskell/haskell-vim', ft = {'haskell'}}
+  use {'itchyny/vim-haskell-indent', ft = {'haskell'}}
+  if fn.executable('stylish-haskell') == 1 then
+    use {'alx741/vim-stylishask', ft = {'haskell'}}
+  end
+
+
+  -- julia
+  use 'JuliaEditorSupport/julia-vim'
+
+
+  -- lispy languages
+  --
   -- >f, <f : move a form
   -- >e, <e : move an element
   -- >), <), >(, <( : move a parenthesis
@@ -362,54 +383,30 @@ require('packer').startup(function()
   -- cse(, cse), cseb : surround an element with parenthesis
   -- cse[, cse] : surround an element with brackets
   -- cse{, cse} : surround an element with braces
-  use 'guns/vim-sexp'
+  use {'guns/vim-sexp', ft = {'clojure', 'fennel', 'racket'}}
   g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
-  use 'tpope/vim-sexp-mappings-for-regular-people'
-  -- for auto completion: <C-x><C-o>
-  -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
-  -- for reloading everything: \rr
-  -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-  use 'Olical/conjure'
-
-
-  -- fennel
-  use 'bakpakin/fennel.vim'
-
-
-  -- go
-  use 'ray-x/go.nvim'
-
-
-  -- haskell
-  use 'neovimhaskell/haskell-vim'
-  use 'itchyny/vim-haskell-indent'
-  if fn.executable('stylish-haskell') == 1 then
-    use 'alx741/vim-stylishask'
-  end
-
-
-  -- julia
-  use 'JuliaEditorSupport/julia-vim'
+  g['sexp_filetypes'] = 'clojure,fennel,racket'
+  use {'tpope/vim-sexp-mappings-for-regular-people', ft = {'clojure', 'fennel', 'racket'}}
 
 
   -- racket
-  use 'wlangstroth/vim-racket'
+  use {'wlangstroth/vim-racket', ft = {'racket'}}
 
 
   -- ruby
-  use 'vim-ruby/vim-ruby'
+  use {'vim-ruby/vim-ruby', ft = {'ruby'}}
 
 
   -- rust
-  use 'rust-lang/rust.vim'
+  use {'rust-lang/rust.vim', ft = {'rust'}}
 
 
   -- zig
-  use 'ziglang/zig.vim'
+  use {'ziglang/zig.vim', ft = {'zig'}}
 
 
-  -- github copilot
-  use 'github/copilot.vim' -- :Copilot setup
+  -- github copilot (:Copilot setup)
+  use 'github/copilot.vim'
 
 
   -- ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ non-lazy `require` not allowed above ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑
@@ -435,7 +432,6 @@ require('packer').startup(function()
     },
   }
   local nvim_lsp = require('lspconfig')
-  ---------------- language servers with default setup
   local lsp_servers = { -- language servers with default setup
     -- (bash)
     -- $ npm i -g bash-language-server
@@ -637,6 +633,11 @@ require('packer').startup(function()
     ['sh'] = true, ['swift'] = true,
     ['zig'] = true,
   }
+
+
+  -- for tab navigation; <ctrl-h> for previous tab, <ctrl-l> for next tab
+  map('n', '<C-h>', ':tabprevious<CR>')
+  map('n', '<C-l>', ':tabnext<CR>')
 
 
   ----------------
