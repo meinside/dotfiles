@@ -95,7 +95,10 @@ require('packer').startup(function()
 
 
   -- colorschemes (https://github.com/rockerBOO/awesome-neovim#colorscheme)
-  use 'projekt0n/github-nvim-theme'
+  use {
+    'projekt0n/github-nvim-theme',
+    config = function() require'github-theme'.setup {theme_style = 'dark', transparent = true} end
+  }
 
 
   -- dim inactive window
@@ -105,9 +108,7 @@ require('packer').startup(function()
   -- show key bindings
   use {
     'folke/which-key.nvim',
-    config = function()
-      require("which-key").setup {}
-    end
+    config = function() require("which-key").setup {} end
   }
 
 
@@ -138,7 +139,17 @@ require('packer').startup(function()
   -- formatting
   use 'tpope/vim-surround' -- cst'" => change ' to " / ds" => remove " / ysiw" => wrap text object with " / yss" => wrap line with "
   use 'tpope/vim-ragtag' -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
-  use 'lukas-reineke/indent-blankline.nvim'
+  use {
+    'lukas-reineke/indent-blankline.nvim',
+    config = function()
+      require'indent_blankline'.setup {
+        char = '▏',
+        buftype_exclude = {'terminal'},
+        show_current_context = true,
+        show_current_context_start = true,
+      }
+    end
+  }
   use 'tpope/vim-sleuth'
   use 'p00f/nvim-ts-rainbow'
 
@@ -207,18 +218,45 @@ require('packer').startup(function()
   -- statusline
   use {
     'hoob3rt/lualine.nvim',
-    requires = {'kyazdani42/nvim-web-devicons', opt = true}
+    requires = {'kyazdani42/nvim-web-devicons', opt = true},
+    config = function() require'lualine'.setup {options = {theme = 'seoul256'}, extensions = {'quickfix'}} end
   }
 
 
   -- auto pair/close
-  use 'windwp/nvim-autopairs'
+  use {
+    'windwp/nvim-autopairs',
+    config = function() require'nvim-autopairs'.setup{} end
+  }
 
 
   -- lsp
   use 'neovim/nvim-lspconfig'
-  use 'ray-x/lsp_signature.nvim'
-  use 'onsails/lspkind-nvim'
+  use {
+    'ray-x/lsp_signature.nvim',
+    config = function() require'lsp_signature'.setup {bind = true, handler_opts = {border = 'single'}} end
+  }
+  use {
+    'onsails/lspkind-nvim',
+    config = function()
+      -- (gray)
+      vim.api.nvim_set_hl(0, 'CmpItemAbbrDeprecated', {bg = 'NONE', fg = '#808080', strikethrough = true})
+      -- (blue)
+      vim.api.nvim_set_hl(0, 'CmpItemAbbrMatch', {bg = 'NONE', fg = '#569CD6'})
+      vim.api.nvim_set_hl(0, 'CmpItemAbbrMatchFuzzy', {bg = 'NONE', fg = '#569CD6'})
+      -- (light blue)
+      vim.api.nvim_set_hl(0, 'CmpItemKindVariable', {bg = 'NONE', fg = '#9CDCFE'})
+      vim.api.nvim_set_hl(0, 'CmpItemKindInterface', {bg = 'NONE', fg = '#9CDCFE'})
+      vim.api.nvim_set_hl(0, 'CmpItemKindText', {bg = 'NONE', fg = '#9CDCFE'})
+      -- (pink)
+      vim.api.nvim_set_hl(0, 'CmpItemKindFunction', {bg = 'NONE', fg = '#C586C0'})
+      vim.api.nvim_set_hl(0, 'CmpItemKindMethod', {bg = 'NONE', fg = '#C586C0'})
+      -- (front)
+      vim.api.nvim_set_hl(0, 'CmpItemKindKeyword', {bg = 'NONE', fg = '#D4D4D4'})
+      vim.api.nvim_set_hl(0, 'CmpItemKindProperty', {bg = 'NONE', fg = '#D4D4D4'})
+      vim.api.nvim_set_hl(0, 'CmpItemKindUnit', {bg = 'NONE', fg = '#D4D4D4'})
+    end
+  }
 
 
   -- snippets
@@ -295,6 +333,9 @@ require('packer').startup(function()
       -- setup autopairs
       local cmp_autopairs = require('nvim-autopairs.completion.cmp')
       cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
+
+      -- load snippets
+      require'luasnip/loaders/from_vscode'.lazy_load()
     end
   }
 
@@ -322,13 +363,40 @@ require('packer').startup(function()
   }
 
 
-  -- syntax highlighting
-  use {'nvim-treesitter/nvim-treesitter', run = ':TSUpdate'}
+  -- syntax highlighting and rainbow parenthesis
+  use {
+    'nvim-treesitter/nvim-treesitter',
+    run = ':TSUpdate',
+    config = function()
+      require'nvim-treesitter.configs'.setup {
+        ensure_installed = {
+          'bash',
+          'c', 'clojure', 'cmake', 'comment', 'cpp', 'css',
+          'dart', 'dockerfile',
+          'fennel',
+          'go', 'gomod', 'gowork',
+          'haskell', 'html',
+          'java', 'javascript', 'jsdoc', 'json', 'json5', 'jsonc', 'julia',
+          'kotlin',
+          'llvm', 'lua',
+          'make', 'markdown',
+          'perl', 'php', 'python',
+          'query',
+          'r', 'ruby', 'rust',
+          --'swift',
+          'toml', 'typescript',
+          'yaml',
+          'zig',
+        },
+        highlight = {enable = true},
+        rainbow = {enable = true, extended_mode = true},
+      }
+    end
+  }
 
 
   -- syntax checking
   use 'neomake/neomake'
-  g['neomake_open_list'] = 2
 
 
   -- code action: `\ca`
@@ -337,7 +405,10 @@ require('packer').startup(function()
 
   -- debug adapter
   use {'rcarriga/nvim-dap-ui', requires = {'mfussenegger/nvim-dap'}}
-  use 'theHamsta/nvim-dap-virtual-text'
+  use {
+    'theHamsta/nvim-dap-virtual-text',
+    config = function() require'nvim-dap-virtual-text'.setup {} end
+  }
 
 
   -- bash
@@ -358,7 +429,13 @@ require('packer').startup(function()
 
 
   -- go
-  use 'ray-x/go.nvim'
+  use {
+    'ray-x/go.nvim',
+    config = function()
+      require'go'.setup {gofmt = 'gopls'}
+      vim.api.nvim_create_autocmd('BufWritePre', {pattern = '*.go', callback = require('go.format').goimport})
+    end
+  }
 
 
   -- haskell
@@ -409,10 +486,6 @@ require('packer').startup(function()
   use 'github/copilot.vim'
 
 
-  -- ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑ non-lazy `require` not allowed above ↑ ↑ ↑ ↑ ↑ ↑ ↑ ↑
-  -- ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓      `use` not allowed below         ↓ ↓ ↓ ↓ ↓ ↓ ↓ ↓
-
-
   ----------------
   -- lsp settings
   local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
@@ -424,13 +497,7 @@ require('packer').startup(function()
   capabilities.textDocument.completion.completionItem.deprecatedSupport = true
   capabilities.textDocument.completion.completionItem.commitCharactersSupport = true
   capabilities.textDocument.completion.completionItem.tagSupport = { valueSet = { 1 } }
-  capabilities.textDocument.completion.completionItem.resolveSupport = {
-    properties = {
-      'documentation',
-      'detail',
-      'additionalTextEdits',
-    },
-  }
+  capabilities.textDocument.completion.completionItem.resolveSupport = {properties = {'documentation', 'detail', 'additionalTextEdits'}}
   local nvim_lsp = require('lspconfig')
   local lsp_servers = { -- language servers with default setup
     -- (bash)
@@ -499,152 +566,35 @@ require('packer').startup(function()
     } },
   }
 
-
-  ----------------
-  -- lsp_signature and lspkind settings
-  require'lsp_signature'.setup({
-    bind = true,
-    handler_opts = {border = 'single'}
-  })
-  -- (gray)
-  vim.api.nvim_set_hl(0, 'CmpItemAbbrDeprecated', {bg = 'NONE', fg = '#808080', strikethrough = true})
-  -- (blue)
-  vim.api.nvim_set_hl(0, 'CmpItemAbbrMatch', {bg = 'NONE', fg = '#569CD6'})
-  vim.api.nvim_set_hl(0, 'CmpItemAbbrMatchFuzzy', {bg = 'NONE', fg = '#569CD6'})
-  -- (light blue)
-  vim.api.nvim_set_hl(0, 'CmpItemKindVariable', {bg = 'NONE', fg = '#9CDCFE'})
-  vim.api.nvim_set_hl(0, 'CmpItemKindInterface', {bg = 'NONE', fg = '#9CDCFE'})
-  vim.api.nvim_set_hl(0, 'CmpItemKindText', {bg = 'NONE', fg = '#9CDCFE'})
-  -- (pink)
-  vim.api.nvim_set_hl(0, 'CmpItemKindFunction', {bg = 'NONE', fg = '#C586C0'})
-  vim.api.nvim_set_hl(0, 'CmpItemKindMethod', {bg = 'NONE', fg = '#C586C0'})
-  -- (front)
-  vim.api.nvim_set_hl(0, 'CmpItemKindKeyword', {bg = 'NONE', fg = '#D4D4D4'})
-  vim.api.nvim_set_hl(0, 'CmpItemKindProperty', {bg = 'NONE', fg = '#D4D4D4'})
-  vim.api.nvim_set_hl(0, 'CmpItemKindUnit', {bg = 'NONE', fg = '#D4D4D4'})
-
-
-  ----------------
-  -- diagnostics
-  vim.api.nvim_create_autocmd('CursorHold', {pattern = '*', callback = function()
-    vim.diagnostic.open_float(nil, { focusable = false, close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' }, border = 'rounded', source = 'always', prefix = ' ' })
-  end})
-
-
-  ----------------
-  -- debug adapter
-  require'nvim-dap-virtual-text'.setup {
-  }
-
-
-  ----------------
-  -- go.nvim settings
-  require'go'.setup {
-    gofmt = 'gopls',
-  }
-  vim.api.nvim_create_autocmd('BufWritePre', {pattern = '*.go', callback = require('go.format').goimport})
-
-
-  ----------------
-  -- lualine settings
-  require'lualine'.setup {
-    options = {theme = 'seoul256'},
-    extensions = {'quickfix'}
-  }
-
-
-  ----------------
-  -- blankline
-  require'indent_blankline'.setup {
-    char = '▏',
-    buftype_exclude = {'terminal'},
-    show_current_context = true,
-    show_current_context_start = true,
-  }
-
-
-  ----------------
-  -- neomake settings
-  vim.api.nvim_exec([[call neomake#configure#automake('nrwi', 500)]], false)
-
-
-  ----------------
-  -- treesitter settings
-  require'nvim-treesitter.configs'.setup {
-    ensure_installed = {
-      'bash',
-      'c', 'clojure', 'cmake', 'comment', 'cpp', 'css',
-      'dart', 'dockerfile',
-      'fennel',
-      'go', 'gomod', 'gowork',
-      'haskell', 'html',
-      'java', 'javascript', 'jsdoc', 'json', 'json5', 'jsonc', 'julia',
-      'kotlin',
-      'llvm', 'lua',
-      'make', 'markdown',
-      'perl', 'php', 'python',
-      'query',
-      'r', 'ruby', 'rust',
-      --'swift',
-      'toml', 'typescript',
-      'yaml',
-      'zig',
-    },
-    highlight = {enable = true},
-  }
-
-
-  ----------------
-  -- snippets settings
-  require'luasnip/loaders/from_vscode'.lazy_load()
-
-
-  ----------------
-  -- auto pair/close settings
-  require'nvim-autopairs'.setup{}
-
-
-  ----------------
-  -- rainbow parentheses
-  require'nvim-treesitter.configs'.setup {
-    rainbow = {enable = true, extended_mode = true}
-  }
-
-
-  ----------------
-  -- github copilot settings (ctrl+L for applying)
-  vim.api.nvim_exec([[
-    imap <silent><script><expr> <C-L> copilot#Accept("<CR>")
-  ]], false)
-  g['copilot_no_tab_map'] = true
-  g['copilot_filetypes'] = {
-    ['*'] = false,
-    ['c'] = true, ['clojure'] = true, ['css'] = true,
-    ['fennel'] = true,
-    ['go'] = true,
-    ['haskell'] = true, ['html'] = true,
-    ['java'] = true, ['javascript'] = true, ['julia'] = true,
-    ['kotlin'] = true,
-    ['lua'] = true,
-    ['markdown'] = true,
-    ['objc'] = true,
-    ['python'] = true,
-    ['racket'] = true, ['ruby'] = true, ['rust'] = true,
-    ['sh'] = true, ['swift'] = true,
-    ['zig'] = true,
-  }
-
-
-  -- for tab navigation; <ctrl-h> for previous tab, <ctrl-l> for next tab
-  map('n', '<C-h>', ':tabprevious<CR>')
-  map('n', '<C-l>', ':tabnext<CR>')
-
-
-  ----------------
-  -- color scheme (24bit-colors)
-  require'github-theme'.setup {theme_style = 'dark', transparent = true}
-
 end)
+
+
+----------------
+-- neomake
+vim.api.nvim_exec([[call neomake#configure#automake('nrwi', 500)]], false)
+g['neomake_open_list'] = 2
+
+
+----------------
+-- copilot settings (ctrl+L for applying)
+vim.api.nvim_exec([[imap <silent><script><expr> <C-L> copilot#Accept("<CR>")]], false)
+g['copilot_no_tab_map'] = true
+g['copilot_filetypes'] = {
+  ['*'] = false,
+  ['c'] = true, ['clojure'] = true, ['css'] = true,
+  ['fennel'] = true,
+  ['go'] = true,
+  ['haskell'] = true, ['html'] = true,
+  ['java'] = true, ['javascript'] = true, ['julia'] = true,
+  ['kotlin'] = true,
+  ['lua'] = true,
+  ['markdown'] = true,
+  ['objc'] = true,
+  ['python'] = true,
+  ['racket'] = true, ['ruby'] = true, ['rust'] = true,
+  ['sh'] = true, ['swift'] = true,
+  ['zig'] = true,
+}
 
 --
 ------------------------------------------------
@@ -678,6 +628,10 @@ opt.splitright = true
 opt.foldmethod = 'indent' -- automatically fold on indent
 opt.foldlevelstart = 20 -- but open all folds on file open
 
+-- for tab navigation
+map('n', '<C-h>', ':tabprevious<CR>') -- <ctrl-h> for previous tab
+map('n', '<C-l>', ':tabnext<CR>') -- <ctrl-l> for next tab
+
 vim.api.nvim_create_augroup("etc", {clear = true})
 vim.api.nvim_create_autocmd('BufReadPost', {group = 'etc', pattern = '*', callback = function() -- go to the last position of a file
   if vim.fn.line('.') > 0 and vim.fn.line('.') <= vim.fn.line('$') then
@@ -686,6 +640,11 @@ vim.api.nvim_create_autocmd('BufReadPost', {group = 'etc', pattern = '*', callba
 end})
 vim.api.nvim_create_autocmd('TextYankPost', {group = 'etc', pattern = '*', callback = function() -- highlight on yank
   vim.highlight.on_yank({on_visual = false})
+end})
+
+-- for diagnostics
+vim.api.nvim_create_autocmd('CursorHold', {pattern = '*', callback = function()
+  vim.diagnostic.open_float(nil, { focusable = false, close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' }, border = 'rounded', source = 'always', prefix = ' ' })
 end})
 
 -- disable unneeded providers
