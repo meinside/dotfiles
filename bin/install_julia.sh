@@ -5,7 +5,7 @@
 # install pre-built Julia (https://julialang.org/downloads/)
 #
 # created on : 2021.12.01.
-# last update: 2022.01.25.
+# last update: 2022.03.04.
 #
 # by meinside@gmail.com
 
@@ -15,7 +15,7 @@
 # frequently updated values
 
 # XXX - edit these for other versions
-VERSION="1.7.1"
+VERSION="1.7.2"
 VERSION_SHORT="1.7"
 
 
