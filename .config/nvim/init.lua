@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.03.03.
+-- last update: 2022.03.07.
 
 ------------------------------------------------
 -- helpers
@@ -19,7 +19,7 @@ local function map(mode, lhs, rhs, opts)
 end
 
 -- default setup for language servers
-local lsp_on_attach = function(client, bufnr)
+local on_attach_lsp = function(client, bufnr)
   -- Enable completion triggered by <c-x><c-o>
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
@@ -542,7 +542,7 @@ require('packer').startup(function()
   }
   for _, lsp in ipairs(lsp_servers) do
     nvim_lsp[lsp].setup {
-      on_attach = lsp_on_attach,
+      on_attach = on_attach_lsp,
       capabilities = capabilities,
     }
   end
