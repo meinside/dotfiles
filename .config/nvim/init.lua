@@ -5,10 +5,6 @@
 -- created on : 2021.05.27.
 -- last update: 2022.03.07.
 
-------------------------------------------------
--- helpers
---
-
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
 
@@ -113,13 +109,10 @@ require('packer').startup(function()
 
 
   -- markdown preview
-  --
   use {'iamcco/markdown-preview.nvim', run = 'cd app && npm install'}
 
 
-  -- fold and preview
-  --
-  -- zc for closing, zo for opening / zM for closing all, zR opening all
+  -- fold and preview (zc for closing, zo for opening / zM for closing all, zR opening all)
   use {
     'anuvyklack/pretty-fold.nvim',
     config = function()
@@ -340,9 +333,7 @@ require('packer').startup(function()
   }
 
 
-  -- quick fix list
-  --
-  -- :Trouble [mode], :TroubleClose, :TroubleToggle, :TroubleRefresh
+  -- quick fix list (:Trouble [mode], :TroubleClose, :TroubleToggle, :TroubleRefresh)
   use {
     'folke/trouble.nvim',
     requires = 'kyazdani42/nvim-web-devicons',
@@ -569,13 +560,11 @@ require('packer').startup(function()
 end)
 
 
-----------------
 -- neomake
 vim.api.nvim_exec([[call neomake#configure#automake('nrwi', 500)]], false)
 g['neomake_open_list'] = 2
 
 
-----------------
 -- copilot settings (ctrl+L for applying)
 vim.api.nvim_exec([[imap <silent><script><expr> <C-L> copilot#Accept("<CR>")]], false)
 g['copilot_no_tab_map'] = true
