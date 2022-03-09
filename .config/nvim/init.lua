@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.03.08.
+-- last update: 2022.03.09.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -39,7 +39,7 @@ local on_attach_lsp = function(client, bufnr)
   vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
   vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
   vim.keymap.set('n', '<leader>ll', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-  vim.keymap.set("n", "<leader>fo", "<cmd>lua vim.lsp.buf.formatting()<CR>", opts)
+  vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 
   -- diagnostics configuration
   vim.diagnostic.config({ underline = false, virtual_text = false, signs = true, severity_sort = true, update_in_insert = false })
@@ -616,6 +616,7 @@ opt.splitbelow = true
 opt.splitright = true
 opt.foldmethod = 'indent' -- automatically fold on indent
 opt.foldlevelstart = 20 -- but open all folds on file open
+vim.o.signcolumn = 'number'
 
 -- for tab navigation
 map('n', '<C-h>', ':tabprevious<CR>') -- <ctrl-h> for previous tab
