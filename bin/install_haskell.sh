@@ -5,7 +5,7 @@
 # Install haskell and its tools.
 # 
 # created on : 2021.07.12.
-# last update: 2021.12.03.
+# last update: 2022.03.16.
 # 
 # by meinside@gmail.com
 
@@ -62,10 +62,12 @@ function install_macos {
 
 	warn ">>> installing stylish-haskell..."
 	LATEST_ZIP=`curl -s "https://api.github.com/repos/haskell/stylish-haskell/releases" | grep "https" | grep "darwin" | grep "$PLATFORM" | cut -d \" -f4 | head -n 1`
-	STYLISH_HASKELL_BIN="$HOME/.ghcup/bin/stylish-haskell"
-	DOWNLOADED_ZIP="$STYLISH_HASKELL_BIN".zip
+	GHCUP_BIN_DIR="$HOME/.ghcup/bin"
+	STYLISH_HASKELL_BIN="$GHCUP_BIN_DIR/stylish-haskell"
+	DOWNLOADED_ZIP="$GHCUP_BIN_DIR/stylish-haskell.zip"
 	wget -O $DOWNLOADED_ZIP $LATEST_ZIP && \
-		unzip -j $DOWNLOADED_ZIP "*/stylish-haskell" && \
+		cd $GHCUP_BIN_DIR && \
+		unzip -j "stylish-haskell.zip" "*/stylish-haskell" && \
 		chmod +x $STYLISH_HASKELL_BIN && \
 		rm $DOWNLOADED_ZIP
 }
