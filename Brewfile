@@ -5,7 +5,7 @@
 # $ brew tap Homebrew/bundle
 # $ brew bundle
 # 
-# last update: 2021.08.11.
+# last update: 2022.03.16.
 
 ######## formulas
 
@@ -21,51 +21,55 @@ brew 'm-cli'
 brew 'mas'	# for Mac App Store
 brew 'mosh', args: ['HEAD']
 brew 'ngrep'
-brew 'neovim'
+brew 'neovim', args: ['HEAD']
 brew 'pstree'
-brew 'reattach-to-user-namespace'	# for using pbcopy, pbpaste, or mas in tmux
+brew 'reattach-to-user-namespace'	# for using `pbcopy`, `pbpaste`, or `mas` in tmux
 brew 'tmux'
 brew 'tree'
 brew 'wget'
 brew 'zsh-syntax-highlighting'
 
-# programming language: dart/flutter
+# for dart/flutter
 tap 'dart-lang/dart'
 brew 'dart'
 
-# programming language: clojure
-brew 'leiningen'
-brew 'borkdude/brew/clj-kondo'
-brew 'borkdude/brew/babashka'
-brew 'candid82/brew/joker'
-brew 'clojure/tools/clojure'
+# for babashka (use `bin/install_babashka.sh`)
 
-# programming language: go
+# for clojure (use `bin/install_clojure.sh`)
+
+# for fennel (use `bin/install_fennel.sh`)
+
+# for go (use `bin/install_go.sh`)
 #brew 'go'
 
-# programming language: node
+# for haskell (use `bin/install_haskell.sh`)
+
+# for julia (use `bin/install_julia.sh`)
+
+# for nodejs (use `bin/install_nodejs.sh`)
 #brew 'node'
 
-# programming language: rust
+# for racket (use `bin/install_racket.sh`)
+
+# for ruby (use `bin/install_ruby.sh`)
+
+# for rust (use `bin/install_rust.sh`)
 #brew 'rustup-init'
 
-# development tools
+# for zig (use `bin/install_zig.sh`)
+
+# other development tools
 brew 'curl'
 brew 'git'
 brew 'git-flow'
 brew 'gnupg'
-brew 'imagemagick'
+#brew 'imagemagick'
 brew 'jq'
 brew 'mkcert'
-brew 'opencv'
-brew 'wireshark'
-brew 'wrk'
-brew 'vale'
-
-# for docker (install Docker Desktop from https://download.docker.com/mac/stable/Docker.dmg)
-brew 'kubernetes-helm'
-tap 'wagoodman/dive'
-brew 'dive'
+#brew 'opencv'
+#brew 'wireshark'
+#brew 'wrk'
+#brew 'vale'
 
 
 ######## casks
