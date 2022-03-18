@@ -5,7 +5,7 @@
 # install pre-built Node.js (LTS) for Linux from: https://nodejs.org/dist
 #
 # created on : 2013.07.19.
-# last update: 2022.03.16.
+# last update: 2022.03.18.
 #
 # by meinside@gmail.com
 
@@ -14,7 +14,7 @@
 #
 # frequently updated values
 
-VERSION="16.14.1"	# XXX - edit this for other versions
+VERSION="16.14.2"	# XXX - edit this for other versions
 
 
 ################################
