@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.03.10.
+-- last update: 2022.03.18.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -213,7 +213,11 @@ require('packer').startup(function()
     'nvim-lualine/lualine.nvim',
     after = 'github-nvim-theme',
     requires = {'kyazdani42/nvim-web-devicons', opt = true},
-    config = function() require'lualine'.setup {options = {theme = 'auto'}, extensions = {'quickfix'}} end
+    config = function()
+      require'lualine'.setup {
+        options = {theme = 'auto', globalstatus = true},
+        extensions = {'quickfix'}}
+    end
   }
 
 
