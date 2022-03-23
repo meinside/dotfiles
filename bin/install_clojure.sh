@@ -6,7 +6,7 @@
 #
 # (https://clojure.org/guides/getting_started#_installation_on_linux)
 # 
-# last update: 2022.02.03.
+# last update: 2022.03.23.
 # 
 # by meinside@gmail.com
 
@@ -15,7 +15,7 @@
 #
 # frequently updated values
 
-CLOJURE_VERSION="1.10.3.1058"	# XXX - change clojure version if needed
+CLOJURE_VERSION="1.10.3.1087"	# XXX - change clojure version if needed
 
 
 ################################
