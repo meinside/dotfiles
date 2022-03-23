@@ -82,7 +82,7 @@ if fn.empty(fn.glob(install_path)) > 0 then
   fn.execute('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
 end
 local use = require('packer').use
-require('packer').startup(function()
+require('packer').startup({function()
   use 'wbthomason/packer.nvim'
 
 
@@ -562,7 +562,7 @@ require('packer').startup(function()
     } },
   }
 
-end)
+end, config = {autoremove = true, display = {open_fn = require'packer.util'.float}}})
 
 
 -- neomake

@@ -3,7 +3,7 @@
 # my zsh functions
 #
 # created on 2014.10.06.
-# updated on 2021.06.02.
+# updated on 2022.03.23.
 #
 # ... by meinside@gmail.com
 #
@@ -88,7 +88,7 @@ update-all () {
 
 	# update nvim packer plugins
 	if [[ -x `which nvim` ]]; then
-		nvim +'autocmd User PackerComplete sleep 100m | write /tmp/packer.txt | qall' +PackerSync && rm /tmp/packer.txt
+		nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
 	fi
 
 	# upgrade oh-my-zsh
