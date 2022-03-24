@@ -3,9 +3,10 @@
 # install_zig.sh
 #
 # Install zig from binaries (https://ziglang.org/download/)
+# Build zls from github (https://github.com/zigtools/zls/releases)
 #
 # created on : 2021.03.17.
-# last update: 2022.02.16.
+# last update: 2022.03.24.
 #
 # by meinside@gmail.com
 #
@@ -20,7 +21,7 @@
 
 # XXX - edit these for installing other versions
 ZIG_VERSION="0.9.1"
-ZLS_VERSION="0.1.0"
+ZLS_VERSION="0.9.0"
 
 
 ################################
