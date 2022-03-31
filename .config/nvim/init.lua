@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.03.18.
+-- last update: 2022.03.31.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -55,11 +55,6 @@ local on_attach_lsp = function(client, bufnr)
 
   -- highlight current variable
   if client.resolved_capabilities.document_highlight then
---    vim.api.nvim_exec([[
---      hi link LspReferenceRead Visual
---      hi link LspReferenceText Visual
---      hi link LspReferenceWrite Visual
---    ]], false)
     vim.api.nvim_set_hl(0, 'LspReferenceRead', {link = 'Visual'})
     vim.api.nvim_set_hl(0, 'LspReferenceText', {link = 'Visual'})
     vim.api.nvim_set_hl(0, 'LspReferenceWrite', {link = 'Visual'})
@@ -68,9 +63,6 @@ local on_attach_lsp = function(client, bufnr)
     vim.api.nvim_create_autocmd('CursorMoved', {group = 'lsp_document_highlight', callback = function() vim.lsp.buf.clear_references() end})
   end
 end
-
---
-------------------------------------------------
 
 
 ------------------------------------------------
@@ -590,9 +582,6 @@ g['copilot_filetypes'] = {
   ['zig'] = true,
 }
 
---
-------------------------------------------------
-
 
 ------------------------------------------------
 -- other common settings
@@ -645,7 +634,4 @@ end})
 -- disable unneeded providers
 g['loaded_python_provider'] = 0
 g['loaded_perl_provider'] = 0
-
---
-------------------------------------------------
 
