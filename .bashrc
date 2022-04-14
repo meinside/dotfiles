@@ -76,9 +76,7 @@ if [[ -z $TMUX ]]; then
     fi
 
     # for Go
-    if [ -d /opt/go/bin ]; then
-        export GOROOT=/opt/go
-    elif [ -x "`which go`" ]; then
+    if [ -x "`which go`" ]; then
         export GOROOT=`go env GOROOT`
     fi
     if [ -d $GOROOT ]; then
@@ -89,11 +87,6 @@ if [[ -z $TMUX ]]; then
     # for Haskell
     [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
 
-    # for Julia
-    if [ -d $PREFIX/opt/julia/bin ]; then
-        export PATH=$PATH:$PREFIX/opt/julia/bin
-    fi
-
     # for Lein (Clojure)
     export LEIN_JVM_OPTS=""
     # https://github.com/venantius/ultra/issues/108
@@ -102,11 +95,6 @@ if [[ -z $TMUX ]]; then
     # for Lua
     if [ -d /opt/lua-language-server/bin ]; then
         export PATH=$PATH:/opt/lua-language-server/bin
-    fi
-
-    # for Racket
-    if [ -d /opt/racket/bin ]; then
-        export PATH=$PATH:/opt/racket/bin
     fi
 
     # for Rust

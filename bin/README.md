@@ -38,17 +38,9 @@ A script for installing [fennel](https://fennel-lang.org/setup#downloading-fenne
 
 A script for building and installing latest [ffmpeg](https://www.ffmpeg.org/).
 
-## install_go.sh
-
-A script for building and installing [Golang](https://golang.org/).
-
 ## install_haskell.sh
 
 A script for installing [GHC](https://www.haskell.org/ghc/), [stack](https://github.com/commercialhaskell/stack), and [HLS](https://github.com/haskell/haskell-language-server).
-
-## install_julia.sh
-
-A script for installing [Julia](https://julialang.org/downloads/).
 
 ## install_mosh.sh
 
@@ -58,10 +50,6 @@ A script for installing [mosh](https://github.com/mobile-shell/mosh/issues/928),
 
 A script for installing [Nginx](https://www.nginx.com/).
 
-## install_nodejs.sh
-
-A script for installing [Node.js](https://nodejs.org/en/).
-
 ## install_neovim.sh
 
 A script for building and installing [neovim](https://neovim.io/).
@@ -69,14 +57,6 @@ A script for building and installing [neovim](https://neovim.io/).
 ## install_pico_sdk.sh
 
 A script for installing sdk and sample codes for [raspberry pi pico](https://datasheets.raspberrypi.org/pico/getting-started-with-pico.pdf).
-
-## install_racket.sh
-
-A script for installing [racket](https://docs.racket-lang.org/racket-build-guide/build.html).
-
-## install_rust.sh
-
-A script for installing [Rust](https://rustup.rs/).
 
 ## install_zig.sh
 
