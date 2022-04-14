@@ -1,0 +1,31 @@
+# My .tool-versions for `asdf`
+
+# $ asdf plugin add babashka
+# $ asdf install babashka
+babashka latest
+
+# $ asdf plugin add golang
+# $ asdf install golang
+golang 1.18.1 system
+
+# $ asdf plugin add nodejs
+# $ asdf install nodejs
+nodejs 16.14.2 system
+
+# $ asdf plugin add ruby
+# $ asdf install ruby
+ruby 3.1.2 system
+
+# $ asdf plugin add rust
+# $ asdf install rust
+#
+# * For rust-analyzer, (https://rust-analyzer.github.io/manual.html#installation)
+# $ git clone https://github.com/rust-analyzer/rust-analyzer.git
+# $ cd rust-analyzer/
+# $ cargo xtask install --server
+rust 1.60.0 system
+
+# $ asdf plugin add zig
+# $ asdf install zig
+zig 0.9.1 system
+

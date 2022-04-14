@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2022.01.25.
+# updated on 2022.04.14.
 #
 # ... by meinside@gmail.com
 
@@ -104,11 +104,6 @@ if [[ -z $TMUX ]]; then
         export PATH=$PATH:/opt/lua-language-server/bin
     fi
 
-    # for Node.js
-    if [ -d /opt/node/bin ]; then
-        export PATH=$PATH:/opt/node/bin
-    fi
-
     # for Racket
     if [ -d /opt/racket/bin ]; then
         export PATH=$PATH:/opt/racket/bin
@@ -125,19 +120,15 @@ if [[ -z $TMUX ]]; then
     fi
 
     # additional paths
-    export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$PATH:$HOME/.rvm/bin"
+    export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$PATH"
+
+    # asdf settings
+    if [ -d ~/.asdf ]; then
+        . $HOME/.asdf/asdf.sh
+        . $HOME/.asdf/completions/asdf.bash
+    fi
 
 fi
-
-# for RVM
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-
-# for python and virtualenv
-#
-# $ sudo apt-get install python-pip
-# $ sudo pip install virtualenvwrapper
-export WORKON_HOME=$HOME/.virtualenvs
-[[ -s "/usr/local/bin/virtualenvwrapper.sh" ]] && source "/usr/local/bin/virtualenvwrapper.sh"	# virtualenv and virtualenvwrapper
 
 # aliases
 . ~/.aliases

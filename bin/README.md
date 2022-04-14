@@ -14,6 +14,10 @@ A script for generating self-signed certificates for development.
 
 A script for macOS hacks (originates from https://gist.github.com/erikh/2260182).
 
+## install_asdf.sh
+
+A script for installing [asdf](https://github.com/asdf-vm/asdf).
+
 ## install_babashka.sh
 
 A script for installing [Babashka](https://github.com/babashka/babashka).
@@ -69,10 +73,6 @@ A script for installing sdk and sample codes for [raspberry pi pico](https://dat
 ## install_racket.sh
 
 A script for installing [racket](https://docs.racket-lang.org/racket-build-guide/build.html).
-
-## install_ruby.sh
-
-A script for installing [rvm](https://rvm.io/) and [Ruby](https://www.ruby-lang.org/en/).
 
 ## install_rust.sh
 

@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2022.02.24.
+# last update: 2022.04.14.
 
 # unnecessary binary files
 *.o
@@ -73,6 +73,9 @@ snap/
 .dbus/
 .Xauthority
 .xsession-errors
+
+# asdf
+.asdf/
 
 # c/c++
 .ccls-cache/
