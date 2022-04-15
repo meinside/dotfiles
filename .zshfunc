@@ -3,7 +3,7 @@
 # my zsh functions
 #
 # created on 2014.10.06.
-# updated on 2022.03.23.
+# updated on 2022.04.15.
 #
 # ... by meinside@gmail.com
 #
@@ -93,6 +93,11 @@ update-all () {
 
 	# upgrade oh-my-zsh
 	omz update
+
+	# update asdf plugins
+	if [[ -x `which asdf` ]]; then
+		asdf plugin update --all
+	fi
 }
 
 # list go imports
