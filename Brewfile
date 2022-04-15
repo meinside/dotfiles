@@ -33,8 +33,6 @@ brew 'zsh-syntax-highlighting'
 tap 'dart-lang/dart'
 brew 'dart'
 
-# for clojure (use `bin/install_clojure.sh`)
-
 # for fennel (use `bin/install_fennel.sh`)
 
 # for haskell (use `bin/install_haskell.sh`)
