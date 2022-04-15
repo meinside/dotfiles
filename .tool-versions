@@ -35,5 +35,15 @@ rust 1.60.0 system
 
 # $ asdf plugin add zig
 # $ asdf install zig
+#
+# For zls, (https://github.com/zigtools/zls)
+#   $ sudo rm -rf /opt/zls
+#   $ sudo mkdir -p /opt/zls
+#   $ sudo chown -R "$USER" /opt/zls
+#   $ git clone --recurse-submodules https://github.com/zigtools/zls /opt/zls
+#   $ cd /opt/zls
+#   $ git checkout master
+#   $ zig build -Drelease-safe
+#   $ zig-out/bin/zls config
 zig 0.9.1 system
 
