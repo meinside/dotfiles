@@ -63,7 +63,6 @@ cask 'xquartz'
 
 # for development
 cask 'iterm2'
-cask 'java'
 #cask 'falcon-sql-client'
 #cask 'postico'
 #cask 'sequel-pro'

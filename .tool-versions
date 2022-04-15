@@ -9,18 +9,18 @@
 babashka 0.8.0
 
 # $ asdf plugin add clojure
-clojure 1.10.3.1087 system
+clojure 1.10.3.1087
 
 # $ asdf plugin add golang
 # $ asdf install golang
-golang 1.18.1 system
+golang 1.18.1
 
 # $ asdf plugin add java
-java zulu-17.32.13 openjdk-17.0.2 system
+java openjdk-17.0.2
 
 # $ asdf plugin add julia
 # $ asdf install julia
-julia 1.7.2 system
+julia 1.7.2
 
 # $ asdf plugin add leiningen
 # $ asdf install leiningen
@@ -28,11 +28,11 @@ leiningen 2.9.8
 
 # $ asdf plugin add nodejs
 # $ asdf install nodejs
-nodejs 16.14.2 system
+nodejs 16.14.2
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
-ruby 3.1.2 system
+ruby 3.1.2
 
 # $ asdf plugin add rust
 # $ asdf install rust
@@ -41,7 +41,7 @@ ruby 3.1.2 system
 #   $ git clone https://github.com/rust-analyzer/rust-analyzer.git
 #   $ cd rust-analyzer/
 #   $ cargo xtask install --server
-rust 1.60.0 system
+rust 1.60.0
 
 # $ asdf plugin add zig
 # $ asdf install zig
@@ -55,5 +55,5 @@ rust 1.60.0 system
 #   $ git checkout master
 #   $ zig build -Drelease-safe
 #   $ zig-out/bin/zls config
-zig 0.9.1 system
+zig 0.9.1
 
