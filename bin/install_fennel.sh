@@ -5,7 +5,7 @@
 # Install fennel script or binary.
 #
 # created on : 2021.11.24.
-# last update: 2022.01.12.
+# last update: 2022.04.15.
 #
 # by meinside@gmail.com
 
@@ -15,7 +15,7 @@
 # frequently updated values
 
 # https://fennel-lang.org/setup#downloading-the-fennel-script
-VERSION="1.0.0"	# XXX - edit for different version
+VERSION="1.1.0"	# XXX - edit for different version
 
 
 ################################
