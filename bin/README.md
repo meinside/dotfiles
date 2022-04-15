@@ -18,10 +18,6 @@ A script for macOS hacks (originates from https://gist.github.com/erikh/2260182)
 
 A script for installing [asdf](https://github.com/asdf-vm/asdf).
 
-## install_clojure.sh
-
-A script for installing [JDK](https://www.azul.com/downloads/zulu-embedded/), [clojure](https://clojure.org/guides/getting_started#_installation_on_linux), and [leiningen](https://leiningen.org/).
-
 ## install_docker.sh
 
 A script for installing [Docker](https://www.docker.com/).

@@ -8,13 +8,23 @@
 # $ asdf global babashka latest
 babashka 0.8.0
 
+# $ asdf plugin add clojure
+clojure 1.10.3.1087 system
+
 # $ asdf plugin add golang
 # $ asdf install golang
 golang 1.18.1 system
 
+# $ asdf plugin add java
+java zulu-17.32.13 openjdk-17.0.2 system
+
 # $ asdf plugin add julia
 # $ asdf install julia
 julia 1.7.2 system
+
+# $ asdf plugin add leiningen
+# $ asdf install leiningen
+leiningen 2.9.8
 
 # $ asdf plugin add nodejs
 # $ asdf install nodejs
