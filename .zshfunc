@@ -95,7 +95,7 @@ update-all () {
 	omz update
 
 	# update asdf plugins
-	if [[ -x `which asdf` ]]; then
+	if [[ -d ~/.asdf/bin ]]; then
 		asdf plugin update --all
 	fi
 }
