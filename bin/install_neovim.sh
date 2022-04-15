@@ -4,7 +4,7 @@
 # 
 # for building neovim from source code
 #
-# last update: 2022.01.02.
+# last update: 2022.04.15.
 # 
 # by meinside@gmail.com
 
@@ -18,7 +18,7 @@
 # frequently updated values
 
 # https://github.com/neovim/neovim/releases
-NVIM_VERSION="v0.6.1"	# XXX - edit for other versions
+NVIM_VERSION="v0.7.0"	# XXX - edit for other versions
 
 
 ################################
