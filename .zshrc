@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2022.04.14.
+# updated on 2022.04.15.
 #
 # ... by meinside@gmail.com
 #
@@ -103,11 +103,6 @@ bindkey "^N" history-beginning-search-forward
 if [[ -z $TMUX ]]; then
 
     # NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
-
-    # for Babashka
-    if [ -d $PREFIX/opt/babashka ]; then
-        export PATH=$PATH:$PREFIX/opt/babashka
-    fi
 
     # for Go
     if [ -x "`which go`" ]; then

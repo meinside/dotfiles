@@ -5,7 +5,7 @@
 # $ brew tap Homebrew/bundle
 # $ brew bundle
 # 
-# last update: 2022.03.16.
+# last update: 2022.04.15.
 
 ######## formulas
 
@@ -33,8 +33,6 @@ brew 'zsh-syntax-highlighting'
 tap 'dart-lang/dart'
 brew 'dart'
 
-# for babashka (use `bin/install_babashka.sh`)
-
 # for clojure (use `bin/install_clojure.sh`)
 
 # for fennel (use `bin/install_fennel.sh`)
@@ -43,18 +41,6 @@ brew 'dart'
 #brew 'go'
 
 # for haskell (use `bin/install_haskell.sh`)
-
-# for julia (use `bin/install_julia.sh`)
-
-# for nodejs (use `bin/install_nodejs.sh`)
-#brew 'node'
-
-# for racket (use `bin/install_racket.sh`)
-
-# for ruby (use `bin/install_ruby.sh`)
-
-# for rust (use `bin/install_rust.sh`)
-#brew 'rustup-init'
 
 # for zig (use `bin/install_zig.sh`)
 
