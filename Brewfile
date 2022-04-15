@@ -37,12 +37,7 @@ brew 'dart'
 
 # for fennel (use `bin/install_fennel.sh`)
 
-# for go (use `bin/install_go.sh`)
-#brew 'go'
-
 # for haskell (use `bin/install_haskell.sh`)
-
-# for zig (use `bin/install_zig.sh`)
 
 # other development tools
 brew 'curl'
