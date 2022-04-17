@@ -1,14 +1,14 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.04.15.
+# last update: 2022.04.17.
 
 # $ asdf plugin add babashka
-# $ asdf install babashka latest
-# $ asdf global babashka latest
-babashka 0.8.0
+# $ asdf install babashka
+babashka 0.8.1
 
 # $ asdf plugin add clojure
+# $ asdf install clojure
 clojure 1.10.3.1087
 
 # $ asdf plugin add golang
