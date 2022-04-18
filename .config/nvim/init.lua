@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.03.31.
+-- last update: 2022.04.18.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -49,12 +49,14 @@ local on_attach_lsp = function(client, bufnr)
   fn.sign_define('DiagnosticSignHint', { text = '', texthl = 'DiagnosticSignHint' })
 
   -- auto formatting on save
-  if client.resolved_capabilities.document_formatting then
+  if client.resolved_capabilities.document_formatting then -- TODO: remove this when lspconfig is updated
+  --if client.server_capabilities.document_formatting then
     vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.formatting_sync() end})
   end
 
   -- highlight current variable
-  if client.resolved_capabilities.document_highlight then
+  if client.resolved_capabilities.document_highlight then -- TODO: remove this when lspconfig is updated
+  --if client.server_capabilities.document_highlight then
     vim.api.nvim_set_hl(0, 'LspReferenceRead', {link = 'Visual'})
     vim.api.nvim_set_hl(0, 'LspReferenceText', {link = 'Visual'})
     vim.api.nvim_set_hl(0, 'LspReferenceWrite', {link = 'Visual'})
