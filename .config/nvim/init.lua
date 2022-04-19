@@ -486,32 +486,15 @@ require('packer').startup({function()
   capabilities.textDocument.completion.completionItem.resolveSupport = {properties = {'documentation', 'detail', 'additionalTextEdits'}}
   local nvim_lsp = require('lspconfig')
   local lsp_servers = { -- language servers with default setup
-    -- (bash)
-    'bashls',
-
-    -- (clang)
-    'ccls',
-
-    -- (clojure)
-    'clojure_lsp',
-
-    -- (go)
-    'gopls',
-
-    -- (haskell)
-    'hls',
-
-    -- (julia)
-    'julials',
-
-    -- (rust)
-    'rust_analyzer',
-
-    -- (ruby)
-    'solargraph',
-
-    -- (zig)
-    'zls',
+    'bashls', -- bash
+    'ccls', -- clang
+    'clojure_lsp',  -- clojure
+    'gopls',  -- go
+    'hls',  -- haskell
+    'julials',  -- julia
+    'rust_analyzer',  -- rust
+    'solargraph', -- ruby
+    'zls',  -- zig
   }
   for _, lsp in ipairs(lsp_servers) do
     nvim_lsp[lsp].setup {
@@ -519,7 +502,7 @@ require('packer').startup({function()
       capabilities = capabilities,
     }
   end
-  ---------------- other language servers for custom setup
+  -------- other language servers for custom setup --------
   -- (lua)
   local runtime_path = vim.split(package.path, ';')
   table.insert(runtime_path, "lua/?.lua")
