@@ -473,7 +473,7 @@ require('packer').startup({function()
 
 
   ----------------
-  -- lsp settings
+  -- lsp settings (see install methods in .tool-versions file)
   local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
   capabilities.textDocument.completion.completionItem.documentationFormat = { 'markdown', 'plaintext' }
   capabilities.textDocument.completion.completionItem.snippetSupport = true
@@ -487,36 +487,27 @@ require('packer').startup({function()
   local nvim_lsp = require('lspconfig')
   local lsp_servers = { -- language servers with default setup
     -- (bash)
-    -- $ npm i -g bash-language-server
     'bashls',
 
     -- (clang)
-    -- $ brew install ccls
-    -- $ sudo apt install ccls
     'ccls',
 
     -- (clojure)
-    -- $ brew install clojure-lsp/brew/clojure-lsp-native
-    -- $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
     'clojure_lsp',
 
     -- (go)
-    -- $ go install golang.org/x/tools/gopls@latest
     'gopls',
 
     -- (haskell)
     'hls',
 
     -- (julia)
-    -- $ julia --project=~/.julia/environments/nvim-lspconfig -e 'using Pkg; Pkg.add("LanguageServer")'
     'julials',
 
     -- (rust)
-    -- $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer/ && cargo xtask install --server
     'rust_analyzer',
 
     -- (ruby)
-    -- $ gem install --user-install solargraph
     'solargraph',
 
     -- (zig)
@@ -530,14 +521,6 @@ require('packer').startup({function()
   end
   ---------------- other language servers for custom setup
   -- (lua)
-  --
-  -- # for macOS
-  -- $ brew install lua-language-server
-  --
-  -- # for linux
-  -- $ DIR="/opt/lua-language-server" VERSION=3.1.0 ARCH=arm64
-  -- $ URL="https://github.com/sumneko/lua-language-server/releases/download/$VERSION/lua-language-server-$VERSION-linux-$ARCH.tar.gz"
-  -- $ sudo mkdir $DIR && (wget $URL -O - | sudo tar -xzvf - -C $DIR) && sudo chown -R $USER $DIR
   local runtime_path = vim.split(package.path, ';')
   table.insert(runtime_path, "lua/?.lua")
   table.insert(runtime_path, "lua/?/init.lua")

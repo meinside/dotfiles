@@ -7,13 +7,39 @@
 # $ asdf install babashka
 babashka 0.8.1
 
+# For bash-language-server,
+#   $ npm i -g bash-language-server
+
+# For ccls,
+#   $ brew install ccls
+# or
+#   $ sudo apt install ccls
+
 # $ asdf plugin add clojure
 # $ asdf install clojure
+#
+# For clojure-lsp,
+#   $ brew install clojure-lsp/brew/clojure-lsp-native
+# or
+#   $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
 clojure 1.10.3.1087
 
 # $ asdf plugin add golang
 # $ asdf install golang
+#
+# For gopls,
+#
+#   $ go install golang.org/x/tools/gopls@latest
 golang 1.18.1
+
+# For lua-language-server,
+#
+#   $ brew install lua-language-server
+# or
+#   $ DIR="/opt/lua-language-server" VERSION=2.6.8
+#   $ sudo mkdir -p $DIR && sudo chown -R $USER $DIR && git clone https://github.com/sumneko/lua-language-server $DIR
+#   $ cd $DIR && git checkout $VERSION && git submodule update --init --recursive
+#   $ cd 3rd/luamake && ./compile/install.sh && cd ../../ && ./3rd/luamake/luamake rebuild
 
 # $ asdf plugin add java
 # $ asdf install java
@@ -21,6 +47,9 @@ java openjdk-17.0.2
 
 # $ asdf plugin add julia
 # $ asdf install julia
+#
+# For language server,
+#   $ julia --project=~/.julia/environments/nvim-lspconfig -e 'using Pkg; Pkg.add("LanguageServer")'
 julia 1.7.2
 
 # $ asdf plugin add leiningen
@@ -33,6 +62,9 @@ nodejs 16.14.2
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
+#
+# For language server,
+#   $ gem install --user-install solargraph
 ruby 3.1.2
 
 # $ asdf plugin add rust
