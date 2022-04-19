@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.04.18.
+-- last update: 2022.04.19.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -450,14 +450,10 @@ require('packer').startup({function()
   -- cse(, cse), cseb : surround an element with parenthesis
   -- cse[, cse] : surround an element with brackets
   -- cse{, cse} : surround an element with braces
-  use {'guns/vim-sexp', ft = {'clojure', 'fennel', 'racket'}}
+  use {'guns/vim-sexp', ft = {'clojure', 'fennel'}}
   g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
-  g['sexp_filetypes'] = 'clojure,fennel,racket'
-  use {'tpope/vim-sexp-mappings-for-regular-people', ft = {'clojure', 'fennel', 'racket'}}
-
-
-  -- racket
-  use {'wlangstroth/vim-racket', ft = {'racket'}}
+  g['sexp_filetypes'] = 'clojure,fennel'
+  use {'tpope/vim-sexp-mappings-for-regular-people', ft = {'clojure', 'fennel'}}
 
 
   -- ruby
@@ -515,10 +511,6 @@ require('packer').startup({function()
     -- $ julia --project=~/.julia/environments/nvim-lspconfig -e 'using Pkg; Pkg.add("LanguageServer")'
     'julials',
 
-    -- (racket)
-    -- $ raco pkg install racket-langserver
-    'racket_langserver',
-
     -- (rust)
     -- $ git clone https://github.com/rust-analyzer/rust-analyzer.git && cd rust-analyzer/ && cargo xtask install --server
     'rust_analyzer',
@@ -543,7 +535,9 @@ require('packer').startup({function()
   -- $ brew install lua-language-server
   --
   -- # for linux
-  -- $ DIR=/opt/lua-language-server; sudo mkdir -p $DIR && sudo chown -R "$USER" $DIR && git clone https://github.com/sumneko/lua-language-server $DIR && cd $DIR && git submodule update --init --recursive && cd 3rd/luamake/ && compile/install.sh && cd ../.. && 3rd/luamake/luamake rebuild
+  -- $ DIR="/opt/lua-language-server" VERSION=3.1.0 ARCH=arm64
+  -- $ URL="https://github.com/sumneko/lua-language-server/releases/download/$VERSION/lua-language-server-$VERSION-linux-$ARCH.tar.gz"
+  -- $ sudo mkdir $DIR && (wget $URL -O - | sudo tar -xzvf - -C $DIR) && sudo chown -R $USER $DIR
   local runtime_path = vim.split(package.path, ';')
   table.insert(runtime_path, "lua/?.lua")
   table.insert(runtime_path, "lua/?/init.lua")
@@ -579,7 +573,7 @@ g['copilot_filetypes'] = {
   ['markdown'] = true,
   ['objc'] = true,
   ['python'] = true,
-  ['racket'] = true, ['ruby'] = true, ['rust'] = true,
+  ['ruby'] = true, ['rust'] = true,
   ['sh'] = true, ['swift'] = true,
   ['zig'] = true,
 }

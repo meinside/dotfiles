@@ -1,4 +1,4 @@
-# .aliases
+# .aliases for common aliases
 #
 # created by meinside@gmail.com
 #
@@ -9,7 +9,7 @@ alias ll="ls -alF"
 alias ngrep="sudo ngrep -q -W byline"
 alias ctags='ctags -R --totals=yes'
 
-alias httpserver="python3 -m http.server 8888"
+alias httpserver="ruby -run -e httpd . -p 8888"
 
 # referenced: https://thorsten-hans.com/5-types-of-zsh-aliases
 
