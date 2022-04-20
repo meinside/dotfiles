@@ -187,6 +187,7 @@ mbox
 # history files
 .*history
 .dbshell
+.fennel_history
 .nvimlog
 .oracle_jre_usage/
 .psql_history*

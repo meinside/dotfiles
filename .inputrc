@@ -2,7 +2,7 @@
 #
 # meinside@gmail.com
 #
-# last update: 2020.01.31.
+# last update: 2022.04.20.
 
 "\e[3~": delete-char
 # this is actually equivalent to "\C-?": delete-char
@@ -19,10 +19,12 @@
 "\e[7~":beginning-of-line
 "\e[8~":end-of-line
 
-set meta-flag On
-set convert-meta Off
-set output-meta On
-set completion-ignore-case On
-set horizontal-scroll-mode On
-set show-all-if-ambiguous On
+set meta-flag on
+set convert-meta off
+set output-meta on
+set completion-ignore-case on
+set horizontal-scroll-mode on
+set show-all-if-ambiguous on
+set enable-bracketed-paste on
+set blink-matching-paren on
 
