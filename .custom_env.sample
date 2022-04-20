@@ -19,8 +19,10 @@ export GOPRIVATE=github.com/meinside
 export DOCKER_CLI_EXPERIMENTAL=enabled
 
 # for luarocks packages (use `luarocks path`)
-if [ -d ~/.luarocks ]; then
-    LUA_VERSION="5.3"
-    export LUA_PATH="$HOME/.luarocks/share/lua/$LUA_VERSION/?.lua;$HOME/.luarocks/share/lua/$LUA_VERSION/?/init.lua;/usr/local/share/lua/$LUA_VERSION/?.lua;/usr/local/share/lua/$LUA_VERSION/?/init.lua;/usr/local/lib/lua/$LUA_VERSION/?.lua;/usr/local/lib/lua/$LUA_VERSION/?/init.lua;/usr/share/lua/$LUA_VERSION/?.lua;/usr/share/lua/$LUA_VERSION/?/init.lua;./?.lua;./?/init.lua"
-    export LUA_CPATH="$HOME/.luarocks/lib/lua/$LUA_VERSION/?.so;/usr/local/lib/lua/$LUA_VERSION/?.so;/usr/lib/aarch64-linux-gnu/lua/$LUA_VERSION/?.so;/usr/lib/lua/$LUA_VERSION/?.so;/usr/local/lib/lua/$LUA_VERSION/loadall.so;./?.so"
+if [ -x `which luarocks` ]; then
+    # (example)
+    export LUA_PATH='/usr/local/Cellar/luarocks/3.8.0/share/lua/5.4/?.lua;/usr/local/share/lua/5.4/?.lua;/usr/local/share/lua/5.4/?/init.lua;/usr/local/lib/lua/5.4/?.lua;/usr/local/lib/lua/5.4/?/init.lua;./?.lua;./?/init.lua;/Users/meinside/.luarocks/share/lua/5.4/?.lua;/Users/meinside/.luarocks/share/lua/5.4/?/init.lua'
+    export LUA_CPATH='/usr/local/lib/lua/5.4/?.so;/usr/local/lib/lua/5.4/loadall.so;./?.so;/Users/meinside/.luarocks/lib/lua/5.4/?.so'
+    export PATH='/Users/meinside/.luarocks/bin:$PATH'
 fi
+
