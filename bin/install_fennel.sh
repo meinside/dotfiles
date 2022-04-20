@@ -51,9 +51,11 @@ INSTALLATION_PATH="/usr/local/bin/fennel"
 # prep for linux
 function prep_linux {
 	# install essential packages
-	warn ">>> Installing essential packages..."
+	if ! [ -x `which lua` ]; then
+		warn ">>> Installing essential packages..."
 
-	sudo apt-get install -y lua5.1
+		sudo apt-get install -y lua5.3
+	fi
 }
 
 # prep for termux
