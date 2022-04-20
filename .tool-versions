@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.04.19.
+# last update: 2022.04.20.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -32,15 +32,6 @@ clojure 1.10.3.1087
 #   $ go install golang.org/x/tools/gopls@latest
 golang 1.18.1
 
-# For lua-language-server,
-#
-#   $ brew install lua-language-server
-# or
-#   $ DIR="/opt/lua-language-server" VERSION=2.6.8
-#   $ sudo mkdir -p $DIR && sudo chown -R $USER $DIR && git clone https://github.com/sumneko/lua-language-server $DIR
-#   $ cd $DIR && git checkout $VERSION && git submodule update --init --recursive
-#   $ cd 3rd/luamake && ./compile/install.sh && cd ../../ && ./3rd/luamake/luamake rebuild
-
 # $ asdf plugin add java
 # $ asdf install java
 java openjdk-17.0.2
@@ -55,6 +46,19 @@ julia 1.7.2
 # $ asdf plugin add leiningen
 # $ asdf install leiningen
 leiningen 2.9.8
+
+# $ asdf plugin add lua
+# $ asdf install lua
+#
+# For lua-language-server,
+#
+#   $ brew install lua-language-server
+# or
+#   $ DIR="/opt/lua-language-server" VERSION=2.6.8
+#   $ sudo mkdir -p $DIR && sudo chown -R $USER $DIR && git clone https://github.com/sumneko/lua-language-server $DIR
+#   $ cd $DIR && git checkout $VERSION && git submodule update --init --recursive
+#   $ cd 3rd/luamake && ./compile/install.sh && cd ../../ && ./3rd/luamake/luamake rebuild
+lua 5.4.4
 
 # $ asdf plugin add nodejs
 # $ asdf install nodejs
