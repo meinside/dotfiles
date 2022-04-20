@@ -94,7 +94,7 @@ function install_termux {
 	INSTALLATION_PATH="/data/data/com.termux/files/home/bin/fennel"
 	wget "https://fennel-lang.org/downloads/fennel-${VERSION}" -O $INSTALLATION_PATH && \
 		chmod +x $INSTALLATION_PATH && \
-		sed -i 's/#!\/usr\/bin\/env\/#!\/data\/data\/com.termux\/files\/usr\/bin\/env/' $INSTALLATION_PATH
+		sed -i 's/#!\/usr\/bin\/env/#!\/data\/data\/com.termux\/files\/usr\/bin\/env/' $INSTALLATION_PATH
 }
 
 # for macOS
