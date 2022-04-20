@@ -95,8 +95,9 @@ function install_termux {
 	wget "https://fennel-lang.org/downloads/fennel-${VERSION}" -O $INSTALLATION_PATH && \
 		chmod +x $INSTALLATION_PATH && \
 		ed -s $INSTALLATION_PATH <<EOF
-1 s/^/#!\/data\/data\/com.termux\/files\/usr\/bin\/env lua/
-
+0 i
+#!/data/data/com.termux/files/usr/bin/env lua
+.
 w
 EOF
 }
