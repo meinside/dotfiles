@@ -96,6 +96,7 @@ function install_termux {
 		chmod +x $INSTALLATION_PATH && \
 		ed -s $INSTALLATION_PATH <<EOF
 1 s/^/#!\/data\/data\/com.termux\/files\/usr\/bin\/env lua/
+
 w
 EOF
 }
