@@ -5,7 +5,7 @@
 # Install fennel script or binary.
 #
 # created on : 2021.11.24.
-# last update: 2022.04.15.
+# last update: 2022.04.20.
 #
 # by meinside@gmail.com
 
@@ -56,6 +56,14 @@ function prep_linux {
 	sudo apt-get install -y lua5.1
 }
 
+# prep for termux
+function prep_termux {
+	# install essential packages
+	warn ">>> Installing essential packages..."
+
+	pkg install lua53
+}
+
 # install
 function install {
 	machine=$(uname -m)
@@ -80,6 +88,18 @@ function install {
 	fi
 }
 
+# install for termux
+function install_termux {
+	# install script, and prepend shebang
+	INSTALLATION_PATH="/data/data/com.termux/files/home/bin/fennel"
+	wget "https://fennel-lang.org/downloads/fennel-${VERSION}" -O $INSTALLATION_PATH && \
+		chmod +x $INSTALLATION_PATH && \
+		ed -s $INSTALLATION_PATH <<EOF
+1 s/^/#!\/data\/data\/com.termux\/files\/usr\/bin\/env lua/
+w
+EOF
+}
+
 # for macOS
 function install_macos {
 	brew install fennel
@@ -90,7 +110,7 @@ function install_linux {
 	if [ -z $TERMUX_VERSION ]; then
 		prep_linux && install
 	else  # termux
-		error "* termux not supported yet."
+		prep_termux && install_termux
 	fi
 }
 
