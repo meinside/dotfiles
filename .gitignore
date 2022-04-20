@@ -1,6 +1,6 @@
 # .gitignore of meinside@gmail.com
 #
-# last update: 2022.04.14.
+# last update: 2022.04.20.
 
 # unnecessary binary files
 *.o
@@ -215,6 +215,7 @@ mbox
 .landscape/
 .lesshst
 .lnav/
+.luarocks/
 .magick/
 .matplotlib/
 .mitmproxy/
