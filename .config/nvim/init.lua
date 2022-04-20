@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.04.19.
+-- last update: 2022.04.20.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -411,7 +411,7 @@ require('packer').startup({function()
   -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
   -- for reloading everything: \rr
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-  use {'Olical/conjure', ft = {'clojure'}}
+  use {'Olical/conjure', ft = {'clojure', 'fennel'}}
 
 
   -- fennel
