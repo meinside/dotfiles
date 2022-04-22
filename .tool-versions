@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.04.20.
+# last update: 2022.04.22.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -70,6 +70,10 @@ lua 5.4.4
 # $ asdf plugin add nodejs
 # $ asdf install nodejs
 nodejs 16.14.2
+
+# $ asdf plugin add python
+# $ asdf install python
+python 3.10.4
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
