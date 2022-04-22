@@ -4,7 +4,7 @@
 # 
 # for building neovim from source code
 #
-# last update: 2022.04.15.
+# last update: 2022.04.22.
 # 
 # by meinside@gmail.com
 
@@ -73,17 +73,17 @@ function install {
 
     warn ">>> installing neovim version ${tag}..."
 
+    unset LUA_PATH
+    unset LUA_CPATH
+
+    # clone, configure, build, and install
     git clone https://github.com/neovim/neovim.git $TMP_DIR && \
 	cd $TMP_DIR && \
-	git checkout ${tag}
-
-    # configure and build
-    rm -rf build && \
+	git checkout ${tag} && \
+	rm -rf build && \
 	make clean && \
-	make CMAKE_BUILD_TYPE=RelWithDebInfo
-
-    # install
-    sudo make install
+	make CMAKE_BUILD_TYPE=RelWithDebInfo && \
+	sudo make install
 }
 
 # install for macOS
