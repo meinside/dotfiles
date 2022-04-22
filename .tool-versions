@@ -73,6 +73,9 @@ nodejs 16.14.2
 
 # $ asdf plugin add python
 # $ asdf install python
+#
+# For language server,
+#   $ pip install python-lsp-server
 python 3.10.4
 
 # $ asdf plugin add ruby

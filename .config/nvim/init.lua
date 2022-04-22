@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.04.20.
+-- last update: 2022.04.22.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -492,6 +492,7 @@ require('packer').startup({function()
     'gopls',  -- go
     'hls',  -- haskell
     'julials',  -- julia
+    'pylsp',  -- python
     'rust_analyzer',  -- rust
     'solargraph', -- ruby
     'zls',  -- zig
