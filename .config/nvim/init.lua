@@ -507,7 +507,7 @@ require('packer').startup({function()
   end
   -------- other language servers for custom setup --------
   -- (lua)
-  if fn.empty(fn.glob('/opt/lua-language-server')) > 0 then
+  if fn.empty(fn.glob('/opt/lua-language-server')) <= 0 then
     local runtime_path = vim.split(package.path, ';')
     table.insert(runtime_path, "lua/?.lua")
     table.insert(runtime_path, "lua/?/init.lua")
