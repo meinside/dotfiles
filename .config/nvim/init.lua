@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.04.22.
+-- last update: 2022.04.26.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -424,7 +424,10 @@ require('packer').startup({function()
   use {
     'ray-x/go.nvim',
     config = function()
-      require'go'.setup {gofmt = 'gopls'}
+      require'go'.setup {
+        gofmt = 'gopls',
+        lsp_codelens = false, -- TODO: remove this when gopls' codelens works
+      }
       vim.api.nvim_create_autocmd('BufWritePre', {pattern = '*.go', callback = require('go.format').goimport})
     end
   }
