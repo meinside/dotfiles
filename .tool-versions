@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.04.22.
+# last update: 2022.04.27.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -54,9 +54,9 @@ leiningen 2.9.8
 #
 #   $ brew install lua-language-server
 # or
-#   $ DIR="/opt/lua-language-server" VERSION=2.6.8
+#   $ DIR="/opt/lua-language-server"
 #   $ sudo mkdir -p $DIR && sudo chown -R $USER $DIR && git clone https://github.com/sumneko/lua-language-server $DIR
-#   $ cd $DIR && git checkout $VERSION && git submodule update --init --recursive
+#   $ cd $DIR && git submodule update --init --recursive
 #   $ cd 3rd/luamake && ./compile/install.sh && cd ../../ && ./3rd/luamake/luamake rebuild
 #
 # For readline in REPL,
