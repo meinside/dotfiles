@@ -69,7 +69,7 @@ lua 5.4.4
 
 # $ asdf plugin add nodejs
 # $ asdf install nodejs
-nodejs 16.14.2
+nodejs 16.15.0
 
 # $ asdf plugin add python
 # $ asdf install python
