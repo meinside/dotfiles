@@ -1,4 +1,4 @@
--- My .config/nvim/init.lua file for neovim 0.7+
+-- My .config/nvim/init.lua file for neovim 0.8+
 --
 -- created by meinside@gmail.com,
 --
@@ -49,14 +49,12 @@ local on_attach_lsp = function(client, bufnr)
   fn.sign_define('DiagnosticSignHint', { text = '', texthl = 'DiagnosticSignHint' })
 
   -- auto formatting on save
-  if client.resolved_capabilities.document_formatting then -- TODO: remove this when lspconfig is updated
-  --if client.server_capabilities.document_formatting then
+  if client.server_capabilities.document_formatting then
     vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.formatting_sync() end})
   end
 
   -- highlight current variable
-  if client.resolved_capabilities.document_highlight then -- TODO: remove this when lspconfig is updated
-  --if client.server_capabilities.document_highlight then
+  if client.server_capabilities.document_highlight then
     vim.api.nvim_set_hl(0, 'LspReferenceRead', {link = 'Visual'})
     vim.api.nvim_set_hl(0, 'LspReferenceText', {link = 'Visual'})
     vim.api.nvim_set_hl(0, 'LspReferenceWrite', {link = 'Visual'})
