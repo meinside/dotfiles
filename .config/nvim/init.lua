@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.04.28.
+-- last update: 2022.05.02.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -107,8 +107,8 @@ require('packer').startup({function()
 
 
   -- fold and preview (zc for closing, zo for opening / zM for closing all, zR opening all)
-  use {
-    'anuvyklack/pretty-fold.nvim',
+  use { 'anuvyklack/pretty-fold.nvim',
+    requires = 'anuvyklack/nvim-keymap-amend', -- only for preview
     config = function()
       require('pretty-fold').setup {
         keep_indentation = false,
@@ -118,7 +118,7 @@ require('packer').startup({function()
           right = { '┫ ', 'number_of_folded_lines', ': ', 'percentage', ' ┣━━' }
         }
       }
-      require('pretty-fold.preview').setup_keybinding('l') -- will float preview when pressing 'l' on folds
+      require('pretty-fold.preview').setup {}
     end
   }
 
