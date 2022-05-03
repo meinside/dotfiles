@@ -3,7 +3,7 @@
 # created on 2012.11.29.
 # updated on 2020.01.31.
 #
-# ... by meinside@gmail.com
+# ... by meinside@duck.com
 
 if [ -f ~/.bashrc ]; then
 	source ~/.bashrc
