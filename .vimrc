@@ -2,9 +2,9 @@
 "
 " init.vim for neovim is located at: .config/nvim/init.lua
 "
-" created by meinside@gmail.com,
+" created by meinside@duck.com
 "
-" last update: 2021.10.28.
+" last update: 2022.05.03.
 
 set t_Co=256
 

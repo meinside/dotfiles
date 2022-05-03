@@ -7,9 +7,9 @@
 # https://datasheets.raspberrypi.org/pico/getting-started-with-pico.pdf
 #
 # created on: 2021.08.24.
-# updated on: 2021.12.17.
+# updated on: 2022.05.03.
 #
-# by meinside@gmail.com
+# by meinside@duck.com
 
 
 ################################

@@ -1,8 +1,8 @@
 # .intpurc
 #
-# meinside@gmail.com
+# meinside@duck.com
 #
-# last update: 2022.04.20.
+# last update: 2022.05.03.
 
 "\e[3~": delete-char
 # this is actually equivalent to "\C-?": delete-char

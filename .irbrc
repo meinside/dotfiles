@@ -2,9 +2,9 @@
 
 # My .irbrc file
 #
-# meinside@gmail.com
+# meinside@duck.com
 #
-# last update: 2021.12.16.
+# last update: 2022.05.03.
 
 # $ gem install solargraph
 

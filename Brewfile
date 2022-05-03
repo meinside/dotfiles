@@ -1,4 +1,4 @@
-# Brewfile of meinside@gmail.com
+# Brewfile of meinside@duck.com
 #
 # Usage: 
 #

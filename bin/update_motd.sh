@@ -3,9 +3,9 @@
 # update_motd.rb
 # 
 # created on : 2012.08.21.
-# last update: 2020.02.01.
+# last update: 2022.05.03.
 # 
-# by meinside@gmail.com
+# by meinside@duck.com
 
 sudo bash -c "cat > /etc/motd" <<MY_MOTD
                         ..:~:=II77I++~,:.,,

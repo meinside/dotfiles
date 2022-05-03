@@ -5,9 +5,9 @@
 # Install fennel script or binary.
 #
 # created on : 2021.11.24.
-# last update: 2022.04.20.
+# last update: 2022.05.03.
 #
-# by meinside@gmail.com
+# by meinside@duck.com
 
 
 ################################

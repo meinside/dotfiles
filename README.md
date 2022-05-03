@@ -1,6 +1,6 @@
 # My dot/config files for macOS, Linux, Raspberry Pi, WSL, and Termux
 
-by Sungjin Han <meinside@gmail.com>
+by Sungjin Han <meinside@duck.com>
 
 ## Description
 

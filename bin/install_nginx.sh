@@ -25,7 +25,7 @@
 # created on : 2017.08.16.
 # last update: 2022.05.03.
 # 
-# by meinside@gmail.com
+# by meinside@duck.com
 
 
 ################################

@@ -6,9 +6,9 @@
 #
 # (https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh)
 # 
-# last update: 2021.12.03.
+# last update: 2022.05.03.
 # 
-# by meinside@gmail.com
+# by meinside@duck.com
 
 # colors
 RED="\033[0;31m"

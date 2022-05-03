@@ -6,9 +6,9 @@
 #
 # (pass '--do-not-clean' argument for preserving files after install)
 # 
-# last update: 2022.01.18.
+# last update: 2022.05.03.
 # 
-# by meinside@gmail.com
+# by meinside@duck.com
 
 
 ################################

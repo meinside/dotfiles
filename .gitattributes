@@ -1,6 +1,6 @@
-# git attributes file of meinside@gmail.com
+# git attributes file of meinside@duck.com
 #
-# last update: 2020.01.31.
+# last update: 2022.05.03.
 
 *.pbxproj -crlf -diff -merge
 

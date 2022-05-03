@@ -4,9 +4,9 @@
 # 
 # for building neovim from source code
 #
-# last update: 2022.04.22.
+# last update: 2022.05.03.
 # 
-# by meinside@gmail.com
+# by meinside@duck.com
 
 # * To install nightly version:
 #

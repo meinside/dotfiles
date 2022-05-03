@@ -1,8 +1,8 @@
 # partial .tmux.conf for macOS
 #
-# by meinside@gmail.com
+# by meinside@duck.com
 #
-# last update: 2021.10.28.
+# last update: 2022.05.03.
 
 set -g message-command-style fg=color255,bg=color235
 set -g message-style fg=color255,bg=color235

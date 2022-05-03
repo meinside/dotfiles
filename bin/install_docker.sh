@@ -5,9 +5,9 @@
 # install docker and docker-compose
 # 
 # created on : 2018.08.02.
-# last update: 2021.12.03.
+# last update: 2022.05.03.
 # 
-# by meinside@gmail.com
+# by meinside@duck.com
 
 
 ################################
