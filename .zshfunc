@@ -3,7 +3,7 @@
 # my zsh functions
 #
 # created on 2014.10.06.
-# updated on 2022.05.02.
+# updated on 2022.05.03.
 #
 # ... by meinside@gmail.com
 #
@@ -98,6 +98,9 @@ update-all () {
 	if [[ -d ~/.asdf/bin ]]; then
 		asdf update
 		asdf plugin update --all
+
+		# list outdated ones
+		asdf latest --all | grep missing
 	fi
 }
 
