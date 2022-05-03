@@ -3,7 +3,7 @@
 -- created by meinside@gmail.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.05.02.
+-- last update: 2022.05.03.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -428,6 +428,7 @@ require('packer').startup({function()
       vim.api.nvim_create_autocmd('BufWritePre', {pattern = '*.go', callback = require('go.format').goimport})
     end
   }
+  use {'ray-x/guihua.lua', run = 'cd lua/fzy && make'}
 
 
   -- haskell
