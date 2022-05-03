@@ -87,9 +87,9 @@ update-all () {
 	fi
 
 	# update nvim packer plugins
-	if [[ -x `which nvim` ]]; then
-		nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
-	fi
+	#if [[ -x `which nvim` ]]; then
+	#	nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
+	#fi
 
 	# upgrade oh-my-zsh
 	omz update
