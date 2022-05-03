@@ -2,10 +2,6 @@
 
 These are my helper scripts that make my life a lot happier:
 
-## check_wlan.sh
-
-A script that checks for WiFi connectivity (with `ping`) and restart the interface when needed.
-
 ## gen_selfsigned_certs.sh
 
 A script for generating self-signed certificates for development.
