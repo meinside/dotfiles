@@ -2,7 +2,7 @@
 #
 # (copy as .gitconfig and customize it)
 #
-# last update: 2022.01.19.
+# last update: 2022.05.03.
 
 [init]
   defaultBranch = master
@@ -74,7 +74,7 @@
 #  ff = only
 [user]
   name = Sungjin Han
-  email = meinside@gmail.com
+  email = meinside@duck.com
 [github]
   user = meinside
 [tag]
