@@ -1,10 +1,12 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.04.27.
+# last update: 2022.05.04.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
+#
+# https://github.com/babashka/babashka/releases
 babashka 0.8.1
 
 # For bash-language-server,
@@ -22,6 +24,8 @@ babashka 0.8.1
 #   $ brew install clojure-lsp/brew/clojure-lsp-native
 # or
 #   $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
+#
+# https://clojure.org/releases/tools#_releases
 clojure 1.10.3.1087
 
 # $ asdf plugin add golang
@@ -30,6 +34,8 @@ clojure 1.10.3.1087
 # For gopls,
 #
 #   $ go install golang.org/x/tools/gopls@latest
+#
+# https://go.dev/doc/devel/release
 golang 1.18.1
 
 # $ asdf plugin add java
@@ -41,10 +47,14 @@ java openjdk-17.0.2
 #
 # For language server,
 #   $ julia --project=~/.julia/environments/nvim-lspconfig -e 'using Pkg; Pkg.add("LanguageServer")'
+#
+# https://julialang.org/downloads/
 julia 1.7.2
 
 # $ asdf plugin add leiningen
 # $ asdf install leiningen
+#
+# https://github.com/technomancy/leiningen/releases
 leiningen 2.9.8
 
 # $ asdf plugin add lua
@@ -65,10 +75,14 @@ leiningen 2.9.8
 #   $ luarocks --local install readline HISTORY_LIBDIR=/usr/lib/aarch64-linux-gnu HISTORY_INCDIR=/usr/include READLINE_LIBDIR=/usr/lib/aarch64-linux-gnu
 #
 #   # and put `luarocks path` result to .custom_env file
+#
+# https://www.lua.org/versions.html
 lua 5.4.4
 
 # $ asdf plugin add nodejs
 # $ asdf install nodejs
+#
+# https://nodejs.org/en/about/releases/
 nodejs 16.15.0
 
 # $ asdf plugin add python
@@ -76,6 +90,8 @@ nodejs 16.15.0
 #
 # For language server,
 #   $ pip install --user python-lsp-server
+#
+# https://www.python.org/downloads/
 python 3.10.4
 
 # $ asdf plugin add ruby
@@ -83,6 +99,8 @@ python 3.10.4
 #
 # For language server,
 #   $ gem install --user-install solargraph
+#
+# https://www.ruby-lang.org/en/downloads/releases/
 ruby 3.1.2
 
 # $ asdf plugin add rust
@@ -92,6 +110,8 @@ ruby 3.1.2
 #   $ git clone https://github.com/rust-analyzer/rust-analyzer.git
 #   $ cd rust-analyzer/
 #   $ cargo xtask install --server
+#
+# https://github.com/rust-lang/rust/releases
 rust 1.60.0
 
 # $ asdf plugin add zig
@@ -106,5 +126,7 @@ rust 1.60.0
 #   $ git checkout master
 #   $ zig build -Drelease-safe
 #   $ zig-out/bin/zls config
+#
+# https://github.com/ziglang/zig/releases
 zig 0.9.1
 
