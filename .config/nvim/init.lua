@@ -1,4 +1,4 @@
--- My .config/nvim/init.lua file for neovim 0.7+
+-- My .config/nvim/init.lua file for neovim 0.8+
 --
 -- created by meinside@duck.com,
 --
