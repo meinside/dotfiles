@@ -1,13 +1,13 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.05.06.
+# last update: 2022.05.10.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
 #
 # https://github.com/babashka/babashka/releases
-babashka 0.8.1
+babashka 0.8.2
 
 # For bash-language-server,
 #   $ npm i -g bash-language-server
