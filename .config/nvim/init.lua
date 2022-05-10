@@ -39,7 +39,11 @@ local on_attach_lsp = function(client, bufnr)
   vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
   vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
   vim.keymap.set('n', '<leader>ll', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-  vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.format{async=true}<CR>', opts)
+  if vim.lsp.buf.format then -- TODO: remove this line when neovim 0.8 becomes stable
+    vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.format{async=true}<CR>', opts)
+  else -- TODO: remove this line when neovim 0.8 becomes stable
+    vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts) -- TODO: remove this line when neovim 0.8 becomes stable
+  end -- TODO: remove this line when neovim 0.8 becomes stable
 
   -- diagnostics configuration
   vim.diagnostic.config({ underline = false, virtual_text = false, signs = true, severity_sort = true, update_in_insert = false })
@@ -50,7 +54,11 @@ local on_attach_lsp = function(client, bufnr)
 
   -- auto formatting on save
   if client.server_capabilities.document_formatting then
-    vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.format{async=false} end})
+    if vim.lsp.buf.format then -- TODO: remove this line when neovim 0.8 becomes stable
+      vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.format{async=false} end})
+    else -- TODO: remove this line when neovim 0.8 becomes stable
+      vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.formatting_sync() end}) -- TODO: remove this line when neovim 0.8 becomes stable
+    end -- TODO: remove this line when neovim 0.8 becomes stable
   end
 
   -- highlight current variable
