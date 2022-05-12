@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.05.10.
+-- last update: 2022.05.12.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -532,12 +532,20 @@ end, config = {autoremove = true, display = {open_fn = require'packer.util'.floa
 
 
 -- neomake
-vim.api.nvim_exec([[call neomake#configure#automake('nrwi', 500)]], false)
+if vim.api.nvim_cmd then -- TODO: remove this line when neovim 0.8 becomes stable
+  vim.api.nvim_cmd({cmd = 'call', args = {"neomake#configure#automake('nrwi', 500)"}}, {})
+else -- TODO: remove this line when neovim 0.8 becomes stable
+  vim.api.nvim_exec([[call neomake#configure#automake('nrwi', 500)]], false) -- TODO: remove this line when neovim 0.8 becomes stable
+end -- TODO: remove this line when neovim 0.8 becomes stable
 g['neomake_open_list'] = 2
 
 
 -- copilot settings (ctrl+L for applying)
-vim.api.nvim_exec([[imap <silent><script><expr> <C-L> copilot#Accept("<CR>")]], false)
+if vim.api.nvim_cmd then -- TODO: remove this line when neovim 0.8 becomes stable
+  vim.api.nvim_cmd({cmd = 'imap', args = {'<silent><script><expr>', '<C-L>', 'copilot#Accept("<CR>")'}}, {})
+else -- TODO: remove this line when neovim 0.8 becomes stable
+  vim.api.nvim_exec([[imap <silent><script><expr> <C-L> copilot#Accept("<CR>")]], false) -- TODO: remove this line when neovim 0.8 becomes stable
+end -- TODO: remove this line when neovim 0.8 becomes stable
 g['copilot_no_tab_map'] = true
 g['copilot_filetypes'] = {
   ['*'] = false,
