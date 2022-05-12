@@ -598,12 +598,13 @@ vim.o.signcolumn = 'number'
 map('n', '<C-h>', ':tabprevious<CR>') -- <ctrl-h> for previous tab
 map('n', '<C-l>', ':tabnext<CR>') -- <ctrl-l> for next tab
 
+-- go to the last position of a file
+vim.api.nvim_exec([[
+  autocmd BufRead * autocmd FileType <buffer> ++once
+    \ if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") | exe 'normal! g`"' | endif
+]], false)
+
 vim.api.nvim_create_augroup("etc", {clear = true})
-vim.api.nvim_create_autocmd('BufReadPost', {group = 'etc', pattern = '*', callback = function() -- go to the last position of a file
-  if vim.fn.line('.') > 0 and vim.fn.line('.') <= vim.fn.line('$') then
-    vim.cmd([[exe "normal g`\""]])
-  end
-end})
 vim.api.nvim_create_autocmd('TextYankPost', {group = 'etc', pattern = '*', callback = function() -- highlight on yank
   vim.highlight.on_yank({on_visual = false})
 end})
