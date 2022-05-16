@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.05.12.
+-- last update: 2022.05.16.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -57,7 +57,8 @@ local on_attach_lsp = function(client, bufnr)
     if vim.lsp.buf.format then -- TODO: remove this line when neovim 0.8 becomes stable
       vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.format{async=false} end})
     else -- TODO: remove this line when neovim 0.8 becomes stable
-      vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.formatting_sync() end}) -- TODO: remove this line when neovim 0.8 becomes stable
+      --vim.api.nvim_exec([[autocmd BufWritePre (InsertLeave?) <buffer> lua vim.lsp.buf.formatting_sync(nil,500)]], false) -- https://github.com/ray-x/go.nvim#code-format
+      vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.formatting_sync(nil,500) end}) -- TODO: remove this line when neovim 0.8 becomes stable
     end -- TODO: remove this line when neovim 0.8 becomes stable
   end
 
@@ -433,7 +434,8 @@ require('packer').startup({function()
       require'go'.setup {
         gofmt = 'gopls',
       }
-      vim.api.nvim_create_autocmd('BufWritePre', {pattern = '*.go', callback = require('go.format').goimport})
+      --vim.api.nvim_create_autocmd('BufWritePre', {pattern = '*.go', callback = require('go.format').goimport})
+      vim.api.nvim_exec([[autocmd BufWritePre *.go :silent! lua require('go.format').goimport()]], false)
     end
   }
   use {'ray-x/guihua.lua', run = 'cd lua/fzy && make'}
