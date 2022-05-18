@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2022.05.03.
+# updated on 2022.05.18.
 #
 # ... by meinside@duck.com
 
@@ -91,6 +91,9 @@ if [[ -z $TMUX ]]; then
     if [ -d /opt/lua-language-server/bin ]; then
         export PATH=$PATH:/opt/lua-language-server/bin
     fi
+
+    # for OCaml
+    [[ ! -r $HOME/.opam/opam-init/init.sh ]] || source $HOME/.opam/opam-init/init.sh  > /dev/null 2> /dev/null
 
     # for Rust
     if [ -d "$HOME/.cargo/bin" ]; then

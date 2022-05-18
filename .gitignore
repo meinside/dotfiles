@@ -1,6 +1,6 @@
 # .gitignore of meinside@duck.com
 #
-# last update: 2022.05.03.
+# last update: 2022.05.18.
 
 # unnecessary binary files
 *.o
@@ -118,6 +118,10 @@ snap/
 node_modules/
 npm-debug.log
 package-lock.json
+
+# ocaml files/dirs
+.ocamlinit
+.opam/
 
 # perl files/dirs
 perl*/

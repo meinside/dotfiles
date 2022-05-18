@@ -505,6 +505,7 @@ require('packer').startup({function()
     'gopls',  -- go
     'hls',  -- haskell
     'julials',  -- julia
+    'ocamllsp', -- ocaml
     'pylsp',  -- python
     'rust_analyzer',  -- rust
     'solargraph', -- ruby
@@ -559,7 +560,7 @@ g['copilot_filetypes'] = {
   ['kotlin'] = true,
   ['lua'] = true,
   ['markdown'] = true,
-  ['objc'] = true,
+  ['objc'] = true, ['ocaml'] = true,
   ['python'] = true,
   ['ruby'] = true, ['rust'] = true,
   ['sh'] = true, ['swift'] = true,

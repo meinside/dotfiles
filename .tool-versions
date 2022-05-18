@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.05.11.
+# last update: 2022.05.18.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -84,6 +84,18 @@ lua 5.4.4
 #
 # https://nodejs.org/en/about/releases/
 nodejs lts
+
+# $ asdf plugin add ocaml
+# $ asdf install ocaml
+#
+# For opam,
+#   $ bash -c "sh <(curl -fsSL https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh)"
+#
+# For language server,
+#   $ opam install ocaml-lsp-server
+#
+# https://ocaml.org/releases
+ocaml 4.14.0
 
 # $ asdf plugin add python
 # $ asdf install python
