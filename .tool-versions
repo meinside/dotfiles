@@ -17,7 +17,7 @@ babashka 0.8.2
 # or
 #   $ sudo apt install ccls
 
-# $ asdf plugin add clojure
+# $ asdf plugin add clojure https://github.com/asdf-community/asdf-clojure.git
 # $ asdf install clojure
 #
 # For clojure-lsp,
@@ -26,7 +26,7 @@ babashka 0.8.2
 #   $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
 #
 # https://clojure.org/releases/tools#_releases
-clojure 1.10.3.1087
+clojure 1.11.1.1113
 
 # $ asdf plugin add golang
 # $ asdf install golang
