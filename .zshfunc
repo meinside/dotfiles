@@ -3,7 +3,7 @@
 # my zsh functions
 #
 # created on 2014.10.06.
-# updated on 2022.05.03.
+# updated on 2022.05.26.
 #
 # ... by meinside@duck.com
 #
@@ -61,6 +61,12 @@ update-macos () {
 	fi
 }
 
+update-termux () {
+	pkg upgrade && \
+		pkg clean && \
+		pkg autoclean
+}
+
 update-linux () {
 	sudo apt-get update && \
 		sudo apt-get -y upgrade && \
@@ -72,6 +78,7 @@ update-linux () {
 update-all () {
 	case "$OSTYPE" in
 		darwin*) update-macos ;;
+		linux-android) update-termux ;;
 		linux*) update-linux ;;
 	esac
 
@@ -102,6 +109,11 @@ update-all () {
 		# list outdated ones
 		asdf latest --all | grep missing
 	fi
+
+	# pull this repository
+	(
+		cd ~ && git checkout master && git pull origin master
+	)
 }
 
 # list go imports
