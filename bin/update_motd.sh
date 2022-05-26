@@ -45,7 +45,9 @@ read -r -d '' ASCII_ART <<EOF
 EOF
 
 if [ -f /etc/motd ]; then
-	sudo bash -c 'echo "$ASCII" > /etc/motd'
+	sudo bash -c "cat << EOF > /etc/motd
+$ASCII_ART
+EOF"
 elif [ -d /etc/update-motd.d/ ]; then
 	sudo bash -c "cat << EOF > /etc/update-motd.d/09-ascii-art
 #!/bin/sh
