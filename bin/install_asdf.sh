@@ -5,7 +5,7 @@
 # Install asdf
 #
 # created on : 2022.04.14.
-# last update: 2022.05.26.
+# last update: 2022.05.27.
 #
 # by meinside@duck.com
 
@@ -53,12 +53,17 @@ function install_macos {
 	checkout
 }
 
+function install_termmux {
+	error "* termux is not supported yet"
+}
+
 function install_linux {
 	checkout
 }
 
 case "$OSTYPE" in
 	darwin*) install_macos ;;
+	linux-android) install_termux ;;
 	linux*) install_linux ;;
 	*) error "* not supported yet: $OSTYPE" ;;
 esac
