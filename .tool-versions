@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.05.23.
+# last update: 2022.05.31.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -49,7 +49,7 @@ java openjdk-17.0.2
 #   $ julia --project=~/.julia/environments/nvim-lspconfig -e 'using Pkg; Pkg.add("LanguageServer")'
 #
 # https://julialang.org/downloads/
-julia 1.7.2
+julia 1.7.3
 
 # $ asdf plugin add leiningen
 # $ asdf install leiningen
