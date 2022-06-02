@@ -627,6 +627,60 @@ vim.api.nvim_create_autocmd('CursorHold', {pattern = '*', callback = function()
   vim.diagnostic.open_float(nil, { focusable = false, close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' }, border = 'rounded', source = 'always', prefix = ' ' })
 end})
 
+-- for winbar
+if vim.fn.has('nvim-0.8') == 1 then -- TODO: remove this line when neovim 0.8 becomes stable
+  local function isempty(s)
+    return s == nil or s == ""
+  end
+
+  local function fname() -- filename function for winbar
+    local filename = vim.fn.expand "%:t"
+    local extension = ""
+    local file_icon = ""
+    local file_icon_color = ""
+    local default_file_icon = ""
+    local default_file_icon_color = ""
+
+    if not isempty(filename) then
+      extension = vim.fn.expand "%:e"
+
+      local default = false
+
+      if isempty(extension) then
+        extension = ""
+        default = true
+      end
+
+      file_icon, file_icon_color = require("nvim-web-devicons").get_icon_color(filename, extension, { default = default })
+
+      local hl_group = "FileIconColor" .. extension
+
+      vim.api.nvim_set_hl(0, hl_group, { fg = file_icon_color })
+      if file_icon == nil then
+        file_icon = default_file_icon
+        file_icon_color = default_file_icon_color
+      end
+
+      return " " .. "%#" .. hl_group .. "#" .. file_icon .. "%*" .. " " .. "%#LineNr#" .. filename .. "%*"
+    end
+  end
+
+  vim.api.nvim_create_autocmd({ "CursorMoved", "BufWinEnter", "BufFilePost" }, {
+    callback = function()
+      local excludes = {
+        "help", "startify", "dashboard", "packer", "neogitstatus", "NvimTree", "Trouble", "alpha", "lir", "Outline", "spectre_panel", "toggleterm", "TelescopePrompt",
+      }
+
+      if vim.tbl_contains(excludes, vim.bo.filetype) then
+        vim.opt_local.winbar = nil
+        return
+      end
+
+      vim.opt_local.winbar = fname()
+    end,
+  })
+end -- TODO: remove this line when neovim 0.8 becomes stable
+
 -- disable unneeded providers
 g['loaded_python_provider'] = 0
 g['loaded_perl_provider'] = 0
