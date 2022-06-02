@@ -5,10 +5,11 @@
 #
 # then it will automatically  `go install` or `go get -u` all packages listed in this file(~/.gogets)
 #
-# last update: 2021.11.24.
+# last update: 2022.06.02.
 
 # official packages
 golang.org/x/tools/cmd/godoc
+github.com/tools/godep
 
 # useful packages/tools
 github.com/mailgun/godebug
@@ -34,10 +35,16 @@ golang.org/x/tools/cmd/goimports
 github.com/zmb3/gogetdoc
 golang.org/x/lint/golint
 
+# for writing
+github.com/errata-ai/vale@v2.17.0
+
 # for backup/sync
 github.com/rclone/rclone
 
 # my packages
 github.com/meinside/gtmx@latest
 github.com/meinside/goget@latest
+github.com/meinside/backupboxxx@latest
+github.com/meinside/pb-send@latest
+github.com/meinside/google-ddns-updater@latest
 

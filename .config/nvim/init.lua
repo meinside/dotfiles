@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.05.16.
+-- last update: 2022.06.02.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -530,6 +530,16 @@ require('packer').startup({function()
       telemetry = { enable = false },
     } },
   }
+
+  -- vale (see ~/.vale.ini)
+  use 'jose-elias-alvarez/null-ls.nvim'
+  if fn.executable('vale') == 1 then -- $ go install github.com/errata-ai/vale@latest
+    require("null-ls").setup({
+      sources = {
+        require("null-ls").builtins.diagnostics.vale,
+      },
+    })
+  end
 
 end, config = {autoremove = true, display = {open_fn = require'packer.util'.float}}})
 

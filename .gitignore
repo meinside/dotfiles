@@ -1,6 +1,6 @@
 # .gitignore of meinside@duck.com
 #
-# last update: 2022.05.18.
+# last update: 2022.06.02.
 
 # unnecessary binary files
 *.o
@@ -142,6 +142,9 @@ perl*/
 .cargo/
 .multirust
 .rustup/
+
+# vale files/dirs
+styles/
 
 # xcode files
 .cocoapods/
