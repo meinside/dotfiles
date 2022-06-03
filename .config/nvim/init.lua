@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.06.02.
+-- last update: 2022.06.03.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -321,12 +321,13 @@ require('packer').startup({function()
           end, { 'i', 's' }),
         },
         sources = {
-          { name = 'nvim_lsp' },
-          { name = 'buffer' },
-          { name = 'nvim_lua' },
-          { name = 'luasnip' },
+          { name = 'copilot' },
+          { name = 'buffer', keyword_length = 3 },
           { name = 'path' },
           { name = 'calc' },
+          { name = 'nvim_lsp', keyword_length = 3 },
+          { name = 'luasnip', keyword_length = 2 },
+          { name = 'nvim_lua', keyword_length = 2 },
         },
         formatting = { format = lspkind.cmp_format() },
       })
@@ -481,8 +482,23 @@ require('packer').startup({function()
   use {'ziglang/zig.vim', ft = {'zig'}}
 
 
-  -- github copilot (:Copilot setup)
-  use 'github/copilot.vim'
+  -- github copilot
+  --use 'github/copilot.vim' -- XXXX: :Copilot setup
+  use {
+    "zbirenbaum/copilot.lua",
+    event = {"VimEnter"},
+    config = function()
+      vim.defer_fn(function()
+        require("copilot").setup {
+          ft_disable = { "markdown", "terraform", "text" },
+        }
+      end, 100)
+    end,
+  }
+  use {
+    "zbirenbaum/copilot-cmp",
+    after = { "copilot.lua", "nvim-cmp" },
+  }
 
 
   ----------------
@@ -551,31 +567,6 @@ else -- TODO: remove this line when neovim 0.8 becomes stable
   vim.api.nvim_exec([[call neomake#configure#automake('nrwi', 500)]], false) -- TODO: remove this line when neovim 0.8 becomes stable
 end -- TODO: remove this line when neovim 0.8 becomes stable
 g['neomake_open_list'] = 2
-
-
--- copilot settings (ctrl+L for applying)
-if vim.api.nvim_cmd then -- TODO: remove this line when neovim 0.8 becomes stable
-  vim.api.nvim_cmd({cmd = 'imap', args = {'<silent><script><expr>', '<C-L>', 'copilot#Accept("<CR>")'}}, {})
-else -- TODO: remove this line when neovim 0.8 becomes stable
-  vim.api.nvim_exec([[imap <silent><script><expr> <C-L> copilot#Accept("<CR>")]], false) -- TODO: remove this line when neovim 0.8 becomes stable
-end -- TODO: remove this line when neovim 0.8 becomes stable
-g['copilot_no_tab_map'] = true
-g['copilot_filetypes'] = {
-  ['*'] = false,
-  ['c'] = true, ['clojure'] = true, ['css'] = true,
-  ['fennel'] = true,
-  ['go'] = true,
-  ['haskell'] = true, ['html'] = true,
-  ['java'] = true, ['javascript'] = true, ['julia'] = true,
-  ['kotlin'] = true,
-  ['lua'] = true,
-  ['markdown'] = true,
-  ['objc'] = true, ['ocaml'] = true,
-  ['python'] = true,
-  ['ruby'] = true, ['rust'] = true,
-  ['sh'] = true, ['swift'] = true,
-  ['zig'] = true,
-}
 
 
 ------------------------------------------------
@@ -668,7 +659,7 @@ if vim.fn.has('nvim-0.8') == 1 then -- TODO: remove this line when neovim 0.8 be
   vim.api.nvim_create_autocmd({ "CursorMoved", "BufWinEnter", "BufFilePost" }, {
     callback = function()
       local excludes = {
-        "help", "startify", "dashboard", "packer", "neogitstatus", "NvimTree", "Trouble", "alpha", "lir", "Outline", "spectre_panel", "toggleterm", "TelescopePrompt",
+        "help", "packer", "NvimTree", "Trouble", "TelescopePrompt", "gitcommit",
       }
 
       if vim.tbl_contains(excludes, vim.bo.filetype) then
