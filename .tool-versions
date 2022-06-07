@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.06.06.
+# last update: 2022.06.07.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -104,7 +104,7 @@ ocaml 4.14.0
 #   $ pip install --user python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.10.4
+python 3.10.5
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
