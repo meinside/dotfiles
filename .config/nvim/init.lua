@@ -14,65 +14,6 @@ local function map(mode, lhs, rhs, opts)
   vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
--- default setup for language servers
-local on_attach_lsp = function(client, bufnr)
-  -- Enable completion triggered by <c-x><c-o>
-  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-  -- See `:help vim.lsp.*` for documentation on any of the below functions
-  -- Mappings.
-  local opts = { remap = false, silent = true }
-
-  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
-  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-  vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
-  --vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-  --vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
-  --vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
-  --vim.keymap.set('n', '<space>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, opts)
-  vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, opts)
-  vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
-  --vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-  vim.keymap.set('n', '<leader>ca', '<cmd>CodeActionMenu<CR>', opts)
-  --vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-  vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-  vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-  vim.keymap.set('n', '<leader>ll', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-  if vim.lsp.buf.format then -- TODO: remove this line when neovim 0.8 becomes stable
-    vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.format{async=true}<CR>', opts)
-  else -- TODO: remove this line when neovim 0.8 becomes stable
-    vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts) -- TODO: remove this line when neovim 0.8 becomes stable
-  end -- TODO: remove this line when neovim 0.8 becomes stable
-
-  -- diagnostics configuration
-  vim.diagnostic.config({ underline = false, virtual_text = false, signs = true, severity_sort = true, update_in_insert = false })
-  fn.sign_define('DiagnosticSignError', { text = '✗', texthl = 'DiagnosticSignError' })
-  fn.sign_define('DiagnosticSignWarn', { text = '!', texthl = 'DiagnosticSignWarn' })
-  fn.sign_define('DiagnosticSignInformation', { text = '', texthl = 'DiagnosticSignInfo' })
-  fn.sign_define('DiagnosticSignHint', { text = '', texthl = 'DiagnosticSignHint' })
-
-  -- auto formatting on save
-  if client.server_capabilities.document_formatting then
-    if vim.lsp.buf.format then -- TODO: remove this line when neovim 0.8 becomes stable
-      vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.format{async=false} end})
-    else -- TODO: remove this line when neovim 0.8 becomes stable
-      --vim.api.nvim_exec([[autocmd BufWritePre (InsertLeave?) <buffer> lua vim.lsp.buf.formatting_sync(nil,500)]], false) -- https://github.com/ray-x/go.nvim#code-format
-      vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.formatting_sync(nil,500) end}) -- TODO: remove this line when neovim 0.8 becomes stable
-    end -- TODO: remove this line when neovim 0.8 becomes stable
-  end
-
-  -- highlight current variable
-  if client.server_capabilities.document_highlight then
-    vim.api.nvim_set_hl(0, 'LspReferenceRead', {link = 'Visual'})
-    vim.api.nvim_set_hl(0, 'LspReferenceText', {link = 'Visual'})
-    vim.api.nvim_set_hl(0, 'LspReferenceWrite', {link = 'Visual'})
-    vim.api.nvim_create_augroup('lsp_document_highlight', {clear = true})
-    vim.api.nvim_create_autocmd('CursorHold', {group = 'lsp_document_highlight', callback = function() vim.lsp.buf.document_highlight() end})
-    vim.api.nvim_create_autocmd('CursorMoved', {group = 'lsp_document_highlight', callback = function() vim.lsp.buf.clear_references() end})
-  end
-end
-
 
 ------------------------------------------------
 -- plugins
@@ -416,17 +357,26 @@ require('packer').startup({function()
   use 'bash-lsp/bash-language-server'
 
 
-  -- clojure
+  -- clojure and other lispy languages
   use {'dmac/vim-cljfmt', ft = {'clojure'}} -- $ go install github.com/cespare/goclj/cljfmt
   -- for auto completion: <C-x><C-o>
   -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
   -- for reloading everything: \rr
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
   use {'Olical/conjure', ft = {'clojure', 'fennel'}}
-
-
-  -- fennel
-  use {'bakpakin/fennel.vim', ft = {'fennel'}}
+  use {'bakpakin/fennel.vim', ft = {'fennel'}} -- fennel
+  -- >f, <f : move a form
+  -- >e, <e : move an element
+  -- >), <), >(, <( : move a parenthesis
+  -- <I, >I : insert at the beginning or end of a form
+  -- dsf : remove surroundings
+  -- cse(, cse), cseb : surround an element with parenthesis
+  -- cse[, cse] : surround an element with brackets
+  -- cse{, cse} : surround an element with braces
+  use {'guns/vim-sexp', ft = {'clojure', 'fennel'}}
+  g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
+  g['sexp_filetypes'] = 'clojure,fennel'
+  use {'tpope/vim-sexp-mappings-for-regular-people', ft = {'clojure', 'fennel'}}
 
 
   -- go
@@ -455,22 +405,6 @@ require('packer').startup({function()
   use 'JuliaEditorSupport/julia-vim'
 
 
-  -- lispy languages
-  --
-  -- >f, <f : move a form
-  -- >e, <e : move an element
-  -- >), <), >(, <( : move a parenthesis
-  -- <I, >I : insert at the beginning or end of a form
-  -- dsf : remove surroundings
-  -- cse(, cse), cseb : surround an element with parenthesis
-  -- cse[, cse] : surround an element with brackets
-  -- cse{, cse} : surround an element with braces
-  use {'guns/vim-sexp', ft = {'clojure', 'fennel'}}
-  g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
-  g['sexp_filetypes'] = 'clojure,fennel'
-  use {'tpope/vim-sexp-mappings-for-regular-people', ft = {'clojure', 'fennel'}}
-
-
   -- ruby
   use {'vim-ruby/vim-ruby', ft = {'ruby'}}
 
@@ -484,7 +418,7 @@ require('packer').startup({function()
 
 
   -- github copilot
-  --use 'github/copilot.vim' -- XXXX: :Copilot setup
+  --use 'github/copilot.vim' -- XXXX: :Copilot setup (setup not supported by copilot.lua yet)
   use {
     "zbirenbaum/copilot.lua",
     event = {"VimEnter"},
@@ -503,7 +437,64 @@ require('packer').startup({function()
 
 
   ----------------
-  -- lsp settings (see install methods in .tool-versions file)
+  -- lsp settings
+  local on_attach_lsp = function(client, bufnr) -- default setup for language servers
+    -- Enable completion triggered by <c-x><c-o>
+    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+    -- See `:help vim.lsp.*` for documentation on any of the below functions
+    -- Mappings.
+    local opts = { remap = false, silent = true }
+
+    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, opts)
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
+    --vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, opts)
+    --vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, opts)
+    --vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, opts)
+    --vim.keymap.set('n', '<space>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, opts)
+    vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, opts)
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
+    --vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
+    vim.keymap.set('n', '<leader>ca', '<cmd>CodeActionMenu<CR>', opts)
+    --vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+    vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+    vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+    vim.keymap.set('n', '<leader>ll', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+    if vim.lsp.buf.format then -- TODO: remove this line when neovim 0.8 becomes stable
+      vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.format{async=true}<CR>', opts)
+    else -- TODO: remove this line when neovim 0.8 becomes stable
+      vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts) -- TODO: remove this line when neovim 0.8 becomes stable
+    end -- TODO: remove this line when neovim 0.8 becomes stable
+
+    -- diagnostics configuration
+    vim.diagnostic.config({ underline = false, virtual_text = false, signs = true, severity_sort = true, update_in_insert = false })
+    fn.sign_define('DiagnosticSignError', { text = '✗', texthl = 'DiagnosticSignError' })
+    fn.sign_define('DiagnosticSignWarn', { text = '!', texthl = 'DiagnosticSignWarn' })
+    fn.sign_define('DiagnosticSignInformation', { text = '', texthl = 'DiagnosticSignInfo' })
+    fn.sign_define('DiagnosticSignHint', { text = '', texthl = 'DiagnosticSignHint' })
+
+    -- auto formatting on save
+    if client.server_capabilities.document_formatting then
+      if vim.lsp.buf.format then -- TODO: remove this line when neovim 0.8 becomes stable
+        vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.format{async=false} end})
+      else -- TODO: remove this line when neovim 0.8 becomes stable
+        --vim.api.nvim_exec([[autocmd BufWritePre (InsertLeave?) <buffer> lua vim.lsp.buf.formatting_sync(nil,500)]], false) -- https://github.com/ray-x/go.nvim#code-format
+        vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.formatting_sync(nil,500) end}) -- TODO: remove this line when neovim 0.8 becomes stable
+      end -- TODO: remove this line when neovim 0.8 becomes stable
+    end
+
+    -- highlight current variable
+    if client.server_capabilities.document_highlight then
+      vim.api.nvim_set_hl(0, 'LspReferenceRead', {link = 'Visual'})
+      vim.api.nvim_set_hl(0, 'LspReferenceText', {link = 'Visual'})
+      vim.api.nvim_set_hl(0, 'LspReferenceWrite', {link = 'Visual'})
+      vim.api.nvim_create_augroup('lsp_document_highlight', {clear = true})
+      vim.api.nvim_create_autocmd('CursorHold', {group = 'lsp_document_highlight', callback = function() vim.lsp.buf.document_highlight() end})
+      vim.api.nvim_create_autocmd('CursorMoved', {group = 'lsp_document_highlight', callback = function() vim.lsp.buf.clear_references() end})
+    end
+  end
   local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
   capabilities.textDocument.completion.completionItem.documentationFormat = { 'markdown', 'plaintext' }
   capabilities.textDocument.completion.completionItem.snippetSupport = true
@@ -515,7 +506,7 @@ require('packer').startup({function()
   capabilities.textDocument.completion.completionItem.tagSupport = { valueSet = { 1 } }
   capabilities.textDocument.completion.completionItem.resolveSupport = {properties = {'documentation', 'detail', 'additionalTextEdits'}}
   local nvim_lsp = require('lspconfig')
-  local lsp_servers = { -- language servers with default setup
+  local lsp_servers = { -- language servers with default setup (see install methods in .tool-versions file)
     'bashls', -- bash
     'ccls', -- clang
     'clojure_lsp',  -- clojure
