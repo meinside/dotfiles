@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2022.05.18.
+# updated on 2022.06.08.
 #
 # ... by meinside@duck.com
 #
@@ -44,13 +44,18 @@ HIST_STAMPS="yyyy-mm-dd"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(macos history history-substring-search mosh git git-flow docker copypath colored-man-pages encode64 urltools sudo web-search asdf)
+plugins=(macos history history-substring-search mosh git git-flow copypath colored-man-pages encode64 urltools sudo asdf zsh-syntax-highlighting)
 
 # Search for oh-my-zsh.sh
 if ! [ -f $ZSH/oh-my-zsh.sh ]; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" -s '--keep-zshrc'
 fi
 source $ZSH/oh-my-zsh.sh
+
+# Setup for zsh-syntax-highlighting
+if ! [ -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting ]; then
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+fi
 
 # User configuration
 #umask 027
@@ -150,13 +155,6 @@ if [[ -z $TMUX ]]; then
         autoload -Uz compinit && compinit   # initialise completions with ZSH's compinit
     fi
 
-fi
-
-# for zsh-syntax-highlighting
-if [ -d /usr/share/zsh-syntax-highlighting/ ]; then
-    source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-elif [ -d /usr/local/share/zsh-syntax-highlighting/ ]; then
-    source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 fi
 
 # aliases
