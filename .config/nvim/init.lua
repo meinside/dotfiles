@@ -609,8 +609,9 @@ vim.api.nvim_exec([[
     \ if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") | exe 'normal! g`"' | endif
 ]], false)
 
+-- highlight on yank
 vim.api.nvim_create_augroup("etc", {clear = true})
-vim.api.nvim_create_autocmd('TextYankPost', {group = 'etc', pattern = '*', callback = function() -- highlight on yank
+vim.api.nvim_create_autocmd('TextYankPost', {group = 'etc', pattern = '*', callback = function()
   vim.highlight.on_yank({on_visual = false})
 end})
 
