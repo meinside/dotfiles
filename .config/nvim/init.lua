@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.06.03.
+-- last update: 2022.06.08.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -393,6 +393,7 @@ require('packer').startup({function()
       }
     end
   }
+  use 'nvim-treesitter/nvim-treesitter-context'
 
 
   -- syntax checking
