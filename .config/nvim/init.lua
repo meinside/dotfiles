@@ -645,7 +645,7 @@ if vim.fn.has('nvim-0.8') == 1 then -- TODO: remove this line when neovim 0.8 be
         file_icon_color = default_file_icon_color
       end
 
-      return " " .. "%#" .. hl_group .. "#" .. file_icon .. "%*" .. " " .. "%#LineNr#" .. filename .. "%*"
+      return " " .. "%#" .. hl_group .. "#" .. file_icon .. "%*" .. " " .. filename .. "%*"
     end
   end
 
