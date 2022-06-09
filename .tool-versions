@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.06.07.
+# last update: 2022.06.09.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -37,6 +37,17 @@ clojure 1.11.1.1113
 #
 # https://go.dev/doc/devel/release
 golang 1.18.3
+
+# $ asdf plugin add janet
+# $ asdf install janet
+#
+# For nrepl,
+#
+# $ jpm install spork
+# $ janet -e "(import spork/netrepl) (netrepl/server)"
+#
+# https://github.com/janet-lang/janet/releases
+janet 1.22.0
 
 # $ asdf plugin add java
 # $ asdf install java

@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.06.08.
+-- last update: 2022.06.09.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -363,8 +363,9 @@ require('packer').startup({function()
   -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
   -- for reloading everything: \rr
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-  use {'Olical/conjure', ft = {'clojure', 'fennel'}}
-  use {'bakpakin/fennel.vim', ft = {'fennel'}} -- fennel
+  use {'Olical/conjure'}
+  use {'bakpakin/fennel.vim'}
+  use {'bakpakin/janet.vim'}
   -- >f, <f : move a form
   -- >e, <e : move an element
   -- >), <), >(, <( : move a parenthesis
@@ -373,10 +374,10 @@ require('packer').startup({function()
   -- cse(, cse), cseb : surround an element with parenthesis
   -- cse[, cse] : surround an element with brackets
   -- cse{, cse} : surround an element with braces
-  use {'guns/vim-sexp', ft = {'clojure', 'fennel'}}
+  use {'guns/vim-sexp'}
   g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
-  g['sexp_filetypes'] = 'clojure,fennel'
-  use {'tpope/vim-sexp-mappings-for-regular-people', ft = {'clojure', 'fennel'}}
+  g['sexp_filetypes'] = 'clojure,fennel,janet'
+  use {'tpope/vim-sexp-mappings-for-regular-people'}
 
 
   -- go
