@@ -363,9 +363,9 @@ require('packer').startup({function()
   -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
   -- for reloading everything: \rr
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-  use {'Olical/conjure'}
-  use {'bakpakin/fennel.vim'}
-  use {'bakpakin/janet.vim'}
+  use {'Olical/conjure', ft = {'clojure', 'fennel', 'janet'}}
+  use {'bakpakin/fennel.vim', ft = {'fennel'}}
+  use {'bakpakin/janet.vim', ft = {'janet'}}
   -- >f, <f : move a form
   -- >e, <e : move an element
   -- >), <), >(, <( : move a parenthesis
@@ -389,7 +389,8 @@ require('packer').startup({function()
       }
       --vim.api.nvim_create_autocmd('BufWritePre', {pattern = '*.go', callback = require('go.format').goimport})
       vim.api.nvim_exec([[autocmd BufWritePre *.go :silent! lua require('go.format').goimport()]], false)
-    end
+    end,
+    ft = {'go'},
   }
   use {'ray-x/guihua.lua', run = 'cd lua/fzy && make'}
 
