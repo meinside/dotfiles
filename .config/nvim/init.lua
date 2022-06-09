@@ -364,7 +364,11 @@ require('packer').startup({function()
   -- for reloading everything: \rr
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
   use {'Olical/conjure', ft = {'clojure', 'fennel', 'janet'}}
-  use {'bakpakin/fennel.vim', ft = {'fennel'}}
+  use {'bakpakin/fennel.vim', ft = {'fennel'},
+    config = function() -- https://github.com/Olical/conjure/wiki/Quick-start:-Fennel-(stdio)
+      vim.api.nvim_exec([[let g:conjure#filetype#fennel = "conjure.client.fennel.stdio"]], false)
+    end
+  }
   use {'bakpakin/janet.vim', ft = {'janet'}}
   -- >f, <f : move a form
   -- >e, <e : move an element
