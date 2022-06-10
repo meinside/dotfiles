@@ -23,7 +23,7 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2022.05.26.
+# last update: 2022.06.10.
 # 
 # by meinside@duck.com
 
@@ -34,9 +34,9 @@
 
 # nginx/library versions
 NGINX_VERSION="1.22.0"
-OPENSSL_VERSION="1.1.1o"
+OPENSSL_VERSION="3.0.3"
 ZLIB_VERSION="1.2.12"
-PCRE_VERSION="8.45"
+PCRE_VERSION="10.40"
 
 
 ################################
@@ -74,14 +74,13 @@ TEMP_DIR="/tmp"
 NGINX_SRC_URL="https://github.com/nginx/nginx/archive/release-${NGINX_VERSION}.tar.gz"
 OPENSSL_SRC_URL="https://www.openssl.org/source/openssl-${OPENSSL_VERSION}.tar.gz"
 ZLIB_SRC_URL="http://www.zlib.net/zlib-${ZLIB_VERSION}.tar.gz"
-#PCRE_SRC_URL="https://ftp.pcre.org/pub/pcre/pcre-${PCRE_VERSION}.tar.gz" # XXX: not working
-PCRE_SRC_URL="https://jaist.dl.sourceforge.net/project/pcre/pcre/${PCRE_VERSION}/pcre-${PCRE_VERSION}.tar.gz"
+PCRE_SRC_URL="https://github.com/PCRE2Project/pcre2/releases/download/pcre2-${PCRE_VERSION}/pcre2-${PCRE_VERSION}.tar.gz"
 
 # extracted dirs
 NGINX_SRC_DIR="${TEMP_DIR}/nginx-release-${NGINX_VERSION}"
 OPENSSL_SRC_DIR="${TEMP_DIR}/openssl-${OPENSSL_VERSION}"
 ZLIB_SRC_DIR="${TEMP_DIR}/zlib-${ZLIB_VERSION}"
-PCRE_SRC_DIR="${TEMP_DIR}/pcre-${PCRE_VERSION}"
+PCRE_SRC_DIR="${TEMP_DIR}/pcre2-${PCRE_VERSION}"
 
 # XXX - built nginx binary will be placed as:
 NGINX_BIN="/usr/local/sbin/nginx"
