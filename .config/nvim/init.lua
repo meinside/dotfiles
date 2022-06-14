@@ -354,7 +354,7 @@ require('packer').startup({function()
 
 
   -- bash
-  use 'bash-lsp/bash-language-server'
+  use {'bash-lsp/bash-language-server', ft = {'sh'}}
 
 
   -- clojure and other lispy languages
@@ -408,7 +408,8 @@ require('packer').startup({function()
 
 
   -- julia
-  use 'JuliaEditorSupport/julia-vim'
+  --use {'JuliaEditorSupport/julia-vim', ft = {'julia'}}
+  use {'JuliaEditorSupport/julia-vim'}  -- XXX: https://github.com/JuliaEditorSupport/julia-vim/issues/269
 
 
   -- ruby
