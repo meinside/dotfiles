@@ -53,15 +53,6 @@ janet 1.22.0
 # $ asdf install java
 java openjdk-17.0.2
 
-# $ asdf plugin add julia
-# $ asdf install julia
-#
-# For language server,
-#   $ julia --project=~/.julia/environments/nvim-lspconfig -e 'using Pkg; Pkg.add("LanguageServer")'
-#
-# https://julialang.org/downloads/
-julia 1.7.3
-
 # $ asdf plugin add leiningen
 # $ asdf install leiningen
 #

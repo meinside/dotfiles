@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.06.09.
+-- last update: 2022.06.21.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -317,7 +317,7 @@ require('packer').startup({function()
           'fennel',
           'go', 'gomod', 'gowork',
           'haskell', 'html',
-          'java', 'javascript', 'jsdoc', 'json', 'json5', 'jsonc', 'julia',
+          'java', 'javascript', 'jsdoc', 'json', 'json5', 'jsonc',
           'kotlin',
           'llvm', 'lua',
           'make', 'markdown',
@@ -405,11 +405,6 @@ require('packer').startup({function()
   if fn.executable('stylish-haskell') == 1 then
     use {'alx741/vim-stylishask', ft = {'haskell'}}
   end
-
-
-  -- julia
-  --use {'JuliaEditorSupport/julia-vim', ft = {'julia'}}
-  use {'JuliaEditorSupport/julia-vim'}  -- XXX: https://github.com/JuliaEditorSupport/julia-vim/issues/269
 
 
   -- ruby
@@ -519,7 +514,6 @@ require('packer').startup({function()
     'clojure_lsp',  -- clojure
     'gopls',  -- go
     'hls',  -- haskell
-    'julials',  -- julia
     'ocamllsp', -- ocaml
     'pylsp',  -- python
     'rust_analyzer',  -- rust
