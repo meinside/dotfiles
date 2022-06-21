@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.06.13.
+# last update: 2022.06.21.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -26,7 +26,7 @@ babashka 0.8.156
 #   $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
 #
 # https://clojure.org/releases/tools#_releases
-clojure 1.11.1.1129
+clojure 1.11.1.1145
 
 # $ asdf plugin add golang
 # $ asdf install golang
