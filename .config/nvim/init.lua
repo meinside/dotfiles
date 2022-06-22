@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.06.21.
+-- last update: 2022.06.22.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -262,7 +262,6 @@ require('packer').startup({function()
           end, { 'i', 's' }),
         },
         sources = {
-          { name = 'copilot' },
           { name = 'buffer', keyword_length = 3 },
           { name = 'path' },
           { name = 'calc' },
@@ -417,25 +416,6 @@ require('packer').startup({function()
 
   -- zig
   use {'ziglang/zig.vim', ft = {'zig'}}
-
-
-  -- github copilot
-  --use 'github/copilot.vim' -- XXXX: :Copilot setup (setup not supported by copilot.lua yet)
-  use {
-    "zbirenbaum/copilot.lua",
-    event = {"VimEnter"},
-    config = function()
-      vim.defer_fn(function()
-        require("copilot").setup {
-          ft_disable = { "markdown", "terraform", "text" },
-        }
-      end, 100)
-    end,
-  }
-  use {
-    "zbirenbaum/copilot-cmp",
-    after = { "copilot.lua", "nvim-cmp" },
-  }
 
 
   ----------------
