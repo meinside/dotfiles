@@ -2,7 +2,7 @@
 #
 # (copy as .gitconfig and customize it)
 #
-# last update: 2022.05.03.
+# last update: 2022.06.23.
 
 [init]
   defaultBranch = master
@@ -79,6 +79,8 @@
   user = meinside
 [tag]
   sort = version:refname
+[submodule]
+  recurse = true
 
 # gitflow
 [gitflow "branch"]
