@@ -1,9 +1,9 @@
-; .fennelrc
-;
-; created on : 2022.04.20.
-; last update: 2022.04.20.
+;; .fennelrc
+;;
+;; created on : 2022.04.20.
+;; last update: 2022.06.29.
 
-; persist repl history
+;; persist repl history
 (match package.loaded.readline
   rl (rl.set_options {:histfile  "~/.fennel_history"
-                      :keeplines 1000}))
+                      :keeplines 1000})) ; XXX not working on 1.1.0: https://issuehint.com/issue/bakpakin/Fennel/424
