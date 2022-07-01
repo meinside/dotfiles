@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.06.22.
+# last update: 2022.07.01.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -73,7 +73,7 @@ leiningen 2.9.8
 #
 # For readline in REPL,
 #
-#   $ sudo apt install liblua5.3-dev libreadline-dev
+#   $ sudo apt install liblua5.4-dev libreadline-dev
 #   $ luarocks --local install readline HISTORY_LIBDIR=/usr/lib/aarch64-linux-gnu HISTORY_INCDIR=/usr/include READLINE_LIBDIR=/usr/lib/aarch64-linux-gnu
 #
 #   # and put `luarocks path` result to .custom_env file
