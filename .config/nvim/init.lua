@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.06.22.
+-- last update: 2022.07.22.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -381,6 +381,7 @@ require('packer').startup({function()
   g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
   g['sexp_filetypes'] = 'clojure,fennel,janet'
   use {'tpope/vim-sexp-mappings-for-regular-people'}
+  use {'gpanders/nvim-parinfer'}
 
 
   -- go
