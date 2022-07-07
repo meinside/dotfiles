@@ -94,9 +94,13 @@ if [[ -z $TMUX ]]; then
     fi
 
     # for rust
-    for r in $HOME/.asdf/installs/rust/*; do
-        . "${r}/env"; break
-    done
+    if [ -d "$HOME/.cargo/bin" ]; then
+        . "$HOME/.cargo/env"
+    else
+        for r in $HOME/.asdf/installs/rust/*; do
+            . "${r}/env"; break
+        done
+    fi
 
     # for zig
     if [ -d /opt/zig ]; then
