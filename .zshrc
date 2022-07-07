@@ -133,9 +133,6 @@ if [[ -z $TMUX ]]; then
         export PATH=$PATH:/opt/lua-language-server/bin
     fi
 
-    # for ocaml
-    [[ ! -r $HOME/.opam/opam-init/init.zsh ]] || source $HOME/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
-
     # for rust
     for r in $HOME/.asdf/installs/rust/*; do
         if [ -d $r ]; then
