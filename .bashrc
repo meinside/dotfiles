@@ -95,7 +95,7 @@ if [[ -z $TMUX ]]; then
 
     # for rust
     if [ -d "$HOME/.cargo/bin" ]; then
-        . "$HOME/.cargo/env"
+        export PATH="$HOME/.cargo/bin:$PATH"
     else
         for r in $HOME/.asdf/installs/rust/*; do
             . "${r}/env"; break
@@ -108,7 +108,7 @@ if [[ -z $TMUX ]]; then
     fi
 
     # additional paths
-    export PATH="$PATH:$HOME/bin:$HOME/.local/bin:$PATH"
+    export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
     # asdf settings
     if [ -d ~/.asdf ]; then
