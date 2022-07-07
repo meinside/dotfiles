@@ -413,6 +413,9 @@ require('packer').startup({function()
 
   -- rust
   use {'rust-lang/rust.vim', ft = {'rust'}}
+  if fn.executable('rustfmt') == 1 then
+    g['rustfmt_autosave'] = 1
+  end
 
 
   -- zig
