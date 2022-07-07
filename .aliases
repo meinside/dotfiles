@@ -12,6 +12,7 @@ alias vimdiff='nvim -d'
 
 alias httpserver="ruby -run -e httpd . -p 8888"
 
+# for janet nrepl
 alias janetnrepl="janet -e \"(import spork/netrepl) (netrepl/server)\""
 
 # referenced: https://thorsten-hans.com/5-types-of-zsh-aliases

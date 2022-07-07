@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2022.06.08.
+# updated on 2022.07.07.
 #
 # ... by meinside@duck.com
 #
@@ -101,6 +101,9 @@ bindkey "^B" vi-backward-char
 bindkey '^[[A' history-beginning-search-backward
 bindkey "^N" history-beginning-search-forward
 
+# zsh options
+unsetopt nomatch
+
 ######################
 ##  for development  #
 ######################
@@ -109,7 +112,7 @@ if [[ -z $TMUX ]]; then
 
     # NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
 
-    # for Go
+    # for go
     if [ -x "`which go`" ]; then
         export GOROOT=`go env GOROOT`
     fi
@@ -118,28 +121,29 @@ if [[ -z $TMUX ]]; then
         export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
     fi
 
-    # for Haskell
+    # for haskell
     [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
 
-    # for Lein (Clojure)
+    # for lein (clojure)
     export LEIN_JVM_OPTS=""
-    # https://github.com/venantius/ultra/issues/108
-    export LEIN_USE_BOOTCLASSPATH=no
+    export LEIN_USE_BOOTCLASSPATH=no # https://github.com/venantius/ultra/issues/108
 
-    # for Lua
+    # for lua
     if [ -d /opt/lua-language-server/bin ]; then
         export PATH=$PATH:/opt/lua-language-server/bin
     fi
 
-    # for OCaml
+    # for ocaml
     [[ ! -r $HOME/.opam/opam-init/init.zsh ]] || source $HOME/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
 
-    # for Rust
-    if [ -d "$HOME/.cargo/bin" ]; then
-        . "$HOME/.cargo/env"
-    fi
+    # for rust
+    for r in $HOME/.asdf/installs/rust/*; do
+        if [ -d $r ]; then
+            . "${r}/env"; break
+        fi
+    done
 
-    # for Zig
+    # for zig
     if [ -d /opt/zig ]; then
         export PATH=$PATH:/opt/zls/zig-out/bin
     fi

@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2022.05.18.
+# updated on 2022.07.07.
 #
 # ... by meinside@duck.com
 
@@ -19,8 +19,10 @@ export TERM="xterm-256color" # XXX: set terminal setting to 'xterm-256color' for
 
 HISTCONTROL=ignoreboth
 
+# bash options
 shopt -s histappend
 shopt -s checkwinsize
+shopt -s nullglob
 
 # prompt
 source ~/.bash/colors
@@ -70,7 +72,7 @@ if [[ -z $TMUX ]]; then
 
     # NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
 
-    # for Go
+    # for go
     if [ -x "`which go`" ]; then
         export GOROOT=`go env GOROOT`
     fi
@@ -79,28 +81,27 @@ if [[ -z $TMUX ]]; then
         export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
     fi
 
-    # for Haskell
+    # for haskell
     [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
 
-    # for Lein (Clojure)
+    # for lein (clojure)
     export LEIN_JVM_OPTS=""
-    # https://github.com/venantius/ultra/issues/108
-    export LEIN_USE_BOOTCLASSPATH=no
+    export LEIN_USE_BOOTCLASSPATH=no # https://github.com/venantius/ultra/issues/108
 
-    # for Lua
+    # for lua
     if [ -d /opt/lua-language-server/bin ]; then
         export PATH=$PATH:/opt/lua-language-server/bin
     fi
 
-    # for OCaml
+    # for ocaml
     [[ ! -r $HOME/.opam/opam-init/init.sh ]] || source $HOME/.opam/opam-init/init.sh  > /dev/null 2> /dev/null
 
-    # for Rust
-    if [ -d "$HOME/.cargo/bin" ]; then
-        . "$HOME/.cargo/env"
-    fi
+    # for rust
+    for r in $HOME/.asdf/installs/rust/*; do
+        . "${r}/env"; break
+    done
 
-    # for Zig
+    # for zig
     if [ -d /opt/zig ]; then
         export PATH=$PATH:/opt/zls/zig-out/bin
     fi
