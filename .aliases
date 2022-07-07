@@ -2,7 +2,7 @@
 #
 # created by meinside@duck.com
 #
-# last update: 2022.05.03.
+# last update: 2022.07.07.
 
 alias ll="ls -alF"
 
@@ -11,6 +11,8 @@ alias ctags='ctags -R --totals=yes'
 alias vimdiff='nvim -d'
 
 alias httpserver="ruby -run -e httpd . -p 8888"
+
+alias janetnrepl="janet -e \"(import spork/netrepl) (netrepl/server)\""
 
 # referenced: https://thorsten-hans.com/5-types-of-zsh-aliases
 
