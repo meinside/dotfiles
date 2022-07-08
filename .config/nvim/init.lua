@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.07.07.
+-- last update: 2022.07.08.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -573,6 +573,7 @@ opt.splitbelow = true
 opt.splitright = true
 opt.foldmethod = 'indent' -- automatically fold on indent
 opt.foldlevelstart = 20 -- but open all folds on file open
+opt.updatetime = 1000 -- for shortening delay of CursorHold
 vim.o.signcolumn = 'number'
 
 -- for tab navigation
