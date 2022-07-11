@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.07.08.
+-- last update: 2022.07.11.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -19,7 +19,7 @@ end
 -- plugins
 --
 -- :PackerInstall / :PackerUpdate / :PackerSync / ...
-local install_path = fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
 if fn.empty(fn.glob(install_path)) > 0 then
   fn.execute('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
 end
@@ -336,10 +336,6 @@ require('packer').startup({function()
   use 'nvim-treesitter/nvim-treesitter-context'
 
 
-  -- syntax checking
-  use 'neomake/neomake'
-
-
   -- code action: `\ca`
   use {'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu'}
 
@@ -353,22 +349,22 @@ require('packer').startup({function()
 
 
   -- bash
-  use {'bash-lsp/bash-language-server', ft = {'sh'}}
+  use {'bash-lsp/bash-language-server'}
 
 
   -- clojure and other lispy languages
-  use {'dmac/vim-cljfmt', ft = {'clojure'}} -- $ go install github.com/cespare/goclj/cljfmt
+  use {'dmac/vim-cljfmt'} -- $ go install github.com/cespare/goclj/cljfmt
   -- for auto completion: <C-x><C-o>
   -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
   -- for reloading everything: \rr
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-  use {'Olical/conjure', ft = {'clojure', 'fennel', 'janet'}}
-  use {'bakpakin/fennel.vim', ft = {'fennel'},
+  use {'Olical/conjure'}
+  use {'bakpakin/fennel.vim',
     config = function() -- https://github.com/Olical/conjure/wiki/Quick-start:-Fennel-(stdio)
       vim.api.nvim_exec([[let g:conjure#filetype#fennel = "conjure.client.fennel.stdio"]], false)
-    end
+    end,
   }
-  use {'bakpakin/janet.vim', ft = {'janet'}}
+  use {'bakpakin/janet.vim'}
   -- >f, <f : move a form
   -- >e, <e : move an element
   -- >), <), >(, <( : move a parenthesis
@@ -394,32 +390,35 @@ require('packer').startup({function()
       --vim.api.nvim_create_autocmd('BufWritePre', {pattern = '*.go', callback = require('go.format').goimport})
       vim.api.nvim_exec([[autocmd BufWritePre *.go :silent! lua require('go.format').goimport()]], false)
     end,
-    ft = {'go'},
   }
   use {'ray-x/guihua.lua', run = 'cd lua/fzy && make'}
 
 
   -- haskell
-  use {'neovimhaskell/haskell-vim', ft = {'haskell'}}
-  use {'itchyny/vim-haskell-indent', ft = {'haskell'}}
+  use {'neovimhaskell/haskell-vim'}
+  use {'itchyny/vim-haskell-indent'}
   if fn.executable('stylish-haskell') == 1 then
-    use {'alx741/vim-stylishask', ft = {'haskell'}}
+    use {'alx741/vim-stylishask'}
   end
 
 
   -- ruby
-  use {'vim-ruby/vim-ruby', ft = {'ruby'}}
+  use {'vim-ruby/vim-ruby'}
 
 
   -- rust
-  use {'rust-lang/rust.vim', ft = {'rust'}}
-  if fn.executable('rustfmt') == 1 then
-    g['rustfmt_autosave'] = 1
-  end
+  use {
+    'simrat39/rust-tools.nvim',
+    requires = {{'nvim-lua/plenary.nvim'}, {'mfussenegger/nvim-dap'}},
+  }
 
 
   -- zig
-  use {'ziglang/zig.vim', ft = {'zig'}}
+  use {'ziglang/zig.vim'}
+
+
+  -- vale (see ~/.vale.ini)
+  use 'jose-elias-alvarez/null-ls.nvim'
 
 
   ----------------
@@ -500,7 +499,7 @@ require('packer').startup({function()
     'hls',  -- haskell
     'ocamllsp', -- ocaml
     'pylsp',  -- python
-    'rust_analyzer',  -- rust
+    --'rust_analyzer',  -- rust (handled by `rust-tools`)
     'solargraph', -- ruby
     'zls',  -- zig
   }
@@ -524,8 +523,20 @@ require('packer').startup({function()
     } },
   }
 
-  -- vale (see ~/.vale.ini)
-  use 'jose-elias-alvarez/null-ls.nvim'
+
+  -- rust
+  require('rust-tools').setup({
+    tools = {
+      hover_actions = {auto_focus = true}
+    },
+    server = {
+      on_attach = on_attach_lsp,
+      capabilities = capabilities,
+    },
+  })
+
+
+  -- vale
   if fn.executable('vale') == 1 then -- $ go install github.com/errata-ai/vale@latest
     require("null-ls").setup({
       sources = {
@@ -535,15 +546,6 @@ require('packer').startup({function()
   end
 
 end, config = {autoremove = true, display = {open_fn = require'packer.util'.float}}})
-
-
--- neomake
-if vim.api.nvim_cmd then -- TODO: remove this line when neovim 0.8 becomes stable
-  vim.api.nvim_cmd({cmd = 'call', args = {"neomake#configure#automake('nrwi', 500)"}}, {})
-else -- TODO: remove this line when neovim 0.8 becomes stable
-  vim.api.nvim_exec([[call neomake#configure#automake('nrwi', 500)]], false) -- TODO: remove this line when neovim 0.8 becomes stable
-end -- TODO: remove this line when neovim 0.8 becomes stable
-g['neomake_open_list'] = 2
 
 
 ------------------------------------------------
