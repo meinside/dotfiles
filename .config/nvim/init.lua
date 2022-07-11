@@ -336,6 +336,10 @@ require('packer').startup({function()
   use 'nvim-treesitter/nvim-treesitter-context'
 
 
+  -- syntax checking
+  use 'neomake/neomake'
+
+
   -- code action: `\ca`
   use {'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu'}
 
@@ -546,6 +550,15 @@ require('packer').startup({function()
   end
 
 end, config = {autoremove = true, display = {open_fn = require'packer.util'.float}}})
+
+
+-- neomake
+if vim.api.nvim_cmd then -- TODO: remove this line when neovim 0.8 becomes stable
+  vim.api.nvim_cmd({cmd = 'call', args = {"neomake#configure#automake('nrwi', 500)"}}, {})
+else -- TODO: remove this line when neovim 0.8 becomes stable
+  vim.api.nvim_exec([[call neomake#configure#automake('nrwi', 500)]], false) -- TODO: remove this line when neovim 0.8 becomes stable
+end -- TODO: remove this line when neovim 0.8 becomes stable
+g['neomake_open_list'] = 2
 
 
 ------------------------------------------------
