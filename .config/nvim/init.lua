@@ -591,6 +591,7 @@ opt.splitright = true
 opt.foldmethod = 'indent' -- automatically fold on indent
 opt.foldlevelstart = 20 -- but open all folds on file open
 opt.updatetime = 1000 -- for shortening delay of CursorHold
+opt.cursorline = true -- highlight current line
 vim.o.signcolumn = 'number'
 
 -- for tab navigation
