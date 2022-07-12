@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.07.11.
+-- last update: 2022.07.12.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -336,7 +336,7 @@ require('packer').startup({function()
   use 'nvim-treesitter/nvim-treesitter-context'
 
 
-  -- syntax checking
+  -- make
   use 'neomake/neomake'
 
 
@@ -346,29 +346,28 @@ require('packer').startup({function()
 
   -- debug adapter
   use {'rcarriga/nvim-dap-ui', requires = {'mfussenegger/nvim-dap'}}
-  use {
-    'theHamsta/nvim-dap-virtual-text',
+  use {'theHamsta/nvim-dap-virtual-text',
     config = function() require'nvim-dap-virtual-text'.setup {} end
   }
 
 
   -- bash
-  use {'bash-lsp/bash-language-server'}
+  use {'bash-lsp/bash-language-server', ft = {'sh'}}
 
 
   -- clojure and other lispy languages
-  use {'dmac/vim-cljfmt'} -- $ go install github.com/cespare/goclj/cljfmt
+  use {'dmac/vim-cljfmt', ft = {'clojure'}} -- $ go install github.com/cespare/goclj/cljfmt
   -- for auto completion: <C-x><C-o>
   -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
   -- for reloading everything: \rr
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-  use {'Olical/conjure'}
-  use {'bakpakin/fennel.vim',
+  use {'Olical/conjure', ft = {'clojure', 'fennel', 'janet'}}
+  use {'bakpakin/fennel.vim', ft = {'fennel'},
     config = function() -- https://github.com/Olical/conjure/wiki/Quick-start:-Fennel-(stdio)
       vim.api.nvim_exec([[let g:conjure#filetype#fennel = "conjure.client.fennel.stdio"]], false)
     end,
   }
-  use {'bakpakin/janet.vim'}
+  use {'bakpakin/janet.vim', ft = {'janet'}}
   -- >f, <f : move a form
   -- >e, <e : move an element
   -- >), <), >(, <( : move a parenthesis
@@ -377,16 +376,16 @@ require('packer').startup({function()
   -- cse(, cse), cseb : surround an element with parenthesis
   -- cse[, cse] : surround an element with brackets
   -- cse{, cse} : surround an element with braces
-  use {'guns/vim-sexp'}
+  use {'guns/vim-sexp', ft = {'clojure', 'fennel', 'janet'}}
   g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
   g['sexp_filetypes'] = 'clojure,fennel,janet'
-  use {'tpope/vim-sexp-mappings-for-regular-people'}
-  use {'gpanders/nvim-parinfer'}
+  use {'tpope/vim-sexp-mappings-for-regular-people', ft = {'clojure', 'fennel', 'janet'}}
+  use {'gpanders/nvim-parinfer', ft = {'clojure', 'fennel', 'janet'}}
 
 
   -- go
   use {
-    'ray-x/go.nvim',
+    'ray-x/go.nvim', ft = {'go'},
     config = function()
       require'go'.setup {
         gofmt = 'gopls',
@@ -399,10 +398,10 @@ require('packer').startup({function()
 
 
   -- haskell
-  use {'neovimhaskell/haskell-vim'}
-  use {'itchyny/vim-haskell-indent'}
+  use {'neovimhaskell/haskell-vim', ft = {'haskell'}}
+  use {'itchyny/vim-haskell-indent', ft = {'haskell'}}
   if fn.executable('stylish-haskell') == 1 then
-    use {'alx741/vim-stylishask'}
+    use {'alx741/vim-stylishask', ft = {'haskell'}}
   end
 
 
@@ -412,13 +411,13 @@ require('packer').startup({function()
 
   -- rust
   use {
-    'simrat39/rust-tools.nvim',
+    'simrat39/rust-tools.nvim', --ft = {'rust'}, -- FIXME: lazyloading doesn't work
     requires = {{'nvim-lua/plenary.nvim'}, {'mfussenegger/nvim-dap'}},
   }
 
 
   -- zig
-  use {'ziglang/zig.vim'}
+  use {'ziglang/zig.vim', ft = {'zig'}}
 
 
   -- vale (see ~/.vale.ini)
@@ -530,9 +529,7 @@ require('packer').startup({function()
 
   -- rust
   require('rust-tools').setup({
-    tools = {
-      hover_actions = {auto_focus = true}
-    },
+    tools = {hover_actions = {auto_focus = true}},
     server = {
       on_attach = on_attach_lsp,
       capabilities = capabilities,
