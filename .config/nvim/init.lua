@@ -390,7 +390,6 @@ require('packer').startup({function()
       require'go'.setup {
         gofmt = 'gopls',
       }
-      --vim.api.nvim_create_autocmd('BufWritePre', {pattern = '*.go', callback = require('go.format').goimport})
       vim.api.nvim_exec([[autocmd BufWritePre *.go :silent! lua require('go.format').goimport()]], false)
     end,
   }
@@ -535,6 +534,12 @@ require('packer').startup({function()
       capabilities = capabilities,
     },
   })
+  if vim.lsp.buf.format then -- TODO: remove this line when neovim 0.8 becomes stable
+    -- FIXME: `rust-tools` doesn't format on file saves
+    vim.api.nvim_exec([[autocmd BufWritePre *.rs :silent! lua vim.lsp.buf.format{async=false}]], false)
+  else -- TODO: remove this line when neovim 0.8 becomes stable
+    vim.api.nvim_exec([[autocmd BufWritePre *.rs :silent! lua vim.lsp.buf.formatting_sync(nil, 500)]], false) -- TODO: remove this line when neovim 0.8 becomes stable
+  end -- TODO: remove this line when neovim 0.8 becomes stable
 
 
   -- vale
