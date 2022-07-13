@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.07.12.
+-- last update: 2022.07.13.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -342,6 +342,8 @@ require('packer').startup({function()
 
   -- code action: `\ca`
   use {'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu'}
+  use {'kosayoda/nvim-lightbulb', requires = 'antoinemadec/FixCursorHold.nvim',
+    config = function() require('nvim-lightbulb').setup({autocmd = {enabled = true}}) end}
 
 
   -- debug adapter
