@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.07.13.
+-- last update: 2022.07.15.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -72,8 +72,9 @@ require('packer').startup({function()
 
 
   -- formatting
-  use 'tpope/vim-surround' -- cst'" => change ' to " / ds" => remove " / ysiw" => wrap text object with " / yss" => wrap line with "
-  use 'tpope/vim-ragtag' -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
+  use({'kylechui/nvim-surround', -- cs'" => change ' to " / ds" => remove " / ysiw" => wrap text object with " / yss" => wrap line with "
+    config = function() require('nvim-surround').setup({}) end
+  })
   use {
     'lukas-reineke/indent-blankline.nvim',
     config = function()
@@ -85,6 +86,7 @@ require('packer').startup({function()
       }
     end
   }
+  use 'tpope/vim-ragtag' -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
   use 'tpope/vim-sleuth'
   use 'p00f/nvim-ts-rainbow'
 
