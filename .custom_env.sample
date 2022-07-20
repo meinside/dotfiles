@@ -1,6 +1,6 @@
 # .custom_env.sample
 #
-# last update: 2022.04.20.
+# last update: 2022.07.20.
 
 # print go version of a compiled binary
 gobuildversion() {
@@ -20,9 +20,6 @@ export DOCKER_CLI_EXPERIMENTAL=enabled
 
 # for luarocks packages (use `luarocks path`)
 if [ -x `which luarocks` ]; then
-    # (example)
-    export LUA_PATH='/usr/local/Cellar/luarocks/3.8.0/share/lua/5.4/?.lua;/usr/local/share/lua/5.4/?.lua;/usr/local/share/lua/5.4/?/init.lua;/usr/local/lib/lua/5.4/?.lua;/usr/local/lib/lua/5.4/?/init.lua;./?.lua;./?/init.lua;/Users/meinside/.luarocks/share/lua/5.4/?.lua;/Users/meinside/.luarocks/share/lua/5.4/?/init.lua'
-    export LUA_CPATH='/usr/local/lib/lua/5.4/?.so;/usr/local/lib/lua/5.4/loadall.so;./?.so;/Users/meinside/.luarocks/lib/lua/5.4/?.so'
-    export PATH='/Users/meinside/.luarocks/bin:$PATH'
+    `luarocks path` # export paths
 fi
 
