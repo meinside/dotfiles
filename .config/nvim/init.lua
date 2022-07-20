@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.07.15.
+-- last update: 2022.07.20.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -344,13 +344,29 @@ require('packer').startup({function()
 
   -- code action: `\ca`
   use {'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu'}
-  use {'kosayoda/nvim-lightbulb', requires = 'antoinemadec/FixCursorHold.nvim',
-    config = function() require('nvim-lightbulb').setup({autocmd = {enabled = true}}) end}
+  use {'kosayoda/nvim-lightbulb', requires = 'antoinemadec/FixCursorHold.nvim', config = function()
+    require('nvim-lightbulb').setup {autocmd = {enabled = true}}
+  end}
 
 
   -- debug adapter
-  use {'rcarriga/nvim-dap-ui', requires = {'mfussenegger/nvim-dap'}, config = function() require('dapui').setup {} end}
-  use {'theHamsta/nvim-dap-virtual-text', config = function() require'nvim-dap-virtual-text'.setup {} end}
+  use {'mfussenegger/nvim-dap', config = function()
+    -- dap sign icons and colors
+    vim.fn.sign_define("DapBreakpoint", {text = '', texthl = 'LspDiagnosticsSignError', linehl = '', numhl = ''})
+    vim.fn.sign_define("DapStopped", {text = '', texthl = 'LspDiagnosticsSignInformation', linehl = 'DiagnosticUnderlineInfo', numhl = 'LspDiagnosticsSignInformation'})
+    vim.fn.sign_define("DapBreakpointRejected", {text = '', texthl = 'LspDiagnosticsSignHint', linehl = '', numhl = ''})
+  end}
+  use {'rcarriga/nvim-dap-ui', requires = {'mfussenegger/nvim-dap'}, config = function()
+    local dap, dapui = require 'dap', require 'dapui'
+    dapui.setup {}
+    -- auto toggle debug UIs
+    dap.listeners.after.event_initialized['dapui_config'] = dapui.open
+    dap.listeners.before.event_terminated['dapui_config'] = dapui.close
+    dap.listeners.before.event_exited['dapui_config'] = dapui.close
+  end}
+  use {'theHamsta/nvim-dap-virtual-text', config = function()
+    require'nvim-dap-virtual-text'.setup { commented = true }
+  end}
 
 
   -- bash
@@ -396,7 +412,7 @@ require('packer').startup({function()
     end,
   }
   use {'ray-x/guihua.lua', run = 'cd lua/fzy && make'}
-  use {'leoluz/nvim-dap-go', ft = {'go'}, config = function() require('dap-go').setup() end}
+  use {'leoluz/nvim-dap-go', ft = {'go'}, config = function() require('dap-go').setup() end} -- :DapContinue for debugging
 
 
   -- haskell
@@ -535,6 +551,12 @@ require('packer').startup({function()
     server = {
       on_attach = on_attach_lsp,
       capabilities = capabilities,
+    },
+    dap = { -- :RustDebuggables for debugging
+      adapter = require("rust-tools.dap").get_codelldb_adapter(
+        vim.env.HOME .. '/.local/codelldb/extension/adapter/codelldb',
+        vim.env.HOME .. '/.local/codelldb/extension/lldb/lib/liblldb.so'
+      ),
     },
   })
   if vim.lsp.buf.format then -- TODO: remove this line when neovim 0.8 becomes stable
