@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.07.15.
+# last update: 2022.07.20.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -114,7 +114,7 @@ ruby 3.1.2
 #   $ cargo xtask install --server
 #
 # https://github.com/rust-lang/rust/releases
-rust 1.62.0
+rust 1.62.1
 
 # $ asdf plugin add zig
 # $ asdf install zig
