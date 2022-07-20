@@ -349,10 +349,8 @@ require('packer').startup({function()
 
 
   -- debug adapter
-  use {'rcarriga/nvim-dap-ui', requires = {'mfussenegger/nvim-dap'}}
-  use {'theHamsta/nvim-dap-virtual-text',
-    config = function() require'nvim-dap-virtual-text'.setup {} end
-  }
+  use {'rcarriga/nvim-dap-ui', requires = {'mfussenegger/nvim-dap'}, config = function() require('dapui').setup {} end}
+  use {'theHamsta/nvim-dap-virtual-text', config = function() require'nvim-dap-virtual-text'.setup {} end}
 
 
   -- bash
@@ -398,6 +396,7 @@ require('packer').startup({function()
     end,
   }
   use {'ray-x/guihua.lua', run = 'cd lua/fzy && make'}
+  use {'leoluz/nvim-dap-go', ft = {'go'}, config = function() require('dap-go').setup() end}
 
 
   -- haskell
@@ -571,7 +570,7 @@ g['neomake_open_list'] = 2
 -- other common settings
 --
 local opt = vim.opt
-opt.mouse = opt.mouse - { 'a' } -- not to enter visual mode when dragging text
+opt.mouse = '' -- for enabling, :set mouse=nvi
 opt.backspace = { 'indent', 'eol', 'start' } -- allow backspacing over everything in insert mode
 opt.history = 50
 opt.number = true
