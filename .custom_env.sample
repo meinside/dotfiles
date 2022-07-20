@@ -20,6 +20,6 @@ export DOCKER_CLI_EXPERIMENTAL=enabled
 
 # for luarocks packages (use `luarocks path`)
 if [ -x "$(which luarocks)" ]; then
-    `luarocks path`
+    # TODO: fill result of `luarocks path` here
 fi
 
