@@ -19,7 +19,7 @@ export GOPRIVATE=github.com/meinside
 export DOCKER_CLI_EXPERIMENTAL=enabled
 
 # for luarocks packages (use `luarocks path`)
-if [ -x `which luarocks` ]; then
-    `luarocks path` # export paths
+if [ -x "$(which luarocks)" ]; then
+    `luarocks path`
 fi
 
