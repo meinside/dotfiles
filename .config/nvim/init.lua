@@ -417,7 +417,7 @@ require('packer').startup({function()
 
 
   -- ruby
-  use {'vim-ruby/vim-ruby'}
+  use {'vim-ruby/vim-ruby', ft = {'ruby'}}
 
 
   -- rust
@@ -479,7 +479,6 @@ require('packer').startup({function()
       if vim.lsp.buf.format then -- TODO: remove this line when neovim 0.8 becomes stable
         vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.format{async=false} end})
       else -- TODO: remove this line when neovim 0.8 becomes stable
-        --vim.api.nvim_exec([[autocmd BufWritePre (InsertLeave?) <buffer> lua vim.lsp.buf.formatting_sync(nil,500)]], false) -- https://github.com/ray-x/go.nvim#code-format
         vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.formatting_sync(nil,500) end}) -- TODO: remove this line when neovim 0.8 becomes stable
       end -- TODO: remove this line when neovim 0.8 becomes stable
     end
@@ -513,8 +512,9 @@ require('packer').startup({function()
     'hls',  -- haskell
     'ocamllsp', -- ocaml
     'pylsp',  -- python
-    --'rust_analyzer',  -- rust (handled by `rust-tools`)
+    --'rust_analyzer',  -- rust (handled below)
     'solargraph', -- ruby
+    --'sumneko_lua', -- lua (handled below)
     'zls',  -- zig
   }
   for _, lsp in ipairs(lsp_servers) do
@@ -536,9 +536,7 @@ require('packer').startup({function()
       telemetry = { enable = false },
     } },
   }
-
-
-  -- rust
+  -- (rust)
   require('rust-tools').setup({
     tools = {hover_actions = {auto_focus = true}},
     server = {
@@ -616,7 +614,7 @@ vim.o.signcolumn = 'number'
 map('n', '<C-h>', ':tabprevious<CR>') -- <ctrl-h> for previous tab
 map('n', '<C-l>', ':tabnext<CR>') -- <ctrl-l> for next tab
 
--- go to the last position of a file
+-- go back to the last position of a file
 vim.api.nvim_exec([[
   autocmd BufRead * autocmd FileType <buffer> ++once
     \ if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") | exe 'normal! g`"' | endif
@@ -638,7 +636,6 @@ if vim.fn.has('nvim-0.8') == 1 then -- TODO: remove this line when neovim 0.8 be
   local function isempty(s)
     return s == nil or s == ''
   end
-
   local function fname() -- filename function for winbar
     local filename = vim.fn.expand '%:t'
     local extension = ''
@@ -670,7 +667,6 @@ if vim.fn.has('nvim-0.8') == 1 then -- TODO: remove this line when neovim 0.8 be
       return ' ' .. '%#' .. hl_group .. '#' .. file_icon .. '%*' .. ' ' .. filename .. '%*'
     end
   end
-
   vim.api.nvim_create_autocmd({ 'CursorMoved', 'BufWinEnter', 'BufFilePost' }, {
     callback = function()
       local excludes = {
