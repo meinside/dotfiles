@@ -43,13 +43,6 @@ require('packer').startup({function()
   use 'blueyed/vim-diminactive'
 
 
-  -- show key bindings
-  use {
-    'folke/which-key.nvim',
-    config = function() require('which-key').setup {} end
-  }
-
-
   -- markdown preview
   use {'iamcco/markdown-preview.nvim', run = 'cd app && npm install'}
 
