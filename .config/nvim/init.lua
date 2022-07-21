@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.07.20.
+-- last update: 2022.07.21.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -46,7 +46,7 @@ require('packer').startup({function()
   -- show key bindings
   use {
     'folke/which-key.nvim',
-    config = function() require("which-key").setup {} end
+    config = function() require('which-key').setup {} end
   }
 
 
@@ -56,7 +56,7 @@ require('packer').startup({function()
 
   -- fold and preview (zc for closing, zo for opening / zM for closing all, zR opening all)
   use { 'anuvyklack/pretty-fold.nvim',
-    requires = 'anuvyklack/nvim-keymap-amend', -- only for preview
+    requires = {'anuvyklack/fold-preview.nvim', 'anuvyklack/keymap-amend.nvim'},
     config = function()
       require('pretty-fold').setup {
         keep_indentation = false,
@@ -66,7 +66,7 @@ require('packer').startup({function()
           right = { '┫ ', 'number_of_folded_lines', ': ', 'percentage', ' ┣━━' }
         }
       }
-      require('pretty-fold.preview').setup {}
+      require('fold-preview').setup {}
     end
   }
 
@@ -352,9 +352,9 @@ require('packer').startup({function()
   -- debug adapter
   use {'mfussenegger/nvim-dap', config = function()
     -- dap sign icons and colors
-    vim.fn.sign_define("DapBreakpoint", {text = '', texthl = 'LspDiagnosticsSignError', linehl = '', numhl = ''})
-    vim.fn.sign_define("DapStopped", {text = '', texthl = 'LspDiagnosticsSignInformation', linehl = 'DiagnosticUnderlineInfo', numhl = 'LspDiagnosticsSignInformation'})
-    vim.fn.sign_define("DapBreakpointRejected", {text = '', texthl = 'LspDiagnosticsSignHint', linehl = '', numhl = ''})
+    vim.fn.sign_define('DapBreakpoint', {text = '', texthl = 'LspDiagnosticsSignError', linehl = '', numhl = ''})
+    vim.fn.sign_define('DapStopped', {text = '', texthl = 'LspDiagnosticsSignInformation', linehl = 'DiagnosticUnderlineInfo', numhl = 'LspDiagnosticsSignInformation'})
+    vim.fn.sign_define('DapBreakpointRejected', {text = '', texthl = 'LspDiagnosticsSignHint', linehl = '', numhl = ''})
   end}
   use {'rcarriga/nvim-dap-ui', requires = {'mfussenegger/nvim-dap'}, config = function()
     local dap, dapui = require 'dap', require 'dapui'
@@ -533,13 +533,13 @@ require('packer').startup({function()
   -------- other language servers for custom setup --------
   -- (lua)
   local runtime_path = vim.split(package.path, ';')
-  table.insert(runtime_path, "lua/?.lua")
-  table.insert(runtime_path, "lua/?/init.lua")
+  table.insert(runtime_path, 'lua/?.lua')
+  table.insert(runtime_path, 'lua/?/init.lua')
   nvim_lsp['sumneko_lua'].setup {
     settings = { Lua = {
       runtime = { version = 'LuaJIT', path = runtime_path },
       diagnostics = { globals = {'vim'} },
-      workspace = { library = vim.api.nvim_get_runtime_file("", true) },
+      workspace = { library = vim.api.nvim_get_runtime_file('', true) },
       telemetry = { enable = false },
     } },
   }
@@ -553,7 +553,7 @@ require('packer').startup({function()
       capabilities = capabilities,
     },
     dap = { -- :RustDebuggables for debugging
-      adapter = require("rust-tools.dap").get_codelldb_adapter(
+      adapter = require('rust-tools.dap').get_codelldb_adapter(
         vim.env.HOME .. '/.local/codelldb/extension/adapter/codelldb',
         vim.env.HOME .. '/.local/codelldb/extension/lldb/lib/liblldb.so'
       ),
@@ -569,9 +569,9 @@ require('packer').startup({function()
 
   -- vale
   if fn.executable('vale') == 1 then -- $ go install github.com/errata-ai/vale@latest
-    require("null-ls").setup({
+    require('null-ls').setup({
       sources = {
-        require("null-ls").builtins.diagnostics.vale,
+        require('null-ls').builtins.diagnostics.vale,
       },
     })
   end
@@ -630,7 +630,7 @@ vim.api.nvim_exec([[
 ]], false)
 
 -- highlight on yank
-vim.api.nvim_create_augroup("etc", {clear = true})
+vim.api.nvim_create_augroup('etc', {clear = true})
 vim.api.nvim_create_autocmd('TextYankPost', {group = 'etc', pattern = '*', callback = function()
   vim.highlight.on_yank({on_visual = false})
 end})
@@ -643,30 +643,30 @@ end})
 -- for winbar
 if vim.fn.has('nvim-0.8') == 1 then -- TODO: remove this line when neovim 0.8 becomes stable
   local function isempty(s)
-    return s == nil or s == ""
+    return s == nil or s == ''
   end
 
   local function fname() -- filename function for winbar
-    local filename = vim.fn.expand "%:t"
-    local extension = ""
-    local file_icon = ""
-    local file_icon_color = ""
-    local default_file_icon = ""
-    local default_file_icon_color = ""
+    local filename = vim.fn.expand '%:t'
+    local extension = ''
+    local file_icon = ''
+    local file_icon_color = ''
+    local default_file_icon = ''
+    local default_file_icon_color = ''
 
     if not isempty(filename) then
-      extension = vim.fn.expand "%:e"
+      extension = vim.fn.expand '%:e'
 
       local default = false
 
       if isempty(extension) then
-        extension = ""
+        extension = ''
         default = true
       end
 
-      file_icon, file_icon_color = require("nvim-web-devicons").get_icon_color(filename, extension, { default = default })
+      file_icon, file_icon_color = require('nvim-web-devicons').get_icon_color(filename, extension, { default = default })
 
-      local hl_group = "FileIconColor" .. extension
+      local hl_group = 'FileIconColor' .. extension
 
       vim.api.nvim_set_hl(0, hl_group, { fg = file_icon_color })
       if file_icon == nil then
@@ -674,14 +674,14 @@ if vim.fn.has('nvim-0.8') == 1 then -- TODO: remove this line when neovim 0.8 be
         file_icon_color = default_file_icon_color
       end
 
-      return " " .. "%#" .. hl_group .. "#" .. file_icon .. "%*" .. " " .. filename .. "%*"
+      return ' ' .. '%#' .. hl_group .. '#' .. file_icon .. '%*' .. ' ' .. filename .. '%*'
     end
   end
 
-  vim.api.nvim_create_autocmd({ "CursorMoved", "BufWinEnter", "BufFilePost" }, {
+  vim.api.nvim_create_autocmd({ 'CursorMoved', 'BufWinEnter', 'BufFilePost' }, {
     callback = function()
       local excludes = {
-        "help", "packer", "NvimTree", "Trouble", "TelescopePrompt", "gitcommit",
+        'help', 'packer', 'NvimTree', 'Trouble', 'TelescopePrompt', 'gitcommit',
       }
 
       if vim.tbl_contains(excludes, vim.bo.filetype) then
