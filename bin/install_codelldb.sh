@@ -5,7 +5,7 @@
 # Install vscode-lldb for neovim's DAP
 #
 # created on : 2022.07.20.
-# last update: 2022.07.20.
+# last update: 2022.07.21.
 #
 # by meinside@duck.com
 
@@ -14,7 +14,7 @@
 #
 # frequently updated values
 
-# https://fennel-lang.org/setup#downloading-the-fennel-script
+# https://github.com/vadimcn/vscode-lldb/releases
 VERSION="1.6.10"	# XXX - edit for different version
 
 
