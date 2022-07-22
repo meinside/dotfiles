@@ -101,9 +101,7 @@ require('packer').startup({function()
 
   -- git
   use 'junegunn/gv.vim' -- :GV, :GV!, :GV?
-  use 'tpope/vim-fugitive'
-  -- git signs (for blame: :Gitsigns toggle_current_line_blame)
-  use {
+  use { -- git signs (for blame: :Gitsigns toggle_current_line_blame)
     'lewis6991/gitsigns.nvim', -- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
     requires = {'nvim-lua/plenary.nvim'},
     config = function()
