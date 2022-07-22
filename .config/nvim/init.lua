@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.07.21.
+-- last update: 2022.07.22.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -544,7 +544,7 @@ require('packer').startup({function()
       capabilities = capabilities,
     },
     dap = { -- :RustDebuggables for debugging
-      adapter = require('rust-tools.dap').get_codelldb_adapter(
+      adapter = require('rust-tools.dap').get_codelldb_adapter( -- install `codelldb` in ~/.local/codelldb/ (use: bin/install_codelldb.sh)
         vim.env.HOME .. '/.local/codelldb/extension/adapter/codelldb',
         vim.env.HOME .. '/.local/codelldb/extension/lldb/lib/liblldb.so'
       ),
