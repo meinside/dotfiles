@@ -149,11 +149,20 @@ require('packer').startup({function()
     after = 'github-nvim-theme',
     requires = {'kyazdani42/nvim-web-devicons', opt = true},
     config = function()
+      local navic = require('nvim-navic')
       require'lualine'.setup {
         options = {theme = 'auto', globalstatus = true},
-        extensions = {'quickfix'}}
+        extensions = {'quickfix'},
+        sections = {
+          lualine_c = {
+            'filename',
+            {navic.get_location, cond = navic.is_available},
+          },
+        }
+      }
     end
   }
+  use {'SmiteshP/nvim-navic', requires = {'neovim/nvim-lspconfig'}}
 
 
   -- auto pair/close
@@ -499,6 +508,11 @@ require('packer').startup({function()
       vim.api.nvim_create_autocmd('CursorHold', {group = 'lsp_document_highlight', callback = function() vim.lsp.buf.document_highlight() end})
       vim.api.nvim_create_autocmd('CursorMoved', {group = 'lsp_document_highlight', callback = function() vim.lsp.buf.clear_references() end})
     end
+
+    -- navic
+    if client.server_capabilities.documentSymbolProvider then
+      require('nvim-navic').attach(client, bufnr)
+    end
   end
   local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
   capabilities.textDocument.completion.completionItem.documentationFormat = { 'markdown', 'plaintext' }
@@ -654,10 +668,9 @@ if vim.fn.has('nvim-0.8') == 1 then -- TODO: remove this line when neovim 0.8 be
     local default_file_icon_color = ''
 
     if not isempty(filename) then
-      extension = vim.fn.expand '%:e'
-
       local default = false
 
+      extension = vim.fn.expand '%:e'
       if isempty(extension) then
         extension = ''
         default = true
@@ -678,15 +691,11 @@ if vim.fn.has('nvim-0.8') == 1 then -- TODO: remove this line when neovim 0.8 be
   end
   vim.api.nvim_create_autocmd({ 'CursorMoved', 'BufWinEnter', 'BufFilePost' }, {
     callback = function()
-      local excludes = {
-        'help', 'packer', 'NvimTree', 'Trouble', 'TelescopePrompt', 'gitcommit',
-      }
-
+      local excludes = {'help', 'packer', 'NvimTree', 'Trouble', 'TelescopePrompt', 'gitcommit'}
       if vim.tbl_contains(excludes, vim.bo.filetype) then
         vim.opt_local.winbar = nil
         return
       end
-
       vim.opt_local.winbar = fname()
     end,
   })
