@@ -405,7 +405,11 @@ require('packer').startup({function()
     end,
   }
   use {'ray-x/guihua.lua', run = 'cd lua/fzy && make'}
-  use {'leoluz/nvim-dap-go', ft = {'go'}, config = function() require('dap-go').setup() end} -- :DapContinue for debugging
+  use {'leoluz/nvim-dap-go', ft = {'go'}, config = function()
+    -- $ go install github.com/go-delve/delve/cmd/dlv@latest
+    -- :DapContinue for debugging
+    require('dap-go').setup()
+  end}
 
 
   -- haskell
@@ -418,6 +422,11 @@ require('packer').startup({function()
 
   -- ruby
   use {'vim-ruby/vim-ruby', ft = {'ruby'}}
+  use {'suketa/nvim-dap-ruby', ft = {'ruby'}, config = function()
+    -- $ gem install readapt
+    -- :DapContinue for debugging
+    require('dap-ruby').setup()
+  end}
 
 
   -- rust
@@ -543,8 +552,10 @@ require('packer').startup({function()
       on_attach = on_attach_lsp,
       capabilities = capabilities,
     },
-    dap = { -- :RustDebuggables for debugging
-      adapter = require('rust-tools.dap').get_codelldb_adapter( -- install `codelldb` in ~/.local/codelldb/ (use: bin/install_codelldb.sh)
+    dap = {
+      -- install `codelldb` in ~/.local/codelldb/ (use: bin/install_codelldb.sh)
+      -- :RustDebuggables for debugging
+      adapter = require('rust-tools.dap').get_codelldb_adapter(
         vim.env.HOME .. '/.local/codelldb/extension/adapter/codelldb',
         vim.env.HOME .. '/.local/codelldb/extension/lldb/lib/liblldb.so'
       ),
