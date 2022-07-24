@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.07.22.
+-- last update: 2022.07.24.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -151,14 +151,16 @@ require('packer').startup({function()
     config = function()
       local navic = require('nvim-navic')
       require'lualine'.setup {
-        options = {theme = 'auto', globalstatus = true},
-        extensions = {'quickfix'},
+        options = {
+          disabled_filetypes = {'help', 'packer', 'NvimTree', 'TelescopePrompt', 'gitcommit'},
+          globalstatus = true,
+        },
+        extensions = {'nvim-dap-ui', 'quickfix'},
         sections = {
-          lualine_c = {
-            'filename',
-            {navic.get_location, cond = navic.is_available},
-          },
-        }
+          lualine_c = {'filename', {navic.get_location, cond = navic.is_available}},
+        },
+        winbar = {lualine_c = {{'filetype', icon_only = true}, {'filename'}}},
+        inactive_winbar = {lualine_c = {'filename'}},
       }
     end
   }
@@ -178,6 +180,9 @@ require('packer').startup({function()
     'ray-x/lsp_signature.nvim',
     config = function() require'lsp_signature'.setup {bind = true, handler_opts = {border = 'single'}} end
   }
+  use {'https://git.sr.ht/~whynothugo/lsp_lines.nvim', config = function()
+      require('lsp_lines').setup {}
+  end}
   use {
     'onsails/lspkind-nvim',
     config = function()
@@ -280,27 +285,6 @@ require('packer').startup({function()
 
       -- load snippets
       require'luasnip/loaders/from_vscode'.lazy_load()
-    end
-  }
-
-
-  -- quick fix list (:Trouble [mode], :TroubleClose, :TroubleToggle, :TroubleRefresh)
-  use {
-    'folke/trouble.nvim',
-    requires = 'kyazdani42/nvim-web-devicons',
-    config = function()
-      require'trouble'.setup {
-        fold_open = 'v',
-        fold_closed = '>',
-        indent_lines = false,
-        signs = {
-          error = 'error',
-          warning = 'warn',
-          hint = 'hint',
-          information = 'info'
-        },
-        use_diagnostic_signs = true,
-      }
     end
   }
 
@@ -653,53 +637,6 @@ end})
 vim.api.nvim_create_autocmd('CursorHold', {pattern = '*', callback = function()
   vim.diagnostic.open_float(nil, { focusable = false, close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' }, border = 'rounded', source = 'always', prefix = ' ' })
 end})
-
--- for winbar
-if vim.fn.has('nvim-0.8') == 1 then -- TODO: remove this line when neovim 0.8 becomes stable
-  local function isempty(s)
-    return s == nil or s == ''
-  end
-  local function fname() -- filename function for winbar
-    local filename = vim.fn.expand '%:t'
-    local extension = ''
-    local file_icon = ''
-    local file_icon_color = ''
-    local default_file_icon = ''
-    local default_file_icon_color = ''
-
-    if not isempty(filename) then
-      local default = false
-
-      extension = vim.fn.expand '%:e'
-      if isempty(extension) then
-        extension = ''
-        default = true
-      end
-
-      file_icon, file_icon_color = require('nvim-web-devicons').get_icon_color(filename, extension, { default = default })
-
-      local hl_group = 'FileIconColor' .. extension
-
-      vim.api.nvim_set_hl(0, hl_group, { fg = file_icon_color })
-      if file_icon == nil then
-        file_icon = default_file_icon
-        file_icon_color = default_file_icon_color
-      end
-
-      return ' ' .. '%#' .. hl_group .. '#' .. file_icon .. '%*' .. ' ' .. filename .. '%*'
-    end
-  end
-  vim.api.nvim_create_autocmd({ 'CursorMoved', 'BufWinEnter', 'BufFilePost' }, {
-    callback = function()
-      local excludes = {'help', 'packer', 'NvimTree', 'Trouble', 'TelescopePrompt', 'gitcommit'}
-      if vim.tbl_contains(excludes, vim.bo.filetype) then
-        vim.opt_local.winbar = nil
-        return
-      end
-      vim.opt_local.winbar = fname()
-    end,
-  })
-end -- TODO: remove this line when neovim 0.8 becomes stable
 
 -- disable unneeded providers
 g['loaded_python_provider'] = 0
