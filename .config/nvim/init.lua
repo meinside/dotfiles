@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.07.24.
+-- last update: 2022.07.25.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -204,6 +204,8 @@ require('packer').startup({function()
       vim.api.nvim_set_hl(0, 'CmpItemKindUnit', {bg = 'NONE', fg = '#D4D4D4'})
     end
   }
+  use {'williamboman/mason.nvim'}
+  use {'williamboman/mason-lspconfig.nvim'}
 
 
   -- snippets
@@ -436,6 +438,28 @@ require('packer').startup({function()
 
 
   ----------------
+  -- install lsp servers
+  require('mason').setup {
+    ui = {icons = {package_installed = '✓', package_pending = '➜', package_uninstalled = '✗'}}
+  }
+  require('mason-lspconfig').setup {
+    ensure_installed = {
+      'bashls', -- bash
+      'clangd', -- clang
+      'clojure_lsp', -- clojure
+      'delve', 'gopls', -- go
+      'hls', -- haskell
+      'sumneko_lua', -- lua
+      'pylsp', -- python
+      'solargraph', -- ruby
+      'codelldb', 'rust_analyzer', -- rust
+      'zls', -- zig
+    },
+    automatic_installation = true,
+  }
+
+
+  ----------------
   -- lsp settings
   local on_attach_lsp = function(client, bufnr) -- default setup for language servers
     -- Enable completion triggered by <c-x><c-o>
@@ -511,11 +535,10 @@ require('packer').startup({function()
   local nvim_lsp = require('lspconfig')
   local lsp_servers = { -- language servers with default setup (see install methods in .tool-versions file)
     'bashls', -- bash
-    'ccls', -- clang
+    'clangd', -- clang
     'clojure_lsp',  -- clojure
     'gopls',  -- go
     'hls',  -- haskell
-    'ocamllsp', -- ocaml
     'pylsp',  -- python
     --'rust_analyzer',  -- rust (handled below)
     'solargraph', -- ruby
@@ -631,11 +654,6 @@ vim.api.nvim_exec([[
 vim.api.nvim_create_augroup('etc', {clear = true})
 vim.api.nvim_create_autocmd('TextYankPost', {group = 'etc', pattern = '*', callback = function()
   vim.highlight.on_yank({on_visual = false})
-end})
-
--- for diagnostics
-vim.api.nvim_create_autocmd('CursorHold', {pattern = '*', callback = function()
-  vim.diagnostic.open_float(nil, { focusable = false, close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' }, border = 'rounded', source = 'always', prefix = ' ' })
 end})
 
 -- disable unneeded providers
