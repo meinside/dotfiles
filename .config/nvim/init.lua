@@ -150,7 +150,8 @@ require('packer').startup({function()
     requires = {'kyazdani42/nvim-web-devicons', opt = true},
     config = function()
       local navic = require('nvim-navic')
-      require'lualine'.setup {
+
+      local opts = {
         options = {
           disabled_filetypes = {'help', 'packer', 'NvimTree', 'TelescopePrompt', 'gitcommit'},
           globalstatus = true,
@@ -159,9 +160,12 @@ require('packer').startup({function()
         sections = {
           lualine_c = {'filename', {navic.get_location, cond = navic.is_available}},
         },
-        winbar = {lualine_c = {{'filetype', icon_only = true}, {'filename'}}},
-        inactive_winbar = {lualine_c = {'filename'}},
       }
+      if vim.fn.has('nvim-0.8') == 1 then -- TODO: remove this line when neovim 0.8 becomes stable
+        opts.winbar = {lualine_c = {{'filetype', icon_only = true}, {'filename'}}}
+        opts.inactive_winbar = {lualine_c = {'filename'}}
+      end
+      require'lualine'.setup(opts)
     end
   }
   use {'SmiteshP/nvim-navic', requires = {'neovim/nvim-lspconfig'}}
