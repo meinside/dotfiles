@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.07.20.
+# last update: 2022.07.25.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -10,17 +10,16 @@
 babashka 0.8.157
 
 # For bash-language-server,
-#   $ npm i -g bash-language-server
-
-# For ccls,
-#   $ brew install ccls
+#   :MasonInstall bash-language-server
 # or
-#   $ sudo apt install ccls
+#   $ npm i -g bash-language-server
 
 # $ asdf plugin add clojure https://github.com/asdf-community/asdf-clojure.git
 # $ asdf install clojure
 #
 # For clojure-lsp,
+#   :MasonInstall clojure-lsp
+# or
 #   $ brew install clojure-lsp/brew/clojure-lsp-native
 # or
 #   $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
@@ -32,7 +31,8 @@ clojure 1.11.1.1149
 # $ asdf install golang
 #
 # For gopls,
-#
+#   :MasonInstall gopls
+# or
 #   $ go install golang.org/x/tools/gopls@latest
 #
 # https://go.dev/doc/devel/release
@@ -63,7 +63,8 @@ leiningen 2.9.8
 # $ asdf install lua
 #
 # For lua-language-server,
-#
+#   :MasonInstall lua-language-server
+# or
 #   $ brew install lua-language-server
 # or
 #   $ DIR="/opt/lua-language-server"
@@ -91,6 +92,8 @@ nodejs lts
 # $ asdf install python
 #
 # For language server,
+#   :MasonInstall python-lsp-server
+# or
 #   $ pip install --user python-lsp-server
 #
 # https://www.python.org/downloads/
@@ -100,6 +103,8 @@ python 3.10.5
 # $ asdf install ruby
 #
 # For language server,
+#   :MasonInstall solargraph
+# or
 #   $ gem install --user-install solargraph
 #
 # https://www.ruby-lang.org/en/downloads/releases/
@@ -109,6 +114,8 @@ ruby 3.1.2
 # $ asdf install rust
 #
 # For rust-analyzer, (https://rust-analyzer.github.io/manual.html#installation)
+#   :MasonInstall rust-analyzer
+# or
 #   $ git clone https://github.com/rust-analyzer/rust-analyzer.git
 #   $ cd rust-analyzer/
 #   $ cargo xtask install --server
@@ -120,6 +127,8 @@ rust 1.62.1
 # $ asdf install zig
 #
 # For zls, (https://github.com/zigtools/zls)
+#   :MasonInstall zls
+# or
 #   $ sudo rm -rf /opt/zls
 #   $ sudo mkdir -p /opt/zls
 #   $ sudo chown -R "$USER" /opt/zls
