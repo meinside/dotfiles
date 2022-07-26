@@ -1,6 +1,6 @@
 # .custom_env.sample
 #
-# last update: 2022.07.20.
+# last update: 2022.07.26.
 
 # print go version of a compiled binary
 gobuildversion() {
@@ -20,6 +20,6 @@ export DOCKER_CLI_EXPERIMENTAL=enabled
 
 # for luarocks packages (use `luarocks path`)
 if [ -x "$(which luarocks)" ]; then
-    # TODO: fill result of `luarocks path` here
+    eval "$(luarocks path)"
 fi
 

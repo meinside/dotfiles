@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2022.07.07.
+# updated on 2022.07.26.
 #
 # ... by meinside@duck.com
 #
@@ -84,7 +84,7 @@ case "$OSTYPE" in
     linux*)
         ;;
     darwin*)
-        export CC="gcc-11"
+        #export CC="gcc-11"
         ;;
     *)
         ;;
@@ -103,6 +103,11 @@ bindkey "^N" history-beginning-search-forward
 
 # zsh options
 unsetopt nomatch
+
+# brew
+if [ -d /opt/homebrew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
 ######################
 ##  for development  #
