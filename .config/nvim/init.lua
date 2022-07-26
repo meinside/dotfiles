@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.07.25.
+-- last update: 2022.07.26.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -66,7 +66,7 @@ require('packer').startup({function()
 
   -- formatting
   use({'kylechui/nvim-surround', -- cs'" => change ' to " / ds" => remove " / ysiw" => wrap text object with " / yss" => wrap line with "
-    config = function() require('nvim-surround').setup({}) end
+    config = function() require('nvim-surround').setup {} end
   })
   use {
     'lukas-reineke/indent-blankline.nvim',
@@ -194,7 +194,7 @@ require('packer').startup({function()
     config = function() require'lsp_signature'.setup {bind = true, handler_opts = {border = 'single'}} end
   }
   use {'https://git.sr.ht/~whynothugo/lsp_lines.nvim', config = function()
-      require('lsp_lines').setup {}
+    require('lsp_lines').setup {}
   end}
   use {
     'onsails/lspkind-nvim',
