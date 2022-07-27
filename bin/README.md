@@ -14,10 +14,6 @@ A script for macOS hacks (originates from https://gist.github.com/erikh/2260182)
 
 A script for installing [asdf](https://github.com/asdf-vm/asdf).
 
-## install_codelldb.sh
-
-A script for installing [vscode-lldb](https://github.com/vadimcn/vscode-lldb).
-
 ## install_docker.sh
 
 A script for installing [Docker](https://www.docker.com/).
