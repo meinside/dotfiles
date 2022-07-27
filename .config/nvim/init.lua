@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.07.26.
+-- last update: 2022.07.27.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -585,11 +585,11 @@ require('packer').startup({function()
       capabilities = capabilities,
     },
     dap = {
-      -- install `codelldb` in ~/.local/codelldb/ (use: bin/install_codelldb.sh)
+      -- install `codelldb` with :Mason
       -- :RustDebuggables for debugging
       adapter = require('rust-tools.dap').get_codelldb_adapter(
-        vim.env.HOME .. '/.local/codelldb/extension/adapter/codelldb',
-        vim.env.HOME .. '/.local/codelldb/extension/lldb/lib/liblldb.so'
+        vim.env.HOME .. '/.local/share/nvim/mason/packages/codelldb/extension/adapter/codelldb',
+        vim.env.HOME .. '/.local/share/nvim/mason/packages/codelldb/extension/lldb/lib/liblldb.so'
       ),
     },
   })
