@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.07.27.
+-- last update: 2022.07.28.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -460,16 +460,18 @@ require('packer').startup({function()
       'bashls', -- bash
       'clangd', -- clang
       'clojure_lsp', -- clojure
-      'delve', 'gopls', -- go
+      'gopls', -- go
       'hls', -- haskell
       'sumneko_lua', -- lua
       'pylsp', -- python
       'solargraph', -- ruby
-      'codelldb', 'rust_analyzer', -- rust
+      'rust_analyzer', -- rust
       'zls', -- zig
     },
     automatic_installation = true,
   }
+  -- NOTE: no way of installing things other than lsp servers for now
+  -- install other things with: :MasonInstall delve codelldb
 
 
   ----------------
