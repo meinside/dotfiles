@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2022.07.26.
+# updated on 2022.07.28.
 #
 # ... by meinside@duck.com
 
@@ -59,11 +59,6 @@ case "$OSTYPE" in
         ;;
 esac
 
-# brew
-if [ -d /opt/homebrew ]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
-
 # bash completion
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
@@ -76,6 +71,11 @@ fi
 if [[ -z $TMUX ]]; then
 
     # NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
+
+    # brew
+    if [ -d /opt/homebrew ]; then
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    fi
 
     # for go
     if [ -x "`which go`" ]; then
