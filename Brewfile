@@ -47,7 +47,7 @@ brew 'jq'
 brew 'mkcert'
 #brew 'wireshark'
 #brew 'wrk'
-brew 'vale'
+#brew 'vale' # get from: https://github.com/errata-ai/vale/releases
 
 
 ######## casks
