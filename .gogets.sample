@@ -5,7 +5,7 @@
 #
 # then it will automatically  `go install` or `go get -u` all packages listed in this file(~/.gogets)
 #
-# last update: 2022.07.20.
+# last update: 2022.07.29.
 
 # official packages
 golang.org/x/tools/cmd/godoc
@@ -22,7 +22,7 @@ github.com/davecheney/httpstat
 github.com/cespare/goclj/cljfmt
 golang.org/x/tools/gopls@latest
 github.com/go-delve/delve/cmd/dlv
-github.com/golangci/golangci-lint/cmd/golangci-lint@v1.41.1
+github.com/golangci/golangci-lint/cmd/golangci-lint@v1.47.2
 
 # for development (VS Code)
 github.com/mdempsky/gocode
@@ -36,7 +36,7 @@ github.com/zmb3/gogetdoc
 golang.org/x/lint/golint
 
 # for writing
-github.com/errata-ai/vale@v2.17.0
+github.com/errata-ai/vale@latest # get from: https://github.com/errata-ai/vale/releases
 
 # for backup/sync
 github.com/rclone/rclone
