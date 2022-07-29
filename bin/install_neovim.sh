@@ -4,7 +4,7 @@
 # 
 # for building neovim from source code
 #
-# last update: 2022.07.11.
+# last update: 2022.07.29.
 # 
 # by meinside@duck.com
 
@@ -89,7 +89,7 @@ function install {
 # install for macOS
 function install_macos {
     if [[ $1 == "--nightly" ]]; then
-	brew install —-HEAD neovim
+	brew install neovim --HEAD
     else
 	brew install neovim
     fi
