@@ -47,7 +47,7 @@ brew 'jq'
 brew 'mkcert'
 #brew 'wireshark'
 #brew 'wrk'
-#brew 'vale' # get from: https://github.com/errata-ai/vale/releases
+#brew 'vale' # (use `bin/install_vale.sh`)
 
 
 ######## casks
