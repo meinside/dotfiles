@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2022.07.28.
+# updated on 2022.08.03.
 #
 # ... by meinside@duck.com
 #
@@ -44,7 +44,7 @@ HIST_STAMPS="yyyy-mm-dd"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(macos history history-substring-search mosh git git-flow copypath colored-man-pages encode64 urltools sudo asdf zsh-syntax-highlighting)
+plugins=(asdf colored-man-pages command-not-found copypath dotenv encode64 git git-flow golang history history-substring-search macos mosh nmap rust sudo urltools zsh-syntax-highlighting)
 
 # Search for oh-my-zsh.sh
 if ! [ -f $ZSH/oh-my-zsh.sh ]; then
