@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.08.02.
+-- last update: 2022.08.04.
 
 local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
 local g = vim.g      -- a table to access global variables
@@ -158,18 +158,31 @@ require('packer').startup({function()
     requires = {'kyazdani42/nvim-web-devicons', opt = true},
     config = function()
       local navic = require('nvim-navic')
-      require'lualine'.setup {
-        options = {
-          disabled_filetypes = {'help', 'packer', 'NvimTree', 'TelescopePrompt', 'gitcommit'},
-          globalstatus = true,
-        },
-        extensions = {'nvim-dap-ui', 'quickfix'},
-        sections = {
-          lualine_c = {'filename', {navic.get_location, cond = navic.is_available}},
-        },
-        --winbar = {lualine_c = {{'filetype', icon_only = true}, {'filename'}}},
-        --inactive_winbar = {lualine_c = {'filename'}},
-      }
+      if vim.fn.has('nvim-0.8') == 1 then -- TODO: remove this line when neovim 0.8 becomes stable
+        require'lualine'.setup {
+          options = {
+            disabled_filetypes = {'help', 'packer', 'NvimTree', 'TelescopePrompt', 'gitcommit'},
+            globalstatus = true,
+          },
+          extensions = {'nvim-dap-ui', 'quickfix'},
+          sections = {
+            lualine_c = {'filename', {navic.get_location, cond = navic.is_available}},
+          },
+          winbar = {lualine_c = {{'filetype', icon_only = true}, {'filename'}}},
+          inactive_winbar = {lualine_c = {'filename'}},
+        }
+      else -- TODO: remove this line when neovim 0.8 becomes stable
+        require'lualine'.setup { -- TODO: remove this line when neovim 0.8 becomes stable
+          options = { -- TODO: remove this line when neovim 0.8 becomes stable
+            disabled_filetypes = {'help', 'packer', 'NvimTree', 'TelescopePrompt', 'gitcommit'}, -- TODO: remove this line when neovim 0.8 becomes stable
+            globalstatus = true, -- TODO: remove this line when neovim 0.8 becomes stable
+          }, -- TODO: remove this line when neovim 0.8 becomes stable
+          extensions = {'nvim-dap-ui', 'quickfix'}, -- TODO: remove this line when neovim 0.8 becomes stable
+          sections = { -- TODO: remove this line when neovim 0.8 becomes stable
+            lualine_c = {'filename', {navic.get_location, cond = navic.is_available}}, -- TODO: remove this line when neovim 0.8 becomes stable
+          }, -- TODO: remove this line when neovim 0.8 becomes stable
+        } -- TODO: remove this line when neovim 0.8 becomes stable
+      end -- TODO: remove this line when neovim 0.8 becomes stable
     end
   }
   use {'SmiteshP/nvim-navic', requires = {'neovim/nvim-lspconfig'}}
