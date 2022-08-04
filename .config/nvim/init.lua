@@ -194,7 +194,9 @@ require('packer').startup({function()
     config = function() require'lsp_signature'.setup {bind = true, handler_opts = {border = 'single'}} end
   }
   use {'https://git.sr.ht/~whynothugo/lsp_lines.nvim', config = function()
-    require('lsp_lines').setup {}
+    local ll = require'lsp_lines'
+    ll.setup {}
+    vim.keymap.set('', '<leader>ll', ll.toggle, { desc = 'Toggle lsp_lines' })
   end}
   use {
     'onsails/lspkind-nvim',
@@ -497,7 +499,7 @@ require('packer').startup({function()
     --vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
     vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
     vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-    vim.keymap.set('n', '<leader>ll', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+    vim.keymap.set('n', '<leader>dl', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
     if vim.lsp.buf.format then -- TODO: remove this line when neovim 0.8 becomes stable
       vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.format{async=true}<CR>', opts)
     else -- TODO: remove this line when neovim 0.8 becomes stable
