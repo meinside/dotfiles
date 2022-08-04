@@ -555,7 +555,28 @@ require('packer').startup({function()
   capabilities.textDocument.completion.completionItem.commitCharactersSupport = true
   capabilities.textDocument.completion.completionItem.tagSupport = { valueSet = { 1 } }
   capabilities.textDocument.completion.completionItem.resolveSupport = {properties = {'documentation', 'detail', 'additionalTextEdits'}}
-  local nvim_lsp = require('lspconfig')
+  local lua_runtime_paths = vim.split(package.path, ';')
+  table.insert(lua_runtime_paths, 'lua/?.lua')
+  table.insert(lua_runtime_paths, 'lua/?/init.lua')
+  local lsp_settings = {
+    gopls = {
+      hints = {
+        assignVariableTypes = true,
+        compositeLiteralFields = true,
+        compositeLiteralTypes = true,
+        constantValues = true,
+        functionTypeParameters = true,
+        parameterNames = true,
+        rangeVariableTypes = true,
+      },
+    },
+    Lua = {
+      runtime = { version = 'LuaJIT', path = lua_runtime_paths},
+      diagnostics = { globals = {'vim'} },
+      workspace = { library = vim.api.nvim_get_runtime_file('', true) },
+      telemetry = { enable = false },
+    },
+  }
   local lsp_servers = { -- language servers with default setup (see install methods in .tool-versions file)
     'bashls', -- bash
     'clangd', -- clang
@@ -565,35 +586,22 @@ require('packer').startup({function()
     'pylsp',  -- python
     --'rust_analyzer',  -- rust (handled below)
     'solargraph', -- ruby
-    --'sumneko_lua', -- lua (handled below)
+    'sumneko_lua', -- lua
     'zls',  -- zig
   }
+  local nvim_lsp = require('lspconfig')
   for _, lsp in ipairs(lsp_servers) do
     nvim_lsp[lsp].setup {
       on_attach = on_attach_lsp,
       capabilities = capabilities,
+      settings = lsp_settings,
     }
   end
   -------- other language servers for custom setup --------
-  -- (lua)
-  local runtime_path = vim.split(package.path, ';')
-  table.insert(runtime_path, 'lua/?.lua')
-  table.insert(runtime_path, 'lua/?/init.lua')
-  nvim_lsp['sumneko_lua'].setup {
-    settings = { Lua = {
-      runtime = { version = 'LuaJIT', path = runtime_path },
-      diagnostics = { globals = {'vim'} },
-      workspace = { library = vim.api.nvim_get_runtime_file('', true) },
-      telemetry = { enable = false },
-    } },
-  }
   -- (rust)
   require('rust-tools').setup({
-    tools = {hover_actions = {auto_focus = true}},
-    server = {
-      on_attach = on_attach_lsp,
-      capabilities = capabilities,
-    },
+    tools = { hover_actions = {auto_focus = true} },
+    server = { on_attach = on_attach_lsp, capabilities = capabilities },
     dap = {
       -- install `codelldb` with :Mason
       -- :RustDebuggables for debugging
