@@ -5,12 +5,6 @@
 -- created on : 2021.05.27.
 -- last update: 2022.08.04.
 
-local function map(mode, lhs, rhs, opts)
-  local options = {noremap = true}
-  if opts then options = vim.tbl_extend('force', options, opts) end
-  vim.api.nvim_set_keymap(mode, lhs, rhs, options)
-end
-
 
 ------------------------------------------------
 -- plugins
@@ -88,12 +82,13 @@ require('packer').startup({function()
     'nvim-telescope/telescope.nvim',
     requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}}
   }
-  map('n', '<leader>ff', '<cmd>Telescope find_files<CR>')
-  map('n', '<leader>gc', '<cmd>Telescope git_commits<CR>')
-  map('n', '<leader>qf', '<cmd>Telescope quickfix<CR>')
-  map('n', '<leader>lr', '<cmd>Telescope lsp_references<CR>')
-  map('n', '<leader>li', '<cmd>Telescope lsp_implementations<CR>')
-  map('n', '<leader>ld', '<cmd>Telescope lsp_definitions<CR>')
+  -- https://github.com/nvim-telescope/telescope.nvim#pickers
+  vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, {remap = false, silent = true})
+  vim.keymap.set('n', '<leader>gc', require('telescope.builtin').git_commits, {remap = false, silent = true})
+  vim.keymap.set('n', '<leader>qf', require('telescope.builtin').quickfix, {remap = false, silent = true})
+  vim.keymap.set('n', '<leader>lr', require('telescope.builtin').lsp_references, {remap = false, silent = true})
+  vim.keymap.set('n', '<leader>li', require('telescope.builtin').lsp_implementations, {remap = false, silent = true})
+  vim.keymap.set('n', '<leader>ld', require('telescope.builtin').lsp_definitions, {remap = false, silent = true})
 
 
   -- git
@@ -665,8 +660,8 @@ opt.cursorline = true -- highlight current line
 vim.o.signcolumn = 'number'
 
 -- for tab navigation
-map('n', '<C-h>', ':tabprevious<CR>') -- <ctrl-h> for previous tab
-map('n', '<C-l>', ':tabnext<CR>') -- <ctrl-l> for next tab
+vim.keymap.set('n', '<C-h>', ':tabprevious<CR>', {remap = false, silent = true}) -- <ctrl-h> for previous tab
+vim.keymap.set('n', '<C-l>', ':tabnext<CR>', {remap = false, silent = true}) -- <ctrl-l> for next tab
 
 -- go back to the last position of a file
 vim.api.nvim_exec([[
