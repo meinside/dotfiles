@@ -457,9 +457,7 @@ require('packer').startup({function()
 
   ----------------
   -- install lsp servers
-  require('mason').setup {
-    ui = {icons = {package_installed = '✓', package_pending = '➜', package_uninstalled = '✗'}}
-  }
+  require('mason').setup { ui = {icons = {package_installed = '✓', package_pending = '➜', package_uninstalled = '✗'}} }
   require('mason-lspconfig').setup {
     ensure_installed = {
       'bashls', -- bash
@@ -552,9 +550,6 @@ require('packer').startup({function()
   capabilities.textDocument.completion.completionItem.commitCharactersSupport = true
   capabilities.textDocument.completion.completionItem.tagSupport = { valueSet = { 1 } }
   capabilities.textDocument.completion.completionItem.resolveSupport = {properties = {'documentation', 'detail', 'additionalTextEdits'}}
-  local lua_runtime_paths = vim.split(package.path, ';')
-  table.insert(lua_runtime_paths, 'lua/?.lua')
-  table.insert(lua_runtime_paths, 'lua/?/init.lua')
   local lsp_settings = {
     gopls = {
       hints = {
@@ -568,7 +563,12 @@ require('packer').startup({function()
       },
     },
     Lua = {
-      runtime = { version = 'LuaJIT', path = lua_runtime_paths},
+      runtime = { version = 'LuaJIT', path = (function()
+        local runtime_paths = vim.split(package.path, ';')
+        table.insert(runtime_paths, 'lua/?.lua')
+        table.insert(runtime_paths, 'lua/?/init.lua')
+        return runtime_paths
+      end)() },
       diagnostics = { globals = {'vim'} },
       workspace = { library = vim.api.nvim_get_runtime_file('', true) },
       telemetry = { enable = false },
@@ -588,11 +588,7 @@ require('packer').startup({function()
   }
   local nvim_lsp = require('lspconfig')
   for _, lsp in ipairs(lsp_servers) do
-    nvim_lsp[lsp].setup {
-      on_attach = on_attach_lsp,
-      capabilities = capabilities,
-      settings = lsp_settings,
-    }
+    nvim_lsp[lsp].setup { on_attach = on_attach_lsp, capabilities = capabilities, settings = lsp_settings }
   end
   -------- other language servers for custom setup --------
   -- (rust)
