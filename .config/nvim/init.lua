@@ -5,9 +5,6 @@
 -- created on : 2021.05.27.
 -- last update: 2022.08.04.
 
-local fn = vim.fn    -- to call Vim functions e.g. fn.bufnr()
-local g = vim.g      -- a table to access global variables
-
 local function map(mode, lhs, rhs, opts)
   local options = {noremap = true}
   if opts then options = vim.tbl_extend('force', options, opts) end
@@ -19,9 +16,9 @@ end
 -- plugins
 --
 -- :PackerInstall / :PackerUpdate / :PackerSync / ...
-local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
-if fn.empty(fn.glob(install_path)) > 0 then
-  fn.execute('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
+local install_path = vim.fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
+if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
+  vim.fn.execute('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
 end
 local use = require('packer').use
 require('packer').startup({function()
@@ -402,8 +399,8 @@ require('packer').startup({function()
   -- cse[, cse] : surround an element with brackets
   -- cse{, cse} : surround an element with braces
   use {'guns/vim-sexp', ft = {'clojure', 'fennel', 'janet'}}
-  g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
-  g['sexp_filetypes'] = 'clojure,fennel,janet'
+  vim.g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
+  vim.g['sexp_filetypes'] = 'clojure,fennel,janet'
   use {'tpope/vim-sexp-mappings-for-regular-people', ft = {'clojure', 'fennel', 'janet'}}
   use {'gpanders/nvim-parinfer', ft = {'clojure', 'fennel', 'janet'}}
 
@@ -429,7 +426,7 @@ require('packer').startup({function()
   -- haskell
   use {'neovimhaskell/haskell-vim', ft = {'haskell'}}
   use {'itchyny/vim-haskell-indent', ft = {'haskell'}}
-  if fn.executable('stylish-haskell') == 1 then
+  if vim.fn.executable('stylish-haskell') == 1 then
     use {'alx741/vim-stylishask', ft = {'haskell'}}
   end
 
@@ -516,10 +513,10 @@ require('packer').startup({function()
 
     -- diagnostics configuration
     vim.diagnostic.config({ underline = false, virtual_text = false, signs = true, severity_sort = true, update_in_insert = false })
-    fn.sign_define('DiagnosticSignError', { text = '✗', texthl = 'DiagnosticSignError' })
-    fn.sign_define('DiagnosticSignWarn', { text = '!', texthl = 'DiagnosticSignWarn' })
-    fn.sign_define('DiagnosticSignInformation', { text = '', texthl = 'DiagnosticSignInfo' })
-    fn.sign_define('DiagnosticSignHint', { text = '', texthl = 'DiagnosticSignHint' })
+    vim.fn.sign_define('DiagnosticSignError', { text = '✗', texthl = 'DiagnosticSignError' })
+    vim.fn.sign_define('DiagnosticSignWarn', { text = '!', texthl = 'DiagnosticSignWarn' })
+    vim.fn.sign_define('DiagnosticSignInformation', { text = '', texthl = 'DiagnosticSignInfo' })
+    vim.fn.sign_define('DiagnosticSignHint', { text = '', texthl = 'DiagnosticSignHint' })
 
     -- auto formatting on save
     if client.server_capabilities.document_formatting then
@@ -620,7 +617,7 @@ require('packer').startup({function()
 
 
   -- vale
-  if fn.executable('vale') == 1 then -- $ go install github.com/errata-ai/vale@latest
+  if vim.fn.executable('vale') == 1 then -- $ go install github.com/errata-ai/vale@latest
     require('null-ls').setup({
       sources = {
         require('null-ls').builtins.diagnostics.vale,
@@ -637,7 +634,7 @@ if vim.api.nvim_cmd then -- TODO: remove this line when neovim 0.8 becomes stabl
 else -- TODO: remove this line when neovim 0.8 becomes stable
   vim.api.nvim_exec([[call neomake#configure#automake('nrwi', 500)]], false) -- TODO: remove this line when neovim 0.8 becomes stable
 end -- TODO: remove this line when neovim 0.8 becomes stable
-g['neomake_open_list'] = 2
+vim.g['neomake_open_list'] = 2
 
 
 ------------------------------------------------
@@ -688,6 +685,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {group = 'etc', pattern = '*', callb
 end})
 
 -- disable unneeded providers
-g['loaded_python_provider'] = 0
-g['loaded_perl_provider'] = 0
+vim.g['loaded_python_provider'] = 0
+vim.g['loaded_perl_provider'] = 0
 
