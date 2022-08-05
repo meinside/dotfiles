@@ -23,7 +23,7 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2022.07.18.
+# last update: 2022.08.05.
 # 
 # by meinside@duck.com
 
@@ -156,10 +156,14 @@ function build {
 }
 
 function configure {
-    # create sample sites
+    # create sites directory
     sudo mkdir -p "$NGINX_SITES_DIR"
-    warn ">>> creating sample site files in $NGINX_SITES_DIR/ ..."
-    sudo bash -c "cat > $NGINX_SITES_DIR/example.com" <<EOF
+
+    # check if there are files in $NGINX_SITES_DIR, if empty:
+    if [ -z "$(ls -A "$NGINX_SITES_DIR")" ]; then
+        warn ">>> creating sample site files in $NGINX_SITES_DIR/ ..."
+
+        sudo bash -c "cat > $NGINX_SITES_DIR/example.com" <<EOF
 # An example for a reverse-proxy (http://localhost:8080 => https://example.com:443)
 #
 # (https://ssl-config.mozilla.org/#server=nginx&version=1.18.0&config=intermediate&openssl=1.1.1g&guideline=5.4)
@@ -210,9 +214,19 @@ server {
     }
 }
 EOF
+    else
+        warn ">>> site files already exist in $NGINX_SITES_DIR/ ..."
+    fi
 
-    # edit default conf to include enabled sites and limit requests
-    sudo sed -i 's|\(\(\s*\)include\(\s\+\)mime.types;\)|\1\n\2include\3/etc/nginx/sites-enabled/*.*;\n\2limit_req_zone $binary_remote_addr zone=lr_zone:10m rate=100r/s;|' $NGINX_CONF_FILE
+    # check if $NGINX_CONF_FILE is already modified, if not:
+    if grep -q "/etc/nginx/sites-enabled/*.*" "$NGINX_CONF_FILE"; then
+        warn ">>> $NGINX_CONF_FILE is already modified..."
+    else
+        # edit default conf to include enabled sites and limit requests
+        sudo sed -i 's|\(\(\s*\)include\(\s\+\)mime.types;\)|\1\n\2include\3/etc/nginx/sites-enabled/*.*;\n\2limit_req_zone $binary_remote_addr zone=lr_zone:10m rate=100r/s;|' $NGINX_CONF_FILE
+
+        warn ">>> added enabled sites and limit requests in $NGINX_CONF_FILE..."
+    fi
 
     # create systemd service file
     #
