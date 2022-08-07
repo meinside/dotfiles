@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.08.04.
+-- last update: 2022.08.07.
 
 
 ------------------------------------------------
@@ -292,6 +292,7 @@ require('packer').startup({function()
           { name = 'nvim_lsp', keyword_length = 3 },
           { name = 'luasnip', keyword_length = 2 },
           { name = 'nvim_lua', keyword_length = 2 },
+          { name = 'conjure', keyword_length = 2 },
         },
         formatting = { format = lspkind.cmp_format() },
       })
@@ -400,6 +401,7 @@ require('packer').startup({function()
   vim.g['sexp_filetypes'] = 'clojure,fennel,janet'
   use {'tpope/vim-sexp-mappings-for-regular-people', ft = {'clojure', 'fennel', 'janet'}}
   use {'gpanders/nvim-parinfer', ft = {'clojure', 'fennel', 'janet'}}
+  use {'PaterJason/cmp-conjure', ft = {'clojure', 'fennel'}}
 
 
   -- go
