@@ -238,7 +238,6 @@ require('packer').startup({function()
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-calc',
       'saadparwaiz1/cmp_luasnip',
-      'PaterJason/cmp-conjure',
     },
     config = function ()
       local cmp = require'cmp'
@@ -402,7 +401,6 @@ require('packer').startup({function()
   vim.g['sexp_filetypes'] = 'clojure,fennel,janet'
   use {'tpope/vim-sexp-mappings-for-regular-people', ft = {'clojure', 'fennel', 'janet'}}
   use {'gpanders/nvim-parinfer', ft = {'clojure', 'fennel', 'janet'}}
-  use {'PaterJason/cmp-conjure', ft = {'clojure', 'fennel'}}
 
 
   -- go
