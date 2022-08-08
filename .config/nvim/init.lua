@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.08.07.
+-- last update: 2022.08.08.
 
 
 ------------------------------------------------
@@ -80,15 +80,17 @@ require('packer').startup({function()
   use 'johngrib/vim-f-hangul'	-- can use f/t/;/, on Hangul characters
   use {
     'nvim-telescope/telescope.nvim',
-    requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}}
+    requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
+    config = function()
+      -- https://github.com/nvim-telescope/telescope.nvim#pickers
+      vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>gc', require('telescope.builtin').git_commits, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>qf', require('telescope.builtin').quickfix, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>lr', require('telescope.builtin').lsp_references, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>li', require('telescope.builtin').lsp_implementations, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>ld', require('telescope.builtin').lsp_definitions, {remap = false, silent = true})
+    end,
   }
-  -- https://github.com/nvim-telescope/telescope.nvim#pickers
-  vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, {remap = false, silent = true})
-  vim.keymap.set('n', '<leader>gc', require('telescope.builtin').git_commits, {remap = false, silent = true})
-  vim.keymap.set('n', '<leader>qf', require('telescope.builtin').quickfix, {remap = false, silent = true})
-  vim.keymap.set('n', '<leader>lr', require('telescope.builtin').lsp_references, {remap = false, silent = true})
-  vim.keymap.set('n', '<leader>li', require('telescope.builtin').lsp_implementations, {remap = false, silent = true})
-  vim.keymap.set('n', '<leader>ld', require('telescope.builtin').lsp_definitions, {remap = false, silent = true})
 
 
   -- git
@@ -536,7 +538,11 @@ require('packer').startup({function()
       require('nvim-navic').attach(client, bufnr)
     end
   end
-  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  local capabilities = vim.lsp.protocol.make_client_capabilities()
+  local cmp_nvim_lsp = require'cmp_nvim_lsp'
+  if cmp_nvim_lsp then
+    capabilities = cmp_nvim_lsp.update_capabilities(capabilities)
+  end
   capabilities.textDocument.completion.completionItem.documentationFormat = { 'markdown', 'plaintext' }
   capabilities.textDocument.completion.completionItem.snippetSupport = true
   capabilities.textDocument.completion.completionItem.preselectSupport = true
