@@ -75,6 +75,10 @@ require('packer').startup({function()
   use 'p00f/nvim-ts-rainbow'
 
 
+  -- scrolling
+  --use {'karb94/neoscroll.nvim', config = function() require'neoscroll'.setup {} end}
+
+
   -- finder / locator
   use 'mtth/locate.vim' -- :L [query], :lclose, gl
   use 'johngrib/vim-f-hangul'	-- can use f/t/;/, on Hangul characters
