@@ -219,8 +219,29 @@ require('packer').startup({function()
       vim.api.nvim_set_hl(0, 'CmpItemKindUnit', {bg = 'NONE', fg = '#D4D4D4'})
     end
   }
-  use {'williamboman/mason.nvim'}
-  use {'williamboman/mason-lspconfig.nvim'}
+  use {'williamboman/mason.nvim', config = function()
+    require('mason').setup { ui = {icons = {package_installed = '✓', package_pending = '➜', package_uninstalled = '✗'}} }
+  end}
+  use {'williamboman/mason-lspconfig.nvim', config = function()
+    -- install lsp servers
+    require('mason-lspconfig').setup {
+      ensure_installed = {
+        'bashls', -- bash
+        'clangd', -- clang
+        'clojure_lsp', -- clojure
+        'gopls', -- go
+        'hls', -- haskell
+        'sumneko_lua', -- lua
+        'pylsp', -- python
+        'solargraph', -- ruby
+        'rust_analyzer', -- rust
+        'zls', -- zig
+      },
+      automatic_installation = true,
+    }
+    -- NOTE: no way of installing things other than lsp servers for now
+    -- install other things with: :MasonInstall delve codelldb
+  end}
 
 
   -- snippets
@@ -292,7 +313,6 @@ require('packer').startup({function()
           { name = 'nvim_lsp', keyword_length = 3 },
           { name = 'luasnip', keyword_length = 2 },
           { name = 'nvim_lua', keyword_length = 2 },
-          { name = 'conjure', keyword_length = 2 },
         },
         formatting = { format = lspkind.cmp_format() },
       })
@@ -451,28 +471,6 @@ require('packer').startup({function()
 
   -- vale (see ~/.vale.ini)
   use 'jose-elias-alvarez/null-ls.nvim'
-
-
-  ----------------
-  -- install lsp servers
-  require('mason').setup { ui = {icons = {package_installed = '✓', package_pending = '➜', package_uninstalled = '✗'}} }
-  require('mason-lspconfig').setup {
-    ensure_installed = {
-      'bashls', -- bash
-      'clangd', -- clang
-      'clojure_lsp', -- clojure
-      'gopls', -- go
-      'hls', -- haskell
-      'sumneko_lua', -- lua
-      'pylsp', -- python
-      'solargraph', -- ruby
-      'rust_analyzer', -- rust
-      'zls', -- zig
-    },
-    automatic_installation = true,
-  }
-  -- NOTE: no way of installing things other than lsp servers for now
-  -- install other things with: :MasonInstall delve codelldb
 
 
   ----------------
