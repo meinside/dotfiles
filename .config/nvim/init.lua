@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.08.08.
+-- last update: 2022.08.09.
 
 
 ------------------------------------------------
@@ -639,14 +639,14 @@ if vim.api.nvim_cmd then -- TODO: remove this line when neovim 0.8 becomes stabl
 else -- TODO: remove this line when neovim 0.8 becomes stable
   vim.api.nvim_exec([[call neomake#configure#automake('nrwi', 500)]], false) -- TODO: remove this line when neovim 0.8 becomes stable
 end -- TODO: remove this line when neovim 0.8 becomes stable
-vim.g['neomake_open_list'] = 2
+vim.g['neomake_open_list'] = 0
 
 
 ------------------------------------------------
 -- other common settings
 --
 local opt = vim.opt
-opt.mouse = '' -- for enabling, :set mouse=nvi
+opt.mouse = ''
 opt.backspace = { 'indent', 'eol', 'start' } -- allow backspacing over everything in insert mode
 opt.history = 50
 opt.number = true
@@ -672,6 +672,19 @@ opt.foldlevelstart = 20 -- but open all folds on file open
 opt.updatetime = 1000 -- for shortening delay of CursorHold
 opt.cursorline = true -- highlight current line
 vim.o.signcolumn = 'number'
+
+-- for toggling mouse: \mm
+local mouse_enabled = false
+vim.keymap.set('n', '<leader>mm', function()
+  if mouse_enabled then
+    opt.mouse = ''
+    print 'mouse disabled'
+  else
+    opt.mouse = 'nvi'
+    print 'mouse enabled'
+  end
+  mouse_enabled = not mouse_enabled
+end, {remap = false, silent = true})
 
 -- for tab navigation
 vim.keymap.set('n', '<C-h>', ':tabprevious<CR>', {remap = false, silent = true}) -- <ctrl-h> for previous tab
