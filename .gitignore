@@ -1,41 +1,46 @@
-# .gitignore of meinside@duck.com
+# ~/.gitignore
 #
 # last update: 2022.08.11.
+#
+# meinside@duck.com
 
 # unnecessary binary files
+*.a
+*.al
+*.class
 *.o
 *.lo
 *.la
-*.al
-.libs
-*.so
-*.so.[0-9]*
-*.a
 *.pyc
 *.pyo
-*.class
-
-# swap files
+*.so
+*.so.[0-9]*
 *.swp
 *~.nib
+.libs
 
-# cache, temp files/dirs
+# history/log/cache/temp files or directories
+*.log*
+.*_history*
+.*-history*
 .cache/
+.dbshell
 .lldb/
 .local/
 .lsp/
+.nvimlog
 .openjfx/
+.oracle_jre_usage/
 .rncache/
 .rpi-firmware
 .sudo_as_admin_successful
 .swt/
+.wget-hsts
 backups/
 default.profraw
-dive.log
-ganttproject.log*
-java*.log*
 oradiag*/
 tmp/
+wget-log*
 
 # other scm files/dirs
 .svn
@@ -74,9 +79,6 @@ snap/
 .Xauthority
 .xsession-errors
 
-# asdf
-.asdf/
-
 # c/c++
 .ccls-cache/
 
@@ -106,7 +108,6 @@ snap/
 .m2/
 .oracle_jre_usage/
 
-
 # julia files/dirs
 .julia/
 
@@ -116,7 +117,6 @@ snap/
 .node-gyp
 .npm/
 node_modules/
-npm-debug.log
 package-lock.json
 
 # ocaml files/dirs
@@ -147,37 +147,6 @@ perl*/
 .cocoapods/
 xcuserdata
 
-# other src files
-public_html/
-srcs/
-
-# private/config files & dirs
-.android/
-.aptitude/
-.aws/
-.config/
-.custom_env
-.davmail.properties
-.docker/
-.eclrc
-.elinks/
-.gdrive/
-.gist-vim
-.gitconfig
-.gnupg
-.gtmx.json
-.lsp/
-.oci/
-.oh-my-zsh/
-.selected_editor
-.srcclr/
-.ssh/
-.wget-hsts
-.zcompdump*
-.zsh_sessions/
-.zsh-update
-mbox
-
 # container files & dirs
 .boot2docker/
 .docker/
@@ -188,17 +157,11 @@ mbox
 .minikube/
 .vs-kubernetes/
 
-# history/log files
-.*history
-.dbshell
-.fennel_history
-.nvimlog
-.oracle_jre_usage/
-.psql_history*
-.wget-hsts
-wget-log*
-
 # other applications' files & dirs
+.android/
+.aptitude/
+.asdf/
+.aws/
 .AndroidStudio*/
 .cpan/
 .cups/
@@ -206,10 +169,12 @@ wget-log*
 .dropbox/
 .dropbox-master/
 .eclipse/
+.elinks/
 .ethash/
 .fastlane/
 .flutter
 .ganttproject
+.gdrive/
 .Genymobile/
 .ghidra/
 .heroku/
@@ -221,6 +186,7 @@ wget-log*
 .landscape/
 .lesshst
 .lnav/
+.lsp/
 .luarocks/
 .magick/
 .matplotlib/
@@ -228,13 +194,18 @@ wget-log*
 .motd_shown
 .netrc
 .ngrok2/
+.oci/
+.oh-my-zsh/
 .plotly/
 .putty/
 .RData
 .rest-client/
 .rnd
 .rstudio-desktop/
+.srcclr/
+.ssh/
 .swiftpm/
+.wget-hsts
 .terminfo/
 .termux/
 .tooling/
@@ -248,11 +219,26 @@ wget-log*
 .wireshark/
 .Xresources
 .yarnrc
+.zcompdump*
+.zsh_sessions/
 Calibre Library/
 Dropbox/
 Google Drive/
-VirtualBox VMs/
+mbox
 pprof/
+VirtualBox VMs/
+
+# private/config files & dirs
+.config/
+.custom_env
+.davmail.properties
+.eclrc
+.gist-vim
+.gitconfig
+.gnupg
+.gtmx.json
+.selected_editor
+.zsh-update
 
 # personal data
 .emulator_console_auth_token
@@ -261,5 +247,7 @@ pprof/
 .sleep
 bin/
 files/
+public_html/
+srcs/
 storage/
 
