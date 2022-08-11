@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2022.08.03.
+# updated on 2022.08.11.
 #
 # ... by meinside@duck.com
 #
@@ -73,11 +73,7 @@ export HISTSIZE=10000
 export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"; find_git_branch; find_git_dirty;'
 
 # colors
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    alias grep="grep --color=auto"
-fi
+source ~/.lscolors
 
 # OS-specific settings
 case "$OSTYPE" in

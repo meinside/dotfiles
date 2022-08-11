@@ -2,8 +2,10 @@
 #
 # created by meinside@duck.com
 #
-# last update: 2022.07.07.
+# last update: 2022.08.11.
 
+alias ls="ls --color=auto"
+alias grep="grep --color=auto"
 alias ll="ls -alF"
 
 alias ngrep="sudo ngrep -q -W byline"
