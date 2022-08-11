@@ -1,6 +1,6 @@
 # .gitignore of meinside@duck.com
 #
-# last update: 2022.07.29.
+# last update: 2022.08.11.
 
 # unnecessary binary files
 *.o
@@ -188,7 +188,7 @@ mbox
 .minikube/
 .vs-kubernetes/
 
-# history files
+# history/log files
 .*history
 .dbshell
 .fennel_history
@@ -196,6 +196,7 @@ mbox
 .oracle_jre_usage/
 .psql_history*
 .wget-hsts
+wget-log*
 
 # other applications' files & dirs
 .AndroidStudio*/
