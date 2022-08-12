@@ -237,9 +237,11 @@ require'packer'.startup({function()
         'clojure_lsp', -- clojure
         'gopls', -- go
         'hls', -- haskell
+        'jsonls', -- json
         'sumneko_lua', -- lua
         'pylsp', -- python
         'solargraph', -- ruby
+        'sqlls', -- sql
         'rust_analyzer', -- rust
         'zls', -- zig
       },
@@ -588,9 +590,11 @@ require'packer'.startup({function()
     'clojure_lsp',  -- clojure
     'gopls',  -- go
     'hls',  -- haskell
+    'jsonls', -- json
     'pylsp',  -- python
     --'rust_analyzer',  -- rust (handled below)
     'solargraph', -- ruby
+    'sqlls', -- sql
     'sumneko_lua', -- lua
     'zls',  -- zig
   }
