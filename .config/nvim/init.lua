@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.08.09.
+-- last update: 2022.08.12.
 
 
 ------------------------------------------------
@@ -14,8 +14,8 @@ local install_path = vim.fn.stdpath('data')..'/site/pack/packer/start/packer.nvi
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
   vim.fn.execute('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
 end
-local use = require('packer').use
-require('packer').startup({function()
+local use = require'packer'.use
+require'packer'.startup({function()
   use 'wbthomason/packer.nvim'
 
 
@@ -39,10 +39,10 @@ require('packer').startup({function()
 
 
   -- fold and preview (zc for closing, zo for opening / zM for closing all, zR opening all)
-  use { 'anuvyklack/pretty-fold.nvim',
+  use {'anuvyklack/pretty-fold.nvim',
     requires = {'anuvyklack/fold-preview.nvim', 'anuvyklack/keymap-amend.nvim'},
     config = function()
-      require('pretty-fold').setup {
+      require'pretty-fold'.setup {
         keep_indentation = false,
         fill_char = '━',
         sections = {
@@ -50,15 +50,15 @@ require('packer').startup({function()
           right = { '┫ ', 'number_of_folded_lines', ': ', 'percentage', ' ┣━━' }
         }
       }
-      require('fold-preview').setup {}
+      require'fold-preview'.setup {}
     end
   }
 
 
   -- formatting
-  use({'kylechui/nvim-surround', -- cs'" => change ' to " / ds" => remove " / ysiw" => wrap text object with " / yss" => wrap line with "
-    config = function() require('nvim-surround').setup {} end
-  })
+  use {'kylechui/nvim-surround', -- cs'" => change ' to " / ds" => remove " / ysiw" => wrap text object with " / yss" => wrap line with "
+    config = function() require'nvim-surround'.setup {} end
+  }
   use {
     'lukas-reineke/indent-blankline.nvim',
     config = function()
@@ -87,12 +87,12 @@ require('packer').startup({function()
     requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
     config = function()
       -- https://github.com/nvim-telescope/telescope.nvim#pickers
-      vim.keymap.set('n', '<leader>ff', require('telescope.builtin').find_files, {remap = false, silent = true})
-      vim.keymap.set('n', '<leader>gc', require('telescope.builtin').git_commits, {remap = false, silent = true})
-      vim.keymap.set('n', '<leader>qf', require('telescope.builtin').quickfix, {remap = false, silent = true})
-      vim.keymap.set('n', '<leader>lr', require('telescope.builtin').lsp_references, {remap = false, silent = true})
-      vim.keymap.set('n', '<leader>li', require('telescope.builtin').lsp_implementations, {remap = false, silent = true})
-      vim.keymap.set('n', '<leader>ld', require('telescope.builtin').lsp_definitions, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>ff', require'telescope.builtin'.find_files, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>gc', require'telescope.builtin'.git_commits, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>qf', require'telescope.builtin'.quickfix, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>lr', require'telescope.builtin'.lsp_references, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>li', require'telescope.builtin'.lsp_implementations, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>ld', require'telescope.builtin'.lsp_definitions, {remap = false, silent = true})
     end,
   }
 
@@ -103,7 +103,7 @@ require('packer').startup({function()
     'lewis6991/gitsigns.nvim', -- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
     requires = {'nvim-lua/plenary.nvim'},
     config = function()
-      require('gitsigns').setup({
+      require'gitsigns'.setup {
         numhl = true,
         on_attach = function(bufnr)
           local gs = package.loaded.gitsigns
@@ -141,7 +141,7 @@ require('packer').startup({function()
           -- Text object
           m({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
         end
-      })
+      }
     end
   }
   -- gist (:Gist / :Gist -p / ...)
@@ -155,7 +155,7 @@ require('packer').startup({function()
     after = 'github-nvim-theme',
     requires = {'kyazdani42/nvim-web-devicons', opt = true},
     config = function()
-      local navic = require('nvim-navic')
+      local navic = require'nvim-navic'
       if vim.fn.has('nvim-0.8') == 1 then -- TODO: remove this line when neovim 0.8 becomes stable
         require'lualine'.setup {
           options = {
@@ -226,11 +226,11 @@ require('packer').startup({function()
     end
   }
   use {'williamboman/mason.nvim', config = function()
-    require('mason').setup { ui = {icons = {package_installed = '✓', package_pending = '➜', package_uninstalled = '✗'}} }
+    require'mason'.setup { ui = {icons = {package_installed = '✓', package_pending = '➜', package_uninstalled = '✗'}} }
   end}
   use {'williamboman/mason-lspconfig.nvim', config = function()
     -- install lsp servers
-    require('mason-lspconfig').setup {
+    require'mason-lspconfig'.setup {
       ensure_installed = {
         'bashls', -- bash
         'clangd', -- clang
@@ -271,7 +271,7 @@ require('packer').startup({function()
       local luasnip = require'luasnip'
       local lspkind = require'lspkind'
 
-      cmp.setup({
+      cmp.setup {
         completion = { completeopt = 'menu,menuone,noselect' },
         snippet = {
           expand = function(args)
@@ -321,11 +321,10 @@ require('packer').startup({function()
           { name = 'nvim_lua', keyword_length = 2 },
         },
         formatting = { format = lspkind.cmp_format() },
-      })
+      }
 
       -- setup autopairs
-      local cmp_autopairs = require('nvim-autopairs.completion.cmp')
-      cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
+      cmp.event:on('confirm_done', require'nvim-autopairs.completion.cmp'.on_confirm_done())
 
       -- load snippets
       require'luasnip/loaders/from_vscode'.lazy_load()
@@ -373,7 +372,7 @@ require('packer').startup({function()
   -- code action: `\ca`
   use {'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu'}
   use {'kosayoda/nvim-lightbulb', requires = 'antoinemadec/FixCursorHold.nvim', config = function()
-    require('nvim-lightbulb').setup {autocmd = {enabled = true}}
+    require'nvim-lightbulb'.setup {autocmd = {enabled = true}}
   end}
 
 
@@ -443,7 +442,7 @@ require('packer').startup({function()
   use {'leoluz/nvim-dap-go', ft = {'go'}, config = function()
     -- $ go install github.com/go-delve/delve/cmd/dlv@latest
     -- :DapContinue for debugging
-    require('dap-go').setup()
+    require'dap-go'.setup()
   end}
 
 
@@ -460,7 +459,7 @@ require('packer').startup({function()
   use {'suketa/nvim-dap-ruby', ft = {'ruby'}, config = function()
     -- $ gem install readapt
     -- :DapContinue for debugging
-    require('dap-ruby').setup()
+    require'dap-ruby'.setup()
   end}
 
 
@@ -539,7 +538,7 @@ require('packer').startup({function()
 
     -- navic
     if client.server_capabilities.documentSymbolProvider then
-      require('nvim-navic').attach(client, bufnr)
+      require'nvim-navic'.attach(client, bufnr)
     end
   end
   local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -595,24 +594,24 @@ require('packer').startup({function()
     'sumneko_lua', -- lua
     'zls',  -- zig
   }
-  local nvim_lsp = require('lspconfig')
+  local nvim_lsp = require'lspconfig'
   for _, lsp in ipairs(lsp_servers) do
     nvim_lsp[lsp].setup { on_attach = on_attach_lsp, capabilities = capabilities, settings = lsp_settings }
   end
   -------- other language servers for custom setup --------
   -- (rust)
-  require('rust-tools').setup({
+  require'rust-tools'.setup {
     tools = { hover_actions = {auto_focus = true} },
     server = { on_attach = on_attach_lsp, capabilities = capabilities },
     dap = {
       -- install `codelldb` with :Mason
       -- :RustDebuggables for debugging
-      adapter = require('rust-tools.dap').get_codelldb_adapter(
+      adapter = require'rust-tools.dap'.get_codelldb_adapter(
         vim.env.HOME .. '/.local/share/nvim/mason/packages/codelldb/extension/adapter/codelldb',
         vim.env.HOME .. '/.local/share/nvim/mason/packages/codelldb/extension/lldb/lib/liblldb.so'
       ),
     },
-  })
+  }
   if vim.lsp.buf.format then -- TODO: remove this line when neovim 0.8 becomes stable
     -- FIXME: `rust-tools` doesn't format on file saves
     vim.api.nvim_exec([[autocmd BufWritePre *.rs :silent! lua vim.lsp.buf.format{async=false}]], false)
@@ -623,11 +622,11 @@ require('packer').startup({function()
 
   -- vale
   if vim.fn.executable('vale') == 1 then -- $ go install github.com/errata-ai/vale@latest
-    require('null-ls').setup({
+    require'null-ls'.setup {
       sources = {
-        require('null-ls').builtins.diagnostics.vale,
+        require'null-ls'.builtins.diagnostics.vale,
       },
-    })
+    }
   end
 
 end, config = {autoremove = true, display = {open_fn = require'packer.util'.float}}})
