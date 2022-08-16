@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.08.12.
+-- last update: 2022.08.16.
 
 
 ------------------------------------------------
@@ -201,7 +201,7 @@ require'packer'.startup({function()
   }
   use {'https://git.sr.ht/~whynothugo/lsp_lines.nvim', config = function()
     local ll = require'lsp_lines'
-    ll.setup {}
+    ll.setup()
     vim.keymap.set('', '<leader>ll', ll.toggle, { desc = 'Toggle lsp_lines' })
   end}
   use {
@@ -285,7 +285,7 @@ require'packer'.startup({function()
           ['<Down>'] = cmp.mapping.select_next_item(),
           ['<C-b>'] = cmp.mapping(cmp.mapping.scroll_docs(-4), { 'i', 'c' }),
           ['<C-f>'] = cmp.mapping(cmp.mapping.scroll_docs(4), { 'i', 'c' }),
-          ['<C-Space>'] = cmp.mapping(cmp.mapping.complete(), { 'i', 'c' }),
+          ['<C-Space>'] = cmp.mapping(cmp.mapping.complete{}, { 'i', 'c' }),
           ['<C-y>'] = cmp.config.disable,
           ['<C-e>'] = cmp.mapping({
             i = cmp.mapping.abort(),
