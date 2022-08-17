@@ -1,9 +1,15 @@
 # .custom_env.sample
 #
-# last update: 2022.08.11.
+# last update: 2022.08.17.
 
 # for macOS ($ brew install coreutils)
 #alias ls='gls --color=auto'
+
+# for macOS
+#export EDITOR="/opt/homebrew/bin/nvim"
+#export SVN_EDITOR=$EDITOR
+#alias vi=$EDITOR
+#alias vim=$EDITOR
 
 # print go version of a compiled binary
 gobuildversion() {
