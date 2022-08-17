@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2022.08.11.
+# updated on 2022.08.17.
 #
 # ... by meinside@duck.com
 #
@@ -65,7 +65,11 @@ export SVN_EDITOR="/usr/bin/vim"
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 export CLICOLOR=true
-export TERM="xterm-256color" # XXX: set terminal setting to 'xterm-256color' for italic fonts
+if [ -z "$TMUX" ]; then
+    if [[ $TERM != "xterm-kitty" ]]; then
+        export TERM="xterm-256color"
+    fi
+fi
 export HISTCONTROL=erasedups
 export HISTSIZE=10000
 
