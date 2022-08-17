@@ -6,7 +6,7 @@ by Sungjin Han <meinside@duck.com>
 
 My personal dot/config files for:
 
-- macOS (**Monterey**)
+- macOS (**Monterey**) + [kitty](https://sw.kovidgoyal.net/kitty/)
 - Raspberry Pi (**Raspbian Bullseye**)
 - Linux (**Debian/Ubuntu**)
 - WSL2 (**Windows 11**)
@@ -29,23 +29,7 @@ $ wget -O - "https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep
 
 ## 1. Tips for macOS
 
-### A. Setup paths
-
-Reorder paths in **/etc/paths** for convenience:
-
-``$ sudo vi /etc/paths``
-
-=> put **/usr/local/bin** on the top for Homebrew
-
-```
-/usr/local/bin
-/usr/bin
-/bin
-/usr/sbin
-/sbin
-```
-
-### B. How to remove unused Xcode simulators
+### A. How to remove unused Xcode simulators
 
 ```bash
 $ xcrun simctl delete unavailable
@@ -198,35 +182,7 @@ You can list yours with following command:
 $ ls /sys/class/net | grep wl
 ```
 
-#### b. UTF-8 configuration for MySQL
-
-Open conf:
-
-```bash
-$ sudo vi /etc/mysql/my.cnf
-```
-
-and add following lines:
-
-```
-[mysql]
-default-character-set = utf8mb4
- 
-[client]
-default-character-set = utf8mb4
- 
-[mysqld]
-character-set-client-handshake=FALSE
-init_connect="SET collation_connection = utf8mb4_unicode_ci
-init_connect="SET NAMES utf8mb4"
-character-set-server = utf8mb4
-collation-server = utf8mb4_unicode_ci
- 
-[mysqldump]
-default-character-set = utf8mb4
-```
-
-#### c. AFP & Zero-conf DNS configuration
+#### b. AFP & Zero-conf DNS configuration
 
 ##### i. Install netatalk and avahi-daemon
 
@@ -270,7 +226,7 @@ and add following lines:
 </service-group>
 ```
 
-#### d. Increase performance/lifespan of storage
+#### c. Increase performance/lifespan of storage
 
 Try mounting frequently-written directories (including /tmp) to tmpfs.
 
@@ -284,7 +240,7 @@ tmpfs    /var/log    tmpfs    defaults,noatime,nosuid,mode=0755,size=128m    0 0
 
 See [this article](https://haydenjames.io/increase-performance-lifespan-ssds-sd-cards/).
 
-#### e. Enable TRIM on an external SSD
+#### d. Enable TRIM on an external SSD
 
 If the SSD [supports TRIM](https://www.jeffgeerling.com/blog/2020/enabling-trim-on-external-ssd-on-raspberry-pi),
 
@@ -547,6 +503,40 @@ $ winget install tailscale
 ### Z. Trouble Shooting
 
 -
+
+---
+
+## 999. Other Tips
+
+### A. Server Configurations
+
+#### a. UTF-8 configuration for MySQL
+
+Open conf:
+
+```bash
+$ sudo vi /etc/mysql/my.cnf
+```
+
+and add following lines:
+
+```
+[mysql]
+default-character-set = utf8mb4
+
+[client]
+default-character-set = utf8mb4
+
+[mysqld]
+character-set-client-handshake=FALSE
+init_connect="SET collation_connection = utf8mb4_unicode_ci
+init_connect="SET NAMES utf8mb4"
+character-set-server = utf8mb4
+collation-server = utf8mb4_unicode_ci
+
+[mysqldump]
+default-character-set = utf8mb4
+```
 
 ---
 
