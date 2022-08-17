@@ -5,7 +5,7 @@
 # $ brew tap Homebrew/bundle
 # $ brew bundle
 # 
-# last update: 2022.07.29.
+# last update: 2022.08.17.
 
 ######## formulas
 
@@ -33,11 +33,6 @@ brew 'zsh-syntax-highlighting'
 tap 'dart-lang/dart'
 brew 'dart'
 
-# for fennel (use `bin/install_fennel.sh`)
-brew 'fennel'
-
-# for haskell (use `bin/install_haskell.sh`)
-
 # other development tools
 brew 'curl'
 brew 'git'
@@ -47,7 +42,6 @@ brew 'jq'
 brew 'mkcert'
 #brew 'wireshark'
 #brew 'wrk'
-#brew 'vale' # (use `bin/install_vale.sh`)
 
 
 ######## casks
@@ -55,8 +49,6 @@ brew 'mkcert'
 # utilities
 cask 'dropbox'
 cask 'google-chrome'
-cask 'osxfuse'
 cask 'visual-studio-code'
-cask 'xquartz'
-cask 'iterm2'
+cask 'kitty'
 
