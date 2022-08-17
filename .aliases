@@ -2,7 +2,7 @@
 #
 # created by meinside@duck.com
 #
-# last update: 2022.08.11.
+# last update: 2022.08.17.
 
 alias ls="ls --color=auto"
 alias grep="grep --color=auto"
@@ -24,6 +24,11 @@ if [[ $OSTYPE == darwin* ]]; then
 	alias flush='dscacheutil -flushcache'
 
 	alias chrome="open -a /Applications/Google\ Chrome.app"
+fi
+
+# workarounds for kitty
+if [[ $TERM == "xterm-kitty" ]]; then
+	alias ssh="TERM=xterm-256color ssh"
 fi
 
 # suffix aliases (for zsh only)
