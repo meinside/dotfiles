@@ -33,6 +33,6 @@ fi
 
 # suffix aliases (for zsh only)
 if [[ $SHELL == *"/bin/zsh"* ]]; then
-	alias -s {go,rs,cljs,cljc,c,cpp,zig,md,json,html,css}=vi
+	alias -s {cljc,cljs,c,cc,cpp,css,go,html,json,md,rs,zig}=vi
 fi
 

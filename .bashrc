@@ -11,7 +11,7 @@
 # various configurations
 export DISPLAY=:0.0
 export EDITOR="/usr/bin/vim"
-export SVN_EDITOR="/usr/bin/vim"
+export SVN_EDITOR="$EDITOR"
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 export CLICOLOR=true
