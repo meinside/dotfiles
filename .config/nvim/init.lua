@@ -84,17 +84,32 @@ require'packer'.startup({function()
   use 'johngrib/vim-f-hangul'	-- can use f/t/;/, on Hangul characters
   use {
     'nvim-telescope/telescope.nvim',
-    requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}},
+    requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}, {'nvim-telescope/telescope-fzf-native.nvim'}},
     config = function()
+      local telescope = require'telescope'
+      telescope.setup {
+        extensions = {
+          fzf = {
+            fuzzy = true,                    -- false will only do exact matching
+            override_generic_sorter = true,  -- override the generic sorter
+            override_file_sorter = true,     -- override the file sorter
+            case_mode = 'smart_case',        -- or "ignore_case" or "respect_case"
+          }
+        }
+      }
+      telescope.load_extension('fzf')
+
       -- https://github.com/nvim-telescope/telescope.nvim#pickers
-      vim.keymap.set('n', '<leader>ff', require'telescope.builtin'.find_files, {remap = false, silent = true})
-      vim.keymap.set('n', '<leader>gc', require'telescope.builtin'.git_commits, {remap = false, silent = true})
-      vim.keymap.set('n', '<leader>qf', require'telescope.builtin'.quickfix, {remap = false, silent = true})
-      vim.keymap.set('n', '<leader>lr', require'telescope.builtin'.lsp_references, {remap = false, silent = true})
-      vim.keymap.set('n', '<leader>li', require'telescope.builtin'.lsp_implementations, {remap = false, silent = true})
-      vim.keymap.set('n', '<leader>ld', require'telescope.builtin'.lsp_definitions, {remap = false, silent = true})
+      local builtin = require'telescope.builtin'
+      vim.keymap.set('n', '<leader>ff', builtin.find_files, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>gc', builtin.git_commits, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>qf', builtin.quickfix, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>lr', builtin.lsp_references, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>li', builtin.lsp_implementations, {remap = false, silent = true})
+      vim.keymap.set('n', '<leader>ld', builtin.lsp_definitions, {remap = false, silent = true})
     end,
   }
+  use {'nvim-telescope/telescope-fzf-native.nvim', run = 'make'}
 
 
   -- git
