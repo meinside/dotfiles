@@ -14,7 +14,7 @@ My personal dot/config files for:
 
 ---
 
-## 0. Easy install
+## 0. Install
 
 ### A. Use prep scripts
 
@@ -29,7 +29,13 @@ $ wget -O - "https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep
 
 ## 1. Tips for macOS
 
-### A. How to remove unused Xcode simulators
+### A. Useful Scripts
+
+#### a. Hack things
+
+Have a look at this script: [`bin/hack_macos.sh`](https://github.com/meinside/dotfiles/blob/master/bin/hack_macos.sh).
+
+#### b. How to remove unused Xcode simulators
 
 ```bash
 $ xcrun simctl delete unavailable
