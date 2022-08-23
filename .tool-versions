@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.08.18.
+# last update: 2022.08.23.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -57,7 +57,7 @@ java openjdk-17.0.2
 # $ asdf install leiningen
 #
 # https://github.com/technomancy/leiningen/releases
-leiningen 2.9.9
+leiningen 2.9.10
 
 # $ asdf plugin add lua
 # $ asdf install lua
