@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.08.16.
+-- last update: 2022.08.23.
 
 
 ------------------------------------------------
@@ -204,7 +204,7 @@ require'packer'.startup({function()
   -- auto pair/close
   use {
     'windwp/nvim-autopairs',
-    config = function() require'nvim-autopairs'.setup{} end
+    config = function() require'nvim-autopairs'.setup {} end
   }
 
 
