@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.08.23.
+-- last update: 2022.09.02.
 
 
 ------------------------------------------------
@@ -429,7 +429,9 @@ require'packer'.startup({function()
       vim.api.nvim_exec([[let g:conjure#filetype#fennel = "conjure.client.fennel.stdio"]], false)
     end,
   }
-  use {'bakpakin/janet.vim', ft = {'janet'}}
+  use {'bakpakin/janet.vim', ft = {'janet'}, config = function()
+    vim.api.nvim_exec([[autocmd BufEnter *.janet echo "NOTE: run LSP with $ janet -e '(import spork/netrepl) (netrepl/server)'"]], false)
+  end}
   -- >f, <f : move a form
   -- >e, <e : move an element
   -- >), <), >(, <( : move a parenthesis
