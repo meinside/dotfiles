@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.09.05.
+# last update: 2022.09.06.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -41,10 +41,14 @@ golang 1.19
 # $ asdf plugin add janet
 # $ asdf install janet
 #
-# For nrepl,
+# If meson is not installed,
+#   $ brew install meson
+# or
+#   $ sudo apt install meson
 #
-# $ jpm install spork
-# $ janet -e "(import spork/netrepl) (netrepl/server)"
+# For LSP,
+#   $ jpm install spork
+#   $ janet -e "(import spork/netrepl) (netrepl/server)"
 #
 # https://github.com/janet-lang/janet/releases
 janet 1.24.1
