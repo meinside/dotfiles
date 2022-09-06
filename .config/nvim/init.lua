@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.09.02.
+-- last update: 2022.09.06.
 
 
 ------------------------------------------------
@@ -417,36 +417,6 @@ require'packer'.startup({function()
   use {'bash-lsp/bash-language-server', ft = {'sh'}}
 
 
-  -- clojure and other lispy languages
-  use {'dmac/vim-cljfmt', ft = {'clojure'}} -- $ go install github.com/cespare/goclj/cljfmt
-  -- for auto completion: <C-x><C-o>
-  -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
-  -- for reloading everything: \rr
-  -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-  use {'Olical/conjure', ft = {'clojure', 'fennel', 'janet'}}
-  use {'bakpakin/fennel.vim', ft = {'fennel'},
-    config = function() -- https://github.com/Olical/conjure/wiki/Quick-start:-Fennel-(stdio)
-      vim.api.nvim_exec([[let g:conjure#filetype#fennel = "conjure.client.fennel.stdio"]], false)
-    end,
-  }
-  use {'bakpakin/janet.vim', ft = {'janet'}, config = function()
-    vim.api.nvim_exec([[autocmd BufEnter *.janet echo "NOTE: run LSP with $ janet -e '(import spork/netrepl) (netrepl/server)'"]], false)
-  end}
-  -- >f, <f : move a form
-  -- >e, <e : move an element
-  -- >), <), >(, <( : move a parenthesis
-  -- <I, >I : insert at the beginning or end of a form
-  -- dsf : remove surroundings
-  -- cse(, cse), cseb : surround an element with parenthesis
-  -- cse[, cse] : surround an element with brackets
-  -- cse{, cse} : surround an element with braces
-  use {'guns/vim-sexp', ft = {'clojure', 'fennel', 'janet'}}
-  vim.g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
-  vim.g['sexp_filetypes'] = 'clojure,fennel,janet'
-  use {'tpope/vim-sexp-mappings-for-regular-people', ft = {'clojure', 'fennel', 'janet'}}
-  use {'gpanders/nvim-parinfer', ft = {'clojure', 'fennel', 'janet'}}
-
-
   -- go
   use {
     'ray-x/go.nvim', ft = {'go'},
@@ -471,6 +441,37 @@ require'packer'.startup({function()
   if vim.fn.executable('stylish-haskell') == 1 then
     use {'alx741/vim-stylishask', ft = {'haskell'}}
   end
+
+
+  -- lispy languages
+  local lisps = {'clojure', 'fennel', 'janet'}
+  -- for auto completion: <C-x><C-o>
+  -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
+  -- for reloading everything: \rr
+  -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
+  use {'Olical/conjure', ft = lisps}
+  use {'dmac/vim-cljfmt', ft = {'clojure'}} -- $ go install github.com/cespare/goclj/cljfmt
+  use {'bakpakin/fennel.vim', ft = {'fennel'},
+    config = function() -- https://github.com/Olical/conjure/wiki/Quick-start:-Fennel-(stdio)
+      vim.api.nvim_exec([[let g:conjure#filetype#fennel = "conjure.client.fennel.stdio"]], false)
+    end,
+  }
+  use {'bakpakin/janet.vim', ft = {'janet'}, config = function()
+    vim.api.nvim_exec([[autocmd BufEnter *.janet echo "NOTE: run LSP with $ janet -e '(import spork/netrepl) (netrepl/server)'"]], false)
+  end}
+  -- >f, <f : move a form
+  -- >e, <e : move an element
+  -- >), <), >(, <( : move a parenthesis
+  -- <I, >I : insert at the beginning or end of a form
+  -- dsf : remove surroundings
+  -- cse(, cse), cseb : surround an element with parenthesis
+  -- cse[, cse] : surround an element with brackets
+  -- cse{, cse} : surround an element with braces
+  use {'guns/vim-sexp', ft = lisps}
+  vim.g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
+  vim.g['sexp_filetypes'] = table.concat(lisps, ',')
+  use {'tpope/vim-sexp-mappings-for-regular-people', ft = lisps}
+  use {'gpanders/nvim-parinfer', ft = lisps}
 
 
   -- ruby
