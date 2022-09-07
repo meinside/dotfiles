@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.09.06.
+-- last update: 2022.09.07.
 
 
 ------------------------------------------------
@@ -457,7 +457,16 @@ require'packer'.startup({function()
     end,
   }
   use {'bakpakin/janet.vim', ft = {'janet'}, config = function()
-    vim.api.nvim_exec([[autocmd BufEnter *.janet echo "NOTE: run LSP with $ janet -e '(import spork/netrepl) (netrepl/server)'"]], false)
+    if vim.fn.executable('lsof') == 1 then
+      local open = vim.fn.system('lsof -i:9365 | grep LISTEN')
+      if string.len(open) <= 0 then
+        vim.api.nvim_create_autocmd('BufEnter', {pattern = '*.janet', callback = function()
+          print("NOTE: run LSP with $ janet -e '(import spork/netrepl) (netrepl/server)'")
+        end})
+      end
+    else
+      error('`lsof` is not installed.')
+    end
   end}
   -- >f, <f : move a form
   -- >e, <e : move an element
