@@ -64,7 +64,7 @@ update-linux () {
 	elif [ -x /usr/bin/pacman ]; then
 		sudo pacman -Syu && \
 			sudo paccache -ruk0
-	end
+	fi
 }
 
 # update bundle, brew, brew cask and everything!
