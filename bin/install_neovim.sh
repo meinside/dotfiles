@@ -4,7 +4,7 @@
 # 
 # for building neovim from source code
 #
-# last update: 2022.07.29.
+# last update: 2022.09.20.
 # 
 # by meinside@duck.com
 
@@ -53,7 +53,13 @@ TMP_DIR=/tmp/nvim
 
 function prep {
     # install needed packages
-    sudo apt-get install -y ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip
+    if [ -x /usr/bin/apt-get ]; then
+	sudo apt-get install -y ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip
+    elif [ -x /usr/bin/pacman ]; then
+	sudo pacman -Syu ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip
+    else
+	error "* distro not supported"
+    fi
 
     # clean tmp directory
     clean

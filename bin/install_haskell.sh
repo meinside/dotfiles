@@ -5,7 +5,7 @@
 # Install haskell and its tools.
 # 
 # created on : 2021.07.12.
-# last update: 2022.05.03.
+# last update: 2022.09.20.
 # 
 # by meinside@duck.com
 
@@ -47,7 +47,14 @@ OPT_DIR="/opt"
 function install_linux {
 	if [ -z $TERMUX_VERSION ]; then
 		warn ">>> installing essential packages..."
-		sudo apt-get install -y build-essential curl libffi-dev libffi7 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5 llvm libnuma-dev stylish-haskell
+
+		if [ -x /usr/bin/apt-get ]; then
+			sudo apt-get install -y build-essential curl libffi-dev libffi7 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5 llvm libnuma-dev stylish-haskell
+		elif [ -x /usr/bin/pacman ]; then
+			sudo pacman -Syu build-essential curl libffi-dev libffi7 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5 llvm libnuma-dev stylish-haskell
+		else
+			error "* distro not supported"
+		fi
 
 		warn ">>> installing ghcup..."
 		curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh

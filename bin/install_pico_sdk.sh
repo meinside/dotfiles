@@ -7,7 +7,7 @@
 # https://datasheets.raspberrypi.org/pico/getting-started-with-pico.pdf
 #
 # created on: 2021.08.24.
-# updated on: 2022.05.03.
+# updated on: 2022.09.20.
 #
 # by meinside@duck.com
 
@@ -76,8 +76,15 @@ function install_macos {
 }
 
 function install_linux_packages {
-    warn ">>> installing packages..." && \
+    warn ">>> installing packages..."
+
+    if [ -x /usr/bin/apt-get ]; then
 	sudo apt-get -y install cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential libstdc++-arm-none-eabi-newlib
+    elif [ -x /usr/bin/pacman ]; then
+	sudo pacman -Syu cmake gcc-arm-none-eabi libnewlib-arm-none-eabi build-essential libstdc++-arm-none-eabi-newlib
+    else
+	error "* distro not supported"
+    fi
 }
 
 function install_linux {

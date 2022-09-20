@@ -5,7 +5,7 @@
 # Manually build mosh from `master` branch. (1.3.2 doesn't support 24-bit colors yet)
 #
 # created on : 2021.08.11.
-# last update: 2022.01.26.
+# last update: 2022.09.20.
 
 
 ################################
@@ -48,20 +48,40 @@ function install_macos {
 # for linux
 function install_linux {
 	if [ -z $TERMUX_VERSION ]; then
-		sudo apt-get -y purge mosh
 
-		info ">>> installing essential packages..." && \
-			sudo apt-get -y install build-essential pkg-config autoconf protobuf-compiler libncurses5-dev zlib1g-dev libssl-dev libprotobuf-dev && \
-			info ">>> cloning: $MOSH_REPO" && \
-			cd $TMP_DIR && \
-			git clone $MOSH_REPO && \
-			info ">>> building..." && \
-			cd mosh && \
-			./autogen.sh && \
-			./configure && \
-			make && \
-			sudo make install && \
-			info ">>> installed mosh from the master branch!"
+		if [ -x /usr/bin/apt-get ]; then
+			sudo apt-get -y purge mosh
+
+			info ">>> installing essential packages..." && \
+				sudo apt-get -y install build-essential pkg-config autoconf protobuf-compiler libncurses5-dev zlib1g-dev libssl-dev libprotobuf-dev && \
+				info ">>> cloning: $MOSH_REPO" && \
+				cd $TMP_DIR && \
+				git clone $MOSH_REPO && \
+				info ">>> building..." && \
+				cd mosh && \
+				./autogen.sh && \
+				./configure && \
+				make && \
+				sudo make install && \
+				info ">>> installed mosh from the master branch!"
+		elif [ -x /usr/bin/pacman ]; then
+			sudo pacman -Rs mosh
+
+			info ">>> installing essential packages..." && \
+				sudo pacman -Syu build-essential pkg-config autoconf protobuf-compiler libncurses5-dev zlib1g-dev libssl-dev libprotobuf-dev && \
+				info ">>> cloning: $MOSH_REPO" && \
+				cd $TMP_DIR && \
+				git clone $MOSH_REPO && \
+				info ">>> building..." && \
+				cd mosh && \
+				./autogen.sh && \
+				./configure && \
+				make && \
+				sudo make install && \
+				info ">>> installed mosh from the master branch!"
+		else
+			error "* distro not supported"
+		fi
 
 		cd $TMP_DIR && \
 			rm -rf mosh && \

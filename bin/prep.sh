@@ -6,7 +6,7 @@
 #
 # (https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh)
 # 
-# last update: 2022.05.03.
+# last update: 2022.09.20.
 # 
 # by meinside@duck.com
 
@@ -69,8 +69,14 @@ function check_git_linux {
 		warning ">>> installing git..."
 
 		if [ -z $TERMUX_VERSION ]; then
-			sudo apt-get update
-			sudo apt-get -y install git
+			if [ -x /usr/bin/apt-get ]; then
+				sudo apt-get update && \
+					sudo apt-get -y install git
+			elif [ -x /usr/bin/pacman ]; then
+				sudo pacman -Syu git
+			else
+				error "* distro not supported"
+			fi
 		else  # termux
 			pkg install git
 		fi
@@ -89,10 +95,17 @@ function install_packages {
 
 function install_packages_linux {
 	if [ -z $TERMUX_VERSION ]; then
-		sudo apt-get update && \
-			sudo apt-get -y upgrade && \
-			sudo apt-get -y install zsh vim tmux psmisc locales && \
-			sudo locale-gen en_US.UTF-8
+		if [ -x /usr/bin/apt-get ]; then
+			sudo apt-get update && \
+				sudo apt-get -y upgrade && \
+				sudo apt-get -y install zsh vim tmux psmisc locales && \
+				sudo locale-gen en_US.UTF-8
+		elif [ -x /usr/bin/pacman ]; then
+			sudo pacman -Syu zsh vim tmux psmisc locales && \
+				sudo locale-gen en_US.UTF-8
+		else
+			error "* distro not supported"
+		fi
 	else  # termux
 		pkg install zsh tmux psmisc
 	fi
@@ -113,8 +126,12 @@ function cleanup {
 
 function cleanup_linux {
 	if [ -z $TERMUX_VERSION ]; then
-		sudo apt-get -y autoremove
-		sudo apt-get -y autoclean
+		if [ -x /usr/bin/apt-get ]; then
+			sudo apt-get -y autoremove && \
+				sudo apt-get -y autoclean
+		elif [ -x /usr/bin/pacman ]; then
+			sudo paccache -ruk0
+		fi
 	fi
 }
 
