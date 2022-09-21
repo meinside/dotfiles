@@ -7,6 +7,8 @@
 
 # for macOS
 #export EDITOR="/opt/homebrew/bin/nvim"
+# or
+#export EDITOR="~/.asdf/shims/nvim"
 #export SVN_EDITOR=$EDITOR
 #alias vi=$EDITOR
 #alias vim=$EDITOR

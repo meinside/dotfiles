@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.09.19.
+# last update: 2022.09.21.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -88,6 +88,21 @@ leiningen 2.9.10
 #
 # https://www.lua.org/versions.html
 lua 5.4.4
+
+# $ asdf plugin add neovim
+# $ asdf install neovim
+#
+# (linux) For updating alternatives for neovim:
+#
+# $ sudo update-alternatives --install /usr/bin/vi vi `which nvim` 60
+# $ sudo update-alternatives --set vi `which nvim`
+# $ sudo update-alternatives --install /usr/bin/vim vim `which nvim` 60
+# $ sudo update-alternatives --set vim `which nvim`
+# $ sudo update-alternatives --install /usr/bin/editor editor `which nvim` 60
+# $ sudo update-alternatives --set editor `which nvim`
+#
+# https://github.com/neovim/neovim/releases
+neovim nightly
 
 # $ asdf plugin add nodejs
 # $ asdf install nodejs
