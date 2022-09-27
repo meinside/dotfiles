@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.09.07.
+-- last update: 2022.09.27.
 
 
 ------------------------------------------------
@@ -109,7 +109,7 @@ require'packer'.startup({function()
       vim.keymap.set('n', '<leader>ld', builtin.lsp_definitions, {remap = false, silent = true})
     end,
   }
-  use {'nvim-telescope/telescope-fzf-native.nvim', run = 'make'}
+  use {'nvim-telescope/telescope-fzf-native.nvim', run = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
 
 
   -- git
