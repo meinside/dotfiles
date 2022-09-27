@@ -109,7 +109,7 @@ require'packer'.startup({function()
       vim.keymap.set('n', '<leader>ld', builtin.lsp_definitions, {remap = false, silent = true})
     end,
   }
-  use {'nvim-telescope/telescope-fzf-native.nvim', run = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' }
+  use {'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
 
 
   -- git
