@@ -55,6 +55,8 @@ function prep {
     # install needed packages
     if [ -x /usr/bin/apt-get ]; then
 	sudo apt-get install -y ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip
+    elif [ -x /usr/bin/pacman ]; then
+	sudo pacman -Syu ninja gettext libtool autoconf automake cmake pkg-config unzip
     else
 	error "* distro not supported"
     fi
@@ -111,13 +113,15 @@ function install_linux {
 }
 
 function update_alternatives {
-    NVIM_BIN_PATH="/usr/local/bin/nvim" && \
-	sudo update-alternatives --install /usr/bin/vi vi $NVIM_BIN_PATH 60 && \
-	sudo update-alternatives --set vi $NVIM_BIN_PATH && \
-	sudo update-alternatives --install /usr/bin/vim vim $NVIM_BIN_PATH 60 && \
-	sudo update-alternatives --set vim $NVIM_BIN_PATH && \
-	sudo update-alternatives --install /usr/bin/editor editor $NVIM_BIN_PATH 60 && \
-	sudo update-alternatives --set editor $NVIM_BIN_PATH
+    if [ -x /usr/bin/update-alternatives ]; then
+	NVIM_BIN_PATH="/usr/local/bin/nvim" && \
+	    sudo update-alternatives --install /usr/bin/vi vi $NVIM_BIN_PATH 60 && \
+	    sudo update-alternatives --set vi $NVIM_BIN_PATH && \
+	    sudo update-alternatives --install /usr/bin/vim vim $NVIM_BIN_PATH 60 && \
+	    sudo update-alternatives --set vim $NVIM_BIN_PATH && \
+	    sudo update-alternatives --install /usr/bin/editor editor $NVIM_BIN_PATH 60 && \
+	    sudo update-alternatives --set editor $NVIM_BIN_PATH
+    fi
 }
 
 case "$OSTYPE" in

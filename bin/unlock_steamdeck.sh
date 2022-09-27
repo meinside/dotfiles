@@ -10,5 +10,6 @@
 sudo steamos-readonly disable && \
 	sudo pacman-key --init && \
 	sudo pacman-key --populate archlinux && \
-	sudo pacman -Syu base-devel
+	sudo pacman -Syu base-devel && \
+	sudo pacman -S glibc linux-api-headers
 
