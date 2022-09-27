@@ -10,8 +10,6 @@
 #   (https://webcodr.io/2018/02/nginx-reverse-proxy-on-raspberry-pi-with-lets-encrypt/)
 
 #   $ sudo apt-get -y install certbot
-#   or
-#   $ sudo pacman -Syu certbot
 #
 #   # for root and subdomain certificates (will restart nginx when issued):
 #   $ sudo certbot certonly --authenticator standalone -d "example.com" -d "subdomain1.example.com" --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
@@ -25,7 +23,7 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2022.09.20.
+# last update: 2022.09.27.
 # 
 # by meinside@duck.com
 

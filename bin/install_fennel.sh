@@ -5,7 +5,7 @@
 # Install fennel script or binary.
 #
 # created on : 2021.11.24.
-# last update: 2022.09.20.
+# last update: 2022.09.27.
 #
 # by meinside@duck.com
 
@@ -56,8 +56,6 @@ function prep_linux {
 
 		if [ -x /usr/bin/apt-get ]; then
 			sudo apt-get install -y lua5.3
-		elif [ -x /usr/bin/pacman ]; then
-			sudo pacman -Syu lua5.3
 		else
 			error "* distro not supported"
 		fi

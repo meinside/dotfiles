@@ -4,7 +4,7 @@
 # 
 # for building neovim from source code
 #
-# last update: 2022.09.20.
+# last update: 2022.09.27.
 # 
 # by meinside@duck.com
 
@@ -55,8 +55,6 @@ function prep {
     # install needed packages
     if [ -x /usr/bin/apt-get ]; then
 	sudo apt-get install -y ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip
-    elif [ -x /usr/bin/pacman ]; then
-	sudo pacman -Syu ninja-build gettext libtool libtool-bin autoconf automake cmake g++ pkg-config unzip
     else
 	error "* distro not supported"
     fi

@@ -6,7 +6,7 @@
 #
 # (pass '--do-not-clean' argument for preserving files after install)
 # 
-# last update: 2022.09.20.
+# last update: 2022.09.27.
 # 
 # by meinside@duck.com
 
@@ -53,16 +53,6 @@ function prep {
 	# install needed packages
 	if [ -x /usr/bin/apt-get ]; then
 		sudo apt-get install -y build-essential \
-			libx264-dev \
-			libx265-dev libnuma-dev \
-			libvpx-dev \
-			libfdk-aac-dev \
-			libmp3lame-dev \
-			libvorbis-dev \
-			libopus-dev \
-			libdav1d-dev
-	elif [ -x /usr/bin/pacman ]; then
-		sudo pacman -Syu build-essential \
 			libx264-dev \
 			libx265-dev libnuma-dev \
 			libvpx-dev \

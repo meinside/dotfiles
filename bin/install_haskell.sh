@@ -5,7 +5,7 @@
 # Install haskell and its tools.
 # 
 # created on : 2021.07.12.
-# last update: 2022.09.20.
+# last update: 2022.09.27.
 # 
 # by meinside@duck.com
 
@@ -50,8 +50,6 @@ function install_linux {
 
 		if [ -x /usr/bin/apt-get ]; then
 			sudo apt-get install -y build-essential curl libffi-dev libffi7 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5 llvm libnuma-dev stylish-haskell
-		elif [ -x /usr/bin/pacman ]; then
-			sudo pacman -Syu build-essential curl libffi-dev libffi7 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5 llvm libnuma-dev stylish-haskell
 		else
 			error "* distro not supported"
 		fi
