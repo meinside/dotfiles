@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2022.09.23.
+# last update: 2022.09.27.
 #
 # meinside@duck.com
 
@@ -74,10 +74,20 @@ Videos/
 snap/
 
 # X11 files/dirs
-.fontconfig/
 .dbus/
+.fontconfig/
+.gtkrc-*
+.kde4/
+.pki/
 .Xauthority
+.xbindkeysrc
 .xsession-errors
+
+# steam deck files/dirs
+.face.icon
+.steam/
+.steampath
+.steampid
 
 # c/c++
 .ccls-cache/
