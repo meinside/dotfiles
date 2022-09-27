@@ -11,6 +11,7 @@ My personal dot/config files for:
 - Linux (**Debian/Ubuntu**)
 - WSL2 (**Windows 11**)
 - Termux (**Android / [F-Droid](https://f-droid.org/en/packages/com.termux/)**)
+- SteamOS on Steam Deck
 
 ---
 

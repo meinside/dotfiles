@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.09.23.
+# last update: 2022.09.27.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -45,6 +45,8 @@ golang 1.19.1
 #   $ brew install meson
 # or
 #   $ sudo apt install meson
+# or
+#   $ pip3 install --user meson
 #
 # For LSP,
 #   $ jpm install spork
