@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-# hack_macos.sh
+# bin/macos/hack.sh
 #
 # cherry-picked from: https://gist.github.com/erikh/2260182
 #
-# last update: 2020.02.01.
+# last update: 2022.09.28.
 
 # This is a script with usefull tips taken from:
 #   https://github.com/mathiasbynens/dotfiles/blob/master/.osx

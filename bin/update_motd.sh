@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# update_motd.rb
+# bin/update_motd.rb
 #
 # (used: https://manytools.org/hacker-tools/convert-images-to-ascii-art/)
 # 

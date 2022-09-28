@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+
+# bin/gen_selfsigned_certs.sh
 #
 # script for generating self-signed certificates for development
 #

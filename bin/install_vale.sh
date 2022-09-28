@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# install_vale.sh
+# bin/install_vale.sh
 #
 # Download and install latest version of vale from github release page.
 #

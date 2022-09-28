@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# prep.sh
+# bin/prep.sh
 # 
 # for cloning config files from github, and setting up several things
 #

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# install_mosh.sh
+# bin/install_mosh.sh
 #
 # Manually build mosh from `master` branch. (1.3.2 doesn't support 24-bit colors yet)
 #

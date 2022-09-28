@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 
-# unlock_steamdeck.sh
+# bin/steamdeck/unlock.sh
 #
 # Unlocks steam deck's read-only file system.
 #
 # created on : 2022.09.27.
-# last update: 2022.09.27.
+# last update: 2022.09.28.
 
 sudo steamos-readonly disable && \
 	sudo pacman-key --init && \

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# install_neovim.sh
+# bin/install_neovim.sh
 # 
 # for building neovim from source code
 #

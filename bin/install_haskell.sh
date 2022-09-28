@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# install_haskell.sh
+# bin/install_haskell.sh
 #
 # Install haskell and its tools.
 # 

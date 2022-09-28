@@ -6,10 +6,6 @@ These are my helper scripts that make my life a lot happier:
 
 A script for generating self-signed certificates for development.
 
-## hack_macos.sh
-
-A script for macOS hacks (originates from https://gist.github.com/erikh/2260182).
-
 ## install_asdf.sh
 
 A script for installing [asdf](https://github.com/asdf-vm/asdf).
@@ -61,4 +57,12 @@ A script for testing colors in the terminal.
 ## update_motd.sh
 
 A script for updating MOTD.
+
+## macos/hack.sh
+
+A script for macOS hacks (originates from https://gist.github.com/erikh/2260182).
+
+## steamdeck/unlock.sh
+
+A script for unlocking read-only file system of Steam Deck.
 

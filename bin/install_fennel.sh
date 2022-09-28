@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# install_fennel.sh
+# bin/install_fennel.sh
 #
 # Install fennel script or binary.
 #

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# test_colors.sh
+# bin/test_colors.sh
 #
 # A script for testing colors in the terminal.
 #

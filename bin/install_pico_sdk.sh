@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# install_pico_sdk.sh
+# bin/install_pico_sdk.sh
 #
 # Install SDK for Raspberry Pi Pico development.
 #

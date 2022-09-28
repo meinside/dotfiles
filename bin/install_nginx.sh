@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# install_nginx.sh
+# bin/install_nginx.sh
 # 
 # Build and install Nginx.
 #

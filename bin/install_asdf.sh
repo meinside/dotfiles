@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# install_asdf.sh
+# bin/install_asdf.sh
 #
 # Install asdf
 #

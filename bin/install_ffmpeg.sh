@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# install_ffmpeg.sh
+# bin/install_ffmpeg.sh
 # 
 # for building ffmpeg from source code
 #
