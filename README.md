@@ -430,7 +430,7 @@ and add following lines:
 $ sudo iptables -A INPUT -s 999.999.999.999 -j DROP
 ```
 
-### Z. Troubleshooting
+### Z. Trouble Shooting
 
 #### a. Error message: 'smsc95xx 1-1.1:1.0: eth0: kevent 2 may have been dropped'
 
