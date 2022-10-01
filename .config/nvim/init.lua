@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.09.27.
+-- last update: 2022.10.01.
 
 
 ------------------------------------------------
@@ -171,31 +171,18 @@ require'packer'.startup({function()
     requires = {'kyazdani42/nvim-web-devicons', opt = true},
     config = function()
       local navic = require'nvim-navic'
-      if vim.fn.has('nvim-0.8') == 1 then -- TODO: remove this line when neovim 0.8 becomes stable
-        require'lualine'.setup {
-          options = {
-            disabled_filetypes = {'help', 'packer', 'NvimTree', 'TelescopePrompt', 'gitcommit'},
-            globalstatus = true,
-          },
-          extensions = {'nvim-dap-ui', 'quickfix'},
-          sections = {
-            lualine_c = {'filename', {navic.get_location, cond = navic.is_available}},
-          },
-          winbar = {lualine_c = {{'filetype', icon_only = true}, {'filename'}}},
-          inactive_winbar = {lualine_c = {'filename'}},
-        }
-      else -- TODO: remove this line when neovim 0.8 becomes stable
-        require'lualine'.setup { -- TODO: remove this line when neovim 0.8 becomes stable
-          options = { -- TODO: remove this line when neovim 0.8 becomes stable
-            disabled_filetypes = {'help', 'packer', 'NvimTree', 'TelescopePrompt', 'gitcommit'}, -- TODO: remove this line when neovim 0.8 becomes stable
-            globalstatus = true, -- TODO: remove this line when neovim 0.8 becomes stable
-          }, -- TODO: remove this line when neovim 0.8 becomes stable
-          extensions = {'nvim-dap-ui', 'quickfix'}, -- TODO: remove this line when neovim 0.8 becomes stable
-          sections = { -- TODO: remove this line when neovim 0.8 becomes stable
-            lualine_c = {'filename', {navic.get_location, cond = navic.is_available}}, -- TODO: remove this line when neovim 0.8 becomes stable
-          }, -- TODO: remove this line when neovim 0.8 becomes stable
-        } -- TODO: remove this line when neovim 0.8 becomes stable
-      end -- TODO: remove this line when neovim 0.8 becomes stable
+      require'lualine'.setup {
+        options = {
+          disabled_filetypes = {'help', 'packer', 'NvimTree', 'TelescopePrompt', 'gitcommit'},
+          globalstatus = true,
+        },
+        extensions = {'nvim-dap-ui', 'quickfix'},
+        sections = {
+          lualine_c = {'filename', {navic.get_location, cond = navic.is_available}},
+        },
+        winbar = {lualine_c = {{'filetype', icon_only = true}, {'filename'}}},
+        inactive_winbar = {lualine_c = {'filename'}},
+      }
     end
   }
   use {'SmiteshP/nvim-navic', requires = {'neovim/nvim-lspconfig'}}
@@ -533,11 +520,7 @@ require'packer'.startup({function()
     vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
     vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
     vim.keymap.set('n', '<leader>dl', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-    if vim.lsp.buf.format then -- TODO: remove this line when neovim 0.8 becomes stable
-      vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.format{async=true}<CR>', opts)
-    else -- TODO: remove this line when neovim 0.8 becomes stable
-      vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts) -- TODO: remove this line when neovim 0.8 becomes stable
-    end -- TODO: remove this line when neovim 0.8 becomes stable
+    vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.format{async=true}<CR>', opts)
 
     -- diagnostics configuration
     vim.diagnostic.config({ underline = false, virtual_text = false, signs = true, severity_sort = true, update_in_insert = false })
@@ -548,11 +531,7 @@ require'packer'.startup({function()
 
     -- auto formatting on save
     if client.server_capabilities.document_formatting then
-      if vim.lsp.buf.format then -- TODO: remove this line when neovim 0.8 becomes stable
-        vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.format{async=false} end})
-      else -- TODO: remove this line when neovim 0.8 becomes stable
-        vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.formatting_sync(nil,500) end}) -- TODO: remove this line when neovim 0.8 becomes stable
-      end -- TODO: remove this line when neovim 0.8 becomes stable
+      vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.format{async=false} end})
     end
 
     -- highlight current variable
@@ -643,12 +622,8 @@ require'packer'.startup({function()
       ),
     },
   }
-  if vim.lsp.buf.format then -- TODO: remove this line when neovim 0.8 becomes stable
-    -- FIXME: `rust-tools` doesn't format on file saves
-    vim.api.nvim_exec([[autocmd BufWritePre *.rs :silent! lua vim.lsp.buf.format{async=false}]], false)
-  else -- TODO: remove this line when neovim 0.8 becomes stable
-    vim.api.nvim_exec([[autocmd BufWritePre *.rs :silent! lua vim.lsp.buf.formatting_sync(nil, 500)]], false) -- TODO: remove this line when neovim 0.8 becomes stable
-  end -- TODO: remove this line when neovim 0.8 becomes stable
+  -- FIXME: `rust-tools` doesn't format on file saves
+  vim.api.nvim_exec([[autocmd BufWritePre *.rs :silent! lua vim.lsp.buf.format{async=false}]], false)
 
 
   -- vale
@@ -664,11 +639,7 @@ end, config = {autoremove = true, display = {open_fn = require'packer.util'.floa
 
 
 -- neomake
-if vim.api.nvim_cmd then -- TODO: remove this line when neovim 0.8 becomes stable
-  vim.api.nvim_cmd({cmd = 'call', args = {"neomake#configure#automake('nrwi', 500)"}}, {})
-else -- TODO: remove this line when neovim 0.8 becomes stable
-  vim.api.nvim_exec([[call neomake#configure#automake('nrwi', 500)]], false) -- TODO: remove this line when neovim 0.8 becomes stable
-end -- TODO: remove this line when neovim 0.8 becomes stable
+vim.api.nvim_cmd({cmd = 'call', args = {"neomake#configure#automake('nrwi', 500)"}}, {})
 vim.g['neomake_open_list'] = 0
 
 
