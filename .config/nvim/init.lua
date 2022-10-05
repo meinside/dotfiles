@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.10.01.
+-- last update: 2022.10.05.
 
 
 ------------------------------------------------
@@ -496,6 +496,7 @@ require'packer'.startup({function()
 
   ----------------
   -- lsp settings
+  local mason_pkgs_dir = vim.env.HOME .. '/.local/share/nvim/mason/packages'
   local on_attach_lsp = function(client, bufnr) -- default setup for language servers
     -- Enable completion triggered by <c-x><c-o>
     vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -617,8 +618,8 @@ require'packer'.startup({function()
       -- install `codelldb` with :Mason
       -- :RustDebuggables for debugging
       adapter = require'rust-tools.dap'.get_codelldb_adapter(
-        vim.env.HOME .. '/.local/share/nvim/mason/packages/codelldb/extension/adapter/codelldb',
-        vim.env.HOME .. '/.local/share/nvim/mason/packages/codelldb/extension/lldb/lib/liblldb.so'
+        mason_pkgs_dir .. '/codelldb/extension/adapter/codelldb',
+        mason_pkgs_dir .. '/codelldb/extension/lldb/lib/liblldb.so'
       ),
     },
   }
