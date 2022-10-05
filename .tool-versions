@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.09.27.
+# last update: 2022.10.05.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -36,7 +36,7 @@ clojure 1.11.1.1165
 #   $ go install golang.org/x/tools/gopls@latest
 #
 # https://go.dev/doc/devel/release
-golang 1.19.1
+golang 1.19.2
 
 # $ asdf plugin add janet
 # $ asdf install janet
