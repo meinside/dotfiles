@@ -59,7 +59,8 @@ function install {
 
 # install for macOS
 function install_macos {
-    brew install chezscheme
+    #brew install --build-from-source chezscheme
+    error "* macOS not supported yet."
 }
 
 # install for linux
