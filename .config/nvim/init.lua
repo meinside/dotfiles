@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.10.05.
+-- last update: 2022.10.06.
 
 
 ------------------------------------------------
@@ -431,7 +431,7 @@ require'packer'.startup({function()
 
 
   -- lispy languages
-  local lisps = {'clojure', 'fennel', 'janet'}
+  local lisps = {'clojure', 'fennel', 'janet', 'scheme'}
   -- for auto completion: <C-x><C-o>
   -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
   -- for reloading everything: \rr
@@ -455,6 +455,10 @@ require'packer'.startup({function()
       error('`lsof` is not installed.')
     end
   end}
+  vim.api.nvim_exec([[
+    let g:conjure#client#scheme#stdio#command = "petite"
+    let g:conjure#client#scheme#stdio#prompt_pattern = "> $?"
+  ]], false)
   -- >f, <f : move a form
   -- >e, <e : move an element
   -- >), <), >(, <( : move a parenthesis
