@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.10.11.
+# last update: 2022.10.13.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -110,7 +110,7 @@ neovim nightly
 # $ asdf install nodejs
 #
 # https://nodejs.org/en/about/releases/
-nodejs lts
+nodejs 16.17.1
 
 # $ asdf plugin add python
 # $ asdf install python
