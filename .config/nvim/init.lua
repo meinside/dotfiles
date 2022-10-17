@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.10.06.
+-- last update: 2022.10.17.
 
 
 ------------------------------------------------
@@ -557,7 +557,7 @@ require'packer'.startup({function()
   local capabilities = vim.lsp.protocol.make_client_capabilities()
   local cmp_nvim_lsp = require'cmp_nvim_lsp'
   if cmp_nvim_lsp then
-    capabilities = cmp_nvim_lsp.update_capabilities(capabilities)
+    capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
   end
   capabilities.textDocument.completion.completionItem.documentationFormat = { 'markdown', 'plaintext' }
   capabilities.textDocument.completion.completionItem.snippetSupport = true
