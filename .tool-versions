@@ -42,6 +42,11 @@ golang 1.19.2
 # $ asdf install janet
 #
 # If meson is not installed,
+#   $ asdf plugin add meson && \
+#     asdf install meson && \
+#     asdf plugin add ninja && \
+#     asdf install ninja
+# or
 #   $ brew install meson
 # or
 #   $ sudo apt install meson
