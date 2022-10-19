@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.10.13.
+# last update: 2022.10.19.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -91,6 +91,12 @@ leiningen 2.9.10
 # https://www.lua.org/versions.html
 lua 5.4.4
 
+# $ asdf plugin add meson
+# $ asdf install meson
+#
+# https://github.com/mesonbuild/meson/releases
+meson 0.63.3
+
 # $ asdf plugin add neovim
 # $ asdf install neovim
 #
@@ -105,6 +111,12 @@ lua 5.4.4
 #
 # https://github.com/neovim/neovim/releases
 neovim nightly
+
+# $ asdf plugin add ninja
+# $ asdf install ninja
+#
+# https://github.com/ninja-build/ninja/releases
+ninja 1.11.1
 
 # $ asdf plugin add nodejs
 # $ asdf install nodejs
