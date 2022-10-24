@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.10.17.
+-- last update: 2022.10.24.
 
 
 ------------------------------------------------
@@ -33,6 +33,17 @@ require'packer'.startup({function()
   -- dim inactive window
   use 'blueyed/vim-diminactive'
 
+
+  -- minimap
+  use {
+    'gorbit99/codewindow.nvim',
+    config = function()
+      local codewindow = require'codewindow'
+      codewindow.setup {}
+      -- for toggling minimap: \mt
+      vim.keymap.set('n', '<leader>mt', function() codewindow.toggle_minimap() end, {remap = false, silent = true})
+    end
+  }
 
   -- markdown preview
   use {'iamcco/markdown-preview.nvim', run = 'cd app && npm install'}
