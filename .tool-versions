@@ -127,7 +127,7 @@ ninja 1.11.1
 # $ asdf install nodejs
 #
 # https://nodejs.org/en/about/releases/
-nodejs 18.12.0
+nodejs 16.17.1
 
 # $ asdf plugin add python
 # $ asdf install python

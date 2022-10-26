@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.10.24.
+-- last update: 2022.10.26.
 
 
 ------------------------------------------------
@@ -246,17 +246,17 @@ require'packer'.startup({function()
     require'mason-lspconfig'.setup {
       ensure_installed = {
         'bashls', -- bash
-        'clangd', -- clang
+        --'clangd', -- clang (NOTE: not installable on linux-aarch64, 2022.10.26.)
         'clojure_lsp', -- clojure
         'gopls', -- go
-        'hls', -- haskell
+        --'hls', -- haskell (NOTE: not installable on linux-aarch64, 2022.10.26.)
         'jsonls', -- json
         'sumneko_lua', -- lua
         'pylsp', -- python
         'solargraph', -- ruby
         'sqlls', -- sql
         'rust_analyzer', -- rust
-        'zls', -- zig
+        --'zls', -- zig (NOTE: not installable on linux-aarch64, 2022.10.26.)
       },
       automatic_installation = true,
     }
