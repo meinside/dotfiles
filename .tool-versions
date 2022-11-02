@@ -7,7 +7,7 @@
 # $ asdf install babashka
 #
 # https://github.com/babashka/babashka/releases
-babashka 1.0.164
+babashka 1.0.165
 
 # For bash-language-server,
 #   :MasonInstall bash-language-server
@@ -25,7 +25,7 @@ babashka 1.0.164
 #   $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
 #
 # https://clojure.org/releases/tools#_releases
-clojure 1.11.1.1165
+clojure 1.11.1.1182
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -180,5 +180,5 @@ rust 1.64.0
 #   $ zig-out/bin/zls config
 #
 # https://github.com/ziglang/zig/releases
-zig 0.9.1
+zig 0.10.0
 
