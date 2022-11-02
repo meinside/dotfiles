@@ -23,7 +23,7 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2022.10.18.
+# last update: 2022.11.02.
 # 
 # by meinside@duck.com
 
@@ -33,8 +33,8 @@
 # frequently updated values
 
 # nginx/library versions
-NGINX_VERSION="1.22.0"
-OPENSSL_VERSION="3.0.5"
+NGINX_VERSION="1.22.1"  # https://nginx.org/en/download.html
+OPENSSL_VERSION="3.0.7" # https://github.com/openssl/openssl/tags
 ZLIB_VERSION="1.2.13"	# https://github.com/madler/zlib/tags
 PCRE_VERSION="10.40"	# https://github.com/PCRE2Project/pcre2/releases
 
