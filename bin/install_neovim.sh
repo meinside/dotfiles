@@ -2,7 +2,8 @@
 
 # bin/install_neovim.sh
 # 
-# for building neovim from source code
+# For building neovim from source code.
+# (https://github.com/neovim/neovim/wiki/Installing-Neovim#install-from-source)
 #
 # last update: 2022.11.15.
 # 
@@ -11,6 +12,12 @@
 # * To install nightly version:
 #
 # $ ./install_neovim.sh --nightly
+#
+#
+# * To uninstall:
+#
+# $ sudo rm /usr/local/bin/nvim
+# $ sudo rm -r /usr/local/share/nvim/
 
 
 ################################
@@ -72,9 +79,11 @@ function clean {
 # $1: nightly or not
 function install {
     tag=$NVIM_VERSION
+    buildtype="Release"
 
     if [[ $1 == "--nightly" ]]; then
 	tag="nightly"
+	buildtype="RelWithDebInfo"
     fi
 
     warn ">>> installing neovim version ${tag}..."
@@ -87,8 +96,7 @@ function install {
 	cd $TMP_DIR && \
 	git checkout ${tag} && \
 	rm -rf build && \
-	make clean && \
-	make CMAKE_BUILD_TYPE=RelWithDebInfo && \
+	make CMAKE_BUILD_TYPE=${buildtype} && \
 	sudo make install
 }
 
