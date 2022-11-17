@@ -100,7 +100,7 @@ lua 5.4.4
 # $ asdf install meson
 #
 # https://github.com/mesonbuild/meson/releases
-meson 0.63.3
+meson 0.64.0
 
 # $ asdf plugin add neovim
 # $ asdf install neovim
