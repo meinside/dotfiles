@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.10.26.
+-- last update: 2022.11.25.
 
 
 ------------------------------------------------
@@ -47,6 +47,10 @@ require'packer'.startup({function()
 
   -- markdown preview
   use {'iamcco/markdown-preview.nvim', run = 'cd app && npm install'}
+
+
+  -- d2
+  use {'terrastruct/d2-vim'}
 
 
   -- fold and preview (zc for closing, zo for opening / zM for closing all, zR opening all)
