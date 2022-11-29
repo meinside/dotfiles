@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.11.25.
+-- last update: 2022.11.29.
 
 
 ------------------------------------------------
@@ -255,6 +255,7 @@ require'packer'.startup({function()
         'gopls', -- go
         --'hls', -- haskell (NOTE: not installable on linux-aarch64, 2022.10.26.)
         'jsonls', -- json
+        'nimls', -- nim
         'sumneko_lua', -- lua
         'pylsp', -- python
         'solargraph', -- ruby
@@ -489,6 +490,10 @@ require'packer'.startup({function()
   use {'gpanders/nvim-parinfer', ft = lisps}
 
 
+  -- nim
+  use {'alaviss/nim.nvim'}
+
+
   -- ruby
   use {'vim-ruby/vim-ruby', ft = {'ruby'}}
   use {'suketa/nvim-dap-ruby', ft = {'ruby'}, config = function()
@@ -617,6 +622,7 @@ require'packer'.startup({function()
     'gopls',  -- go
     'hls',  -- haskell
     'jsonls', -- json
+    'nimls', -- nim
     'pylsp',  -- python
     --'rust_analyzer',  -- rust (handled below)
     'solargraph', -- ruby

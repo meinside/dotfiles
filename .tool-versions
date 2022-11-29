@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.11.25.
+# last update: 2022.11.29.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -116,6 +116,15 @@ meson 0.64.1
 #
 # https://github.com/neovim/neovim/releases
 neovim nightly
+
+# $ asdf plugin add nim
+# $ asdf install nim
+#
+# For language server,
+#   $ nimble install nimlsp
+#
+# https://nim-lang.org/install.html
+nim 1.6.10
 
 # $ asdf plugin add ninja
 # $ asdf install ninja
