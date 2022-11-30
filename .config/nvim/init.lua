@@ -3,7 +3,7 @@
 -- created by meinside@duck.com,
 --
 -- created on : 2021.05.27.
--- last update: 2022.11.29.
+-- last update: 2022.11.30.
 
 
 ------------------------------------------------
@@ -14,6 +14,7 @@ local install_path = vim.fn.stdpath('data')..'/site/pack/packer/start/packer.nvi
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
   vim.fn.execute('!git clone https://github.com/wbthomason/packer.nvim '..install_path)
 end
+
 local use = require'packer'.use
 require'packer'.startup({function()
   use 'wbthomason/packer.nvim'
@@ -248,23 +249,10 @@ require'packer'.startup({function()
   use {'williamboman/mason-lspconfig.nvim', config = function()
     -- install lsp servers
     require'mason-lspconfig'.setup {
-      ensure_installed = {
-        'bashls', -- bash
-        --'clangd', -- clang (NOTE: not installable on linux-aarch64, 2022.10.26.)
-        'clojure_lsp', -- clojure
-        'gopls', -- go
-        --'hls', -- haskell (NOTE: not installable on linux-aarch64, 2022.10.26.)
-        'jsonls', -- json
-        'nimls', -- nim
-        'sumneko_lua', -- lua
-        'pylsp', -- python
-        'solargraph', -- ruby
-        'sqlls', -- sql
-        'rust_analyzer', -- rust
-        --'zls', -- zig (NOTE: not installable on linux-aarch64, 2022.10.26.)
-      },
+      ensure_installed = require'locals'.installable_lsp_names(), -- NOTE: see .config/nvim/lua/locals/lsps.lua
       automatic_installation = true,
     }
+
     -- NOTE: no way of installing things other than lsp servers for now
     -- install other things with: :MasonInstall delve codelldb
   end}
@@ -372,7 +360,7 @@ require'packer'.startup({function()
           'perl', 'php', 'python',
           'query',
           'r', 'ruby', 'rust',
-          --'swift',
+          --'swift', -- NOTE: tree-sitter CLI is needed
           'toml', 'typescript',
           'yaml',
           'zig',
@@ -615,23 +603,8 @@ require'packer'.startup({function()
       telemetry = { enable = false },
     },
   }
-  local lsp_servers = { -- language servers with default setup (see install methods in .tool-versions file)
-    'bashls', -- bash
-    'clangd', -- clang
-    'clojure_lsp',  -- clojure
-    'gopls',  -- go
-    'hls',  -- haskell
-    'jsonls', -- json
-    'nimls', -- nim
-    'pylsp',  -- python
-    --'rust_analyzer',  -- rust (handled below)
-    'solargraph', -- ruby
-    'sqlls', -- sql
-    'sumneko_lua', -- lua
-    'zls',  -- zig
-  }
   local nvim_lsp = require'lspconfig'
-  for _, lsp in ipairs(lsp_servers) do
+  for _, lsp in ipairs(require'locals'.autoconfigurable_lsp_names()) do -- NOTE: see .config/nvim/lua/locals/lsps.lua
     nvim_lsp[lsp].setup { on_attach = on_attach_lsp, capabilities = capabilities, settings = lsp_settings }
   end
   -------- other language servers for custom setup --------
