@@ -1,6 +1,8 @@
 -- .config/nvim/lua/plugins.lua
 --
--- https://github.com/wbthomason/packer.nvim#bootstrapping
+-- Neovim plugins list
+--
+-- NOTE: sourced from: `.config/nvim/init.lua`
 --
 -- last update: 2022.12.01.
 
@@ -8,6 +10,7 @@
 ------------------------------------------------
 --
 -- install packer automatically
+-- (https://github.com/wbthomason/packer.nvim#bootstrapping)
 local ensure_packer = function()
   local fn = vim.fn
   local install_path = fn.stdpath('data')..'/site/pack/packer/start/packer.nvim'
@@ -19,6 +22,7 @@ local ensure_packer = function()
   return false
 end
 local packer_bootstrap = ensure_packer()
+
 
 ------------------------------------------------
 --
@@ -614,7 +618,7 @@ return packer.startup({function()
   local nvim_lsp
   ok, nvim_lsp = pcall(require, 'lspconfig')
   if ok then
-    for _, lsp in ipairs(require'locals'.autoconfigurable_lsp_names()) do -- NOTE: see .config/nvim/lua/locals/lsps.lua
+    for _, lsp in ipairs(require'locals'.autoconfigurable_lsp_names()) do -- NOTE: see `.config/nvim/lua/locals/lsps.sample.lua`
       nvim_lsp[lsp].setup { on_attach = on_attach_lsp, capabilities = capabilities, settings = lsp_settings }
     end
   end
