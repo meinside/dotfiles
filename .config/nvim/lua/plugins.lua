@@ -264,7 +264,7 @@ return packer.startup({function()
   use {'williamboman/mason-lspconfig.nvim', config = function()
     -- install lsp servers
     require'mason-lspconfig'.setup {
-      ensure_installed = require'locals'.installable_lsp_names(), -- NOTE: see .config/nvim/lua/locals/lsps.lua
+      ensure_installed = require'locals'.installable_lsp_names(), -- NOTE: see `.config/nvim/lua/locals/lsps.sample.lua`
       automatic_installation = true,
     }
 
