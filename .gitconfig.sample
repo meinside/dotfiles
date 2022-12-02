@@ -2,7 +2,7 @@
 #
 # (copy as .gitconfig and customize it)
 #
-# last update: 2022.06.23.
+# last update: 2022.12.02.
 
 [init]
   defaultBranch = master
