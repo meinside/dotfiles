@@ -369,7 +369,7 @@ return packer.startup({function()
       require'nvim-treesitter.configs'.setup {
         ensure_installed = {
           'bash',
-          'c', 'clojure', 'cmake', 'comment', 'commonlisp', 'cpp', 'css',
+          'c', 'clojure', 'cmake', 'comment', 'cpp', 'css',
           'dart', 'diff', 'dockerfile',
           'fennel',
           'go', 'gomod', 'gowork', --'gitignore',
@@ -377,12 +377,11 @@ return packer.startup({function()
           'java', 'javascript', 'jq', 'jsdoc', 'json', 'json5', 'jsonc', --'julia',
           'kotlin',
           'latex', 'llvm', 'lua',
-          'make', 'markdown', 'markdown_inline', 'mermaid', 'meson',
-          'ninja', 'nix',
+          'make', 'markdown', 'markdown_inline', 'mermaid',
           'perl', 'php', 'python',
           'query',
           'r', 'regex', 'ruby', 'rust',
-          'scala', 'scheme', 'scss', 'sql', --'swift',
+          'scheme', 'scss', 'sql', --'swift',
           'toml', 'typescript',
           'yaml',
           'zig',
