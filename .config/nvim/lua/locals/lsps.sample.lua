@@ -4,10 +4,13 @@
 --
 -- (duplicate this file with path `.config/nvim/lua/locals/lsps.lua` and edit it)
 --
--- last update: 2022.12.01.
+-- last update: 2022.12.02.
 
--- set value to `true` for lspconfig to configure automatically,
---              `false` for manual configuration in .config/nvim/init.lua
+-- following lsps will be configured automatically or manually
+-- in `.config/nvim/lua/plugins.lua`.
+--
+-- if value is `true`, will be configured automatically with `lspconfig`.
+-- otherwise (`false`), should be configured manually.
 local my_lsps = {
   -- bash
   bashls = true,

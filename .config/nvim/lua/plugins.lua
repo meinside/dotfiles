@@ -616,6 +616,7 @@ return packer.startup({function()
       telemetry = { enable = false },
     },
   }
+  -------- automatic configuration with `lspconfig` --------
   local nvim_lsp
   ok, nvim_lsp = pcall(require, 'lspconfig')
   if ok then
@@ -623,7 +624,7 @@ return packer.startup({function()
       nvim_lsp[lsp].setup { on_attach = on_attach_lsp, capabilities = capabilities, settings = lsp_settings }
     end
   end
-  -------- other language servers for custom setup --------
+  -------- manual configuration here --------
   -- (rust)
   local rust_tools
   ok, rust_tools = pcall(require, 'rust-tools')
