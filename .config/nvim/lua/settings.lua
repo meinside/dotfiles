@@ -13,7 +13,7 @@
 
 local opt = vim.opt
 opt.mouse = ''
-opt.backspace = { 'indent', 'eol', 'start' } -- allow backspacing over everything in insert mode
+opt.backspace = {'indent', 'eol', 'start'} -- allow backspacing over everything in insert mode
 opt.history = 50
 opt.number = true
 opt.ruler = true
@@ -27,7 +27,7 @@ opt.tabstop = 4
 opt.shiftwidth = 4
 opt.softtabstop = 4
 opt.expandtab = true
-opt.fileencodings = { 'ucs-bom', 'utf-8', 'korea' }
+opt.fileencodings = {'ucs-bom', 'utf-8', 'korea'}
 opt.showbreak = '↳'
 opt.wildmenu = true
 opt.breakindent = true
@@ -50,11 +50,11 @@ vim.keymap.set('n', '<leader>mm', function()
     print 'mouse enabled'
   end
   mouse_enabled = not mouse_enabled
-end, {remap=false, silent=true, desc='Toggle mouse'})
+end, {remap = false, silent = true, desc = 'Toggle mouse'})
 
 -- for tab navigation
-vim.keymap.set('n', '<C-h>', ':tabprevious<CR>', {remap=false, silent=true, desc='Previous tab'}) -- <ctrl-h> for previous tab
-vim.keymap.set('n', '<C-l>', ':tabnext<CR>', {remap=false, silent=true, desc='Next tab'}) -- <ctrl-l> for next tab
+vim.keymap.set('n', '<C-h>', ':tabprevious<CR>', {remap = false, silent = true, desc = 'Previous tab'}) -- <ctrl-h> for previous tab
+vim.keymap.set('n', '<C-l>', ':tabnext<CR>', {remap = false, silent = true, desc = 'Next tab'}) -- <ctrl-l> for next tab
 
 -- go back to the last position of a file
 vim.api.nvim_exec([[
