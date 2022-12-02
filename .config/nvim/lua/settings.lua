@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2022.12.01.
+-- last update: 2022.12.02.
 
 
 ------------------------------------------------
@@ -50,11 +50,11 @@ vim.keymap.set('n', '<leader>mm', function()
     print 'mouse enabled'
   end
   mouse_enabled = not mouse_enabled
-end, {remap = false, silent = true})
+end, {remap=false, silent=true, desc='Toggle mouse'})
 
 -- for tab navigation
-vim.keymap.set('n', '<C-h>', ':tabprevious<CR>', {remap = false, silent = true}) -- <ctrl-h> for previous tab
-vim.keymap.set('n', '<C-l>', ':tabnext<CR>', {remap = false, silent = true}) -- <ctrl-l> for next tab
+vim.keymap.set('n', '<C-h>', ':tabprevious<CR>', {remap=false, silent=true, desc='Previous tab'}) -- <ctrl-h> for previous tab
+vim.keymap.set('n', '<C-l>', ':tabnext<CR>', {remap=false, silent=true, desc='Next tab'}) -- <ctrl-l> for next tab
 
 -- go back to the last position of a file
 vim.api.nvim_exec([[
