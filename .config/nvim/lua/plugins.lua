@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2022.12.02.
+-- last update: 2022.12.05.
 
 
 ------------------------------------------------
@@ -645,7 +645,7 @@ return packer.startup({function()
     }
   end
   -- FIXME: `rust-tools` doesn't format on file saves
-  vim.api.nvim_exec([[autocmd BufWritePre *.rs :silent! lua vim.lsp.buf.format {async = false}]], false)
+  vim.api.nvim_create_autocmd('BufWritePre', {pattern = '*.rs', callback = function() vim.lsp.buf.format {async = false} end,})
 
 
   -- vale
