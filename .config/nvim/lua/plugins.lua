@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2022.12.05.
+-- last update: 2022.12.06.
 
 
 ------------------------------------------------
@@ -28,7 +28,7 @@ local packer_bootstrap = ensure_packer()
 --
 -- packer plugins here
 local packer = require'packer'
-return packer.startup({function()
+return packer.startup { function()
   local ok
   local use = packer.use
 
@@ -42,16 +42,26 @@ return packer.startup({function()
   -- colorschemes (https://github.com/rockerBOO/awesome-neovim#colorscheme)
   use {
     'projekt0n/github-nvim-theme',
-    config = function() require'github-theme'.setup {theme_style = 'dark', transparent = true} end
+    config = function() require'github-theme'.setup { theme_style = 'dark', transparent = true } end
   }
 
 
   -- show keymaps
-  use {'folke/which-key.nvim', config = function() require('which-key').setup {} end}
+  use { 'folke/which-key.nvim', config = function() require('which-key').setup {} end }
 
 
   -- dim inactive window
   use 'blueyed/vim-diminactive'
+
+
+  -- split/join blocks of code (<space>m - toggle, <space>j - join, <space>s - split)
+  use({
+    'Wansmer/treesj',
+    requires = { 'nvim-treesitter' },
+    config = function() require'treesj'.setup {
+      max_join_length = 240,
+    } end,
+  })
 
 
   -- minimap
@@ -62,16 +72,16 @@ return packer.startup({function()
       codewindow.setup {}
 
       -- for toggling minimap: \mt
-      vim.keymap.set('n', '<leader>mt', function() codewindow.toggle_minimap() end, {remap = false, silent = true, desc = 'minimap: Toggle'})
+      vim.keymap.set('n', '<leader>mt', function() codewindow.toggle_minimap() end, { remap = false, silent = true, desc = 'minimap: Toggle' })
     end
   }
 
   -- markdown preview
-  use {'iamcco/markdown-preview.nvim', run = 'cd app && npm install'}
+  use { 'iamcco/markdown-preview.nvim', run = 'cd app && npm install' }
 
 
   -- d2
-  use {'terrastruct/d2-vim'}
+  use { 'terrastruct/d2-vim' }
 
 
   -- fold and preview (zc for closing, zo for opening / zM for closing all, zR opening all)
@@ -100,7 +110,7 @@ return packer.startup({function()
     config = function()
       require'indent_blankline'.setup {
         char = '▏',
-        buftype_exclude = {'terminal'},
+        buftype_exclude = { 'terminal' },
         show_current_context = true,
         show_current_context_start = true,
       }
@@ -120,7 +130,7 @@ return packer.startup({function()
   use 'johngrib/vim-f-hangul'	-- can use f/t/;/, on Hangul characters
   use {
     'nvim-telescope/telescope.nvim',
-    requires = {{'nvim-lua/popup.nvim'}, {'nvim-lua/plenary.nvim'}, {'nvim-telescope/telescope-fzf-native.nvim'}},
+    requires = { { 'nvim-lua/popup.nvim' }, { 'nvim-lua/plenary.nvim' }, { 'nvim-telescope/telescope-fzf-native.nvim' } },
     config = function()
       local telescope = require'telescope'
       telescope.setup {
@@ -146,7 +156,7 @@ return packer.startup({function()
       vim.keymap.set('n', '<leader>ld', builtin.lsp_definitions, {remap = false, silent = true, desc = 'telescope: LSP definitions'})
     end,
   }
-  use {'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
+  use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
 
 
   -- git
@@ -170,16 +180,16 @@ return packer.startup({function()
             if vim.wo.diff then return ']c' end
             vim.schedule(function() gs.next_hunk() end)
             return '<Ignore>'
-          end, {expr = true, desc = 'gitsigns: Next hunk'})
+          end, { expr = true, desc = 'gitsigns: Next hunk' })
           m('n', '[c', function()
             if vim.wo.diff then return '[c' end
             vim.schedule(function() gs.prev_hunk() end)
             return '<Ignore>'
-          end, {expr = true, desc = 'gitsigns: Previous hunk'})
+          end, { expr = true, desc = 'gitsigns: Previous hunk' })
 
           -- Actions
-          m({'n', 'v'}, '<leader>hs', ':Gitsigns stage_hunk<CR>', {desc = 'gitsigns: Stage hunk'})
-          m({'n', 'v'}, '<leader>hr', ':Gitsigns reset_hunk<CR>', {desc = 'gitsigns: Reset hunk'})
+          m({ 'n', 'v' }, '<leader>hs', ':Gitsigns stage_hunk<CR>', {desc = 'gitsigns: Stage hunk'})
+          m({ 'n', 'v' }, '<leader>hr', ':Gitsigns reset_hunk<CR>', {desc = 'gitsigns: Reset hunk'})
           m('n', '<leader>hS', gs.stage_buffer, {desc = 'gitsigns: Stage buffer'})
           m('n', '<leader>hu', gs.undo_stage_hunk, {desc = 'gitsigns: Undo stage hunk'})
           m('n', '<leader>hR', gs.reset_buffer, {desc = 'gitsigns: Reset buffer'})
@@ -191,7 +201,7 @@ return packer.startup({function()
           m('n', '<leader>td', gs.toggle_deleted, {desc = 'gitsigns: Toggle deleted'})
 
           -- Text object
-          m({'o', 'x'}, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+          m({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
         end
       }
     end
@@ -205,24 +215,24 @@ return packer.startup({function()
   use {
     'nvim-lualine/lualine.nvim',
     after = 'github-nvim-theme',
-    requires = {'kyazdani42/nvim-web-devicons', opt = true},
+    requires = { 'kyazdani42/nvim-web-devicons', opt = true },
     config = function()
       local navic = require'nvim-navic'
       require'lualine'.setup {
         options = {
-          disabled_filetypes = {'help', 'packer', 'NvimTree', 'TelescopePrompt', 'gitcommit'},
+          disabled_filetypes = { 'help', 'packer', 'NvimTree', 'TelescopePrompt', 'gitcommit' },
           globalstatus = true,
         },
-        extensions = {'nvim-dap-ui', 'quickfix'},
+        extensions = { 'nvim-dap-ui', 'quickfix' },
         sections = {
-          lualine_c = {'filename', {navic.get_location, cond = navic.is_available}},
+          lualine_c = { 'filename', { navic.get_location, cond = navic.is_available } },
         },
-        winbar = {lualine_c = {{'filetype', icon_only = true}, {'filename'}}},
-        inactive_winbar = {lualine_c = {'filename'}},
+        winbar = { lualine_c = { { 'filetype', icon_only = true }, { 'filename' } } },
+        inactive_winbar = { lualine_c = { 'filename' } },
       }
     end
   }
-  use {'SmiteshP/nvim-navic', requires = {'neovim/nvim-lspconfig'}}
+  use { 'SmiteshP/nvim-navic', requires = { 'neovim/nvim-lspconfig' } }
 
 
   -- auto pair/close
@@ -236,36 +246,36 @@ return packer.startup({function()
   use 'neovim/nvim-lspconfig'
   use {
     'ray-x/lsp_signature.nvim',
-    config = function() require'lsp_signature'.setup {bind = true, handler_opts = {border = 'single'}} end
+    config = function() require'lsp_signature'.setup { bind = true, handler_opts = { border = 'single' } } end
   }
   use {'https://git.sr.ht/~whynothugo/lsp_lines.nvim', config = function()
     local ll = require'lsp_lines'
     ll.setup()
-    vim.keymap.set('', '<leader>ll', ll.toggle, {desc = 'lsp_lines: Toggle'})
+    vim.keymap.set('', '<leader>ll', ll.toggle, { desc = 'lsp_lines: Toggle' })
   end}
   use {
     'onsails/lspkind-nvim',
     config = function()
       -- (gray)
-      vim.api.nvim_set_hl(0, 'CmpItemAbbrDeprecated', {bg = 'NONE', fg = '#808080', strikethrough = true})
+      vim.api.nvim_set_hl(0, 'CmpItemAbbrDeprecated', { bg = 'NONE', fg = '#808080', strikethrough = true })
       -- (blue)
-      vim.api.nvim_set_hl(0, 'CmpItemAbbrMatch', {bg = 'NONE', fg = '#569CD6'})
-      vim.api.nvim_set_hl(0, 'CmpItemAbbrMatchFuzzy', {bg = 'NONE', fg = '#569CD6'})
+      vim.api.nvim_set_hl(0, 'CmpItemAbbrMatch', { bg = 'NONE', fg = '#569CD6' })
+      vim.api.nvim_set_hl(0, 'CmpItemAbbrMatchFuzzy', { bg = 'NONE', fg = '#569CD6' })
       -- (light blue)
-      vim.api.nvim_set_hl(0, 'CmpItemKindVariable', {bg = 'NONE', fg = '#9CDCFE'})
-      vim.api.nvim_set_hl(0, 'CmpItemKindInterface', {bg = 'NONE', fg = '#9CDCFE'})
-      vim.api.nvim_set_hl(0, 'CmpItemKindText', {bg = 'NONE', fg = '#9CDCFE'})
+      vim.api.nvim_set_hl(0, 'CmpItemKindVariable', { bg = 'NONE', fg = '#9CDCFE' })
+      vim.api.nvim_set_hl(0, 'CmpItemKindInterface', { bg = 'NONE', fg = '#9CDCFE' })
+      vim.api.nvim_set_hl(0, 'CmpItemKindText', { bg = 'NONE', fg = '#9CDCFE' })
       -- (pink)
-      vim.api.nvim_set_hl(0, 'CmpItemKindFunction', {bg = 'NONE', fg = '#C586C0'})
-      vim.api.nvim_set_hl(0, 'CmpItemKindMethod', {bg = 'NONE', fg = '#C586C0'})
+      vim.api.nvim_set_hl(0, 'CmpItemKindFunction', { bg = 'NONE', fg = '#C586C0' })
+      vim.api.nvim_set_hl(0, 'CmpItemKindMethod', { bg = 'NONE', fg = '#C586C0' })
       -- (front)
-      vim.api.nvim_set_hl(0, 'CmpItemKindKeyword', {bg = 'NONE', fg = '#D4D4D4'})
-      vim.api.nvim_set_hl(0, 'CmpItemKindProperty', {bg = 'NONE', fg = '#D4D4D4'})
-      vim.api.nvim_set_hl(0, 'CmpItemKindUnit', {bg = 'NONE', fg = '#D4D4D4'})
+      vim.api.nvim_set_hl(0, 'CmpItemKindKeyword', { bg = 'NONE', fg = '#D4D4D4' })
+      vim.api.nvim_set_hl(0, 'CmpItemKindProperty', { bg = 'NONE', fg = '#D4D4D4' })
+      vim.api.nvim_set_hl(0, 'CmpItemKindUnit', { bg = 'NONE', fg = '#D4D4D4' })
     end
   }
   use {'williamboman/mason.nvim', config = function()
-    require'mason'.setup { ui = {icons = {package_installed = '✓', package_pending = '➜', package_uninstalled = '✗'}} }
+    require'mason'.setup { ui = {icons = { package_installed = '✓', package_pending = '➜', package_uninstalled = '✗' }} }
   end}
   use {'williamboman/mason-lspconfig.nvim', config = function()
     -- install lsp servers
@@ -386,8 +396,8 @@ return packer.startup({function()
           'yaml',
           'zig',
         },
-        highlight = {enable = true},
-        rainbow = {enable = true, extended_mode = true},
+        highlight = { enable = true },
+        rainbow = { enable = true, extended_mode = true },
       }
     end
   }
@@ -397,16 +407,16 @@ return packer.startup({function()
   -- code action: `\ca`
   use {'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu'}
   use {'kosayoda/nvim-lightbulb', requires = 'antoinemadec/FixCursorHold.nvim', config = function()
-    require'nvim-lightbulb'.setup {autocmd = {enabled = true}}
+    require'nvim-lightbulb'.setup { autocmd = { enabled = true } }
   end}
 
 
   -- debug adapter
   use {'mfussenegger/nvim-dap', config = function()
     -- dap sign icons and colors
-    vim.fn.sign_define('DapBreakpoint', {text = '', texthl = 'LspDiagnosticsSignError', linehl = '', numhl = ''})
-    vim.fn.sign_define('DapStopped', {text = '', texthl = 'LspDiagnosticsSignInformation', linehl = 'DiagnosticUnderlineInfo', numhl = 'LspDiagnosticsSignInformation'})
-    vim.fn.sign_define('DapBreakpointRejected', {text = '', texthl = 'LspDiagnosticsSignHint', linehl = '', numhl = ''})
+    vim.fn.sign_define('DapBreakpoint', { text = '', texthl = 'LspDiagnosticsSignError', linehl = '', numhl = '' })
+    vim.fn.sign_define('DapStopped', { text = '', texthl = 'LspDiagnosticsSignInformation', linehl = 'DiagnosticUnderlineInfo', numhl = 'LspDiagnosticsSignInformation' })
+    vim.fn.sign_define('DapBreakpointRejected', { text = '', texthl = 'LspDiagnosticsSignHint', linehl = '', numhl = '' })
   end}
   use {'rcarriga/nvim-dap-ui', requires = {'mfussenegger/nvim-dap'}, config = function()
     local dap, dapui = require 'dap', require 'dapui'
@@ -427,7 +437,7 @@ return packer.startup({function()
 
   -- go
   use {
-    'ray-x/go.nvim', ft = {'go'},
+    'ray-x/go.nvim', ft = { 'go' },
     config = function()
       require'go'.setup {
         gofmt = 'gopls',
@@ -444,27 +454,27 @@ return packer.startup({function()
 
 
   -- haskell
-  use {'neovimhaskell/haskell-vim', ft = {'haskell'}}
-  use {'itchyny/vim-haskell-indent', ft = {'haskell'}}
+  use {'neovimhaskell/haskell-vim', ft = { 'haskell' }}
+  use {'itchyny/vim-haskell-indent', ft = { 'haskell' }}
   if vim.fn.executable('stylish-haskell') == 1 then
-    use {'alx741/vim-stylishask', ft = {'haskell'}}
+    use {'alx741/vim-stylishask', ft = { 'haskell' }}
   end
 
 
   -- lispy languages
-  local lisps = {'clojure', 'fennel', 'janet', 'scheme'}
+  local lisps = { 'clojure', 'fennel', 'janet', 'scheme' }
   -- for auto completion: <C-x><C-o>
   -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
   -- for reloading everything: \rr
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
   use {'Olical/conjure', ft = lisps}
-  use {'dmac/vim-cljfmt', ft = {'clojure'}} -- $ go install github.com/cespare/goclj/cljfmt
-  use {'bakpakin/fennel.vim', ft = {'fennel'},
+  use {'dmac/vim-cljfmt', ft = { 'clojure' }} -- $ go install github.com/cespare/goclj/cljfmt
+  use {'bakpakin/fennel.vim', ft = { 'fennel' },
     config = function() -- https://github.com/Olical/conjure/wiki/Quick-start:-Fennel-(stdio)
       vim.api.nvim_exec([[let g:conjure#filetype#fennel = "conjure.client.fennel.stdio"]], false)
     end,
   }
-  use {'bakpakin/janet.vim', ft = {'janet'}, config = function()
+  use {'bakpakin/janet.vim', ft = { 'janet' }, config = function()
     if vim.fn.executable('lsof') == 1 then
       local open = vim.fn.system('lsof -i:9365 | grep LISTEN')
       if string.len(open) <= 0 then
@@ -500,8 +510,8 @@ return packer.startup({function()
 
 
   -- ruby
-  use {'vim-ruby/vim-ruby', ft = {'ruby'}}
-  use {'suketa/nvim-dap-ruby', ft = {'ruby'}, config = function()
+  use {'vim-ruby/vim-ruby', ft = { 'ruby' }}
+  use {'suketa/nvim-dap-ruby', ft = { 'ruby' }, config = function()
     -- $ gem install readapt
     -- :DapContinue for debugging
     require'dap-ruby'.setup()
@@ -510,13 +520,13 @@ return packer.startup({function()
 
   -- rust
   use {
-    'simrat39/rust-tools.nvim', --ft = {'rust'}, -- FIXME: lazyloading doesn't work
-    requires = {{'nvim-lua/plenary.nvim'}, {'mfussenegger/nvim-dap'}},
+    'simrat39/rust-tools.nvim', --ft = { 'rust' }, -- FIXME: lazyloading doesn't work
+    requires = { { 'nvim-lua/plenary.nvim' }, { 'mfussenegger/nvim-dap' } },
   }
 
 
   -- zig
-  use {'ziglang/zig.vim', ft = {'zig'}}
+  use {'ziglang/zig.vim', ft = { 'zig' }}
 
 
   -- vale (see ~/.vale.ini)
@@ -531,44 +541,44 @@ return packer.startup({function()
     vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
     -- See `:help vim.lsp.*` for documentation on any of the below functions
-    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, {remap = false, silent = true, desc = 'lsp: Declaration'})
-    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {remap = false, silent = true, desc = 'lsp: Definition'})
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, {remap = false, silent = true, desc = 'lsp: Hover'})
-    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, {remap = false, silent = true, desc = 'lsp: Implementation'})
-    --vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, {remap = false, silent = true, desc = 'lsp: Signature help'})
-    --vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, {remap = false, silent = true, desc = 'lsp: Add workspace folder'})
-    --vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, {remap = false, silent = true, desc = 'lsp: Remove workspace folder'})
-    --vim.keymap.set('n', '<space>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, {remap = false, silent = true, desc = 'lsp: List workspace folders'})
-    vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, {remap = false, silent = true, desc = 'lsp: Type definition'})
-    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, {remap = false, silent = true, desc = 'lsp: Rename'})
-    --vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, {remap = false, silent = true, desc = 'lsp: Code action'})
-    vim.keymap.set('n', '<leader>ca', '<cmd>CodeActionMenu<CR>', {remap = false, silent = true, desc = 'lsp: Code action'})
-    --vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', {remap = false, silent = true, desc = 'lsp: References'})
-    vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', {remap = false, silent = true, desc = 'lsp: Previous diagnostic'})
-    vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', {remap = false, silent = true, desc = 'lsp: Next diagnostic'})
-    vim.keymap.set('n', '<leader>dl', '<cmd>lua vim.diagnostic.setloclist()<CR>', {remap = false, silent = true, desc = 'lsp: Diagnostics list'})
-    vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.format {async = true}<CR>', {remap = false, silent = true, desc = 'lsp: Format'})
+    vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { remap = false, silent = true, desc = 'lsp: Declaration' })
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { remap = false, silent = true, desc = 'lsp: Definition' })
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, { remap = false, silent = true, desc = 'lsp: Hover' })
+    vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { remap = false, silent = true, desc = 'lsp: Implementation' })
+    --vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, { remap = false, silent = true, desc = 'lsp: Signature help' })
+    --vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, { remap = false, silent = true, desc = 'lsp: Add workspace folder' })
+    --vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, { remap = false, silent = true, desc = 'lsp: Remove workspace folder' })
+    --vim.keymap.set('n', '<space>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, { remap = false, silent = true, desc = 'lsp: List workspace folders' })
+    vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, { remap = false, silent = true, desc = 'lsp: Type definition' })
+    vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { remap = false, silent = true, desc = 'lsp: Rename' })
+    --vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { remap = false, silent = true, desc = 'lsp: Code action' })
+    vim.keymap.set('n', '<leader>ca', '<cmd>CodeActionMenu<CR>', { remap = false, silent = true, desc = 'lsp: Code action' })
+    --vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', { remap = false, silent = true, desc = 'lsp: References' })
+    vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', { remap = false, silent = true, desc = 'lsp: Previous diagnostic' })
+    vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', { remap = false, silent = true, desc = 'lsp: Next diagnostic' })
+    vim.keymap.set('n', '<leader>dl', '<cmd>lua vim.diagnostic.setloclist()<CR>', { remap = false, silent = true, desc = 'lsp: Diagnostics list' })
+    vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.format {async = true}<CR>', { remap = false, silent = true, desc = 'lsp: Format' })
 
     -- diagnostics configuration
     vim.diagnostic.config({ underline = false, virtual_text = false, signs = true, severity_sort = true, update_in_insert = false })
-    vim.fn.sign_define('DiagnosticSignError', {text = '✗', texthl = 'DiagnosticSignError'})
-    vim.fn.sign_define('DiagnosticSignWarn', {text = '!', texthl = 'DiagnosticSignWarn'})
-    vim.fn.sign_define('DiagnosticSignInformation', {text = '', texthl = 'DiagnosticSignInfo'})
-    vim.fn.sign_define('DiagnosticSignHint', {text = '', texthl = 'DiagnosticSignHint'})
+    vim.fn.sign_define('DiagnosticSignError', { text = '✗', texthl = 'DiagnosticSignError' })
+    vim.fn.sign_define('DiagnosticSignWarn', { text = '!', texthl = 'DiagnosticSignWarn' })
+    vim.fn.sign_define('DiagnosticSignInformation', { text = '', texthl = 'DiagnosticSignInfo' })
+    vim.fn.sign_define('DiagnosticSignHint', { text = '', texthl = 'DiagnosticSignHint' })
 
     -- auto formatting on save
     if client.server_capabilities.document_formatting then
-      vim.api.nvim_create_autocmd('BufWritePre', {callback = function() vim.lsp.buf.format {async = false} end})
+      vim.api.nvim_create_autocmd('BufWritePre', { callback = function() vim.lsp.buf.format { async = false } end })
     end
 
     -- highlight current variable
     if client.server_capabilities.document_highlight then
-      vim.api.nvim_set_hl(0, 'LspReferenceRead', {link = 'Visual'})
-      vim.api.nvim_set_hl(0, 'LspReferenceText', {link = 'Visual'})
-      vim.api.nvim_set_hl(0, 'LspReferenceWrite', {link = 'Visual'})
-      vim.api.nvim_create_augroup('lsp_document_highlight', {clear = true})
-      vim.api.nvim_create_autocmd('CursorHold', {group = 'lsp_document_highlight', callback = function() vim.lsp.buf.document_highlight() end})
-      vim.api.nvim_create_autocmd('CursorMoved', {group = 'lsp_document_highlight', callback = function() vim.lsp.buf.clear_references() end})
+      vim.api.nvim_set_hl(0, 'LspReferenceRead', { link = 'Visual' })
+      vim.api.nvim_set_hl(0, 'LspReferenceText', { link = 'Visual' })
+      vim.api.nvim_set_hl(0, 'LspReferenceWrite', { link = 'Visual' })
+      vim.api.nvim_create_augroup('lsp_document_highlight', { clear = true })
+      vim.api.nvim_create_autocmd('CursorHold', { group = 'lsp_document_highlight', callback = function() vim.lsp.buf.document_highlight() end })
+      vim.api.nvim_create_autocmd('CursorMoved', { group = 'lsp_document_highlight', callback = function() vim.lsp.buf.clear_references() end })
     end
 
     -- navic
@@ -582,15 +592,15 @@ return packer.startup({function()
   if ok then
     capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
   end
-  capabilities.textDocument.completion.completionItem.documentationFormat = {'markdown', 'plaintext'}
+  capabilities.textDocument.completion.completionItem.documentationFormat = { 'markdown', 'plaintext' }
   capabilities.textDocument.completion.completionItem.snippetSupport = true
   capabilities.textDocument.completion.completionItem.preselectSupport = true
   capabilities.textDocument.completion.completionItem.insertReplaceSupport = true
   capabilities.textDocument.completion.completionItem.labelDetailsSupport = true
   capabilities.textDocument.completion.completionItem.deprecatedSupport = true
   capabilities.textDocument.completion.completionItem.commitCharactersSupport = true
-  capabilities.textDocument.completion.completionItem.tagSupport = {valueSet = {1}}
-  capabilities.textDocument.completion.completionItem.resolveSupport = {properties = {'documentation', 'detail', 'additionalTextEdits'}}
+  capabilities.textDocument.completion.completionItem.tagSupport = { valueSet = { 1 } }
+  capabilities.textDocument.completion.completionItem.resolveSupport = { properties = { 'documentation', 'detail', 'additionalTextEdits' } }
   local lsp_settings = {
     gopls = {
       hints = {
@@ -610,12 +620,12 @@ return packer.startup({function()
         table.insert(runtime_paths, 'lua/?/init.lua')
         return runtime_paths
       end)() },
-      diagnostics = {globals = {'vim'}},
+      diagnostics = { globals = { 'vim' } },
       workspace = {
         library = vim.api.nvim_get_runtime_file('', true),
         checkThirdParty = false,
       },
-      telemetry = {enable = false},
+      telemetry = { enable = false },
     },
   }
   -------- automatic configuration with `lspconfig` --------
@@ -623,7 +633,7 @@ return packer.startup({function()
   ok, nvim_lsp = pcall(require, 'lspconfig')
   if ok then
     for _, lsp in ipairs(require'locals'.autoconfigurable_lsp_names()) do -- NOTE: see `.config/nvim/lua/locals/lsps.sample.lua`
-      nvim_lsp[lsp].setup {on_attach = on_attach_lsp, capabilities = capabilities, settings = lsp_settings}
+      nvim_lsp[lsp].setup { on_attach = on_attach_lsp, capabilities = capabilities, settings = lsp_settings }
     end
   end
   -------- manual configuration here --------
@@ -632,8 +642,8 @@ return packer.startup({function()
   ok, rust_tools = pcall(require, 'rust-tools')
   if ok then
     rust_tools.setup {
-      tools = {hover_actions = {auto_focus = true}},
-      server = {on_attach = on_attach_lsp, capabilities = capabilities},
+      tools = {hover_actions = { auto_focus = true }},
+      server = { on_attach = on_attach_lsp, capabilities = capabilities },
       dap = {
         -- install `codelldb` with :Mason
         -- :RustDebuggables for debugging
@@ -645,7 +655,7 @@ return packer.startup({function()
     }
   end
   -- FIXME: `rust-tools` doesn't format on file saves
-  vim.api.nvim_create_autocmd('BufWritePre', {pattern = '*.rs', callback = function() vim.lsp.buf.format {async = false} end,})
+  vim.api.nvim_create_autocmd('BufWritePre', { pattern = '*.rs', callback = function() vim.lsp.buf.format { async = false } end })
 
 
   -- vale
@@ -664,7 +674,7 @@ return packer.startup({function()
 
   -- sync plugins after bootstrapping
   if packer_bootstrap then
-    require('packer').sync()
+    require'packer'.sync()
   end
-end, config = {autoremove = true, display = {open_fn = function() return require'packer.util'.float({border = 'single'}) end}}})
+end, config = { autoremove = true, display = { open_fn = function() return require'packer.util'.float({ border = 'single' }) end } } }
 
