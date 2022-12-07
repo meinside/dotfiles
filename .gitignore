@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2022.09.27.
+# last update: 2022.12.07.
 #
 # meinside@duck.com
 
@@ -226,7 +226,7 @@ xcuserdata
 .zcompdump*
 .zsh_sessions/
 Calibre Library/
-Dropbox/
+Dropbox
 Google Drive/
 mbox
 pprof/
