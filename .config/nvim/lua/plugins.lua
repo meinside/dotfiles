@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2022.12.06.
+-- last update: 2022.12.08.
 
 
 ------------------------------------------------
@@ -119,10 +119,6 @@ return packer.startup { function()
   use 'tpope/vim-ragtag' -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
   use 'tpope/vim-sleuth'
   use 'p00f/nvim-ts-rainbow'
-
-
-  -- scrolling
-  --use {'karb94/neoscroll.nvim', config = function() require'neoscroll'.setup {} end}
 
 
   -- finder / locator
