@@ -396,6 +396,10 @@ return packer.startup { function()
 
 
   -- syntax highlighting and rainbow parenthesis
+  --
+  -- $ cargo install tree-sitter-cli
+  -- or
+  -- $ brew install tree-sitter
   use {
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate',
