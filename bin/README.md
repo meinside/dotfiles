@@ -66,6 +66,10 @@ A script for updating MOTD.
 
 A script for macOS hacks (originates from https://gist.github.com/erikh/2260182).
 
+## macos/rename_nfd2nfc.sh
+
+A script for renaming files in a given directory, [from NFD to NFC](https://en.wikipedia.org/wiki/Unicode_equivalence).
+
 ## steamdeck/unlock.sh
 
 A script for unlocking read-only file system of Steam Deck.
