@@ -2,7 +2,9 @@
 #
 # by meinside@duck.com
 #
-# last update: 2022.05.03.
+# last update: 2022.12.26.
+
+set -g default-terminal xterm-256color
 
 set -g message-command-style fg=color255,bg=color235
 set -g message-style fg=color255,bg=color235
