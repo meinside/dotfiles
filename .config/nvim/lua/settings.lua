@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2022.12.06.
+-- last update: 2022.12.26.
 
 
 ------------------------------------------------
@@ -37,6 +37,7 @@ opt.foldmethod = 'indent' -- automatically fold on indent
 opt.foldlevelstart = 20 -- but open all folds on file open
 opt.updatetime = 1000 -- for shortening delay of CursorHold
 opt.cursorline = true -- highlight current line
+opt.termguicolors = true
 vim.o.signcolumn = 'number'
 
 -- for toggling mouse: \mm

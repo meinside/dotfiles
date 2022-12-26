@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2022.12.09.
+-- last update: 2022.12.26.
 
 
 ------------------------------------------------
@@ -88,6 +88,21 @@ return packer.startup { function()
 
   -- d2
   use { 'terrastruct/d2-vim', ft = { 'd2' } }
+
+
+  -- mastodon
+  -- (https://github.com/kode-team/mastodon.nvim#important-adding-mastodon-account)
+  use {
+    'kode-team/mastodon.nvim',
+    requires = {
+      'nvim-lua/plenary.nvim',
+      'rcarriga/nvim-notify',
+      'kkharji/sqlite.lua',
+    },
+    config = function()
+      require'mastodon'.setup()
+    end
+  }
 
 
   -- fold and preview (zc for closing, zo for opening / zM for closing all, zR opening all)
