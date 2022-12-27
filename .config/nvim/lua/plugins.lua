@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2022.12.26.
+-- last update: 2022.12.27.
 
 
 ------------------------------------------------
@@ -572,7 +572,7 @@ return packer.startup { function()
 
 
   -- nim
-  use { 'alaviss/nim.nvim' }
+  use { 'alaviss/nim.nvim', ft = { 'nim' } }
 
 
   -- ruby
