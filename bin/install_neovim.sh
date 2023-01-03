@@ -23,6 +23,8 @@
 # * To install tree-sitter:
 #
 # $ cargo install tree-sitter-cli
+# or
+# $ npm install tree-sitter-cli
 
 
 ################################
