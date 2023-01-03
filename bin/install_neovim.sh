@@ -18,6 +18,11 @@
 #
 # $ sudo rm /usr/local/bin/nvim
 # $ sudo rm -r /usr/local/share/nvim/
+#
+#
+# * To install tree-sitter:
+#
+# $ cargo install tree-sitter-cli
 
 
 ################################
