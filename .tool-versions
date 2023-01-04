@@ -1,13 +1,13 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2022.12.26.
+# last update: 2023.01.04.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
 #
 # https://github.com/babashka/babashka/releases
-babashka 1.0.168
+babashka 1.0.169
 
 # For bash-language-server,
 #   :MasonInstall bash-language-server
