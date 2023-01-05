@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2022.12.27.
+-- last update: 2023.01.05.
 
 
 ------------------------------------------------
@@ -415,6 +415,8 @@ return packer.startup { function()
   -- $ cargo install tree-sitter-cli
   -- or
   -- $ brew install tree-sitter
+  --
+  -- NOTE: if it complains about any language, try :TSInstall [xxx]
   use {
     'nvim-treesitter/nvim-treesitter',
     run = ':TSUpdate',
