@@ -23,7 +23,7 @@
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
 # created on : 2017.08.16.
-# last update: 2022.12.20.
+# last update: 2023.01.09.
 # 
 # by meinside@duck.com
 
@@ -88,6 +88,7 @@ NGINX_BIN="/usr/local/sbin/nginx"
 NGINX_CONF_FILE="/etc/nginx/conf/nginx.conf"
 NGINX_SITES_DIR="/etc/nginx/sites-enabled"
 NGINX_SERVICE_FILE="/lib/systemd/system/nginx.service"
+NGINX_LOGS_DIR="/var/log/nginx"
 
 function prep {
     warn ">>> preparing for essential libraries..."
@@ -134,8 +135,8 @@ function build {
 	--sbin-path="${NGINX_BIN}" \
 	--prefix=/etc/nginx \
 	--pid-path=/run/nginx.pid \
-	--error-log-path=/var/log/nginx/error.log \
-	--http-log-path=/var/log/nginx/access.log \
+	--error-log-path="${NGINX_LOGS_DIR}/error.log" \
+	--http-log-path="${NGINX_LOGS_DIR}/access.log" \
 	--with-http_ssl_module \
 	--with-http_sub_module \
 	--with-http_v2_module \
@@ -156,8 +157,9 @@ function build {
 }
 
 function configure {
-    # create sites directory
+    # create directories
     sudo mkdir -p "$NGINX_SITES_DIR"
+    sudo mkdir -p "$NGINX_LOGS_DIR"
 
     # check if there are files in $NGINX_SITES_DIR, if empty:
     if [ -z "$(ls -A "$NGINX_SITES_DIR")" ]; then
