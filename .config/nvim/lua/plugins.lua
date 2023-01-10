@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.01.05.
+-- last update: 2023.01.10.
 
 
 ------------------------------------------------
@@ -144,7 +144,7 @@ return packer.startup { function()
   }
   use 'tpope/vim-ragtag' -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
   use 'tpope/vim-sleuth'
-  use 'p00f/nvim-ts-rainbow'
+  use 'mrjones2014/nvim-ts-rainbow'
 
 
   -- finder / locator
