@@ -147,6 +147,18 @@ return packer.startup { function()
   use 'mrjones2014/nvim-ts-rainbow'
 
 
+  -- annotation
+  use {
+    'danymat/neogen',
+    config = function()
+      require('neogen').setup {
+        snippet_engine = 'luasnip',
+      }
+    end,
+    requires = 'nvim-treesitter/nvim-treesitter',
+  }
+
+
   -- finder / locator
   use 'mtth/locate.vim' -- :L [query], :lclose, gl
   use 'johngrib/vim-f-hangul'	-- can use f/t/;/, on Hangul characters
