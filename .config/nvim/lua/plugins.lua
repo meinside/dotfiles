@@ -55,6 +55,19 @@ return packer.startup { function()
   }
 
 
+  -- notification
+  use {
+    'rcarriga/nvim-notify',
+    config = function()
+      local notify = require'notify'
+      notify.setup {
+        background_colour = '#000000',
+      }
+      vim.notify = notify -- override `vim.notify`
+    end,
+  }
+
+
   -- dim inactive window
   use 'blueyed/vim-diminactive'
 
