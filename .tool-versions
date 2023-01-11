@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2023.01.09.
+# last update: 2023.01.11.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -36,7 +36,7 @@ clojure 1.11.1.1208
 #   $ go install golang.org/x/tools/gopls@latest
 #
 # https://go.dev/doc/devel/release
-golang 1.19.4
+golang 1.19.5
 
 # $ asdf plugin add janet
 # $ asdf install janet
@@ -171,7 +171,7 @@ ruby 3.2.0
 #   $ cargo xtask install --server
 #
 # https://github.com/rust-lang/rust/releases
-rust 1.66.0
+rust 1.66.1
 
 # $ asdf plugin add zig
 # $ asdf install zig
