@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2022.08.17.
+# updated on 2023.01.11.
 #
 # ... by meinside@duck.com
 
@@ -92,11 +92,6 @@ if [[ -z $TMUX ]]; then
     # for lein (clojure)
     export LEIN_JVM_OPTS=""
     export LEIN_USE_BOOTCLASSPATH=no # https://github.com/venantius/ultra/issues/108
-
-    # for lua
-    if [ -d /opt/lua-language-server/bin ]; then
-        export PATH=$PATH:/opt/lua-language-server/bin
-    fi
 
     # for rust
     if [ -d "$HOME/.cargo/bin" ]; then
