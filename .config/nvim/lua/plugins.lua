@@ -46,15 +46,6 @@ return packer.startup { function()
   }
 
 
-  -- show keymaps
-  use {
-    'folke/which-key.nvim',
-    config = function()
-      require('which-key').setup { }
-    end,
-  }
-
-
   -- notification
   use {
     'rcarriga/nvim-notify',
@@ -64,6 +55,15 @@ return packer.startup { function()
         background_colour = '#000000',
       }
       vim.notify = notify -- override `vim.notify`
+    end,
+  }
+
+
+  -- show keymaps
+  use {
+    'folke/which-key.nvim',
+    config = function()
+      require('which-key').setup { }
     end,
   }
 
@@ -90,7 +90,10 @@ return packer.startup { function()
       codewindow.setup {}
 
       -- for toggling minimap: \mt
-      vim.keymap.set('n', '<leader>mt', function() codewindow.toggle_minimap() end, { remap = false, silent = true, desc = 'minimap: Toggle' })
+      vim.keymap.set('n', '<leader>mt', function()
+        codewindow.toggle_minimap()
+        vim.notify 'Toggled minimap.'
+      end, { remap = false, silent = true, desc = 'minimap: Toggle' })
     end,
   }
 
@@ -556,11 +559,11 @@ return packer.startup { function()
         local open = vim.fn.system('lsof -i:9365 | grep LISTEN')
         if string.len(open) <= 0 then
           vim.api.nvim_create_autocmd('BufEnter', {pattern = '*.janet', callback = function()
-            print("NOTE: run LSP with $ janet -e '(import spork/netrepl) (netrepl/server)'")
-          end})
+            vim.notify "You can run LSP with $ janet -e '(import spork/netrepl) (netrepl/server)'"
+          end, once = true})
         end
       else
-        error('`lsof` is not installed.')
+        vim.notify('`lsof` is not installed.', 'error')
       end
     end,
   }

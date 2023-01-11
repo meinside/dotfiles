@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2022.12.26.
+-- last update: 2023.01.11.
 
 
 ------------------------------------------------
@@ -45,10 +45,10 @@ local mouse_enabled = false
 vim.keymap.set('n', '<leader>mm', function()
   if mouse_enabled then
     opt.mouse = ''
-    print 'mouse disabled'
+    vim.notify 'Mouse disabled'
   else
     opt.mouse = 'nvi'
-    print 'mouse enabled'
+    vim.notify 'Mouse enabled'
   end
   mouse_enabled = not mouse_enabled
 end, { remap = false, silent = true, desc = 'Toggle mouse' })
