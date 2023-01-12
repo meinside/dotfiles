@@ -34,7 +34,7 @@ $ wget -O - "https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep
 
 #### a. Hack things
 
-Have a look at this script: [`bin/hack_macos.sh`](https://github.com/meinside/dotfiles/blob/master/bin/hack_macos.sh).
+Have a look at this script: [`bin/macos/hack.sh`](https://github.com/meinside/dotfiles/blob/master/bin/macos/hack.sh).
 
 #### b. How to remove unused Xcode simulators
 
