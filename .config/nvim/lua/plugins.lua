@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.01.11.
+-- last update: 2023.01.12.
 
 
 ------------------------------------------------
@@ -48,12 +48,9 @@ return packer.startup { function()
 
   -- notification
   use {
-    'rcarriga/nvim-notify',
-    config = function()
+    'rcarriga/nvim-notify', config = function()
       local notify = require'notify'
-      notify.setup {
-        background_colour = '#000000',
-      }
+      notify.setup { background_colour = '#000000' }
       vim.notify = notify -- override `vim.notify`
     end,
   }
@@ -61,8 +58,7 @@ return packer.startup { function()
 
   -- show keymaps
   use {
-    'folke/which-key.nvim',
-    config = function()
+    'folke/which-key.nvim', config = function()
       require('which-key').setup { }
     end,
   }
@@ -74,9 +70,7 @@ return packer.startup { function()
 
   -- split/join blocks of code (<space>m - toggle, <space>j - join, <space>s - split)
   use {
-    'Wansmer/treesj',
-    requires = { 'nvim-treesitter' },
-    config = function()
+    'Wansmer/treesj', requires = { 'nvim-treesitter' }, config = function()
       require'treesj'.setup { max_join_length = 240 }
     end,
   }
@@ -84,8 +78,7 @@ return packer.startup { function()
 
   -- minimap
   use {
-    'gorbit99/codewindow.nvim',
-    config = function()
+    'gorbit99/codewindow.nvim', config = function()
       local codewindow = require'codewindow'
       codewindow.setup {}
 
@@ -127,14 +120,12 @@ return packer.startup { function()
   -- formatting
   use {
     -- cs'" => change ' to " / ds" => remove " / ysiw" => wrap text object with " / yss" => wrap line with "
-    'kylechui/nvim-surround',
-    config = function()
+    'kylechui/nvim-surround', config = function()
       require'nvim-surround'.setup {}
     end,
   }
   use {
-    'lukas-reineke/indent-blankline.nvim',
-    config = function()
+    'lukas-reineke/indent-blankline.nvim', config = function()
       require'indent_blankline'.setup {
         char = '▏',
         buftype_exclude = { 'terminal' },
@@ -150,11 +141,9 @@ return packer.startup { function()
 
   -- annotation
   use {
-    'danymat/neogen',
-    config = function()
-      require('neogen').setup {
-        snippet_engine = 'luasnip',
-      }
+    -- :Neogen
+    'danymat/neogen', config = function()
+      require'neogen'.setup { snippet_engine = 'luasnip' }
     end,
     requires = 'nvim-treesitter/nvim-treesitter',
   }
@@ -263,9 +252,7 @@ return packer.startup { function()
           globalstatus = true,
         },
         extensions = { 'nvim-dap-ui', 'quickfix' },
-        sections = {
-          lualine_c = { 'filename', { navic.get_location, cond = navic.is_available } },
-        },
+        sections = { lualine_c = { 'filename', { navic.get_location, cond = navic.is_available } } },
         winbar = { lualine_c = { { 'filetype', icon_only = true }, { 'filename' } } },
         inactive_winbar = { lualine_c = { 'filename' } },
       }
@@ -276,8 +263,7 @@ return packer.startup { function()
 
   -- auto pair/close
   use {
-    'windwp/nvim-autopairs',
-    config = function()
+    'windwp/nvim-autopairs', config = function()
       require'nvim-autopairs'.setup {}
     end,
   }
@@ -286,22 +272,23 @@ return packer.startup { function()
   -- lsp
   use 'neovim/nvim-lspconfig'
   use {
-    'ray-x/lsp_signature.nvim',
-    config = function()
+    'ray-x/lsp_signature.nvim', config = function()
       require'lsp_signature'.setup { bind = true, handler_opts = { border = 'single' } }
     end,
   }
   use {
-    'https://git.sr.ht/~whynothugo/lsp_lines.nvim',
-    config = function()
+    'https://git.sr.ht/~whynothugo/lsp_lines.nvim', config = function()
       local ll = require'lsp_lines'
       ll.setup()
-      vim.keymap.set('', '<leader>ll', ll.toggle, { desc = 'lsp_lines: Toggle' })
+      --vim.keymap.set('', '<leader>ll', ll.toggle, { desc = 'lsp_lines: Toggle' })
+      vim.keymap.set('', '<leader>ll', function()
+        ll.toggle()
+        vim.notify 'Toggled LSP Lines.'
+      end, { desc = 'lsp_lines: Toggle' })
     end,
   }
   use {
-    'onsails/lspkind-nvim',
-    config = function()
+    'onsails/lspkind-nvim', config = function()
       -- (gray)
       vim.api.nvim_set_hl(0, 'CmpItemAbbrDeprecated', { bg = 'NONE', fg = '#808080', strikethrough = true })
       -- (blue)
@@ -321,14 +308,12 @@ return packer.startup { function()
     end,
   }
   use {
-    'williamboman/mason.nvim',
-    config = function()
+    'williamboman/mason.nvim', config = function()
       require'mason'.setup { ui = { icons = { package_installed = '✓', package_pending = '➜', package_uninstalled = '✗' } } }
     end,
   }
   use {
-    'williamboman/mason-lspconfig.nvim',
-    config = function()
+    'williamboman/mason-lspconfig.nvim', config = function()
       -- install lsp servers
       require'mason-lspconfig'.setup {
         ensure_installed = require'locals'.installable_lsp_names(), -- NOTE: see `.config/nvim/lua/locals/lsps.sample.lua`
@@ -425,15 +410,15 @@ return packer.startup { function()
 
   -- syntax highlighting and rainbow parenthesis
   --
+  -- $ npm -g install tree-sitter-cli
+  -- or
   -- $ cargo install tree-sitter-cli
   -- or
   -- $ brew install tree-sitter
   --
   -- NOTE: if it complains about any language, try :TSInstall [xxx]
   use {
-    'nvim-treesitter/nvim-treesitter',
-    run = ':TSUpdate',
-    config = function()
+    'nvim-treesitter/nvim-treesitter', run = ':TSUpdate', config = function()
       require'nvim-treesitter.configs'.setup {
         ensure_installed = {
           'bash',
@@ -475,8 +460,7 @@ return packer.startup { function()
 
   -- debug adapter
   use {
-    'mfussenegger/nvim-dap',
-    config = function()
+    'mfussenegger/nvim-dap', config = function()
       -- dap sign icons and colors
       vim.fn.sign_define('DapBreakpoint', { text = '', texthl = 'LspDiagnosticsSignError', linehl = '', numhl = '' })
       vim.fn.sign_define('DapStopped', { text = '', texthl = 'LspDiagnosticsSignInformation', linehl = 'DiagnosticUnderlineInfo', numhl = 'LspDiagnosticsSignInformation' })
@@ -496,8 +480,7 @@ return packer.startup { function()
     end,
   }
   use {
-    'theHamsta/nvim-dap-virtual-text',
-    config = function()
+    'theHamsta/nvim-dap-virtual-text', config = function()
       require'nvim-dap-virtual-text'.setup { commented = true }
     end,
   }
@@ -513,14 +496,13 @@ return packer.startup { function()
     ft = { 'go' },
     config = function()
       require'go'.setup { gofmt = 'gopls' }
-      vim.api.nvim_exec([[autocmd BufWritePre *.go :silent! lua require('go.format').goimport()]], false)
+      vim.api.nvim_create_autocmd('BufWritePre', { pattern = '*.go', callback = function() require'go.format'.goimport()  end })
     end,
   }
   use { 'ray-x/guihua.lua', run = 'cd lua/fzy && make' }
   use {
     'leoluz/nvim-dap-go',
-    -- install `delve` with :Mason
-    -- :DapContinue for starting debugging
+    -- install `delve` with :Mason, :DapContinue for starting debugging
     ft = {'go'},
     config = function()
       require'dap-go'.setup()
