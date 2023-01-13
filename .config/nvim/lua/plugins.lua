@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.01.12.
+-- last update: 2023.01.13.
 
 
 ------------------------------------------------
@@ -139,6 +139,14 @@ return packer.startup { function()
   use 'mrjones2014/nvim-ts-rainbow'
 
 
+  -- marks
+  use {
+    'chentoast/marks.nvim', config = function()
+      require'marks'.setup { }
+    end,
+  }
+
+
   -- annotation
   use {
     -- :Neogen
@@ -240,6 +248,7 @@ return packer.startup { function()
 
 
   -- statusline
+  use 'WhoIsSethDaniel/lualine-lsp-progress.nvim'
   use {
     'nvim-lualine/lualine.nvim',
     after = 'github-nvim-theme',
@@ -252,7 +261,7 @@ return packer.startup { function()
           globalstatus = true,
         },
         extensions = { 'nvim-dap-ui', 'quickfix' },
-        sections = { lualine_c = { 'filename', { navic.get_location, cond = navic.is_available } } },
+        sections = { lualine_c = { 'filename', 'lsp_progress', { navic.get_location, cond = navic.is_available } } },
         winbar = { lualine_c = { { 'filetype', icon_only = true }, { 'filename' } } },
         inactive_winbar = { lualine_c = { 'filename' } },
       }
