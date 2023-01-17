@@ -455,7 +455,7 @@ require("lazy").setup({
   --
   -- NOTE: if it complains about any language, try :TSInstall [xxx]
   {
-    'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = function()
+    'nvim-treesitter/nvim-treesitter', build = ':TSUpdateSync', config = function()
       require'nvim-treesitter.configs'.setup {
         ensure_installed = {
           'bash',
