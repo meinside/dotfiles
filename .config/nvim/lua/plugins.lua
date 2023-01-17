@@ -354,7 +354,7 @@ require("lazy").setup({
       -- install lsp servers
       require'mason-lspconfig'.setup {
         ensure_installed = require'locals'.installable_lsp_names(), -- NOTE: see `.config/nvim/lua/locals/lsps.sample.lua`
-        automatic_installation = false,
+        automatic_installation = true,
       }
 
       -- NOTE: no way of installing things other than lsp servers for now
@@ -445,7 +445,7 @@ require("lazy").setup({
   },
 
 
-  -- syntax highlighting and rainbow parenthesis
+  -- syntax highlighting and rainbow parenthesis (:TSUpdate for installing grammars)
   --
   -- $ npm -g install tree-sitter-cli
   -- or
@@ -455,7 +455,8 @@ require("lazy").setup({
   --
   -- NOTE: if it complains about any language, try :TSInstall [xxx]
   {
-    'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = function()
+    --'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = function() -- NOTE: generates heavy load on tiny machines
+    'nvim-treesitter/nvim-treesitter', config = function()
       require'nvim-treesitter.configs'.setup {
         ensure_installed = {
           'bash',
