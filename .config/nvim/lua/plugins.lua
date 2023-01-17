@@ -628,7 +628,7 @@ require("lazy").setup({
   -- rust
   {
     'simrat39/rust-tools.nvim',
-    --ft = { 'rust' }, -- FIXME: lazyloading doesn't work
+    ft = { 'rust' },
     dependencies = { { 'nvim-lua/plenary.nvim' }, { 'mfussenegger/nvim-dap' } },
   },
 
@@ -777,7 +777,7 @@ if ok then
       ),
     },
   }
+  -- FIXME: `rust-tools` doesn't format on file saves
+  vim.api.nvim_create_autocmd('BufWritePre', { pattern = '*.rs', callback = function() vim.lsp.buf.format { async = false } end })
 end
--- FIXME: `rust-tools` doesn't format on file saves
-vim.api.nvim_create_autocmd('BufWritePre', { pattern = '*.rs', callback = function() vim.lsp.buf.format { async = false } end })
 
