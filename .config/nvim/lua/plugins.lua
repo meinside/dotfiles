@@ -354,7 +354,7 @@ require("lazy").setup({
       -- install lsp servers
       require'mason-lspconfig'.setup {
         ensure_installed = require'locals'.installable_lsp_names(), -- NOTE: see `.config/nvim/lua/locals/lsps.sample.lua`
-        automatic_installation = true,
+        automatic_installation = false,
       }
 
       -- NOTE: no way of installing things other than lsp servers for now
@@ -445,7 +445,7 @@ require("lazy").setup({
   },
 
 
-  -- syntax highlighting and rainbow parenthesis (:TSUpdate for installing grammars)
+  -- syntax highlighting and rainbow parenthesis
   --
   -- $ npm -g install tree-sitter-cli
   -- or
@@ -455,8 +455,7 @@ require("lazy").setup({
   --
   -- NOTE: if it complains about any language, try :TSInstall [xxx]
   {
-    --'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = function() -- NOTE: generates heavy load on tiny machines
-    'nvim-treesitter/nvim-treesitter', config = function()
+    'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = function()
       require'nvim-treesitter.configs'.setup {
         ensure_installed = {
           'bash',
@@ -465,14 +464,14 @@ require("lazy").setup({
           'fennel',
           'go', 'gomod', 'gowork', --'gitignore',
           'haskell', 'html', 'http',
-          'java', 'javascript', 'jq', 'jsdoc', 'json', 'json5', 'jsonc', --'julia',
+          'java', 'javascript', 'jq', 'jsdoc', 'json', 'json5', 'jsonc', 'julia',
           'kotlin',
           'latex', 'llvm', 'lua',
           'make', 'markdown', 'markdown_inline', 'mermaid',
           'perl', 'php', 'python',
           'query',
-          'r', 'regex', 'ruby', 'rust',
-          'scheme', 'scss', 'sql', --'swift',
+          'regex', 'ruby', 'rust',
+          'scheme', 'scss', 'sql', 'swift',
           'toml', 'typescript',
           'yaml',
           'zig',
