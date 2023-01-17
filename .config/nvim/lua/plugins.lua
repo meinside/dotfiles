@@ -477,7 +477,7 @@ require'lazy'.setup({
           'yaml',
           'zig',
         },
-        sync_install = true, -- NOTE: asynchronous install generates too much load on tiny machines
+        sync_install = require'tools'.is_low_perf_machine(), -- NOTE: asynchronous install generates too much load on tiny machines
         highlight = { enable = true },
         rainbow = { enable = true, extended_mode = true },
       }
