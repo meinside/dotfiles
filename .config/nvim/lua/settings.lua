@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.01.11.
+-- last update: 2023.01.17.
 
 
 ------------------------------------------------
@@ -56,12 +56,6 @@ end, { remap = false, silent = true, desc = 'Toggle mouse' })
 -- for tab navigation
 vim.keymap.set('n', '<C-h>', ':tabprevious<CR>', { remap = false, silent = true, desc = 'Previous tab' }) -- <ctrl-h> for previous tab
 vim.keymap.set('n', '<C-l>', ':tabnext<CR>', { remap = false, silent = true, desc = 'Next tab' }) -- <ctrl-l> for next tab
-
--- go back to the last position of a file
-vim.api.nvim_exec([[
-  autocmd BufRead * autocmd FileType <buffer> ++once
-    \ if &ft !~# 'commit\|rebase' && line("'\"") > 1 && line("'\"") <= line("$") | exe 'normal! g`"' | endif
-]], false)
 
 -- highlight on yank
 vim.api.nvim_create_augroup('etc', { clear = true })

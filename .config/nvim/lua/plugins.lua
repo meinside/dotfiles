@@ -68,6 +68,18 @@ return packer.startup { function()
   use 'blueyed/vim-diminactive'
 
 
+  -- last position
+  use {
+    'ethanholz/nvim-lastplace', config = function()
+      require'nvim-lastplace'.setup {
+        lastplace_ignore_buftype = {'quickfix', 'nofile', 'help'},
+        lastplace_ignore_filetype = {'gitcommit', 'gitrebase', 'svn', 'hgcommit'},
+        lastplace_open_folds = true,
+      }
+    end,
+  }
+
+
   -- split/join blocks of code (<space>m - toggle, <space>j - join, <space>s - split)
   use {
     'Wansmer/treesj', requires = { 'nvim-treesitter' }, config = function()
