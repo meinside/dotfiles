@@ -113,7 +113,20 @@ require("lazy").setup({
 
 
   -- vale (see ~/.vale.ini)
-  { 'jose-elias-alvarez/null-ls.nvim' },
+  {
+    'jose-elias-alvarez/null-ls.nvim', config = function()
+      if vim.fn.executable('vale') == 1 then -- $ go install github.com/errata-ai/vale@latest
+        local ok, null_ls = pcall(require, 'null-ls')
+        if ok then
+          null_ls.setup {
+            sources = {
+              require'null-ls'.builtins.diagnostics.vale,
+            },
+          }
+        end
+      end
+    end,
+  },
 
 
   -- fold and preview (zc for closing, zo for opening / zM for closing all, zR opening all)
@@ -759,8 +772,8 @@ if ok then
       -- install `codelldb` with :Mason
       -- :RustDebuggables for debugging
       adapter = require'rust-tools.dap'.get_codelldb_adapter(
-      mason_pkgs_dir .. '/codelldb/extension/adapter/codelldb',
-      mason_pkgs_dir .. '/codelldb/extension/lldb/lib/liblldb.so'
+        mason_pkgs_dir .. '/codelldb/extension/adapter/codelldb',
+        mason_pkgs_dir .. '/codelldb/extension/lldb/lib/liblldb.so'
       ),
     },
   }
@@ -768,16 +781,3 @@ end
 -- FIXME: `rust-tools` doesn't format on file saves
 vim.api.nvim_create_autocmd('BufWritePre', { pattern = '*.rs', callback = function() vim.lsp.buf.format { async = false } end })
 
-
--- vale
-if vim.fn.executable('vale') == 1 then -- $ go install github.com/errata-ai/vale@latest
-  local null_ls
-  ok, null_ls = pcall(require, 'null-ls')
-  if ok then
-    null_ls.setup {
-      sources = {
-        require'null-ls'.builtins.diagnostics.vale,
-      },
-    }
-  end
-end
