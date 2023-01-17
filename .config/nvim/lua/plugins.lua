@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.01.13.
+-- last update: 2023.01.17.
 
 
 ------------------------------------------------
@@ -550,11 +550,11 @@ return packer.startup { function()
         local open = vim.fn.system('lsof -i:9365 | grep LISTEN')
         if string.len(open) <= 0 then
           vim.api.nvim_create_autocmd('BufEnter', {pattern = '*.janet', callback = function()
-            vim.notify "You can run LSP with $ janet -e '(import spork/netrepl) (netrepl/server)'"
+            vim.notify "You can run LSP with: $ janet -e '(import spork/netrepl) (netrepl/server)'"
           end, once = true})
         end
       else
-        vim.notify('`lsof` is not installed.', 'error')
+        vim.notify('`lsof` is not installed.', vim.log.levels.ERROR)
       end
     end,
   }
