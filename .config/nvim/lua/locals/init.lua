@@ -8,8 +8,8 @@ local locals = {}
 
 -- Returns LSP names for configuration
 local lsp_names = function (filter)
-  -- try loading: .config/nvim/lua/locals/lsps.lua
-  -- sample file here: .config/nvim/lua/locals/lsps.sample.lua
+  -- try loading: `.config/nvim/lua/locals/lsps.lua`
+  -- sample file here: `.config/nvim/lua/locals/lsps.sample.lua`
   local ok, my_lsps = pcall(require, 'locals/lsps')
   if not ok then
     -- default
