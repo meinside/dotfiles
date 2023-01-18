@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.01.17.
+-- last update: 2023.01.18.
 
 
 ------------------------------------------------

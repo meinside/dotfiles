@@ -5,12 +5,12 @@
 -- last update: 2023.01.18.
 
 -- Checks if given `path` is executable or not
-local function executable(path)
+local function is_executable(path)
   return vim.fn.executable(path) == 1
 end
 
 -- Checks if given `path` exists or not
-local function exists(path)
+local function file_exists(path)
    local f = io.open(path, 'r')
    return f ~= nil and io.close(f)
 end
@@ -25,10 +25,19 @@ local function shell_execute(command)
   return result
 end
 
+-- Check if given `port` is opened or not
+local function is_port_opened(port)
+  if is_executable('lsof') then
+    local listen = shell_execute('lsof -i:' .. tostring(port) .. ' | grep LISTEN')
+    return string.len(listen) > 0
+  end
+  return false
+end
+
 -- Returns total memory (in kB)
 local function total_memory()
   local meminfo = '/proc/meminfo'
-  if exists(meminfo) then
+  if file_exists(meminfo) then
     -- $ grep "MemTotal" /proc/meminfo | grep -oE '[0-9]+'
     local memory = shell_execute('grep "MemTotal" ' .. meminfo .. ' | grep -oE "[0-9]+"')
     memory = memory:gsub('%s+', '')
@@ -54,13 +63,19 @@ end
 return {
   -- functions for managing file system
   fs = {
-    executable = executable,
-    exists = exists,
+    executable = is_executable,
+    exists = file_exists,
   },
 
   -- functions for managing the machine
-  machine = {
+  system = {
     low_perf = low_performance,
+    port_opened = is_port_opened,
+  },
+
+  -- functions for manaing shell/commands
+  shell = {
+    execute = shell_execute,
   },
 
   -- for debugging

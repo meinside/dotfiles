@@ -480,7 +480,7 @@ require'lazy'.setup({
           'yaml',
           'zig',
         },
-        sync_install = tools.machine.low_perf(), -- NOTE: asynchronous install generates too much load on tiny machines
+        sync_install = tools.system.low_perf(), -- NOTE: asynchronous install generates too much load on tiny machines
         highlight = { enable = true },
         rainbow = { enable = true, extended_mode = true },
       }
@@ -579,22 +579,8 @@ require'lazy'.setup({
       vim.api.nvim_exec([[let g:conjure#filetype#fennel = "conjure.client.fennel.stdio"]], false)
     end,
   },
-  {
-    'bakpakin/janet.vim',
-    ft = { 'janet' },
-    config = function()
-      if tools.fs.executable('lsof') then
-        local open = vim.fn.system('lsof -i:9365 | grep LISTEN')
-        if string.len(open) <= 0 then
-          vim.api.nvim_create_autocmd('BufEnter', {pattern = '*.janet', callback = function()
-            vim.notify "You can run LSP with: $ janet -e '(import spork/netrepl) (netrepl/server)'"
-          end, once = true})
-        end
-      else
-        vim.notify('`lsof` is not installed.', vim.log.levels.ERROR)
-      end
-    end,
-  },
+  -- run janet LSP with: $ janet -e '(import spork/netrepl) (netrepl/server)'
+  { 'bakpakin/janet.vim', ft = { 'janet' } },
   -- >f, <f : move a form
   -- >e, <e : move an element
   -- >), <), >(, <( : move a parenthesis
