@@ -4,11 +4,16 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.01.17.
+-- last update: 2023.01.18.
 
 
 -- my utility functions (in .config/nvim/lua/tools.lua)
 local tools = require'tools'
+
+
+-- variables and constants
+local lisps = { 'clojure', 'fennel', 'janet', 'scheme' }
+
 
 ------------------------------------------------
 --
@@ -26,10 +31,6 @@ if not vim.loop.fs_stat(lazypath) then
   })
 end
 vim.opt.rtp:prepend(lazypath)
-
-
--- variables and constants
-local lisps = { 'clojure', 'fennel', 'janet', 'scheme' }
 
 
 ------------------------------------------------
@@ -175,7 +176,9 @@ require'lazy'.setup({
   -- marks
   {
     'chentoast/marks.nvim', config = function()
-      require'marks'.setup { }
+      require'marks'.setup {
+        force_write_shada = true, -- FIXME: marks are not removed across sessions without this configuration
+      }
     end,
   },
 
