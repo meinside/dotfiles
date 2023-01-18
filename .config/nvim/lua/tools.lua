@@ -1,14 +1,21 @@
 -- .config/nvim/lua/tools.lua
 --
--- My neovim tools
+-- My neovim utility functions
 --
--- last update: 2023.01.17.
+-- last update: 2023.01.18.
 
-local function file_exists(path)
+-- Checks if given `path` is executable or not
+local function executable(path)
+  return vim.fn.executable(path) == 1
+end
+
+-- Checks if given `path` exists or not
+local function exists(path)
    local f = io.open(path, 'r')
    return f ~= nil and io.close(f)
 end
 
+-- Runs given `command` and returns the result
 local function shell_execute(command)
   local handle = io.popen(command)
 ---@diagnostic disable-next-line: need-check-nil
@@ -19,9 +26,9 @@ local function shell_execute(command)
 end
 
 -- Returns total memory (in kB)
-local function physical_memory()
+local function total_memory()
   local meminfo = '/proc/meminfo'
-  if file_exists(meminfo) then
+  if exists(meminfo) then
     -- $ grep "MemTotal" /proc/meminfo | grep -oE '[0-9]+'
     local memory = shell_execute('grep "MemTotal" ' .. meminfo .. ' | grep -oE "[0-9]+"')
     memory = memory:gsub('%s+', '')
@@ -32,16 +39,36 @@ local function physical_memory()
   return -1 -- when it has no proper `/proc/meminfo` file (eg. macOS machine)
 end
 
+-- Checks if this machine will work with low performance
+-- (if it is not macOS and has < 4GB memory)
+local function low_performance()
+  local memory = total_memory()
+  if memory < 0 or memory >= 4 * 1024 * 1024 then
+    return false
+  end
+  vim.notify('Running on a machine with low performance.', vim.log.levels.WARN)
+  return true
+end
+
 -- export things
 return {
-  -- if it is not macOS, or has > 4GB physical memory,
-  is_low_perf_machine = function()
-    local memory = physical_memory()
-    if memory < 0 or memory > 4 * 1024 * 1024 then
-      return false
-    end
-    vim.notify('Running on a machine with low performance.', vim.log.levels.WARN)
-    return true
+  -- functions for managing file system
+  fs = {
+    executable = executable,
+    exists = exists,
+  },
+
+  -- functions for managing the machine
+  machine = {
+    low_perf = low_performance,
+  },
+
+  -- for debugging
+  d = function(something)
+    vim.notify(vim.inspect(something), vim.log.levels.DEBUG)
+  end,
+  i = function(something)
+    vim.notify(vim.inspect(something), vim.log.levels.INFO)
   end,
 }
 

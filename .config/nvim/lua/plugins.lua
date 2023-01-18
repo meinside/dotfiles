@@ -7,6 +7,9 @@
 -- last update: 2023.01.17.
 
 
+-- my utility functions (in .config/nvim/lua/tools.lua)
+local tools = require'tools'
+
 ------------------------------------------------
 --
 -- install `lazy` automatically
@@ -115,7 +118,7 @@ require'lazy'.setup({
   -- vale (see ~/.vale.ini)
   {
     'jose-elias-alvarez/null-ls.nvim', config = function()
-      if vim.fn.executable('vale') == 1 then -- $ go install github.com/errata-ai/vale@latest
+      if tools.fs.executable('vale') then -- $ go install github.com/errata-ai/vale@latest
         local ok, null_ls = pcall(require, 'null-ls')
         if ok then
           null_ls.setup {
@@ -477,7 +480,7 @@ require'lazy'.setup({
           'yaml',
           'zig',
         },
-        sync_install = require'tools'.is_low_perf_machine(), -- NOTE: asynchronous install generates too much load on tiny machines
+        sync_install = tools.machine.low_perf(), -- NOTE: asynchronous install generates too much load on tiny machines
         highlight = { enable = true },
         rainbow = { enable = true, extended_mode = true },
       }
@@ -552,7 +555,7 @@ require'lazy'.setup({
   -- haskell
   { 'neovimhaskell/haskell-vim', ft = { 'haskell' } },
   { 'itchyny/vim-haskell-indent', ft = { 'haskell' } },
-  { 'alx741/vim-stylishask', ft = { 'haskell' }, cond = vim.fn.executable('stylish-haskell') == 1 },
+  { 'alx741/vim-stylishask', ft = { 'haskell' }, cond = tools.fs.executable('stylish-haskell') },
 
 
   -- lispy languages
@@ -580,7 +583,7 @@ require'lazy'.setup({
     'bakpakin/janet.vim',
     ft = { 'janet' },
     config = function()
-      if vim.fn.executable('lsof') == 1 then
+      if tools.fs.executable('lsof') then
         local open = vim.fn.system('lsof -i:9365 | grep LISTEN')
         if string.len(open) <= 0 then
           vim.api.nvim_create_autocmd('BufEnter', {pattern = '*.janet', callback = function()
