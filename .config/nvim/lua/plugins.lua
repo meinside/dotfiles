@@ -7,8 +7,9 @@
 -- last update: 2023.01.18.
 
 
--- my utility functions (in .config/nvim/lua/tools.lua)
-local tools = require'tools'
+-- my utility functions and customized local things
+local tools = require'tools' -- .config/nvim/lua/tools.lua
+local locals = require'locals' -- .config/nvim/lua/locals/init.lua
 
 
 -- variables and constants
@@ -359,7 +360,7 @@ require'lazy'.setup({
     'williamboman/mason-lspconfig.nvim', config = function()
       -- install lsp servers
       require'mason-lspconfig'.setup {
-        ensure_installed = require'locals'.installable_lsp_names(), -- NOTE: see `.config/nvim/lua/locals/lsps.sample.lua`
+        ensure_installed = locals.installable_lsp_names(), -- NOTE: see `.config/nvim/lua/locals/lsps.sample.lua`
         automatic_installation = false,
       }
 
@@ -750,7 +751,7 @@ local lsp_settings = {
 local nvim_lsp
 ok, nvim_lsp = pcall(require, 'lspconfig')
 if ok then
-  for _, lsp in ipairs(require'locals'.autoconfigurable_lsp_names()) do -- NOTE: see `.config/nvim/lua/locals/lsps.sample.lua`
+  for _, lsp in ipairs(locals.autoconfigurable_lsp_names()) do -- NOTE: see `.config/nvim/lua/locals/lsps.sample.lua`
     nvim_lsp[lsp].setup { on_attach = on_attach_lsp, capabilities = capabilities, settings = lsp_settings }
   end
 end
