@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.01.18.
+-- last update: 2023.01.19.
 
 
 -- my utility functions and customized local things
@@ -121,14 +121,12 @@ require'lazy'.setup({
   {
     'jose-elias-alvarez/null-ls.nvim', config = function()
       if tools.fs.executable('vale') then -- $ go install github.com/errata-ai/vale@latest
-        local ok, null_ls = pcall(require, 'null-ls')
-        if ok then
-          null_ls.setup {
-            sources = {
-              require'null-ls'.builtins.diagnostics.vale,
-            },
-          }
-        end
+        local null_ls = require'null-ls'
+        null_ls.setup {
+          sources = {
+            null_ls.builtins.diagnostics.vale,
+          },
+        }
       end
     end,
   },
@@ -653,7 +651,6 @@ require'lazy'.setup({
 
 ----------------
 -- lsp settings
-local ok
 local mason_pkgs_dir = vim.env.HOME .. '/.local/share/nvim/mason/packages'
 local on_attach_lsp = function(client, bufnr) -- default setup for language servers
   -- Enable completion triggered by <c-x><c-o>
@@ -706,11 +703,7 @@ local on_attach_lsp = function(client, bufnr) -- default setup for language serv
   end
 end
 local capabilities = vim.lsp.protocol.make_client_capabilities()
-local cmp_nvim_lsp
-ok, cmp_nvim_lsp = pcall(require, 'cmp_nvim_lsp')
-if ok then
-  capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
-end
+capabilities = require'cmp_nvim_lsp'.default_capabilities(capabilities)
 capabilities.textDocument.completion.completionItem.documentationFormat = { 'markdown', 'plaintext' }
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 capabilities.textDocument.completion.completionItem.preselectSupport = true
@@ -748,31 +741,24 @@ local lsp_settings = {
   },
 }
 -------- automatic configuration with `lspconfig` --------
-local nvim_lsp
-ok, nvim_lsp = pcall(require, 'lspconfig')
-if ok then
-  for _, lsp in ipairs(locals.autoconfigurable_lsp_names()) do -- NOTE: see `.config/nvim/lua/locals/lsps.sample.lua`
-    nvim_lsp[lsp].setup { on_attach = on_attach_lsp, capabilities = capabilities, settings = lsp_settings }
-  end
+local nvim_lsp = require'lspconfig'
+for _, lsp in ipairs(locals.autoconfigurable_lsp_names()) do -- NOTE: see `.config/nvim/lua/locals/lsps.sample.lua`
+  nvim_lsp[lsp].setup { on_attach = on_attach_lsp, capabilities = capabilities, settings = lsp_settings }
 end
--------- manual configuration here --------
+-------- manual configurations here --------
 -- (rust)
-local rust_tools
-ok, rust_tools = pcall(require, 'rust-tools')
-if ok then
-  rust_tools.setup {
-    tools = {hover_actions = { auto_focus = true }},
-    server = { on_attach = on_attach_lsp, capabilities = capabilities },
-    dap = {
-      -- install `codelldb` with :Mason
-      -- :RustDebuggables for debugging
-      adapter = require'rust-tools.dap'.get_codelldb_adapter(
-        mason_pkgs_dir .. '/codelldb/extension/adapter/codelldb',
-        mason_pkgs_dir .. '/codelldb/extension/lldb/lib/liblldb.so'
-      ),
-    },
-  }
-  -- FIXME: `rust-tools` doesn't format on file saves
-  vim.api.nvim_create_autocmd('BufWritePre', { pattern = '*.rs', callback = function() vim.lsp.buf.format { async = false } end })
-end
+require'rust-tools'.setup {
+  tools = {hover_actions = { auto_focus = true }},
+  server = { on_attach = on_attach_lsp, capabilities = capabilities },
+  dap = {
+    -- install `codelldb` with :Mason
+    -- :RustDebuggables for debugging
+    adapter = require'rust-tools.dap'.get_codelldb_adapter(
+    mason_pkgs_dir .. '/codelldb/extension/adapter/codelldb',
+    mason_pkgs_dir .. '/codelldb/extension/lldb/lib/liblldb.so'
+    ),
+  },
+}
+-- FIXME: `rust-tools` doesn't format on file saves
+vim.api.nvim_create_autocmd('BufWritePre', { pattern = '*.rs', callback = function() vim.lsp.buf.format { async = false } end })
 
