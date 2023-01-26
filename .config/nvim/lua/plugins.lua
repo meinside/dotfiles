@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.01.19.
+-- last update: 2023.01.26.
 
 
 -- my utility functions and customized local things
@@ -120,7 +120,7 @@ require'lazy'.setup({
   -- vale (see ~/.vale.ini)
   {
     'jose-elias-alvarez/null-ls.nvim', config = function()
-      if tools.fs.executable('vale') then -- $ go install github.com/errata-ai/vale@latest
+      if tools.fs.executable('vale') then -- install `vale` with :Mason
         local null_ls = require'null-ls'
         null_ls.setup {
           sources = {
@@ -363,7 +363,7 @@ require'lazy'.setup({
       }
 
       -- NOTE: no way of installing things other than lsp servers for now
-      -- install other things with: :MasonInstall delve codelldb
+      -- install other things with: :MasonInstall delve codelldb  vale
     end,
   },
 
@@ -468,7 +468,7 @@ require'lazy'.setup({
           'c', 'clojure', 'cmake', 'comment', 'cpp', 'css',
           'dart', 'diff', 'dockerfile',
           'fennel',
-          'go', 'gomod', 'gowork', --'gitignore',
+          'go', 'gomod', 'gowork', 'gitignore',
           'haskell', 'html', 'http',
           'java', 'javascript', 'jq', 'jsdoc', 'json', 'json5', 'jsonc', 'julia',
           'kotlin',
