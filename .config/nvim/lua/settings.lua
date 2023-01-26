@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.01.18.
+-- last update: 2023.01.26.
 
 
 ------------------------------------------------
@@ -12,32 +12,32 @@
 -- options
 
 local opt = vim.opt
-opt.mouse = ''
-opt.backspace = { 'indent', 'eol', 'start' } -- allow backspacing over everything in insert mode
-opt.history = 50
-opt.number = true
-opt.ruler = true
-opt.showcmd = true
-opt.incsearch = true
-opt.smartcase = true
-opt.cindent = true
 opt.autoindent = true
-opt.smartindent = true
-opt.tabstop = 4
-opt.shiftwidth = 4
-opt.softtabstop = 4
+opt.backspace = { 'indent', 'eol', 'start' } -- allow backspacing over everything in insert mode
+opt.breakindent = true
+opt.cindent = true
+opt.cursorline = true -- highlight current line
 opt.expandtab = true
 opt.fileencodings = { 'ucs-bom', 'utf-8', 'korea' }
-opt.showbreak = '↳'
-opt.wildmenu = true
-opt.breakindent = true
-opt.splitbelow = true
-opt.splitright = true
 opt.foldmethod = 'indent' -- automatically fold on indent
 opt.foldlevelstart = 20 -- but open all folds on file open
-opt.updatetime = 1000 -- for shortening delay of CursorHold
-opt.cursorline = true -- highlight current line
+opt.history = 50
+opt.incsearch = true
+opt.mouse = ''
+opt.number = true
+opt.ruler = true
+opt.shiftwidth = 4
+opt.showbreak = '↳'
+opt.showcmd = true
+opt.smartcase = true
+opt.smartindent = true
+opt.softtabstop = 4
+opt.splitbelow = true
+opt.splitright = true
+opt.tabstop = 4
 opt.termguicolors = true
+opt.updatetime = 1000 -- for shortening delay of CursorHold
+opt.wildmenu = true
 vim.o.signcolumn = 'number'
 
 -- for toggling mouse: \mm
@@ -53,7 +53,7 @@ vim.keymap.set('n', '<leader>mm', function()
   mouse_enabled = not mouse_enabled
 end, { remap = false, silent = true, desc = 'Toggle mouse' })
 
--- for tab navigation
+-- tab navigation
 vim.keymap.set('n', '<C-h>', ':tabprevious<CR>', { remap = false, silent = true, desc = 'Previous tab' }) -- <ctrl-h> for previous tab
 vim.keymap.set('n', '<C-l>', ':tabnext<CR>', { remap = false, silent = true, desc = 'Next tab' }) -- <ctrl-l> for next tab
 
