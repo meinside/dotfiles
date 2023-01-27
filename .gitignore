@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2022.12.07.
+# last update: 2023.01.27.
 #
 # meinside@duck.com
 
@@ -250,6 +250,7 @@ VirtualBox VMs/
 .wakeup
 .sleep
 bin/
+homebrew/
 files/
 public_html/
 srcs/
