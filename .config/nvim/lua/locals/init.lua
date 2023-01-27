@@ -2,13 +2,13 @@
 --
 -- My custom functions and variable/constants.
 --
--- last update: 2023.01.18.
+-- last update: 2023.01.27.
 
 local locals = {}
 
 -- Returns LSP names for configuration
 local lsp_names = function (filter)
-  -- try loading: `.config/nvim/lua/locals/lsps.lua`
+  -- will try loading: `.config/nvim/lua/locals/lsps.lua`
   -- sample file here: `.config/nvim/lua/locals/lsps.sample.lua`
   local ok, my_lsps = pcall(require, 'locals/lsps')
   if not ok then
