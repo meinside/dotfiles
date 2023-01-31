@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.01.26.
+-- last update: 2023.01.31.
 
 
 -- my utility functions and customized local things
@@ -437,6 +437,7 @@ require'lazy'.setup({
           { name = 'nvim_lsp', keyword_length = 3 },
           { name = 'luasnip', keyword_length = 2 },
           { name = 'nvim_lua', keyword_length = 2 },
+--          { name = 'codeium' },
         },
         formatting = { format = lspkind.cmp_format() },
       }
@@ -528,6 +529,20 @@ require'lazy'.setup({
       require'nvim-dap-virtual-text'.setup { commented = true }
     end,
   },
+
+
+--  -- codeium
+--  {
+--    'jcdickinson/codeium.nvim',
+--    dependencies = {
+--      'nvim-lua/plenary.nvim',
+--      'MunifTanjim/nui.nvim',
+--      'hrsh7th/nvim-cmp',
+--    },
+--    config = function()
+--      require'codeium'.setup { }
+--    end,
+--  },
 
 
   -- bash
