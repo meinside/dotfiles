@@ -7,11 +7,6 @@
 -- last update: 2023.01.31.
 
 
--- my utility functions and customized local things
-local tools = require'tools' -- .config/nvim/lua/tools.lua
-local locals = require'locals' -- .config/nvim/lua/locals/init.lua
-
-
 -- variables and constants
 local lisps = { 'clojure', 'fennel', 'janet', 'scheme' }
 
