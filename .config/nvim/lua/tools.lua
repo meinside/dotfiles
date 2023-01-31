@@ -2,7 +2,7 @@
 --
 -- My neovim utility functions
 --
--- last update: 2023.01.18.
+-- last update: 2023.01.31.
 
 -- Checks if given `path` is executable or not
 local function is_executable(path)
@@ -81,6 +81,9 @@ return {
   -- for debugging
   d = function(something)
     vim.notify(vim.inspect(something), vim.log.levels.DEBUG)
+  end,
+  e = function(something)
+    vim.notify(vim.inspect(something), vim.log.levels.ERROR)
   end,
   i = function(something)
     vim.notify(vim.inspect(something), vim.log.levels.INFO)
