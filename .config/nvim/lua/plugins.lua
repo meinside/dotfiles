@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.01.31.
+-- last update: 2023.02.01.
 
 
 -- variables and constants
@@ -358,7 +358,7 @@ require'lazy'.setup({
       }
 
       -- NOTE: no way of installing things other than lsp servers for now
-      -- install other things with: :MasonInstall delve codelldb  vale
+      -- install other things with: :MasonInstall delve codelldb vale
     end,
   },
 
@@ -764,8 +764,8 @@ require'rust-tools'.setup {
     -- install `codelldb` with :Mason
     -- :RustDebuggables for debugging
     adapter = require'rust-tools.dap'.get_codelldb_adapter(
-    mason_pkgs_dir .. '/codelldb/extension/adapter/codelldb',
-    mason_pkgs_dir .. '/codelldb/extension/lldb/lib/liblldb.so'
+      mason_pkgs_dir .. '/codelldb/extension/adapter/codelldb',
+      mason_pkgs_dir .. '/codelldb/extension/lldb/lib/liblldb.so'
     ),
   },
 }
