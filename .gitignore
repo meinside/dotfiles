@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2023.01.27.
+# last update: 2023.02.02.
 #
 # meinside@duck.com
 
@@ -35,6 +35,8 @@
 .rpi-firmware
 .sudo_as_admin_successful
 .swt/
+.vpython_cipd_cache
+.vpython-root
 .wget-hsts
 backups/
 default.profraw
