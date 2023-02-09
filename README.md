@@ -1,4 +1,4 @@
-# My dot/config files for macOS, Linux, Raspberry Pi, WSL, and Termux
+# My dot/config files for various machines
 
 by Sungjin Han <meinside@duck.com>
 
@@ -6,12 +6,12 @@ by Sungjin Han <meinside@duck.com>
 
 My personal dot/config files for:
 
-- macOS (**Monterey**) + [kitty](https://sw.kovidgoyal.net/kitty/)
-- Raspberry Pi (**Raspbian Bullseye**)
+- macOS (**Ventura**) + [kitty](https://sw.kovidgoyal.net/kitty/)
+- Raspberry Pi (**Raspberry Pi OS Bullseye**)
 - Linux (**Debian/Ubuntu**)
-- WSL2 (**Windows 11**)
-- Termux (**Android / [F-Droid](https://f-droid.org/en/packages/com.termux/)**)
-- SteamOS on Steam Deck
+- WSL2 (**Windows 11**) + [Windows Terminal](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701)
+- Android Termux (**[F-Droid](https://f-droid.org/en/packages/com.termux/)**)
+- [SteamOS](https://store.steampowered.com/steamos) on [Steam Deck](https://store.steampowered.com/steamdeck)
 
 ---
 
@@ -505,6 +505,7 @@ Use `winget`: [Windows Package Manager](https://www.microsoft.com/store/productI
 # eg.
 $ winget search tailscale
 $ winget install tailscale
+$ winget upgrade --all
 ```
 
 ### Z. Trouble Shooting
