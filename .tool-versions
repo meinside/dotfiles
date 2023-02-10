@@ -1,5 +1,7 @@
 # My .tool-versions for `asdf`
 #
+# https://github.com/asdf-vm/asdf-plugins
+#
 # created on : 2022.04.14.
 # last update: 2023.02.10.
 
@@ -26,6 +28,26 @@ babashka 1.1.173
 #
 # https://clojure.org/releases/tools#_releases
 clojure 1.11.1.1208
+
+# $ asdf plugin add deno
+# $ asdf install deno
+#
+# https://github.com/denoland/deno/releases
+deno 1.30.3
+
+# $ asdf plugin add elixir
+# $ asdf install elixir
+#
+# (erlang is needed)
+#
+# https://github.com/elixir-lang/elixir/releases
+elixir 1.14.3
+
+# $ asdf plugin add erlang
+# $ asdf install erlang
+#
+# https://github.com/erlang/otp/releases
+erlang 25.2.2
 
 # $ asdf plugin add golang
 # $ asdf install golang
