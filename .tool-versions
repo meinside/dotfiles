@@ -1,7 +1,7 @@
 # My .tool-versions for `asdf`
 #
 # created on : 2022.04.14.
-# last update: 2023.02.06.
+# last update: 2023.02.10.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -158,7 +158,7 @@ python 3.11.1
 #   $ gem install --user-install solargraph
 #
 # https://www.ruby-lang.org/en/downloads/releases/
-ruby 3.2.0
+ruby 3.2.1
 
 # $ asdf plugin add rust
 # $ asdf install rust
