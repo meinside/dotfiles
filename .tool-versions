@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2023.02.10.
+# last update: 2023.02.13.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -27,7 +27,7 @@ babashka 1.1.173
 #   $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
 #
 # https://clojure.org/releases/tools#_releases
-clojure 1.11.1.1208
+clojure 1.11.1.1224
 
 # $ asdf plugin add deno
 # $ asdf install deno
