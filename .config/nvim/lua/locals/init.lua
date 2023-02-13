@@ -2,7 +2,7 @@
 --
 -- My custom functions and variable/constants.
 --
--- last update: 2023.01.31.
+-- last update: 2023.02.13.
 
 -- Returns LSP names for configuration
 local lsp_names = function(filter)
@@ -14,7 +14,7 @@ local lsp_names = function(filter)
     return {
       'bashls', -- bash
       'jsonls', -- json
-      'sumneko_lua', -- lua
+      'lua_ls', -- lua
     }
   else
     local names = {}
