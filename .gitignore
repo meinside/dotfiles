@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2023.02.02.
+# last update: 2023.02.28.
 #
 # meinside@duck.com
 
@@ -247,11 +247,14 @@ VirtualBox VMs/
 .zsh-update
 
 # personal data
+.emulationstation/
 .emulator_console_auth_token
 .homebrew_analytics_user_uuid
+.mame/
 .wakeup
 .sleep
 bin/
+emudeck/
 homebrew/
 files/
 public_html/
