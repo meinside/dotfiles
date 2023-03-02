@@ -3,13 +3,13 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2023.02.17.
+# last update: 2023.03.02.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
 #
 # https://github.com/babashka/babashka/releases
-babashka 1.1.173
+babashka 1.2.174
 
 # For bash-language-server,
 #   :MasonInstall bash-language-server
@@ -27,13 +27,13 @@ babashka 1.1.173
 #   $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
 #
 # https://clojure.org/releases/tools#_releases
-clojure 1.11.1.1224
+clojure 1.11.1.1237
 
 # $ asdf plugin add deno
 # $ asdf install deno
 #
 # https://github.com/denoland/deno/releases
-deno 1.30.3
+deno 1.31.1
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -108,7 +108,7 @@ lua 5.4.4
 # $ asdf install meson
 #
 # https://github.com/mesonbuild/meson/releases
-meson 1.0.0
+meson 1.0.1
 
 # $ asdf plugin add neovim
 # $ asdf install neovim
@@ -144,7 +144,7 @@ ninja 1.11.1
 # $ asdf install nodejs
 #
 # https://nodejs.org/en/about/releases/
-nodejs 18.14.1
+nodejs 18.14.2
 
 # $ asdf plugin add python
 # $ asdf install python
@@ -155,7 +155,7 @@ nodejs 18.14.1
 #   $ pip install --user python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.11.1
+python 3.11.2
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
