@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2023.03.02.
+# last update: 2023.03.06.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -66,7 +66,7 @@ golang 1.20.1
 #   $ janet -e "(import spork/netrepl) (netrepl/server)"
 #
 # https://github.com/janet-lang/janet/releases
-janet 1.26.0
+janet 1.27.0
 
 # $ asdf plugin add java
 # $ asdf install java
