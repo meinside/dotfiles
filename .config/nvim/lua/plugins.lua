@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.02.01.
+-- last update: 2023.03.07.
 
 
 -- variables and constants
@@ -164,7 +164,7 @@ require'lazy'.setup({
   },
   { 'tpope/vim-ragtag' }, -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
   { 'tpope/vim-sleuth' },
-  { 'mrjones2014/nvim-ts-rainbow' },
+  { 'https://gitlab.com/HiPhish/nvim-ts-rainbow2' },
 
 
   -- marks
@@ -480,7 +480,12 @@ require'lazy'.setup({
         },
         sync_install = tools.system.low_perf(), -- NOTE: asynchronous install generates too much load on tiny machines
         highlight = { enable = true },
-        rainbow = { enable = true, extended_mode = true },
+        rainbow = {
+          enable = true,
+          extended_mode = true,
+          query = 'rainbow-parens',
+          strategy = require 'ts-rainbow.strategy.global',
+        },
       }
     end,
   },
