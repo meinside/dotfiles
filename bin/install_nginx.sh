@@ -6,7 +6,9 @@
 #
 # (https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#sources)
 #
+#
 # * for issuing and renewing SSL certificates:
+#
 #   (https://webcodr.io/2018/02/nginx-reverse-proxy-on-raspberry-pi-with-lets-encrypt/)
 
 #   $ sudo apt-get -y install certbot
@@ -17,13 +19,29 @@
 #   # or manually issue a certificate for a wildcard domain (cannot be renewed automatically):
 #   $ sudo certbot certonly --manual --preferred-challenges=dns --agree-tos -d "*.example.com"
 #
+#
 # * for auto-renewing SSL certificates:
+#
 #   $ sudo crontab -e
 #   # will renew all certificates and restart nginx:
 #   0 0 1 * * certbot renew --pre-hook "systemctl stop nginx" --post-hook "systemctl start nginx"
 #
+#
+# * for issuing and renewing letsencrypt certificates for tailscale funnel:
+#
+#   # application on port 9999 will be funneled through port 80/443/8443/10000
+#   $ sudo tailscale serve / proxy 9999
+#   $ sudo tailscale serve funnel on
+#
+#   # generate certificates
+#   $ sudo tailscale cert --cert-file /path/to/cert.crt --key-file /path/to/cert.key "subdomain.my-tailnet-name.ts.net"
+#
+#   $ sudo crontab -e
+#   # will renew tailscale certificates on the 1st day of every month
+#   0 5 1 */1 * sudo tailscale cert --cert-file /path/to/cert.crt --key-file /path/to/cert.key "subdomain.my-tailnet-name.ts.net"
+#
 # created on : 2017.08.16.
-# last update: 2023.02.08.
+# last update: 2023.03.09.
 # 
 # by meinside@duck.com
 
