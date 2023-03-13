@@ -2,10 +2,6 @@
 
 These are my helper scripts that make my life a lot happier:
 
-## busy.sh
-
-A script for generating CPU spikes for some seconds.
-
 ## gen_selfsigned_certs.sh
 
 A script for generating self-signed certificates for development.
