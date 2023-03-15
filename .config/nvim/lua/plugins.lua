@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.03.07.
+-- last update: 2023.03.15.
 
 
 -- variables and constants
@@ -102,6 +102,10 @@ require'lazy'.setup({
       end, { remap = false, silent = true, desc = 'minimap: Toggle' })
     end,
   },
+
+
+  -- relative/absolute linenumber toggling
+  { 'cpea2506/relative-toggle.nvim' },
 
 
   -- markdown preview
