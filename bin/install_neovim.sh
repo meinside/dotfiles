@@ -5,7 +5,7 @@
 # For building neovim from source code.
 # (https://github.com/neovim/neovim/wiki/Installing-Neovim#install-from-source)
 #
-# last update: 2023.02.03.
+# last update: 2023.03.16.
 # 
 # by meinside@duck.com
 
@@ -25,6 +25,9 @@
 # $ cargo install tree-sitter-cli
 # or
 # $ npm -g install tree-sitter-cli
+#
+# and reshim installed packages
+# $ asdf reshim
 
 
 ################################
