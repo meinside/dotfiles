@@ -105,7 +105,7 @@ require'lazy'.setup({
 
 
   -- relative/absolute linenumber toggling
-  { 'cpea2506/relative-toggle.nvim' },
+  { 'sitiom/nvim-numbertoggle' },
 
 
   -- markdown preview
@@ -355,7 +355,12 @@ require'lazy'.setup({
   },
   {
     'williamboman/mason.nvim', config = function()
-      require'mason'.setup { ui = { icons = { package_installed = '✓', package_pending = '➜', package_uninstalled = '✗' } } }
+      require'mason'.setup {
+        ui = { icons = { package_installed = '✓', package_pending = '➜', package_uninstalled = '✗' } },
+
+        -- XXX: https://github.com/williamboman/mason.nvim/issues/1101
+        --registries = { "github:mason-org/mason-registry", "lua:mason-registry.index" }
+      }
     end,
   },
   {
@@ -652,9 +657,14 @@ require'lazy'.setup({
 
   {
     'meinside/openai.nvim',
+    --dir = '~/srcs/lua/openai.nvim',
     dependencies = { { 'nvim-lua/plenary.nvim' } },
+    config = function()
+      require'openai'.setup {
+        credentialsFilepath = '~/.config/openai-nvim.json',
+      }
+    end,
   },
-  --{ dir = '~/srcs/lua/openai.nvim' },
 
 }, {
   ui = {
