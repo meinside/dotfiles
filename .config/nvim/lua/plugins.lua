@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.03.15.
+-- last update: 2023.03.22.
 
 
 -- variables and constants
@@ -303,6 +303,11 @@ require'lazy'.setup({
   { 'SmiteshP/nvim-navic', dependencies = { 'neovim/nvim-lspconfig' } },
 
 
+  --------------------------------
+  --
+  -- tools for development
+  --
+
   -- auto pair/close
   {
     'windwp/nvim-autopairs', config = function()
@@ -535,19 +540,10 @@ require'lazy'.setup({
   },
 
 
---  -- codeium
---  {
---    'jcdickinson/codeium.nvim',
---    dependencies = {
---      'nvim-lua/plenary.nvim',
---      'MunifTanjim/nui.nvim',
---      'hrsh7th/nvim-cmp',
---    },
---    config = function()
---      require'codeium'.setup { }
---    end,
---  },
-
+  --------------------------------
+  --
+  -- programming languages
+  --
 
   -- bash
   { 'bash-lsp/bash-language-server', ft = { 'sh' } },
@@ -647,6 +643,18 @@ require'lazy'.setup({
 
   -- zig
   { 'ziglang/zig.vim', ft = { 'zig' } },
+
+
+  --------------------------------
+  --
+  -- my neovim lua plugins for testing & development
+  --
+
+  {
+    'meinside/openai.nvim',
+    dependencies = { { 'nvim-lua/plenary.nvim' } },
+  },
+  --{ dir = '~/srcs/lua/openai.nvim' },
 
 }, {
   ui = {
