@@ -2,7 +2,7 @@
 --
 -- My neovim utility functions
 --
--- last update: 2023.01.31.
+-- last update: 2023.03.23.
 
 -- Checks if given `path` is executable or not
 local function is_executable(path)
@@ -59,8 +59,7 @@ local function low_performance()
   return true
 end
 
--- export things
-return {
+local Tools = {
   -- functions for managing file system
   fs = {
     executable = is_executable,
@@ -77,16 +76,20 @@ return {
   shell = {
     execute = shell_execute,
   },
-
-  -- for debugging
-  d = function(something)
-    vim.notify(vim.inspect(something), vim.log.levels.DEBUG)
-  end,
-  e = function(something)
-    vim.notify(vim.inspect(something), vim.log.levels.ERROR)
-  end,
-  i = function(something)
-    vim.notify(vim.inspect(something), vim.log.levels.INFO)
-  end,
 }
+
+-- functions for debugging
+function Tools.d(something)
+  vim.notify(vim.inspect(something), vim.log.levels.DEBUG)
+end
+function Tools.e(something)
+  vim.notify(vim.inspect(something), vim.log.levels.ERROR)
+end
+function Tools.i(something)
+  vim.notify(vim.inspect(something), vim.log.levels.INFO)
+end
+
+
+-- export things
+return Tools
 

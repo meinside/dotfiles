@@ -2,7 +2,9 @@
 --
 -- My custom functions and variable/constants.
 --
--- last update: 2023.02.13.
+-- last update: 2023.03.23.
+
+local Locals = {}
 
 -- Returns LSP names for configuration
 local lsp_names = function(filter)
@@ -28,7 +30,8 @@ local lsp_names = function(filter)
 end
 
 -- export things
-return {
-  installable_lsp_names = function() return lsp_names(false) end,
-  autoconfigurable_lsp_names = function() return lsp_names(true) end,
-}
+Locals.installable_lsp_names = function() return lsp_names(false) end
+Locals.autoconfigurable_lsp_names = function() return lsp_names(true) end
+
+return Locals
+
