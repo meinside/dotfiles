@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.01.26.
+-- last update: 2023.03.23.
 
 
 ------------------------------------------------
@@ -18,6 +18,7 @@ opt.breakindent = true
 opt.cindent = true
 opt.cursorline = true -- highlight current line
 opt.expandtab = true
+opt.encoding = 'utf-8'
 opt.fileencodings = { 'ucs-bom', 'utf-8', 'korea' }
 opt.foldmethod = 'indent' -- automatically fold on indent
 opt.foldlevelstart = 20 -- but open all folds on file open
