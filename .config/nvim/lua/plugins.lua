@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.03.22.
+-- last update: 2023.03.24.
 
 
 -- variables and constants
@@ -198,7 +198,8 @@ require'lazy'.setup({
     'nvim-telescope/telescope.nvim',
     dependencies = {
       { 'nvim-lua/popup.nvim' },
-      { 'nvim-lua/plenary.nvim' },
+      --{ 'nvim-lua/plenary.nvim' },
+      { 'meinside/plenary.nvim', branch = 'feature/curl-opts-timeout' }, -- XXX: FIXME (https://github.com/nvim-lua/plenary.nvim/pull/475)
       { 'nvim-telescope/telescope-fzf-native.nvim' },
     },
     config = function()
@@ -233,7 +234,8 @@ require'lazy'.setup({
   { 'junegunn/gv.vim' }, -- :GV, :GV!, :GV?
   {
     'lewis6991/gitsigns.nvim', -- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
-    dependencies = { 'nvim-lua/plenary.nvim' },
+    --dependencies = { { 'nvim-lua/plenary.nvim' } },
+    dependencies = { { 'meinside/plenary.nvim', branch = 'feature/curl-opts-timeout' } }, -- XXX: FIXME (https://github.com/nvim-lua/plenary.nvim/pull/475)
     config = function()
       require'gitsigns'.setup {
         numhl = true,
@@ -642,7 +644,11 @@ require'lazy'.setup({
   {
     'simrat39/rust-tools.nvim',
     ft = { 'rust' },
-    dependencies = { { 'nvim-lua/plenary.nvim' }, { 'mfussenegger/nvim-dap' } },
+    dependencies = {
+      --{ 'nvim-lua/plenary.nvim' },
+      { 'meinside/plenary.nvim', branch = 'feature/curl-opts-timeout' }, -- XXX: FIXME (https://github.com/nvim-lua/plenary.nvim/pull/475)
+      { 'mfussenegger/nvim-dap' },
+    },
   },
 
 
@@ -658,10 +664,16 @@ require'lazy'.setup({
   {
     'meinside/openai.nvim',
     --dir = '~/srcs/lua/openai.nvim',
-    dependencies = { { 'nvim-lua/plenary.nvim' } },
+    --dependencies = { { 'nvim-lua/plenary.nvim' } },
+    dependencies = { { 'meinside/plenary.nvim', branch = 'feature/curl-opts-timeout' } }, -- XXX: FIXME (https://github.com/nvim-lua/plenary.nvim/pull/475)
     config = function()
       require'openai'.setup {
         credentialsFilepath = '~/.config/openai-nvim.json',
+        models = {
+          edit = 'text-davinci-edit-001',
+          editCode = 'code-davinci-edit-001',
+          completeChat = 'gpt-3.5-turbo',
+        },
       }
     end,
   },
