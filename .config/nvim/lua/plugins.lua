@@ -2,9 +2,9 @@
 --
 -- Neovim plugins list
 --
--- NOTE: sourced from: `.config/nvim/init.lua`
+-- NOTE: sourced from: `~/.config/nvim/init.lua`
 --
--- last update: 2023.03.24.
+-- last update: 2023.03.27.
 
 
 -- variables and constants
@@ -359,9 +359,6 @@ require'lazy'.setup({
     'williamboman/mason.nvim', config = function()
       require'mason'.setup {
         ui = { icons = { package_installed = '✓', package_pending = '➜', package_uninstalled = '✗' } },
-
-        -- XXX: https://github.com/williamboman/mason.nvim/issues/1101
-        --registries = { "github:mason-org/mason-registry", "lua:mason-registry.index" }
       }
     end,
   },
@@ -790,7 +787,7 @@ local lsp_settings = {
 }
 -------- automatic configuration with `lspconfig` --------
 local nvim_lsp = require'lspconfig'
-for _, lsp in ipairs(locals.autoconfigurable_lsp_names()) do -- NOTE: see `.config/nvim/lua/locals/lsps.sample.lua`
+for _, lsp in ipairs(locals.autoconfigurable_lsp_names()) do -- NOTE: see `~/.config/nvim/lua/locals/lsps.sample.lua`
   nvim_lsp[lsp].setup { on_attach = on_attach_lsp, capabilities = capabilities, settings = lsp_settings }
 end
 -------- manual configurations here --------
