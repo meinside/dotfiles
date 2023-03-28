@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `~/.config/nvim/init.lua`
 --
--- last update: 2023.03.27.
+-- last update: 2023.03.28.
 
 
 -- variables and constants
@@ -497,7 +497,7 @@ require'lazy'.setup({
           enable = true,
           extended_mode = true,
           query = 'rainbow-parens',
-          strategy = require 'ts-rainbow.strategy.global',
+          strategy = require'ts-rainbow'.strategy.global,
         },
       }
     end,
