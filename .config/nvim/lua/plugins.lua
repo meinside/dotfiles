@@ -168,7 +168,7 @@ require'lazy'.setup({
   },
   { 'tpope/vim-ragtag' }, -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
   { 'tpope/vim-sleuth' },
-  { 'https://gitlab.com/HiPhish/nvim-ts-rainbow2' },
+  { 'HiPhish/nvim-ts-rainbow2' },
 
 
   -- marks
