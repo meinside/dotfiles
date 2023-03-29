@@ -1,11 +1,14 @@
-# Brewfile of meinside@duck.com
+# .config/brewfile/Brewfile
+#
+# meinside@duck.com
+#
 #
 # Usage: 
 #
 # $ brew tap Homebrew/bundle
 # $ brew bundle
 # 
-# last update: 2022.08.17.
+# last update: 2023.03.29.
 
 ######## formulas
 
