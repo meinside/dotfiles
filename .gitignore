@@ -124,17 +124,6 @@ Brewfile.lock.json
 .m2/
 .oracle_jre_usage/
 
-# node.js files/dirs
-.babel.json
-.config/configstore
-.node-gyp
-.npm/
-node_modules/
-package-lock.json
-
-# perl files/dirs
-perl*/
-
 # python files/dirs
 .pip/
 .virtualenvs/
@@ -196,7 +185,6 @@ xcuserdata
 .lesshst
 .lnav/
 .lsp/
-.luarocks/
 .magick/
 .matplotlib/
 .mitmproxy/
@@ -223,7 +211,6 @@ xcuserdata
 .viminfo
 .vimrc.lowperf
 .vscode*/
-.w3m/
 .wireshark-etc/
 .wireshark/
 .Xresources

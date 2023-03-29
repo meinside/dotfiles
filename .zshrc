@@ -86,12 +86,16 @@ if [ -z "$TMUX" ]; then
 fi
 export HISTCONTROL=erasedups
 export HISTSIZE=10000
+export W3M_DIR="$XDG_STATE_HOME/w3m"
 
 # prompt
 export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"; find_git_branch; find_git_dirty;'
 
 # colors
 source ~/.lscolors
+
+# readline
+export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
 
 # OS-specific settings
 case "$OSTYPE" in
@@ -146,6 +150,13 @@ if [[ -z $TMUX ]]; then
     # for lein (clojure)
     export LEIN_JVM_OPTS=""
     export LEIN_USE_BOOTCLASSPATH=no # https://github.com/venantius/ultra/issues/108
+
+    # for nodejs
+    export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+
+    # for ruby
+    export IRBRC="$XDG_CONFIG_HOME/irb/irbrc"
+    export SOLARGRAPH_CACHE="$XDG_CACHE_HOME/solargraph"
 
     # for rust
     if [ -d "$HOME/.cargo/bin" ]; then

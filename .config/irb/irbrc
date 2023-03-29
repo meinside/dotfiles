@@ -1,18 +1,17 @@
 # frozen_string_literal: true
 
-# My .irbrc file
+# .config/irb/irbrc
 #
 # meinside@duck.com
 #
-# last update: 2022.05.03.
-
-# $ gem install solargraph
+# last update: 2023.03.29.
 
 # turn on auto completion
 require 'irb/completion'
 
 # turn on auto indent
 IRB.conf[:AUTO_INDENT] = true
+IRB.conf[:SAVE_HISTORY] ||= 1000
 
 # definitions of irb helper functions
 def clear
@@ -40,3 +39,4 @@ end
 
 # for loading gems installed from git with bundler
 require 'bundler/setup'
+

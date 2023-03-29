@@ -34,8 +34,8 @@ if [ -z "$TMUX" ]; then
         export TERM="xterm-256color"
     fi
 fi
-
-HISTCONTROL=ignoreboth
+export W3M_DIR="$XDG_STATE_HOME/w3m"
+export HISTCONTROL=ignoreboth
 
 # bash options
 shopt -s histappend
@@ -61,6 +61,9 @@ export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}
 
 # colors
 source ~/.lscolors
+
+# readline
+export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
 
 # OS-specific settings
 case "$OSTYPE" in
@@ -106,6 +109,13 @@ if [[ -z $TMUX ]]; then
     # for lein (clojure)
     export LEIN_JVM_OPTS=""
     export LEIN_USE_BOOTCLASSPATH=no # https://github.com/venantius/ultra/issues/108
+
+    # for nodejs
+    export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+
+    # for ruby
+    export IRBRC="$XDG_CONFIG_HOME/irb/irbrc"
+    export SOLARGRAPH_CACHE="$XDG_CACHE_HOME/solargraph"
 
     # for rust
     if [ -d "$HOME/.cargo/bin" ]; then
