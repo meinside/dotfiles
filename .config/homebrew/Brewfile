@@ -1,11 +1,18 @@
-# Brewfile of meinside@duck.com
+# .config/homebrew/Brewfile
+#
+# meinside@duck.com
 #
 # Usage: 
 #
 # $ brew tap Homebrew/bundle
-# $ brew bundle
+# $ brew bundle --file=$XDG_CONFIG_HOME/homebrew/Brewfile
 # 
-# last update: 2022.08.17.
+# last update: 2023.03.29.
+
+cask_args appdir: '/Applications'
+
+tap 'homebrew/cask'
+tap 'homebrew/cask-fonts'
 
 ######## formulas
 

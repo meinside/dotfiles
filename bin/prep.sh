@@ -6,7 +6,7 @@
 #
 # (https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh)
 # 
-# last update: 2022.09.27.
+# last update: 2023.03.29.
 # 
 # by meinside@duck.com
 
@@ -148,7 +148,7 @@ function show_guide_macos {
 	error
 	info "for installing brew bundles:"
 	info "  $ brew tap Homebrew/bundle"
-	info "  $ brew bundle"
+	info "  $ brew bundle --file=$XDG_CONFIG_HOME/homebrew/Brewfile"
 	info
 }
 
