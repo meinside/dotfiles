@@ -203,7 +203,6 @@ xcuserdata
 .ssh/
 .swiftpm/
 .wget-hsts
-.terminfo/
 .termux/
 .tooling/
 .vnc/

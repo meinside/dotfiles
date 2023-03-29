@@ -65,6 +65,10 @@ source ~/.lscolors
 # readline
 export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
 
+# ncurses
+export TERMINFO="$XDG_DATA_HOME/terminfo"
+export TERMINFO_DIRS="$XDG_DATA_HOME/terminfo":/usr/share/terminfo
+
 # OS-specific settings
 case "$OSTYPE" in
     linux*)
