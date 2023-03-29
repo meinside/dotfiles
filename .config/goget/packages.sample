@@ -1,39 +1,24 @@
-# .gogets.sample
+# .config/goget/packages.sample
 #
 # $ go install github.com/meinside/goget@latest
 # $ goget
 #
 # then it will automatically  `go install` or `go get -u` all packages listed in this file(~/.gogets)
 #
-# last update: 2022.07.29.
+# last update: 2023.03.29.
 
 # official packages
 golang.org/x/tools/cmd/godoc
 github.com/tools/godep
 
 # useful packages/tools
-github.com/mailgun/godebug
-github.com/x-motemen/gore/cmd/gore
-github.com/tcnksm/gotests
 github.com/google/gops
 
 # for development
-github.com/davecheney/httpstat
 github.com/cespare/goclj/cljfmt
-golang.org/x/tools/gopls@latest
 github.com/go-delve/delve/cmd/dlv
+golang.org/x/tools/gopls@latest
 github.com/golangci/golangci-lint/cmd/golangci-lint@v1.47.2
-
-# for development (VS Code)
-github.com/mdempsky/gocode
-github.com/ramya-rao-a/go-outline
-github.com/acroca/go-symbols
-github.com/uudashr/gopkgs/cmd/gopkgs
-golang.org/x/tools/cmd/guru
-golang.org/x/tools/cmd/gorename
-golang.org/x/tools/cmd/goimports
-github.com/zmb3/gogetdoc
-golang.org/x/lint/golint
 
 # for writing
 github.com/errata-ai/vale@latest # get from: https://github.com/errata-ai/vale/releases
