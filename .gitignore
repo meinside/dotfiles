@@ -92,6 +92,9 @@ snap/
 .steampid
 .var/
 
+# brew files/dirs
+Brewfile.lock.json
+
 # c/c++
 .ccls-cache/
 
