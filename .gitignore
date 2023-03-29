@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2023.02.28.
+# last update: 2023.03.29.
 #
 # meinside@duck.com
 
@@ -240,7 +240,6 @@ VirtualBox VMs/
 .davmail.properties
 .eclrc
 .gist-vim
-.gitconfig
 .gnupg
 .gtmx.json
 .selected_editor

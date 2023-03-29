@@ -1,8 +1,8 @@
-# partial .tmux.conf for macOS
+# partial tmux.conf for macOS
 #
 # by meinside@duck.com
 #
-# last update: 2022.12.26.
+# last update: 2023.03.29.
 
 set -g default-terminal xterm-256color
 

@@ -1,8 +1,8 @@
-# sample .gitconfig file
+# .config/git/config.sample
 #
-# (copy as .gitconfig and customize it)
+# (copy as `~/.config/git/config` and customize it)
 #
-# last update: 2022.12.02.
+# last update: 2023.03.29.
 
 [init]
   defaultBranch = master

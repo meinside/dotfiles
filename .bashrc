@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2023.01.11.
+# updated on 2023.03.29.
 #
 # ... by meinside@duck.com
 
@@ -9,6 +9,9 @@
 [ -z "$PS1" ] && return
 
 # various configurations
+if [[ -z "$XDG_CONFIG_HOME" ]]; then
+    export XDG_CONFIG_HOME="$HOME/.config"
+fi
 export DISPLAY=:0.0
 export EDITOR="/usr/bin/vim"
 export SVN_EDITOR="$EDITOR"

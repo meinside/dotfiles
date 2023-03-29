@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2023.01.11.
+# updated on 2023.03.29.
 #
 # ... by meinside@duck.com
 #
@@ -58,6 +58,9 @@ if ! [ -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting ]; 
 fi
 
 # User configuration
+if [[ -z "$XDG_CONFIG_HOME" ]]; then
+    export XDG_CONFIG_HOME="$HOME/.config"
+fi
 #umask 027
 export DISPLAY=:0.0
 export EDITOR="/usr/bin/vim"
