@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2023.03.29.
+# updated on 2023.03.30.
 #
 # ... by meinside@duck.com
 #
@@ -92,7 +92,7 @@ export W3M_DIR="$XDG_STATE_HOME/w3m"
 export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"; find_git_branch; find_git_dirty;'
 
 # colors
-source ~/.lscolors
+source $XDG_CONFIG_HOME/lscolors
 
 # readline
 export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
