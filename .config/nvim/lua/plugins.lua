@@ -168,7 +168,7 @@ require'lazy'.setup({
   },
   { 'tpope/vim-ragtag' }, -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
   { 'tpope/vim-sleuth' },
-  { 'HiPhish/nvim-ts-rainbow2' },
+  { 'HiPhish/nvim-ts-rainbow2', tag= 'v2.1.0' }, -- FIXME: https://github.com/HiPhish/nvim-ts-rainbow2/issues/23
 
 
   -- marks
