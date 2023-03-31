@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2023.03.30.
+# updated on 2023.03.31.
 #
 # ... by meinside@duck.com
 #
@@ -188,10 +188,10 @@ if [[ -z $TMUX ]]; then
 fi
 
 # aliases
-. ~/.aliases
+. $XDG_CONFIG_HOME/aliases
 
 # zsh functions
-. ~/.zshfunc
+. ~/.zsh/func
 
 # load custom environment variables (like GOPRIVATE, PATH, alias, ...) if exist
 if [ -f ~/.custom_env ]; then

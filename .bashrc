@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2023.03.30.
+# updated on 2023.03.31.
 #
 # ... by meinside@duck.com
 
@@ -143,7 +143,7 @@ if [[ -z $TMUX ]]; then
 fi
 
 # aliases
-. ~/.aliases
+. $XDG_CONFIG_HOME/aliases
 
 # load custom environment variables (like GOPRIVATE, PATH, alias, ...) if exist
 if [ -f ~/.custom_env ]; then
