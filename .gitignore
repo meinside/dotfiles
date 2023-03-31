@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2023.03.29.
+# last update: 2023.03.31.
 #
 # meinside@duck.com
 
@@ -20,11 +20,9 @@
 .libs
 
 # history/log/cache/temp files or directories
-*.log*
-.*_history*
-.*-history*
 .cache/
 .dbshell
+.*history*
 .lldb/
 .local/
 .lsp/
@@ -35,28 +33,27 @@
 .rpi-firmware
 .sudo_as_admin_successful
 .swt/
-.vpython_cipd_cache
-.vpython-root
 .wget-hsts
 backups/
 default.profraw
+*.log*
 oradiag*/
 tmp/
 wget-log*
 
 # other scm files/dirs
-.svn
 .cvs
 .subversion/
+.svn
 
 # macOS files/dirs
 .AppleDB
 .AppleDesktop
 .AppleDouble
-.DS_Store
-.Trash/
 .CFUserTextEncoding
 .crash_*
+.DS_Store
+.Trash/
 Applications/
 Desktop/
 Documents/
@@ -92,9 +89,6 @@ snap/
 .steampid
 .var/
 
-# brew files/dirs
-Brewfile.lock.json
-
 # c/c++
 .ccls-cache/
 
@@ -109,7 +103,6 @@ Brewfile.lock.json
 .stagehand
 
 # golang files/dirs
-.gogets
 .gore/
 
 # haskell files/dirs
@@ -127,6 +120,7 @@ Brewfile.lock.json
 # python files/dirs
 .pip/
 .virtualenvs/
+.vpython*
 
 # ruby files/dirs
 .gem
@@ -165,7 +159,6 @@ xcuserdata
 .cups/
 .dlv/
 .dropbox/
-.dropbox-master/
 .eclipse/
 .elinks/
 .ethash/
@@ -175,7 +168,6 @@ xcuserdata
 .gdrive/
 .Genymobile/
 .ghidra/
-.heroku/
 .htoprc
 .httpie/
 .ipfs/
@@ -208,7 +200,6 @@ xcuserdata
 .vnc/
 .vim/
 .viminfo
-.vimrc.lowperf
 .vscode*/
 .wireshark-etc/
 .wireshark/
@@ -228,9 +219,7 @@ VirtualBox VMs/
 .custom_env
 .davmail.properties
 .eclrc
-.gist-vim
-.gnupg
-.gtmx.json
+.gnupg/
 .selected_editor
 .zsh-update
 
