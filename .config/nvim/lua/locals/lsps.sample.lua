@@ -2,12 +2,13 @@
 --
 -- sample LSP list
 --
--- (duplicate this file with path `~/.config/nvim/lua/locals/lsps.lua` and edit it)
+-- (duplicate this file to: ~/.config/nvim/lua/locals/lsps.lua
+-- and edit it)
 --
--- last update: 2023.03.27.
+-- last update: 2023.04.06.
 
 -- following lsps will be configured automatically or manually
--- in `.config/nvim/lua/plugins.lua`.
+-- in: .config/nvim/lua/plugins.lua
 --
 -- if value is `true`, will be configured automatically with `lspconfig`.
 -- otherwise (`false`), should be configured manually.

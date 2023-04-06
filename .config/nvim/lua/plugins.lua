@@ -2,7 +2,7 @@
 --
 -- Neovim plugins list
 --
--- NOTE: sourced from: `~/.config/nvim/init.lua`
+-- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
 -- last update: 2023.04.06.
 
@@ -370,7 +370,7 @@ require'lazy'.setup({
     'williamboman/mason-lspconfig.nvim', config = function()
       -- install lsp servers
       require'mason-lspconfig'.setup {
-        ensure_installed = locals.installable_lsp_names(), -- NOTE: see `.config/nvim/lua/locals/lsps.sample.lua`
+        ensure_installed = locals.installable_lsp_names(), -- NOTE: .config/nvim/lua/locals/lsps.sample.lua
         automatic_installation = false,
       }
 
@@ -790,7 +790,7 @@ local lsp_settings = {
 }
 -------- automatic configuration with `lspconfig` --------
 local nvim_lsp = require'lspconfig'
-for _, lsp in ipairs(locals.autoconfigurable_lsp_names()) do -- NOTE: see `~/.config/nvim/lua/locals/lsps.sample.lua`
+for _, lsp in ipairs(locals.autoconfigurable_lsp_names()) do -- NOTE: ~/.config/nvim/lua/locals/lsps.sample.lua
   nvim_lsp[lsp].setup { on_attach = on_attach_lsp, capabilities = capabilities, settings = lsp_settings }
 end
 -------- manual configurations here --------
