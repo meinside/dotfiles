@@ -643,6 +643,7 @@ require'lazy'.setup({
     'simrat39/rust-tools.nvim',
     ft = { 'rust' },
     dependencies = {
+      { 'neovim/nvim-lspconfig' },
       { 'nvim-lua/plenary.nvim' },
       { 'mfussenegger/nvim-dap' },
     },
@@ -694,7 +695,6 @@ require'lazy'.setup({
 
 ----------------
 -- lsp settings
-local mason_pkgs_dir = vim.env.HOME .. '/.local/share/nvim/mason/packages'
 local on_attach_lsp = function(client, bufnr) -- default setup for language servers
   -- Enable completion triggered by <c-x><c-o>
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -790,6 +790,7 @@ for _, lsp in ipairs(locals.autoconfigurable_lsp_names()) do -- NOTE: ~/.config/
 end
 -------- manual configurations here --------
 -- (rust)
+local mason_pkgs_dir = vim.env.HOME .. '/.local/share/nvim/mason/packages'
 require'rust-tools'.setup {
   tools = {hover_actions = { auto_focus = true }},
   server = { on_attach = on_attach_lsp, capabilities = capabilities },
