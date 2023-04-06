@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `~/.config/nvim/init.lua`
 --
--- last update: 2023.03.29.
+-- last update: 2023.04.06.
 
 
 -- variables and constants
@@ -106,6 +106,10 @@ require'lazy'.setup({
 
   -- relative/absolute linenumber toggling
   { 'sitiom/nvim-numbertoggle' },
+
+
+  -- show color column
+  { 'Bekaboo/deadcolumn.nvim' },
 
 
   -- markdown preview
