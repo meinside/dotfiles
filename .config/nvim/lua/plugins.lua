@@ -73,8 +73,8 @@ require'lazy'.setup({
   {
     'ethanholz/nvim-lastplace', config = function()
       require'nvim-lastplace'.setup {
-        lastplace_ignore_buftype = {'quickfix', 'nofile', 'help'},
-        lastplace_ignore_filetype = {'gitcommit', 'gitrebase', 'svn', 'hgcommit'},
+        lastplace_ignore_buftype = { 'quickfix', 'nofile', 'help' },
+        lastplace_ignore_filetype = { 'gitcommit', 'gitrebase', 'svn', 'hgcommit' },
         lastplace_open_folds = true,
       }
     end,
@@ -447,7 +447,6 @@ require'lazy'.setup({
           { name = 'nvim_lsp', keyword_length = 3 },
           { name = 'luasnip', keyword_length = 2 },
           { name = 'nvim_lua', keyword_length = 2 },
---          { name = 'codeium' },
         },
         formatting = { format = lspkind.cmp_format() },
       }
@@ -793,7 +792,7 @@ end
 -- (rust)
 local mason_pkgs_dir = vim.env.HOME .. '/.local/share/nvim/mason/packages'
 require'rust-tools'.setup {
-  tools = {hover_actions = { auto_focus = true }},
+  tools = { hover_actions = { auto_focus = true } },
   server = { on_attach = on_attach_lsp, capabilities = capabilities },
   dap = {
     -- install `codelldb` with :Mason
