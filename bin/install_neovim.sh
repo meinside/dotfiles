@@ -5,7 +5,7 @@
 # For building neovim from source code.
 # (https://github.com/neovim/neovim/wiki/Installing-Neovim#install-from-source)
 #
-# last update: 2023.03.16.
+# last update: 2023.04.10.
 # 
 # by meinside@duck.com
 
@@ -35,7 +35,7 @@
 # frequently updated values
 
 # https://github.com/neovim/neovim/releases
-NVIM_VERSION="v0.8.3"	# XXX - edit for other versions
+NVIM_VERSION="v0.9.0"	# XXX - edit for other versions
 
 
 ################################
