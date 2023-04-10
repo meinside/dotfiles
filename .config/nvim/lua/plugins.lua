@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.04.06.
+-- last update: 2023.04.10.
 
 
 -- variables and constants
@@ -172,7 +172,7 @@ require'lazy'.setup({
   },
   { 'tpope/vim-ragtag' }, -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
   { 'tpope/vim-sleuth' },
-  { 'HiPhish/nvim-ts-rainbow2', tag= 'v2.1.0' }, -- FIXME: https://github.com/HiPhish/nvim-ts-rainbow2/issues/23
+  { 'HiPhish/nvim-ts-rainbow2', lazy = true },
 
 
   -- marks
