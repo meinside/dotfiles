@@ -669,6 +669,7 @@ require'lazy'.setup({
           completeChat = 'gpt-3.5-turbo',
           moderation = 'text-moderation-latest',
         },
+        timeout = 60 * 1000,
       }
     end,
   },
