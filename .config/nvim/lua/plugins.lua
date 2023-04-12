@@ -4,10 +4,12 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.04.11.
+-- last update: 2023.04.12.
 
 
 -- variables and constants
+local tools = require'tools'  -- ~/.config/nvim/lua/tools.lua
+local locals = require'locals'  -- ~/.config/nvim/lua/locals/init.lua
 local lisps = { 'clojure', 'fennel', 'janet', 'scheme' }
 
 
@@ -294,7 +296,7 @@ require'lazy'.setup({
   { 'WhoIsSethDaniel/lualine-lsp-progress.nvim' },
   {
     'nvim-lualine/lualine.nvim',
-    dependencies = { 'kyazdani42/nvim-web-devicons', 'projekt0n/github-nvim-theme' },
+    dependencies = { 'nvim-tree/nvim-web-devicons', 'projekt0n/github-nvim-theme' },
     config = function()
       local navic = require'nvim-navic'
       require'lualine'.setup {
@@ -304,12 +306,27 @@ require'lazy'.setup({
         },
         extensions = { 'nvim-dap-ui', 'quickfix' },
         sections = { lualine_c = { 'filename', 'lsp_progress', { navic.get_location, cond = navic.is_available } } },
-        winbar = { lualine_c = { { 'filetype', icon_only = true }, { 'filename' } } },
-        inactive_winbar = { lualine_c = { 'filename' } },
       }
     end,
   },
   { 'SmiteshP/nvim-navic', dependencies = { 'neovim/nvim-lspconfig' } },
+
+
+  -- tabline
+  {
+    'crispgm/nvim-tabline',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require'tabline'.setup {
+        show_index = false,
+        show_modify = true,
+        show_icon = true,
+        modify_indicator = '*',
+        no_name = '<untitled>',
+        brackets = { '', '' },
+      }
+    end,
+  },
 
 
   --------------------------------
@@ -336,6 +353,7 @@ require'lazy'.setup({
     'https://git.sr.ht/~whynothugo/lsp_lines.nvim', config = function()
       local ll = require'lsp_lines'
       ll.setup()
+      vim.diagnostic.config { virtual_lines = { only_current_line = true } }
       vim.keymap.set('', '<leader>ll', function()
         ll.toggle()
         vim.notify 'Toggled LSP Lines.'
@@ -549,6 +567,26 @@ require'lazy'.setup({
   },
 
 
+  -- lint
+  {
+    'mfussenegger/nvim-lint', config = function()
+      require'lint'.linters_by_ft = {
+        clojure = { 'clj-kondo' },
+        fennel = { 'fennel' },
+        go = { 'golangcilint' },
+        janet = { 'janet' },
+        lua = { 'luacheck' },
+        markdown = { 'vale' },
+        ruby = { 'rubocop' },
+        sh = { 'shellcheck' },
+      }
+      vim.api.nvim_create_autocmd({ 'BufWritePost' }, { callback = function()
+        require'lint'.try_lint()
+      end })
+    end,
+  },
+
+
   --------------------------------
   --
   -- programming languages
@@ -564,7 +602,7 @@ require'lazy'.setup({
     ft = { 'go' },
     config = function()
       require'go'.setup { gofmt = 'gopls' }
-      vim.api.nvim_create_autocmd('BufWritePre', { pattern = '*.go', callback = function() require'go.format'.goimport()  end })
+      vim.api.nvim_create_autocmd('BufWritePre', { pattern = '*.go', callback = function() require'go.format'.goimport() end })
     end,
   },
   { 'ray-x/guihua.lua', build = 'cd lua/fzy && make' },
