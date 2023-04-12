@@ -5,7 +5,7 @@
 # Manually build mosh from `master` branch. (1.3.2 doesn't support 24-bit colors yet)
 #
 # created on : 2021.08.11.
-# last update: 2022.09.27.
+# last update: 2023.04.12.
 
 
 ################################
@@ -47,7 +47,7 @@ function install_macos {
 
 # for linux
 function install_linux {
-	if [ -z $TERMUX_VERSION ]; then
+	if [ -z "$TERMUX_VERSION" ]; then
 
 		if [ -x /usr/bin/apt-get ]; then
 			sudo apt-get -y purge mosh

@@ -5,7 +5,7 @@
 # Install fennel script or binary.
 #
 # created on : 2021.11.24.
-# last update: 2023.03.09.
+# last update: 2023.04.12.
 #
 # by meinside@duck.com
 
@@ -51,7 +51,7 @@ INSTALLATION_PATH="/usr/local/bin/fennel"
 # prep for linux
 function prep_linux {
 	# install essential packages
-	if ! [ -x `which lua` ]; then
+	if ! [ -x "$(which lua)" ]; then
 		warn ">>> Installing essential packages..."
 
 		if [ -x /usr/bin/apt-get ]; then

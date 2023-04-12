@@ -46,10 +46,6 @@ A script for building and installing [neovim](https://neovim.io/).
 
 A script for installing sdk and sample codes for [raspberry pi pico](https://datasheets.raspberrypi.org/pico/getting-started-with-pico.pdf).
 
-## install_vale.sh
-
-A script for installing latest version of [vale](https://github.com/errata-ai/vale/).
-
 ## prep.sh
 
 A script that will clone this repository and install things.

@@ -4,7 +4,7 @@
 #
 # for building & installing ChezScheme from source code
 #
-# last update: 2022.10.06.
+# last update: 2023.04.12.
 #
 # by meinside@duck.com
 
@@ -43,9 +43,9 @@ function clean {
     sudo rm -rf $TMP_DIR
 }
 
-# $1: nightly or not
+# install
 function install {
-    warn ">>> installing ChezScheme ${tag}..."
+    warn ">>> installing ChezScheme..."
 
     # clone, configure, build, and install
     rm -rf $TMP_DIR && \
@@ -65,7 +65,7 @@ function install_macos {
 
 # install for linux
 function install_linux {
-    if [ -z $TERMUX_VERSION ]; then
+    if [ -z "$TERMUX_VERSION" ]; then
 	install && clean
     else  # termux
 	error "* termux not supported yet."

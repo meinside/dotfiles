@@ -6,7 +6,7 @@
 #
 # (pass '--do-not-clean' argument for preserving files after install)
 # 
-# last update: 2023.03.06.
+# last update: 2023.04.12.
 # 
 # by meinside@duck.com
 
@@ -73,33 +73,31 @@ function clean {
 }
 
 function install {
-	git clone --depth=1 -b $FFMPEG_VERSION https://github.com/FFmpeg/FFmpeg.git $TMP_DIR
-	cd $TMP_DIR
-
-	PLATFORM=`uname -m`
+	PLATFORM=$(uname -m)
 	case "$PLATFORM" in
 		arm64) ARCH="aarch64" ;;
 		arm*) ARCH="armel" ;;
 		*) ARCH=$PLATFORM ;;
 	esac
 
-	./configure --arch=$ARCH --target-os=linux --enable-gpl --enable-nonfree \
-		--enable-libx264 \
-		--enable-libx265 \
-		--enable-libvpx \
-		--enable-libfdk-aac \
-		--enable-libmp3lame \
-		--enable-libvorbis \
-		--enable-libopus \
-		--enable-libdav1d
-	make -j$(nproc)
-
-	# install
-	sudo make install
+	# clone source code, configure, make, and install
+	git clone --depth=1 -b $FFMPEG_VERSION https://github.com/FFmpeg/FFmpeg.git $TMP_DIR && \
+		cd $TMP_DIR && \
+		./configure --arch="$ARCH" --target-os=linux --enable-gpl --enable-nonfree \
+			--enable-libx264 \
+			--enable-libx265 \
+			--enable-libvpx \
+			--enable-libfdk-aac \
+			--enable-libmp3lame \
+			--enable-libvorbis \
+			--enable-libopus \
+			--enable-libdav1d && \
+		make -j$(nproc) && \
+		sudo make install
 }
 
 function install_linux {
-	if [ -z $TERMUX_VERSION ]; then
+	if [ -z "$TERMUX_VERSION" ]; then
 		prep && install
 
 		# check if '--do-not-clean' argument was given
@@ -118,8 +116,8 @@ function install_macos {
 }
 
 case "$OSTYPE" in
-	darwin*) install_macos ;;
-	linux*) install_linux ;;
+	darwin*) install_macos "$@" ;;
+	linux*) install_linux "$@" ;;
 	*) error "* not supported yet: $OSTYPE" ;;
 esac
 

@@ -6,7 +6,7 @@
 #
 # (https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh)
 # 
-# last update: 2023.03.29.
+# last update: 2023.04.12.
 # 
 # by meinside@duck.com
 
@@ -28,7 +28,7 @@ function warn {
 }
 
 # check if it is me!
-if [ `whoami` == 'meinside' ]; then
+if [ "$(whoami)" == 'meinside' ]; then
 	REPOSITORY="git@github.com:meinside/dotfiles.git"
 else
 	REPOSITORY="https://github.com/meinside/dotfiles.git"
@@ -39,7 +39,7 @@ info ">>> this script will setup several things for you..."
 info
 
 # authenticate for sudo if needed
-if [ -z $TERMUX_VERSION ]; then  # not in termux
+if [ -z "$TERMUX_VERSION" ]; then  # not in termux
 	sudo -l > /dev/null
 fi
 
@@ -47,13 +47,13 @@ function pull_configs {
 	check_git
 
 	# clone config files
-	rm -rf $TMP_DIR
-	git clone $REPOSITORY $TMP_DIR
+	rm -rf "$TMP_DIR"
+	git clone $REPOSITORY "$TMP_DIR"
 
 	# move temp files to $HOME directory
 	shopt -s dotglob nullglob
-	mv $TMP_DIR/* $HOME/
-	rm -rf $TMP_DIR
+	mv "$TMP_DIR/*" "$HOME/"
+	rm -rf "$TMP_DIR"
 }
 
 function check_git {
@@ -68,7 +68,7 @@ function check_git_linux {
 	if ! which git > /dev/null; then
 		warning ">>> installing git..."
 
-		if [ -z $TERMUX_VERSION ]; then
+		if [ -z "$TERMUX_VERSION" ]; then
 			if [ -x /usr/bin/apt-get ]; then
 				sudo apt-get update && \
 					sudo apt-get -y install git
@@ -92,7 +92,7 @@ function install_packages {
 }
 
 function install_packages_linux {
-	if [ -z $TERMUX_VERSION ]; then
+	if [ -z "$TERMUX_VERSION" ]; then
 		if [ -x /usr/bin/apt-get ]; then
 			sudo apt-get update && \
 				sudo apt-get -y upgrade && \
@@ -120,7 +120,7 @@ function cleanup {
 }
 
 function cleanup_linux {
-	if [ -z $TERMUX_VERSION ]; then
+	if [ -z "$TERMUX_VERSION" ]; then
 		if [ -x /usr/bin/apt-get ]; then
 			sudo apt-get -y autoremove && \
 				sudo apt-get -y autoclean

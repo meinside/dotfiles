@@ -5,7 +5,7 @@
 # For building neovim from source code.
 # (https://github.com/neovim/neovim/wiki/Installing-Neovim#install-from-source)
 #
-# last update: 2023.04.10.
+# last update: 2023.04.12.
 # 
 # by meinside@duck.com
 
@@ -123,8 +123,8 @@ function install_macos {
 #
 # $1: nightly or not
 function install_linux {
-    if [ -z $TERMUX_VERSION ]; then
-	prep && install $1 && clean && update_alternatives
+    if [ -z "$TERMUX_VERSION" ]; then
+	prep && install "$1" && clean && update_alternatives
     else  # termux
 	pkg install neovim
     fi
@@ -143,8 +143,8 @@ function update_alternatives {
 }
 
 case "$OSTYPE" in
-    darwin*) install_macos $1 ;;
-    linux*) install_linux $1 ;;
+    darwin*) install_macos "$1" ;;
+    linux*) install_linux "$1" ;;
     *) error "* not supported yet: $OSTYPE" ;;
 esac
 

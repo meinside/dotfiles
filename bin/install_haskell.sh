@@ -5,7 +5,7 @@
 # Install haskell and its tools.
 # 
 # created on : 2021.07.12.
-# last update: 2022.09.27.
+# last update: 2024.04.12.
 # 
 # by meinside@duck.com
 
@@ -37,15 +37,11 @@ function warn {
 #
 ################################
 
-
-TMP_DIR="/tmp"
-OPT_DIR="/opt"
-
 # NOTE: working fine on x64 with Ubuntu 20.04 LTS
 # NOTE: working fine on arm64 with Ubuntu 20.04 LTS (update: 2021.11.25.)
 # NOTE: working fine on Raspberry Pi 4 (arm64) with Raspberry Pi OS Bullseye (updated: 2021.11.25.)
 function install_linux {
-	if [ -z $TERMUX_VERSION ]; then
+	if [ -z "$TERMUX_VERSION" ]; then
 		warn ">>> installing essential packages..."
 
 		if [ -x /usr/bin/apt-get ]; then
@@ -66,15 +62,15 @@ function install_macos {
 	curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | sh
 
 	warn ">>> installing stylish-haskell..."
-	LATEST_ZIP=`curl -s "https://api.github.com/repos/haskell/stylish-haskell/releases" | grep "https" | grep "darwin" | grep "$PLATFORM" | cut -d \" -f4 | head -n 1`
+	LATEST_ZIP="$(curl -s "https://api.github.com/repos/haskell/stylish-haskell/releases" | grep "https" | grep "darwin" | grep "$PLATFORM" | cut -d \" -f4 | head -n 1)"
 	GHCUP_BIN_DIR="$HOME/.ghcup/bin"
 	STYLISH_HASKELL_BIN="$GHCUP_BIN_DIR/stylish-haskell"
 	DOWNLOADED_ZIP="$GHCUP_BIN_DIR/stylish-haskell.zip"
-	wget -O $DOWNLOADED_ZIP $LATEST_ZIP && \
-		cd $GHCUP_BIN_DIR && \
+	wget -O "$DOWNLOADED_ZIP" "$LATEST_ZIP" && \
+		cd "$GHCUP_BIN_DIR" && \
 		unzip -j "stylish-haskell.zip" "*/stylish-haskell" && \
-		chmod +x $STYLISH_HASKELL_BIN && \
-		rm $DOWNLOADED_ZIP
+		chmod +x "$STYLISH_HASKELL_BIN" && \
+		rm "$DOWNLOADED_ZIP"
 }
 
 case "$OSTYPE" in
