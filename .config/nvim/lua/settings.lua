@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.04.06.
+-- last update: 2023.04.12.
 
 
 ------------------------------------------------
@@ -56,12 +56,24 @@ vim.keymap.set('n', '<leader>mm', function()
 end, { remap = false, silent = true, desc = 'Toggle mouse' })
 
 -- tab navigation
-vim.keymap.set('n', '<C-h>', ':tabprevious<CR>', { remap = false, silent = true, desc = 'Previous tab' }) -- <ctrl-h> for previous tab
-vim.keymap.set('n', '<C-l>', ':tabnext<CR>', { remap = false, silent = true, desc = 'Next tab' }) -- <ctrl-l> for next tab
+vim.keymap.set('n', '<C-h>', ':tabprevious<CR>', {
+  remap = false,
+  silent = true,
+  desc = 'Previous tab',
+}) -- <ctrl-h> for previous tab
+vim.keymap.set('n', '<C-l>', ':tabnext<CR>', {
+  remap = false,
+  silent = true,
+  desc = 'Next tab',
+}) -- <ctrl-l> for next tab
 
 -- highlight on yank
 vim.api.nvim_create_augroup('etc', { clear = true })
-vim.api.nvim_create_autocmd('TextYankPost', { group = 'etc', pattern = '*', callback = function() vim.highlight.on_yank({ on_visual = false }) end })
+vim.api.nvim_create_autocmd('TextYankPost', {
+  group = 'etc',
+  pattern = '*',
+  callback = function() vim.highlight.on_yank({ on_visual = false }) end,
+})
 
 -- disable unneeded providers
 vim.g['loaded_python_provider'] = 0

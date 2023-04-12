@@ -228,13 +228,41 @@ require'lazy'.setup({
 
       -- https://github.com/nvim-telescope/telescope.nvim#pickers
       local builtin = require'telescope.builtin'
-      vim.keymap.set('n', '<leader>tt', builtin.builtin, {remap = false, silent = true, desc = 'telescope: List builtin pickers'})
-      vim.keymap.set('n', '<leader>ff', builtin.find_files, {remap = false, silent = true, desc = 'telescope: Find files'})
-      vim.keymap.set('n', '<leader>gc', builtin.git_commits, {remap = false, silent = true, desc = 'telescope: Git commits'})
-      vim.keymap.set('n', '<leader>qf', builtin.quickfix, {remap = false, silent = true, desc = 'telescope: Quickfix'})
-      vim.keymap.set('n', '<leader>lr', builtin.lsp_references, {remap = false, silent = true, desc = 'telescope: LSP references'})
-      vim.keymap.set('n', '<leader>li', builtin.lsp_implementations, {remap = false, silent = true, desc = 'telescope: LSP implementations'})
-      vim.keymap.set('n', '<leader>ld', builtin.lsp_definitions, {remap = false, silent = true, desc = 'telescope: LSP definitions'})
+      vim.keymap.set('n', '<leader>tt', builtin.builtin, {
+        remap = false,
+        silent = true,
+        desc = 'telescope: List builtin pickers',
+      })
+      vim.keymap.set('n', '<leader>ff', builtin.find_files, {
+        remap = false,
+        silent = true,
+        desc = 'telescope: Find files',
+      })
+      vim.keymap.set('n', '<leader>gc', builtin.git_commits, {
+        remap = false,
+        silent = true,
+        desc = 'telescope: Git commits',
+      })
+      vim.keymap.set('n', '<leader>qf', builtin.quickfix, {
+        remap = false,
+        silent = true,
+        desc = 'telescope: Quickfix',
+      })
+      vim.keymap.set('n', '<leader>lr', builtin.lsp_references, {
+        remap = false,
+        silent = true,
+        desc = 'telescope: LSP references',
+      })
+      vim.keymap.set('n', '<leader>li', builtin.lsp_implementations, {
+        remap = false,
+        silent = true,
+        desc = 'telescope: LSP implementations',
+      })
+      vim.keymap.set('n', '<leader>ld', builtin.lsp_definitions, {
+        remap = false,
+        silent = true,
+        desc = 'telescope: LSP definitions',
+      })
     end,
   },
   { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
@@ -305,7 +333,13 @@ require'lazy'.setup({
           globalstatus = true,
         },
         extensions = { 'nvim-dap-ui', 'quickfix' },
-        sections = { lualine_c = { 'filename', 'lsp_progress', { navic.get_location, cond = navic.is_available } } },
+        sections = {
+          lualine_c = {
+            'filename',
+            'lsp_progress',
+            { navic.get_location, cond = navic.is_available },
+          },
+        },
       }
     end,
   },
@@ -543,9 +577,24 @@ require'lazy'.setup({
   {
     'mfussenegger/nvim-dap', config = function()
       -- dap sign icons and colors
-      vim.fn.sign_define('DapBreakpoint', { text = '', texthl = 'LspDiagnosticsSignError', linehl = '', numhl = '' })
-      vim.fn.sign_define('DapStopped', { text = '', texthl = 'LspDiagnosticsSignInformation', linehl = 'DiagnosticUnderlineInfo', numhl = 'LspDiagnosticsSignInformation' })
-      vim.fn.sign_define('DapBreakpointRejected', { text = '', texthl = 'LspDiagnosticsSignHint', linehl = '', numhl = '' })
+      vim.fn.sign_define('DapBreakpoint', {
+        text = '',
+        texthl = 'LspDiagnosticsSignError',
+        linehl = '',
+        numhl = '',
+      })
+      vim.fn.sign_define('DapStopped', {
+        text = '',
+        texthl = 'LspDiagnosticsSignInformation',
+        linehl = 'DiagnosticUnderlineInfo',
+        numhl = 'LspDiagnosticsSignInformation',
+      })
+      vim.fn.sign_define('DapBreakpointRejected', {
+        text = '',
+        texthl = 'LspDiagnosticsSignHint',
+        linehl = '',
+        numhl = '',
+      })
     end,
   },
   {
@@ -602,7 +651,10 @@ require'lazy'.setup({
     ft = { 'go' },
     config = function()
       require'go'.setup { gofmt = 'gopls' }
-      vim.api.nvim_create_autocmd('BufWritePre', { pattern = '*.go', callback = function() require'go.format'.goimport() end })
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        pattern = '*.go',
+        callback = function() require'go.format'.goimport() end,
+      })
     end,
   },
   { 'ray-x/guihua.lua', build = 'cd lua/fzy && make' },
@@ -743,26 +795,70 @@ local on_attach_lsp = function(client, bufnr) -- default setup for language serv
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
 
   -- See `:help vim.lsp.*` for documentation on any of the below functions
-  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, { remap = false, silent = true, desc = 'lsp: Declaration' })
-  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { remap = false, silent = true, desc = 'lsp: Definition' })
-  vim.keymap.set('n', 'K', vim.lsp.buf.hover, { remap = false, silent = true, desc = 'lsp: Hover' })
-  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, { remap = false, silent = true, desc = 'lsp: Implementation' })
-  --vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, { remap = false, silent = true, desc = 'lsp: Signature help' })
-  --vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, { remap = false, silent = true, desc = 'lsp: Add workspace folder' })
-  --vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, { remap = false, silent = true, desc = 'lsp: Remove workspace folder' })
-  --vim.keymap.set('n', '<space>wl', function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end, { remap = false, silent = true, desc = 'lsp: List workspace folders' })
-  vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, { remap = false, silent = true, desc = 'lsp: Type definition' })
-  vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, { remap = false, silent = true, desc = 'lsp: Rename' })
-  --vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, { remap = false, silent = true, desc = 'lsp: Code action' })
-  vim.keymap.set('n', '<leader>ca', '<cmd>CodeActionMenu<CR>', { remap = false, silent = true, desc = 'lsp: Code action' })
-  --vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', { remap = false, silent = true, desc = 'lsp: References' })
-  vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', { remap = false, silent = true, desc = 'lsp: Previous diagnostic' })
-  vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', { remap = false, silent = true, desc = 'lsp: Next diagnostic' })
-  vim.keymap.set('n', '<leader>dl', '<cmd>lua vim.diagnostic.setloclist()<CR>', { remap = false, silent = true, desc = 'lsp: Diagnostics list' })
-  vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.format {async = true}<CR>', { remap = false, silent = true, desc = 'lsp: Format' })
+  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, {
+    remap = false,
+    silent = true,
+    desc = 'lsp: Declaration',
+  })
+  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {
+    remap = false,
+    silent = true,
+    desc = 'lsp: Definition',
+  })
+  vim.keymap.set('n', 'K', vim.lsp.buf.hover, {
+    remap = false,
+    silent = true,
+    desc = 'lsp: Hover',
+  })
+  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, {
+    remap = false,
+    silent = true,
+    desc = 'lsp: Implementation',
+  })
+  vim.keymap.set('n', 'gt', vim.lsp.buf.type_definition, {
+    remap = false,
+    silent = true,
+    desc = 'lsp: Type definition',
+  })
+  vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, {
+    remap = false,
+    silent = true,
+    desc = 'lsp: Rename',
+  })
+  vim.keymap.set('n', '<leader>ca', '<cmd>CodeActionMenu<CR>', {
+    remap = false,
+    silent = true,
+    desc = 'lsp: Code action',
+  })
+  vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', {
+    remap = false,
+    silent = true,
+    desc = 'lsp: Previous diagnostic',
+  })
+  vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', {
+    remap = false,
+    silent = true,
+    desc = 'lsp: Next diagnostic',
+  })
+  vim.keymap.set('n', '<leader>dl', '<cmd>lua vim.diagnostic.setloclist()<CR>', {
+    remap = false,
+    silent = true,
+    desc = 'lsp: Diagnostics list',
+  })
+  vim.keymap.set('n', '<leader>fo', '<cmd>lua vim.lsp.buf.format {async = true}<CR>', {
+    remap = false,
+    silent = true,
+    desc = 'lsp: Format',
+  })
 
   -- diagnostics configuration
-  vim.diagnostic.config({ underline = false, virtual_text = false, signs = true, severity_sort = true, update_in_insert = false })
+  vim.diagnostic.config({
+    underline = false,
+    virtual_text = false,
+    signs = true,
+    severity_sort = true,
+    update_in_insert = false,
+  })
   vim.fn.sign_define('DiagnosticSignError', { text = '✗', texthl = 'DiagnosticSignError' })
   vim.fn.sign_define('DiagnosticSignWarn', { text = '!', texthl = 'DiagnosticSignWarn' })
   vim.fn.sign_define('DiagnosticSignInformation', { text = '', texthl = 'DiagnosticSignInfo' })
@@ -770,7 +866,9 @@ local on_attach_lsp = function(client, bufnr) -- default setup for language serv
 
   -- auto formatting on save
   if client.server_capabilities.document_formatting then
-    vim.api.nvim_create_autocmd('BufWritePre', { callback = function() vim.lsp.buf.format { async = false } end })
+    vim.api.nvim_create_autocmd('BufWritePre', {
+      callback = function() vim.lsp.buf.format { async = false } end,
+    })
   end
 
   -- highlight current variable
@@ -779,8 +877,14 @@ local on_attach_lsp = function(client, bufnr) -- default setup for language serv
     vim.api.nvim_set_hl(0, 'LspReferenceText', { link = 'Visual' })
     vim.api.nvim_set_hl(0, 'LspReferenceWrite', { link = 'Visual' })
     vim.api.nvim_create_augroup('lsp_document_highlight', { clear = true })
-    vim.api.nvim_create_autocmd('CursorHold', { group = 'lsp_document_highlight', callback = function() vim.lsp.buf.document_highlight() end })
-    vim.api.nvim_create_autocmd('CursorMoved', { group = 'lsp_document_highlight', callback = function() vim.lsp.buf.clear_references() end })
+    vim.api.nvim_create_autocmd('CursorHold', {
+      group = 'lsp_document_highlight',
+      callback = function() vim.lsp.buf.document_highlight() end,
+    })
+    vim.api.nvim_create_autocmd('CursorMoved', {
+      group = 'lsp_document_highlight',
+      callback = function() vim.lsp.buf.clear_references() end,
+    })
   end
 
   -- navic
@@ -798,7 +902,9 @@ capabilities.textDocument.completion.completionItem.labelDetailsSupport = true
 capabilities.textDocument.completion.completionItem.deprecatedSupport = true
 capabilities.textDocument.completion.completionItem.commitCharactersSupport = true
 capabilities.textDocument.completion.completionItem.tagSupport = { valueSet = { 1 } }
-capabilities.textDocument.completion.completionItem.resolveSupport = { properties = { 'documentation', 'detail', 'additionalTextEdits' } }
+capabilities.textDocument.completion.completionItem.resolveSupport = {
+  properties = { 'documentation', 'detail', 'additionalTextEdits' },
+}
 local lsp_settings = {
   gopls = {
     hints = {
@@ -847,5 +953,7 @@ require'rust-tools'.setup {
   },
 }
 -- FIXME: `rust-tools` doesn't format on file saves
-vim.api.nvim_create_autocmd('BufWritePre', { pattern = '*.rs', callback = function() vim.lsp.buf.format { async = false } end })
+vim.api.nvim_create_autocmd('BufWritePre', { pattern = '*.rs', callback = function()
+  vim.lsp.buf.format { async = false }
+end })
 
