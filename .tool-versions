@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2023.04.05.
+# last update: 2023.04.13.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -108,7 +108,7 @@ lua 5.4.4
 # $ asdf install meson
 #
 # https://github.com/mesonbuild/meson/releases
-meson 1.0.1
+meson 1.1.0
 
 # $ asdf plugin add neovim
 # $ asdf install neovim
