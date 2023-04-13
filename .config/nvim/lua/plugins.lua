@@ -703,7 +703,7 @@ require'lazy'.setup({
     end,
   },
   -- run janet LSP with: $ janet -e '(import spork/netrepl) (netrepl/server)'
-  { 'bakpakin/janet.vim', ft = { 'janet' } },
+  { 'janet-lang/janet.vim', ft = { 'janet' } },
   -- >f, <f : move a form
   -- >e, <e : move an element
   -- >), <), >(, <( : move a parenthesis
