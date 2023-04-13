@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.04.12.
+-- last update: 2023.04.13.
 
 
 -- variables and constants
@@ -224,7 +224,7 @@ require'lazy'.setup({
           }
         }
       }
-      telescope.load_extension('fzf')
+      local _, _ = pcall(function() telescope.load_extension('fzf') end)
 
       -- https://github.com/nvim-telescope/telescope.nvim#pickers
       local builtin = require'telescope.builtin'
@@ -265,7 +265,14 @@ require'lazy'.setup({
       })
     end,
   },
-  { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
+  {
+    'nvim-telescope/telescope-fzf-native.nvim',
+    build = 'make',
+    enabled = function() -- do not load in termux
+      local termuxv = os.getenv('TERMUX_VERSION')
+      return termuxv == nil or termuxv == ''
+    end,
+  },
 
 
   -- git
