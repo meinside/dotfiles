@@ -632,7 +632,7 @@ require'lazy'.setup({
         clojure = { 'clj-kondo' },
         fennel = { 'fennel' },
         go = { 'golangcilint' },
-        --janet = { 'janet' }, -- FIXME: `compile error: (macro) grammar error in nil, unexpected peg source`
+        janet = { 'janet' },
         lua = { 'luacheck' },
         markdown = { 'vale' },
         ruby = { 'rubocop' },
