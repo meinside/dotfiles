@@ -387,6 +387,17 @@ require'lazy'.setup({
   },
 
 
+  -- code generation & completion
+  {
+    'jcdickinson/codeium.nvim', -- :Codeium Auth
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'hrsh7th/nvim-cmp',
+    },
+    config = function() require'codeium'.setup { } end
+  },
+
+
   -- lsp
   { 'neovim/nvim-lspconfig' },
   {
@@ -515,8 +526,16 @@ require'lazy'.setup({
           { name = 'nvim_lsp', keyword_length = 3 },
           { name = 'luasnip', keyword_length = 2 },
           { name = 'nvim_lua', keyword_length = 2 },
+          { name = 'codeium' },
         },
-        formatting = { format = lspkind.cmp_format() },
+        formatting = {
+          format = lspkind.cmp_format {
+            mode = 'symbol',
+            maxwidth = 50,
+            ellipsis_char = '...',
+            symbol_map = { Codeium = '' },
+          },
+        },
       }
 
       -- setup autopairs
