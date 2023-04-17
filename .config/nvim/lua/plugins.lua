@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.04.14.
+-- last update: 2023.04.17.
 
 
 -- variables and constants
@@ -49,6 +49,8 @@ require'lazy'.setup({
         options = {
           transparent = true,
         },
+
+        experiments = { }, -- FIXME: https://github.com/projekt0n/github-nvim-theme/issues/244
       }
       vim.cmd('colorscheme github_dark')
     end,
