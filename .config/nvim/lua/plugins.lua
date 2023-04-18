@@ -122,6 +122,13 @@ require'lazy'.setup({
   },
 
 
+  -- comment (gcc, gbc / visual block + gc, gb)
+  {
+    'numToStr/Comment.nvim',
+    config = function() require'Comment'.setup() end
+  },
+
+
   -- relative/absolute linenumber toggling
   { 'sitiom/nvim-numbertoggle' },
 
