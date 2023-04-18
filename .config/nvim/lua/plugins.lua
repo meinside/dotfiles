@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.04.17.
+-- last update: 2023.04.18.
 
 
 -- variables and constants
@@ -49,8 +49,6 @@ require'lazy'.setup({
         options = {
           transparent = true,
         },
-
-        experiments = { }, -- FIXME: https://github.com/projekt0n/github-nvim-theme/issues/244
       }
       vim.cmd('colorscheme github_dark')
     end,
@@ -189,9 +187,7 @@ require'lazy'.setup({
   -- marks
   {
     'chentoast/marks.nvim', config = function()
-      require'marks'.setup {
-        force_write_shada = true, -- FIXME: marks are not removed across sessions without this configuration
-      }
+      require'marks'.setup { }
     end,
   },
 
