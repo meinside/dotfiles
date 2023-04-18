@@ -82,8 +82,17 @@ require'lazy'.setup({
   {
     'ethanholz/nvim-lastplace', config = function()
       require'nvim-lastplace'.setup {
-        lastplace_ignore_buftype = { 'quickfix', 'nofile', 'help' },
-        lastplace_ignore_filetype = { 'gitcommit', 'gitrebase', 'svn', 'hgcommit' },
+        lastplace_ignore_buftype = {
+          'quickfix',
+          'nofile',
+          'help',
+        },
+        lastplace_ignore_filetype = {
+          'gitcommit',
+          'gitrebase',
+          'svn',
+          'hgcommit',
+        },
         lastplace_open_folds = true,
       }
     end,
@@ -154,7 +163,7 @@ require'lazy'.setup({
         fill_char = '━',
         sections = {
           left = { '━ ', function() return string.rep('*', vim.v.foldlevel) end, ' ━┫', 'content', '┣' },
-          right = { '┫ ', 'number_of_folded_lines', ': ', 'percentage', ' ┣━━' }
+          right = { '┫ ', 'number_of_folded_lines', ': ', 'percentage', ' ┣━━' },
         }
       }
       require'fold-preview'.setup {}
@@ -304,17 +313,17 @@ require'lazy'.setup({
           end, { expr = true, desc = 'gitsigns: Previous hunk' })
 
           -- Actions
-          m({ 'n', 'v' }, '<leader>hs', ':Gitsigns stage_hunk<CR>', {desc = 'gitsigns: Stage hunk'})
-          m({ 'n', 'v' }, '<leader>hr', ':Gitsigns reset_hunk<CR>', {desc = 'gitsigns: Reset hunk'})
-          m('n', '<leader>hS', gs.stage_buffer, {desc = 'gitsigns: Stage buffer'})
-          m('n', '<leader>hu', gs.undo_stage_hunk, {desc = 'gitsigns: Undo stage hunk'})
-          m('n', '<leader>hR', gs.reset_buffer, {desc = 'gitsigns: Reset buffer'})
-          m('n', '<leader>hp', gs.preview_hunk, {desc = 'gitsigns: Preview hunk'})
-          m('n', '<leader>hb', function() gs.blame_line {full = true} end, {desc = 'gitsigns: Blame line'})
-          m('n', '<leader>tb', gs.toggle_current_line_blame, {desc = 'gitsigns: Toggle current line blame'})
-          m('n', '<leader>hd', gs.diffthis, {desc = 'gitsigns: Diff this'})
-          m('n', '<leader>hD', function() gs.diffthis('~') end, {desc = 'gitsigns: Diff this ~'})
-          m('n', '<leader>td', gs.toggle_deleted, {desc = 'gitsigns: Toggle deleted'})
+          m({ 'n', 'v' }, '<leader>hs', ':Gitsigns stage_hunk<CR>', { desc = 'gitsigns: Stage hunk' })
+          m({ 'n', 'v' }, '<leader>hr', ':Gitsigns reset_hunk<CR>', { desc = 'gitsigns: Reset hunk' })
+          m('n', '<leader>hS', gs.stage_buffer, { desc = 'gitsigns: Stage buffer' })
+          m('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'gitsigns: Undo stage hunk' })
+          m('n', '<leader>hR', gs.reset_buffer, { desc = 'gitsigns: Reset buffer' })
+          m('n', '<leader>hp', gs.preview_hunk, { desc = 'gitsigns: Preview hunk' })
+          m('n', '<leader>hb', function() gs.blame_line { full = true } end, { desc = 'gitsigns: Blame line' })
+          m('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'gitsigns: Toggle current line blame' })
+          m('n', '<leader>hd', gs.diffthis, { desc = 'gitsigns: Diff this' })
+          m('n', '<leader>hD', function() gs.diffthis('~') end, { desc = 'gitsigns: Diff this ~' })
+          m('n', '<leader>td', gs.toggle_deleted, { desc = 'gitsigns: Toggle deleted' })
 
           -- Text object
           m({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
@@ -689,7 +698,7 @@ require'lazy'.setup({
   {
     'leoluz/nvim-dap-go',
     -- install `delve` with :Mason, :DapContinue for starting debugging
-    ft = {'go'},
+    ft = { 'go' },
     config = function()
       require'dap-go'.setup()
     end,
@@ -963,7 +972,11 @@ local lsp_settings = {
 -------- automatic configuration with `lspconfig` --------
 local nvim_lsp = require'lspconfig'
 for _, lsp in ipairs(locals.autoconfigurable_lsp_names()) do -- NOTE: ~/.config/nvim/lua/locals/lsps.sample.lua
-  nvim_lsp[lsp].setup { on_attach = on_attach_lsp, capabilities = capabilities, settings = lsp_settings }
+  nvim_lsp[lsp].setup {
+    on_attach = on_attach_lsp,
+    capabilities = capabilities,
+    settings = lsp_settings,
+  }
 end
 -------- manual configurations here --------
 -- (rust)
