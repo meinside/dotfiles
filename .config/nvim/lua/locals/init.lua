@@ -46,7 +46,7 @@ function Locals.features()
     -- default
     return {
       codeium = false,
-      linter = true,
+      linter = false,
     }
   else
     return features

@@ -395,7 +395,7 @@ require'lazy'.setup({
       'hrsh7th/nvim-cmp',
     },
     config = function() require'codeium'.setup { } end,
-    enabled = locals.features().codeium,
+    enabled = locals.features().codeium, -- .config/nvim/lua/locals/init.lua
   },
 
 
@@ -664,7 +664,7 @@ require'lazy'.setup({
         require'lint'.try_lint()
       end })
     end,
-    enabled = locals.features().linter,
+    enabled = locals.features().linter, -- .config/nvim/lua/locals/init.lua
   },
 
 
