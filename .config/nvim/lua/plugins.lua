@@ -272,7 +272,7 @@ require'lazy'.setup({
   {
     'nvim-telescope/telescope-fzf-native.nvim',
     build = 'make',
-    enabled = function() -- do not load in termux
+    cond = function() -- do not load in termux
       local termuxv = os.getenv('TERMUX_VERSION')
       return termuxv == nil or termuxv == ''
     end,
@@ -395,7 +395,7 @@ require'lazy'.setup({
       'hrsh7th/nvim-cmp',
     },
     config = function() require'codeium'.setup { } end,
-    enabled = locals.features().codeium, -- .config/nvim/lua/locals/init.lua
+    cond = locals.features().codeium, -- .config/nvim/lua/locals/init.lua
   },
 
 
@@ -664,7 +664,7 @@ require'lazy'.setup({
         require'lint'.try_lint()
       end })
     end,
-    enabled = locals.features().linter, -- .config/nvim/lua/locals/init.lua
+    cond = locals.features().linter, -- .config/nvim/lua/locals/init.lua
   },
 
 
