@@ -2,15 +2,15 @@
 --
 -- My custom functions and variable/constants.
 --
--- last update: 2023.03.23.
+-- last update: 2023.04.18.
 
 local Locals = {}
 
 -- Returns LSP names for configuration
 local lsp_names = function(filter)
-  -- will try loading: `.config/nvim/lua/locals/lsps.lua`
-  -- sample file here: `.config/nvim/lua/locals/lsps.sample.lua`
-  local ok, my_lsps = pcall(require, 'locals/lsps')
+  -- will try loading: ~/.config/nvim/lua/locals/lsps.lua
+  -- sample file here: ~/.config/nvim/lua/locals/lsps.sample.lua
+  local ok, lsps = pcall(require, 'locals/lsps')
   if not ok then
     -- default
     return {
@@ -20,7 +20,7 @@ local lsp_names = function(filter)
     }
   else
     local names = {}
-    for name, b in pairs(my_lsps) do
+    for name, b in pairs(lsps) do
       if not filter or b then
         table.insert(names, name)
       end
@@ -29,9 +29,31 @@ local lsp_names = function(filter)
   end
 end
 
--- export things
-Locals.installable_lsp_names = function() return lsp_names(false) end
-Locals.autoconfigurable_lsp_names = function() return lsp_names(true) end
+function Locals.installable_lsp_names()
+  return lsp_names(false)
+end
 
+function Locals.autoconfigurable_lsp_names()
+  return lsp_names(true)
+end
+
+-- Returns features' on/off for configuration
+function Locals.features()
+  -- will try loading: ~/.config/nvim/lua/locals/features.lua
+  -- sample file here: ~/.config/nvim/lua/locals/features.sample.lua
+  local ok, features = pcall(require, 'locals/features')
+  if not ok then
+    -- default
+    return {
+      codeium = false,
+      linter = true,
+    }
+  else
+    return features
+  end
+end
+
+
+-- export things
 return Locals
 

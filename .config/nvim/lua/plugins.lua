@@ -394,7 +394,8 @@ require'lazy'.setup({
       'nvim-lua/plenary.nvim',
       'hrsh7th/nvim-cmp',
     },
-    config = function() require'codeium'.setup { } end
+    config = function() require'codeium'.setup { } end,
+    enabled = locals.features().codeium,
   },
 
 
@@ -663,6 +664,7 @@ require'lazy'.setup({
         require'lint'.try_lint()
       end })
     end,
+    enabled = locals.features().linter,
   },
 
 
