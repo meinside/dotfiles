@@ -5,7 +5,7 @@
 -- (duplicate this file to: ~/.config/nvim/lua/locals/lsps.lua
 -- and edit it)
 --
--- last update: 2023.04.18.
+-- last update: 2023.04.19.
 
 -- following lsps will be configured automatically or manually
 -- in: .config/nvim/lua/plugins.lua
@@ -21,6 +21,9 @@ return {
 
   -- clojure
   clojure_lsp = true,
+
+  -- fennel
+  fennel_language_server = true,
 
   -- go
   gopls = true,
