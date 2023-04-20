@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.04.12.
+-- last update: 2023.04.20.
 
 
 ------------------------------------------------
@@ -16,6 +16,7 @@ opt.autoindent = true
 opt.backspace = { 'indent', 'eol', 'start' } -- allow backspacing over everything in insert mode
 opt.breakindent = true
 opt.cindent = true
+opt.clipboard = opt.clipboard + 'unnamedplus' -- copy/paste to/from system clipboard
 opt.colorcolumn = '80'
 opt.cursorline = true -- highlight current line
 opt.expandtab = true

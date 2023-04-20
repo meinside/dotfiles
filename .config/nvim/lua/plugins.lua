@@ -130,7 +130,7 @@ require'lazy'.setup({
 
 
   -- relative/absolute linenumber toggling
-  { 'sitiom/nvim-numbertoggle' },
+  { 'cpea2506/relative-toggle.nvim' },
 
 
   -- show color column
