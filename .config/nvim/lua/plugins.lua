@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.04.18.
+-- last update: 2023.04.20.
 
 
 -- variables and constants
@@ -40,7 +40,8 @@ require'lazy'.setup({
   'dstein64/vim-startuptime',
 
 
-  -- colorschemes (https://github.com/rockerBOO/awesome-neovim#colorscheme)
+  -- colorschemes
+  -- (https://github.com/rockerBOO/awesome-neovim#colorscheme)
   {
     'projekt0n/github-nvim-theme',
     lazy = false,
@@ -101,9 +102,9 @@ require'lazy'.setup({
 
   -- split/join blocks of code (<space>m - toggle, <space>j - join, <space>s - split)
   {
-    'Wansmer/treesj', dependencies = { 'nvim-treesitter' }, config = function()
-      require'treesj'.setup { max_join_length = 240 }
-    end,
+    'Wansmer/treesj',
+    dependencies = { 'nvim-treesitter' },
+    config = function() require'treesj'.setup { max_join_length = 240 } end,
   },
 
 
@@ -138,7 +139,11 @@ require'lazy'.setup({
 
 
   -- markdown preview
-  { 'iamcco/markdown-preview.nvim', build = 'cd app && npm install', ft = { 'markdown' } },
+  {
+    'iamcco/markdown-preview.nvim',
+    build = 'cd app && npm install',
+    ft = { 'markdown' },
+  },
 
 
   -- d2
@@ -169,8 +174,20 @@ require'lazy'.setup({
         keep_indentation = false,
         fill_char = '━',
         sections = {
-          left = { '━ ', function() return string.rep('*', vim.v.foldlevel) end, ' ━┫', 'content', '┣' },
-          right = { '┫ ', 'number_of_folded_lines', ': ', 'percentage', ' ┣━━' },
+          left = {
+            '━ ',
+            function() return string.rep('*', vim.v.foldlevel) end,
+            ' ━┫',
+            'content',
+            '┣',
+          },
+          right = {
+            '┫ ',
+            'number_of_folded_lines',
+            ': ',
+            'percentage',
+            ' ┣━━',
+          },
         }
       }
       require'fold-preview'.setup {}
@@ -320,20 +337,79 @@ require'lazy'.setup({
           end, { expr = true, desc = 'gitsigns: Previous hunk' })
 
           -- Actions
-          m({ 'n', 'v' }, '<leader>hs', ':Gitsigns stage_hunk<CR>', { desc = 'gitsigns: Stage hunk' })
-          m({ 'n', 'v' }, '<leader>hr', ':Gitsigns reset_hunk<CR>', { desc = 'gitsigns: Reset hunk' })
-          m('n', '<leader>hS', gs.stage_buffer, { desc = 'gitsigns: Stage buffer' })
-          m('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'gitsigns: Undo stage hunk' })
-          m('n', '<leader>hR', gs.reset_buffer, { desc = 'gitsigns: Reset buffer' })
-          m('n', '<leader>hp', gs.preview_hunk, { desc = 'gitsigns: Preview hunk' })
-          m('n', '<leader>hb', function() gs.blame_line { full = true } end, { desc = 'gitsigns: Blame line' })
-          m('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'gitsigns: Toggle current line blame' })
-          m('n', '<leader>hd', gs.diffthis, { desc = 'gitsigns: Diff this' })
-          m('n', '<leader>hD', function() gs.diffthis('~') end, { desc = 'gitsigns: Diff this ~' })
-          m('n', '<leader>td', gs.toggle_deleted, { desc = 'gitsigns: Toggle deleted' })
+          m(
+            { 'n', 'v' },
+            '<leader>hs',
+            ':Gitsigns stage_hunk<CR>',
+            { desc = 'gitsigns: Stage hunk' }
+          )
+          m(
+            { 'n', 'v' },
+            '<leader>hr',
+            ':Gitsigns reset_hunk<CR>',
+            { desc = 'gitsigns: Reset hunk' }
+          )
+          m(
+            'n',
+            '<leader>hS',
+            gs.stage_buffer,
+            { desc = 'gitsigns: Stage buffer' }
+          )
+          m(
+            'n',
+            '<leader>hu',
+            gs.undo_stage_hunk,
+            { desc = 'gitsigns: Undo stage hunk' }
+          )
+          m(
+            'n',
+            '<leader>hR',
+            gs.reset_buffer,
+            { desc = 'gitsigns: Reset buffer' }
+          )
+          m(
+            'n',
+            '<leader>hp',
+            gs.preview_hunk,
+            { desc = 'gitsigns: Preview hunk' }
+          )
+          m(
+            'n',
+            '<leader>hb',
+            function() gs.blame_line { full = true } end,
+            { desc = 'gitsigns: Blame line' }
+          )
+          m(
+            'n',
+            '<leader>tb',
+            gs.toggle_current_line_blame,
+            { desc = 'gitsigns: Toggle current line blame' }
+          )
+          m(
+            'n',
+            '<leader>hd',
+            gs.diffthis,
+            { desc = 'gitsigns: Diff this' }
+          )
+          m(
+            'n',
+            '<leader>hD',
+            function() gs.diffthis('~') end,
+            { desc = 'gitsigns: Diff this ~' }
+          )
+          m(
+            'n',
+            '<leader>td',
+            gs.toggle_deleted,
+            { desc = 'gitsigns: Toggle deleted' }
+          )
 
           -- Text object
-          m({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+          m(
+            { 'o', 'x' },
+            'ih',
+            ':<C-U>Gitsigns select_hunk<CR>'
+          )
         end,
       }
     end,
@@ -352,7 +428,13 @@ require'lazy'.setup({
       local navic = require'nvim-navic'
       require'lualine'.setup {
         options = {
-          disabled_filetypes = { 'help', 'packer', 'NvimTree', 'TelescopePrompt', 'gitcommit' },
+          disabled_filetypes = {
+            'help',
+            'packer',
+            'NvimTree',
+            'TelescopePrompt',
+            'gitcommit',
+          },
           globalstatus = true,
         },
         extensions = { 'nvim-dap-ui', 'quickfix' },
@@ -415,14 +497,19 @@ require'lazy'.setup({
   { 'neovim/nvim-lspconfig' },
   {
     'ray-x/lsp_signature.nvim', config = function()
-      require'lsp_signature'.setup { bind = true, handler_opts = { border = 'single' } }
+      require'lsp_signature'.setup {
+        bind = true,
+        handler_opts = { border = 'single' },
+      }
     end,
   },
   {
     'https://git.sr.ht/~whynothugo/lsp_lines.nvim', config = function()
       local ll = require'lsp_lines'
       ll.setup()
-      vim.diagnostic.config { virtual_lines = { only_current_line = true } }
+      vim.diagnostic.config {
+        virtual_lines = { only_current_line = true },
+      }
       vim.keymap.set('', '<leader>ll', function()
         ll.toggle()
         vim.notify 'Toggled LSP Lines.'
@@ -432,27 +519,67 @@ require'lazy'.setup({
   {
     'onsails/lspkind-nvim', config = function()
       -- (gray)
-      vim.api.nvim_set_hl(0, 'CmpItemAbbrDeprecated', { bg = 'NONE', fg = '#808080', strikethrough = true })
+      vim.api.nvim_set_hl(0, 'CmpItemAbbrDeprecated', {
+        bg = 'NONE',
+        fg = '#808080',
+        strikethrough = true,
+      })
       -- (blue)
-      vim.api.nvim_set_hl(0, 'CmpItemAbbrMatch', { bg = 'NONE', fg = '#569CD6' })
-      vim.api.nvim_set_hl(0, 'CmpItemAbbrMatchFuzzy', { bg = 'NONE', fg = '#569CD6' })
+      vim.api.nvim_set_hl(0, 'CmpItemAbbrMatch', {
+        bg = 'NONE',
+        fg = '#569CD6',
+      })
+      vim.api.nvim_set_hl(0, 'CmpItemAbbrMatchFuzzy', {
+        bg = 'NONE',
+        fg = '#569CD6',
+      })
       -- (light blue)
-      vim.api.nvim_set_hl(0, 'CmpItemKindVariable', { bg = 'NONE', fg = '#9CDCFE' })
-      vim.api.nvim_set_hl(0, 'CmpItemKindInterface', { bg = 'NONE', fg = '#9CDCFE' })
-      vim.api.nvim_set_hl(0, 'CmpItemKindText', { bg = 'NONE', fg = '#9CDCFE' })
+      vim.api.nvim_set_hl(0, 'CmpItemKindVariable', {
+        bg = 'NONE',
+        fg = '#9CDCFE',
+      })
+      vim.api.nvim_set_hl(0, 'CmpItemKindInterface', {
+        bg = 'NONE',
+        fg = '#9CDCFE',
+      })
+      vim.api.nvim_set_hl(0, 'CmpItemKindText', {
+        bg = 'NONE',
+        fg = '#9CDCFE',
+      })
       -- (pink)
-      vim.api.nvim_set_hl(0, 'CmpItemKindFunction', { bg = 'NONE', fg = '#C586C0' })
-      vim.api.nvim_set_hl(0, 'CmpItemKindMethod', { bg = 'NONE', fg = '#C586C0' })
+      vim.api.nvim_set_hl(0, 'CmpItemKindFunction', {
+        bg = 'NONE',
+        fg = '#C586C0',
+      })
+      vim.api.nvim_set_hl(0, 'CmpItemKindMethod', {
+        bg = 'NONE',
+        fg = '#C586C0',
+      })
       -- (front)
-      vim.api.nvim_set_hl(0, 'CmpItemKindKeyword', { bg = 'NONE', fg = '#D4D4D4' })
-      vim.api.nvim_set_hl(0, 'CmpItemKindProperty', { bg = 'NONE', fg = '#D4D4D4' })
-      vim.api.nvim_set_hl(0, 'CmpItemKindUnit', { bg = 'NONE', fg = '#D4D4D4' })
+      vim.api.nvim_set_hl(0, 'CmpItemKindKeyword', {
+        bg = 'NONE',
+        fg = '#D4D4D4',
+      })
+      vim.api.nvim_set_hl(0, 'CmpItemKindProperty', {
+        bg = 'NONE',
+        fg = '#D4D4D4',
+      })
+      vim.api.nvim_set_hl(0, 'CmpItemKindUnit', {
+        bg = 'NONE',
+        fg = '#D4D4D4',
+      })
     end,
   },
   {
     'williamboman/mason.nvim', config = function()
       require'mason'.setup {
-        ui = { icons = { package_installed = '✓', package_pending = '➜', package_uninstalled = '✗' } },
+        ui = {
+          icons = {
+            package_installed = '✓',
+            package_pending = '➜',
+            package_uninstalled = '✗',
+          },
+        },
       }
     end,
   },
@@ -672,9 +799,10 @@ require'lazy'.setup({
         ruby = { 'rubocop' },
         sh = { 'shellcheck' },
       }
-      vim.api.nvim_create_autocmd({ 'BufWritePost' }, { callback = function()
-        require'lint'.try_lint()
-      end })
+      vim.api.nvim_create_autocmd(
+        { 'BufWritePost' },
+        { callback = function() require'lint'.try_lint() end }
+      )
     end,
     cond = locals.features().linter, -- .config/nvim/lua/locals/init.lua
   },
@@ -715,7 +843,11 @@ require'lazy'.setup({
   -- haskell
   { 'neovimhaskell/haskell-vim', ft = { 'haskell' } },
   { 'itchyny/vim-haskell-indent', ft = { 'haskell' } },
-  { 'alx741/vim-stylishask', ft = { 'haskell' }, cond = tools.fs.executable('stylish-haskell') },
+  {
+    'alx741/vim-stylishask',
+    ft = { 'haskell' },
+    cond = tools.fs.executable('stylish-haskell'),
+  },
 
 
   -- lispy languages
@@ -903,10 +1035,22 @@ local on_attach_lsp = function(client, bufnr) -- default setup for language serv
     severity_sort = true,
     update_in_insert = false,
   })
-  vim.fn.sign_define('DiagnosticSignError', { text = '✗', texthl = 'DiagnosticSignError' })
-  vim.fn.sign_define('DiagnosticSignWarn', { text = '!', texthl = 'DiagnosticSignWarn' })
-  vim.fn.sign_define('DiagnosticSignInformation', { text = '', texthl = 'DiagnosticSignInfo' })
-  vim.fn.sign_define('DiagnosticSignHint', { text = '', texthl = 'DiagnosticSignHint' })
+  vim.fn.sign_define('DiagnosticSignError', {
+    text = '✗',
+    texthl = 'DiagnosticSignError',
+  })
+  vim.fn.sign_define('DiagnosticSignWarn', {
+    text = '!',
+    texthl = 'DiagnosticSignWarn',
+  })
+  vim.fn.sign_define('DiagnosticSignInformation', {
+    text = '',
+    texthl = 'DiagnosticSignInfo',
+  })
+  vim.fn.sign_define('DiagnosticSignHint', {
+    text = '',
+    texthl = 'DiagnosticSignHint',
+  })
 
   -- auto formatting on save
   if client.server_capabilities.document_formatting then
