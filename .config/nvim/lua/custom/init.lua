@@ -1,4 +1,4 @@
--- .config/nvim/lua/locals/init.lua
+-- .config/nvim/lua/custom/init.lua
 --
 -- My custom functions and variable/constants.
 --
@@ -8,9 +8,9 @@ local Locals = {}
 
 -- Returns LSP names for configuration
 local lsp_names = function(filter)
-  -- will try loading: ~/.config/nvim/lua/locals/lsps.lua
-  -- sample file here: ~/.config/nvim/lua/locals/lsps.sample.lua
-  local ok, lsps = pcall(require, 'locals/lsps')
+  -- will try loading: ~/.config/nvim/lua/custom/lsps.lua
+  -- sample file here: ~/.config/nvim/lua/custom/lsps.sample.lua
+  local ok, lsps = pcall(require, 'custom/lsps')
   if not ok then
     -- default
     return {
@@ -39,18 +39,16 @@ end
 
 -- Returns linter names for configuration
 function Locals.linters()
-  -- will try loading: ~/.config/nvim/lua/locals/linters.lua
-  -- sample file here: ~/.config/nvim/lua/locals/linters.sample.lua
-  local ok, linters = pcall(require, 'locals/linters')
+  -- will try loading: ~/.config/nvim/lua/custom/linters.lua
+  -- sample file here: ~/.config/nvim/lua/custom/linters.sample.lua
+  local ok, linters = pcall(require, 'custom/linters')
   if ok then
     return linters
   else
     -- default
     return {
       go = { 'golangcilint' },
-      lua = { 'luacheck' },
       markdown = { 'vale' },
-      ruby = { 'rubocop' },
       sh = { 'shellcheck' },
     }
   end
@@ -58,9 +56,9 @@ end
 
 -- Returns features' on/off for configuration
 function Locals.features()
-  -- will try loading: ~/.config/nvim/lua/locals/features.lua
-  -- sample file here: ~/.config/nvim/lua/locals/features.sample.lua
-  local ok, features = pcall(require, 'locals/features')
+  -- will try loading: ~/.config/nvim/lua/custom/features.lua
+  -- sample file here: ~/.config/nvim/lua/custom/features.sample.lua
+  local ok, features = pcall(require, 'custom/features')
   if not ok then
     -- default
     return {

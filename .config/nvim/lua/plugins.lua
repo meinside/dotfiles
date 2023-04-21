@@ -4,12 +4,12 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.04.20.
+-- last update: 2023.04.21.
 
 
 -- variables and constants
 local tools = require'tools'  -- ~/.config/nvim/lua/tools.lua
-local locals = require'locals'  -- ~/.config/nvim/lua/locals/init.lua
+local custom = require'custom'  -- ~/.config/nvim/lua/custom/init.lua
 local lisps = { 'clojure', 'fennel', 'janet', 'scheme' }
 
 
@@ -489,7 +489,7 @@ require'lazy'.setup({
       'hrsh7th/nvim-cmp',
     },
     config = function() require'codeium'.setup { } end,
-    cond = locals.features().codeium, -- .config/nvim/lua/locals/init.lua
+    cond = custom.features().codeium, -- .config/nvim/lua/local/init.lua
   },
 
 
@@ -587,7 +587,7 @@ require'lazy'.setup({
     'williamboman/mason-lspconfig.nvim', config = function()
       -- install lsp servers
       require'mason-lspconfig'.setup {
-        ensure_installed = locals.installable_lsp_names(), -- NOTE: .config/nvim/lua/locals/lsps.sample.lua
+        ensure_installed = custom.installable_lsp_names(), -- NOTE: .config/nvim/lua/local/lsps.sample.lua
         automatic_installation = false,
       }
 
@@ -790,13 +790,13 @@ require'lazy'.setup({
   {
     'mfussenegger/nvim-lint', config = function()
       local lint = require'lint'
-      lint.linters_by_ft = locals.linters()
+      lint.linters_by_ft = custom.linters()
       vim.api.nvim_create_autocmd(
         { 'BufWritePost' },
         { callback = function() lint.try_lint() end }
       )
     end,
-    cond = locals.features().linter, -- .config/nvim/lua/locals/init.lua
+    cond = custom.features().linter, -- .config/nvim/lua/custom/init.lua
   },
 
 
@@ -1114,7 +1114,7 @@ local lsp_settings = {
 }
 -------- automatic configuration with `lspconfig` --------
 local nvim_lsp = require'lspconfig'
-for _, lsp in ipairs(locals.autoconfigurable_lsp_names()) do -- NOTE: ~/.config/nvim/lua/locals/lsps.sample.lua
+for _, lsp in ipairs(custom.autoconfigurable_lsp_names()) do -- NOTE: ~/.config/nvim/lua/custom/lsps.sample.lua
   nvim_lsp[lsp].setup {
     on_attach = on_attach_lsp,
     capabilities = capabilities,

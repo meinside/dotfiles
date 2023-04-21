@@ -1,8 +1,8 @@
--- .config/nvim/lua/locals/linters.sample.lua
+-- .config/nvim/lua/custom/linters.sample.lua
 --
 -- sample linter list
 --
--- (duplicate this file to: ~/.config/nvim/lua/locals/linters.lua
+-- (duplicate this file to: ~/.config/nvim/lua/custom/linters.lua
 -- and edit it)
 --
 -- last update: 2023.04.21.
