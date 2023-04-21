@@ -789,19 +789,11 @@ require'lazy'.setup({
   -- lint
   {
     'mfussenegger/nvim-lint', config = function()
-      require'lint'.linters_by_ft = {
-        clojure = { 'clj-kondo' },
-        fennel = { 'fennel' },
-        go = { 'golangcilint' },
-        janet = { 'janet' },
-        lua = { 'luacheck' },
-        markdown = { 'vale' },
-        ruby = { 'rubocop' },
-        sh = { 'shellcheck' },
-      }
+      local lint = require'lint'
+      lint.linters_by_ft = locals.linters()
       vim.api.nvim_create_autocmd(
         { 'BufWritePost' },
-        { callback = function() require'lint'.try_lint() end }
+        { callback = function() lint.try_lint() end }
       )
     end,
     cond = locals.features().linter, -- .config/nvim/lua/locals/init.lua

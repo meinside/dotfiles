@@ -8,7 +8,7 @@
 -- last update: 2023.04.21.
 
 -- following lsps will be configured automatically or manually
--- in: .config/nvim/lua/plugins.lua
+-- in: ~/.config/nvim/lua/plugins.lua
 --
 -- if value is `true`, will be configured automatically with `lspconfig`.
 -- otherwise (`false`), should be configured manually.

@@ -2,7 +2,7 @@
 --
 -- My custom functions and variable/constants.
 --
--- last update: 2023.04.18.
+-- last update: 2023.04.21.
 
 local Locals = {}
 
@@ -35,6 +35,25 @@ end
 
 function Locals.autoconfigurable_lsp_names()
   return lsp_names(true)
+end
+
+-- Returns linter names for configuration
+function Locals.linters()
+  -- will try loading: ~/.config/nvim/lua/locals/linters.lua
+  -- sample file here: ~/.config/nvim/lua/locals/linters.sample.lua
+  local ok, linters = pcall(require, 'locals/linters')
+  if ok then
+    return linters
+  else
+    -- default
+    return {
+      go = { 'golangcilint' },
+      lua = { 'luacheck' },
+      markdown = { 'vale' },
+      ruby = { 'rubocop' },
+      sh = { 'shellcheck' },
+    }
+  end
 end
 
 -- Returns features' on/off for configuration
