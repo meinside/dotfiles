@@ -11,14 +11,7 @@ local lsp_names = function(filter)
   -- will try loading: ~/.config/nvim/lua/custom/lsps.lua
   -- sample file here: ~/.config/nvim/lua/custom/lsps.sample.lua
   local ok, lsps = pcall(require, 'custom/lsps')
-  if not ok then
-    -- default
-    return {
-      'bashls', -- bash
-      'jsonls', -- json
-      'lua_ls', -- lua
-    }
-  else
+  if ok then
     local names = {}
     for name, b in pairs(lsps) do
       if not filter or b then
@@ -26,6 +19,13 @@ local lsp_names = function(filter)
       end
     end
     return names
+  else
+    -- default
+    return {
+      'bashls', -- bash
+      'jsonls', -- json
+      'lua_ls', -- lua
+    }
   end
 end
 
@@ -59,14 +59,14 @@ function Locals.features()
   -- will try loading: ~/.config/nvim/lua/custom/features.lua
   -- sample file here: ~/.config/nvim/lua/custom/features.sample.lua
   local ok, features = pcall(require, 'custom/features')
-  if not ok then
+  if ok then
+    return features
+  else
     -- default
     return {
       codeium = false,
       linter = false,
     }
-  else
-    return features
   end
 end
 
