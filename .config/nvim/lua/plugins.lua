@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.04.21.
+-- last update: 2023.04.24.
 
 
 -- variables and constants
@@ -44,14 +44,13 @@ require'lazy'.setup({
   -- (https://github.com/rockerBOO/awesome-neovim#colorscheme)
   {
     'projekt0n/github-nvim-theme',
-    lazy = false,
     config = function()
       require'github-theme'.setup {
         options = {
           transparent = true,
         },
       }
-      vim.cmd('colorscheme github_dark')
+      vim.cmd('colorscheme github_dark_dimmed')
     end,
   },
 
