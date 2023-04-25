@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.04.24.
+-- last update: 2023.04.25.
 
 
 -- variables and constants
@@ -43,14 +43,37 @@ require'lazy'.setup({
   -- colorschemes
   -- (https://github.com/rockerBOO/awesome-neovim#colorscheme)
   {
-    'projekt0n/github-nvim-theme',
-    config = function()
-      require'github-theme'.setup {
-        options = {
-          transparent = true,
+    'marko-cerovac/material.nvim', config = function()
+      require'material'.setup {
+        styles = {
+          comments = { italic = true },
+          strings = { },
+          keywords = { },
+          functions = { bold = true },
+          variables = { },
+          operators = { },
+          types = { },
+        },
+        plugins = {
+          'dap',
+          'gitsigns',
+          'indent-blankline',
+          'nvim-navic',
+          'nvim-web-devicons',
+          'telescope',
+          'which-key',
+        },
+        disable = {
+          background = true,
+        },
+        lualine_style = 'stealth',
+        custom_highlights = {
+          TabLineSel = { bg = '#FFFFFF', fg = '#000000' },
         },
       }
-      vim.cmd('colorscheme github_dark_dimmed')
+
+      vim.g.material_style = 'darker'
+      vim.cmd('colorscheme material')
     end,
   },
 
@@ -422,7 +445,7 @@ require'lazy'.setup({
   { 'WhoIsSethDaniel/lualine-lsp-progress.nvim' },
   {
     'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons', 'projekt0n/github-nvim-theme' },
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
       local navic = require'nvim-navic'
       require'lualine'.setup {
@@ -435,6 +458,7 @@ require'lazy'.setup({
             'gitcommit',
           },
           globalstatus = true,
+          theme = 'material',
         },
         extensions = { 'nvim-dap-ui', 'quickfix' },
         sections = {
