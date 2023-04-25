@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2023.03.31.
+# last update: 2023.04.25.
 #
 # meinside@duck.com
 
@@ -155,6 +155,7 @@ xcuserdata
 .asdf/
 .aws/
 .AndroidStudio*/
+.cortex-debug
 .cpan/
 .cups/
 .dlv/
