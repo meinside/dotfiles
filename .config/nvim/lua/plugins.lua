@@ -4,13 +4,12 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.04.25.
+-- last update: 2023.04.26.
 
 
 -- variables and constants
 local tools = require'tools'  -- ~/.config/nvim/lua/tools.lua
 local custom = require'custom'  -- ~/.config/nvim/lua/custom/init.lua
-local lisps = { 'clojure', 'fennel', 'janet', 'scheme' }
 
 
 ------------------------------------------------
@@ -871,7 +870,7 @@ require'lazy'.setup({
   -- for reloading everything: \rr
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
   {
-    'Olical/conjure', ft = lisps, config = function()
+    'Olical/conjure', ft = custom.lisps, config = function()
       -- for scheme
       vim.api.nvim_exec([[
         let g:conjure#client#scheme#stdio#command = "petite"
@@ -897,13 +896,13 @@ require'lazy'.setup({
   -- cse[, cse] : surround an element with brackets
   -- cse{, cse} : surround an element with braces
   {
-    'guns/vim-sexp', ft = lisps, config = function()
+    'guns/vim-sexp', ft = custom.lisps, config = function()
       vim.g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
-      vim.g['sexp_filetypes'] = table.concat(lisps, ',')
+      vim.g['sexp_filetypes'] = table.concat(custom.lisps, ',')
     end,
   },
-  { 'tpope/vim-sexp-mappings-for-regular-people', ft = lisps },
-  { 'gpanders/nvim-parinfer', ft = lisps },
+  { 'tpope/vim-sexp-mappings-for-regular-people', ft = custom.lisps },
+  { 'gpanders/nvim-parinfer', ft = custom.lisps },
 
 
   -- nim
@@ -1160,7 +1159,8 @@ require'rust-tools'.setup {
   },
 }
 -- FIXME: `rust-tools` doesn't format on file saves
-vim.api.nvim_create_autocmd('BufWritePre', { pattern = '*.rs', callback = function()
-  vim.lsp.buf.format { async = false }
-end })
+vim.api.nvim_create_autocmd('BufWritePre', {
+  pattern = '*.rs',
+  callback = function() vim.lsp.buf.format { async = false } end,
+})
 

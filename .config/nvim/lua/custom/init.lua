@@ -2,7 +2,7 @@
 --
 -- My custom functions and variable/constants.
 --
--- last update: 2023.04.21.
+-- last update: 2023.04.26.
 
 local Locals = {}
 
@@ -69,6 +69,9 @@ function Locals.features()
     }
   end
 end
+
+-- lisp types
+Locals.lisps = { 'clojure', 'fennel', 'janet', 'scheme' }
 
 
 -- export things
