@@ -322,10 +322,7 @@ require'lazy'.setup({
   {
     'nvim-telescope/telescope-fzf-native.nvim',
     build = 'make',
-    cond = function() -- do not load in termux
-      local termuxv = os.getenv('TERMUX_VERSION')
-      return termuxv == nil or termuxv == ''
-    end,
+    cond = tools.system.not_termux(), -- do not load in termux
   },
 
 
@@ -511,7 +508,7 @@ require'lazy'.setup({
       'hrsh7th/nvim-cmp',
     },
     config = function() require'codeium'.setup { } end,
-    cond = custom.features().codeium, -- .config/nvim/lua/local/init.lua
+    cond = custom.features().codeium, -- .config/nvim/lua/custom/init.lua
   },
 
 
@@ -609,7 +606,7 @@ require'lazy'.setup({
     'williamboman/mason-lspconfig.nvim', config = function()
       -- install lsp servers
       require'mason-lspconfig'.setup {
-        ensure_installed = custom.installable_lsp_names(), -- NOTE: .config/nvim/lua/local/lsps.sample.lua
+        ensure_installed = custom.installable_lsp_names(), -- NOTE: .config/nvim/lua/custom/lsps.sample.lua
         automatic_installation = false,
       }
 

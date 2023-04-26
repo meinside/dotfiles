@@ -2,7 +2,7 @@
 --
 -- My neovim utility functions
 --
--- last update: 2023.03.23.
+-- last update: 2023.04.26.
 
 -- Checks if given `path` is executable or not
 local function is_executable(path)
@@ -59,6 +59,12 @@ local function low_performance()
   return true
 end
 
+-- Checks if it is not in termux
+local function not_termux()
+  local termuxv = os.getenv('TERMUX_VERSION')
+  return termuxv == nil or termuxv == ''
+end
+
 local Tools = {
   -- functions for managing file system
   fs = {
@@ -70,6 +76,7 @@ local Tools = {
   system = {
     low_perf = low_performance,
     port_opened = is_port_opened,
+    not_termux = not_termux,
   },
 
   -- functions for manaing shell/commands
