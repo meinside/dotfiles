@@ -67,7 +67,7 @@ require'lazy'.setup({
         },
         lualine_style = 'stealth',
         custom_highlights = {
-          TabLineSel = { bg = '#FFFFFF', fg = '#000000' },
+          TabLineSel = { bg = '#FF9800', fg = '#000000' },
         },
       }
 
