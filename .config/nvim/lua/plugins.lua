@@ -695,6 +695,7 @@ require'lazy'.setup({
           { name = 'luasnip', keyword_length = 2 },
           { name = 'nvim_lua', keyword_length = 2 },
           { name = 'codeium' },
+          { name = 'conjure' },
         },
         formatting = {
           format = lspkind.cmp_format {
@@ -876,13 +877,14 @@ require'lazy'.setup({
   -- for reloading everything: \rr
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
   {
-    'Olical/conjure', ft = custom.lisps, config = function()
+    'Olical/conjure', config = function()
       -- for scheme
       vim.api.nvim_exec([[
         let g:conjure#client#scheme#stdio#command = "petite"
         let g:conjure#client#scheme#stdio#prompt_pattern = "> $?"
       ]], false)
-    end},
+    end
+  },
   { 'dmac/vim-cljfmt', ft = { 'clojure' } }, -- $ go install github.com/cespare/goclj/cljfmt
   {
     'bakpakin/fennel.vim',
@@ -909,6 +911,7 @@ require'lazy'.setup({
   },
   { 'tpope/vim-sexp-mappings-for-regular-people', ft = custom.lisps },
   { 'gpanders/nvim-parinfer', ft = custom.lisps },
+  { 'PaterJason/cmp-conjure', ft = custom.lisps },
 
 
   -- nim
