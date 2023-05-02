@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.04.26.
+-- last update: 2023.05.02.
 
 
 -- variables and constants
@@ -491,6 +491,15 @@ require'lazy'.setup({
   --
   -- tools for development
   --
+
+  -- trouble
+  {
+    'folke/trouble.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require'trouble'.setup {}
+    end,
+  },
 
   -- auto pair/close
   {
