@@ -2,9 +2,9 @@
 --
 -- My custom functions and variable/constants.
 --
--- last update: 2023.04.26.
+-- last update: 2023.05.02.
 
-local Locals = {}
+local Custom = {}
 
 -- Returns LSP names for configuration
 local lsp_names = function(filter)
@@ -29,16 +29,16 @@ local lsp_names = function(filter)
   end
 end
 
-function Locals.installable_lsp_names()
+function Custom.installable_lsp_names()
   return lsp_names(false)
 end
 
-function Locals.autoconfigurable_lsp_names()
+function Custom.autoconfigurable_lsp_names()
   return lsp_names(true)
 end
 
 -- Returns linter names for configuration
-function Locals.linters()
+function Custom.linters()
   -- will try loading: ~/.config/nvim/lua/custom/linters.lua
   -- sample file here: ~/.config/nvim/lua/custom/linters.sample.lua
   local ok, linters = pcall(require, 'custom/linters')
@@ -55,7 +55,7 @@ function Locals.linters()
 end
 
 -- Returns features' on/off for configuration
-function Locals.features()
+function Custom.features()
   -- will try loading: ~/.config/nvim/lua/custom/features.lua
   -- sample file here: ~/.config/nvim/lua/custom/features.sample.lua
   local ok, features = pcall(require, 'custom/features')
@@ -71,9 +71,9 @@ function Locals.features()
 end
 
 -- lisp types
-Locals.lisps = { 'clojure', 'fennel', 'janet', 'scheme' }
+Custom.lisps = { 'clojure', 'fennel', 'janet', 'scheme' }
 
 
 -- export things
-return Locals
+return Custom
 
