@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2023.05.02.
+# last update: 2023.05.03.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -44,7 +44,7 @@ deno 1.31.1
 #   $ go install golang.org/x/tools/gopls@latest
 #
 # https://go.dev/doc/devel/release
-golang 1.20.3
+golang 1.20.4
 
 # $ asdf plugin add janet
 # $ asdf install janet
