@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.05.02.
+-- last update: 2023.05.04.
 
 
 -- variables and constants
@@ -23,7 +23,7 @@ if not vim.loop.fs_stat(lazypath) then
     'clone',
     '--filter=blob:none',
     'https://github.com/folke/lazy.nvim.git',
-    '--branch=stable', -- latest stable release
+    '--branch=stable',
     lazypath,
   })
 end
@@ -91,7 +91,7 @@ require'lazy'.setup({
   -- show keymaps
   {
     'folke/which-key.nvim', config = function()
-      require('which-key').setup { }
+      require'which-key'.setup { }
     end,
   },
 
@@ -123,9 +123,12 @@ require'lazy'.setup({
 
   -- split/join blocks of code (<space>m - toggle, <space>j - join, <space>s - split)
   {
-    'Wansmer/treesj',
+    'Wansmer/treesj', config = function()
+      require'treesj'.setup {
+        max_join_length = 240,
+      }
+    end,
     dependencies = { 'nvim-treesitter' },
-    config = function() require'treesj'.setup { max_join_length = 240 } end,
   },
 
 
@@ -188,9 +191,7 @@ require'lazy'.setup({
 
   -- fold and preview (zc for closing, zo for opening / zM for closing all, zR opening all)
   {
-    'anuvyklack/pretty-fold.nvim',
-    dependencies = {'anuvyklack/fold-preview.nvim', 'anuvyklack/keymap-amend.nvim'},
-    config = function()
+    'anuvyklack/pretty-fold.nvim', config = function()
       require'pretty-fold'.setup {
         keep_indentation = false,
         fill_char = '━',
@@ -213,6 +214,7 @@ require'lazy'.setup({
       }
       require'fold-preview'.setup {}
     end,
+    dependencies = { 'anuvyklack/fold-preview.nvim', 'anuvyklack/keymap-amend.nvim' },
   },
 
 
@@ -260,13 +262,7 @@ require'lazy'.setup({
   { 'mtth/locate.vim' }, -- :L [query], :lclose, gl
   { 'johngrib/vim-f-hangul' },	-- can use f/t/;/, on Hangul characters
   {
-    'nvim-telescope/telescope.nvim',
-    dependencies = {
-      { 'nvim-lua/popup.nvim' },
-      { 'nvim-lua/plenary.nvim' },
-      { 'nvim-telescope/telescope-fzf-native.nvim' },
-    },
-    config = function()
+    'nvim-telescope/telescope.nvim', config = function()
       local telescope = require'telescope'
       telescope.setup {
         extensions = {
@@ -318,6 +314,11 @@ require'lazy'.setup({
         desc = 'telescope: LSP definitions',
       })
     end,
+    dependencies = {
+      { 'nvim-lua/popup.nvim' },
+      { 'nvim-lua/plenary.nvim' },
+      { 'nvim-telescope/telescope-fzf-native.nvim' },
+    },
   },
   {
     'nvim-telescope/telescope-fzf-native.nvim',
@@ -329,9 +330,8 @@ require'lazy'.setup({
   -- git
   { 'junegunn/gv.vim' }, -- :GV, :GV!, :GV?
   {
-    'lewis6991/gitsigns.nvim', -- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
-    dependencies = { { 'nvim-lua/plenary.nvim' } },
-    config = function()
+    -- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
+    'lewis6991/gitsigns.nvim', config = function()
       require'gitsigns'.setup {
         numhl = true,
         on_attach = function(bufnr)
@@ -431,6 +431,7 @@ require'lazy'.setup({
         end,
       }
     end,
+    dependencies = { { 'nvim-lua/plenary.nvim' } },
   },
   -- gist (:Gist / :Gist -p / ...)
   { 'mattn/webapi-vim' },
@@ -440,9 +441,7 @@ require'lazy'.setup({
   -- statusline
   { 'WhoIsSethDaniel/lualine-lsp-progress.nvim' },
   {
-    'nvim-lualine/lualine.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function()
+    'nvim-lualine/lualine.nvim', config = function()
       local navic = require'nvim-navic'
       require'lualine'.setup {
         options = {
@@ -466,15 +465,14 @@ require'lazy'.setup({
         },
       }
     end,
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
   },
   { 'SmiteshP/nvim-navic', dependencies = { 'neovim/nvim-lspconfig' } },
 
 
   -- tabline
   {
-    'crispgm/nvim-tabline',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function()
+    'crispgm/nvim-tabline', config = function()
       require'tabline'.setup {
         show_index = false,
         show_modify = true,
@@ -484,6 +482,7 @@ require'lazy'.setup({
         brackets = { '', '' },
       }
     end,
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
   },
 
 
@@ -494,11 +493,10 @@ require'lazy'.setup({
 
   -- trouble
   {
-    'folke/trouble.nvim',
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function()
+    'folke/trouble.nvim', config = function()
       require'trouble'.setup {}
     end,
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
   },
 
   -- auto pair/close
@@ -511,12 +509,14 @@ require'lazy'.setup({
 
   -- code generation & completion
   {
-    'jcdickinson/codeium.nvim', -- :Codeium Auth
+    -- :Codeium Auth
+    'jcdickinson/codeium.nvim', config = function()
+      require'codeium'.setup { }
+    end,
     dependencies = {
       'nvim-lua/plenary.nvim',
       'hrsh7th/nvim-cmp',
     },
-    config = function() require'codeium'.setup { } end,
     cond = custom.features().codeium, -- .config/nvim/lua/custom/init.lua
   },
 
@@ -632,16 +632,7 @@ require'lazy'.setup({
 
   -- autocompletion
   {
-    'hrsh7th/nvim-cmp',
-    dependencies = {
-      'hrsh7th/cmp-nvim-lsp',
-      'hrsh7th/cmp-buffer',
-      'hrsh7th/cmp-nvim-lua',
-      'hrsh7th/cmp-path',
-      'hrsh7th/cmp-calc',
-      'saadparwaiz1/cmp_luasnip',
-    },
-    config = function()
+    'hrsh7th/nvim-cmp', config = function()
       local cmp = require'cmp'
       local luasnip = require'luasnip'
       local lspkind = require'lspkind'
@@ -713,6 +704,14 @@ require'lazy'.setup({
       -- load snippets
       require'luasnip/loaders/from_vscode'.lazy_load()
     end,
+    dependencies = {
+      'hrsh7th/cmp-nvim-lsp',
+      'hrsh7th/cmp-buffer',
+      'hrsh7th/cmp-nvim-lua',
+      'hrsh7th/cmp-path',
+      'hrsh7th/cmp-calc',
+      'saadparwaiz1/cmp_luasnip',
+    },
   },
 
 
@@ -764,11 +763,10 @@ require'lazy'.setup({
   -- code action: `\ca`
   { 'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu' },
   {
-    'kosayoda/nvim-lightbulb',
-    dependencies = 'antoinemadec/FixCursorHold.nvim',
-    config = function()
+    'kosayoda/nvim-lightbulb', config = function()
       require'nvim-lightbulb'.setup { autocmd = { enabled = true } }
     end,
+    dependencies = 'antoinemadec/FixCursorHold.nvim',
   },
 
 
@@ -797,9 +795,7 @@ require'lazy'.setup({
     end,
   },
   {
-    'rcarriga/nvim-dap-ui',
-    dependencies = { 'mfussenegger/nvim-dap' },
-    config = function()
+    'rcarriga/nvim-dap-ui', config = function()
       local dap, dapui = require 'dap', require 'dapui'
       dapui.setup {}
       -- auto toggle debug UIs
@@ -807,6 +803,7 @@ require'lazy'.setup({
       dap.listeners.before.event_terminated['dapui_config'] = dapui.close
       dap.listeners.before.event_exited['dapui_config'] = dapui.close
     end,
+    dependencies = { 'mfussenegger/nvim-dap' },
   },
   {
     'theHamsta/nvim-dap-virtual-text', config = function()
@@ -840,24 +837,22 @@ require'lazy'.setup({
 
   -- go
   {
-    'ray-x/go.nvim',
-    ft = { 'go' },
-    config = function()
+    'ray-x/go.nvim', config = function()
       require'go'.setup { gofmt = 'gopls' }
       vim.api.nvim_create_autocmd('BufWritePre', {
         pattern = '*.go',
         callback = function() require'go.format'.goimport() end,
       })
     end,
+    ft = { 'go' },
   },
   { 'ray-x/guihua.lua', build = 'cd lua/fzy && make' },
   {
-    'leoluz/nvim-dap-go',
     -- install `delve` with :Mason, :DapContinue for starting debugging
-    ft = { 'go' },
-    config = function()
+    'leoluz/nvim-dap-go', config = function()
       require'dap-go'.setup()
     end,
+    ft = { 'go' },
   },
 
 
@@ -887,11 +882,11 @@ require'lazy'.setup({
   },
   { 'dmac/vim-cljfmt', ft = { 'clojure' } }, -- $ go install github.com/cespare/goclj/cljfmt
   {
-    'bakpakin/fennel.vim',
-    ft = { 'fennel' },
-    config = function() -- https://github.com/Olical/conjure/wiki/Quick-start:-Fennel-(stdio)
+    'bakpakin/fennel.vim', config = function()
+      -- https://github.com/Olical/conjure/wiki/Quick-start:-Fennel-(stdio)
       vim.api.nvim_exec([[let g:conjure#filetype#fennel = "conjure.client.fennel.stdio"]], false)
     end,
+    ft = { 'fennel' },
   },
   -- run janet LSP with: $ janet -e '(import spork/netrepl) (netrepl/server)'
   { 'janet-lang/janet.vim', ft = { 'janet' } },
@@ -921,13 +916,12 @@ require'lazy'.setup({
   -- ruby
   { 'vim-ruby/vim-ruby', ft = { 'ruby' } },
   {
-    'suketa/nvim-dap-ruby',
-    ft = { 'ruby' },
-    config = function()
+    'suketa/nvim-dap-ruby', config = function()
       -- $ gem install readapt
       -- :DapContinue for debugging
       require'dap-ruby'.setup()
     end,
+    ft = { 'ruby' },
   },
 
 
@@ -953,9 +947,7 @@ require'lazy'.setup({
   --
 
   {
-    'meinside/openai.nvim',
-    dependencies = { { 'nvim-lua/plenary.nvim' } },
-    config = function()
+    'meinside/openai.nvim', config = function()
       require'openai'.setup {
         credentialsFilepath = '~/.config/openai-nvim.json',
         models = {
@@ -965,6 +957,7 @@ require'lazy'.setup({
         timeout = 60 * 1000,
       }
     end,
+    dependencies = { { 'nvim-lua/plenary.nvim' } },
   },
 
 }, {
