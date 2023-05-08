@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.05.04.
+-- last update: 2023.05.08.
 
 
 -- variables and constants
@@ -727,11 +727,13 @@ require'lazy'.setup({
   {
     --'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = function()
     'nvim-treesitter/nvim-treesitter', config = function()
+      require'nvim-dap-repl-highlights'.setup() -- for `dap_repl`
+
       require'nvim-treesitter.configs'.setup {
         ensure_installed = {
           'bash',
           'c', 'clojure', 'cmake', 'comment', 'cpp', 'css',
-          'dart', 'diff', 'dockerfile',
+          'dap_repl', 'dart', 'diff', 'dockerfile',
           'fennel',
           'go', 'gomod', 'gowork', 'gitignore',
           'haskell', 'html', 'http',
@@ -809,6 +811,9 @@ require'lazy'.setup({
     'theHamsta/nvim-dap-virtual-text', config = function()
       require'nvim-dap-virtual-text'.setup { commented = true }
     end,
+  },
+  {
+    'LiadOz/nvim-dap-repl-highlights'
   },
 
 
@@ -1160,7 +1165,9 @@ require'rust-tools'.setup {
     ),
   },
 }
--- FIXME: `rust-tools` doesn't format on file saves
+-- FIXME: `rustfmt` doesn't support aarch64 yet,
+-- FIXME: when fixed, put "rust = { 'rustfmt' }," in  ~/.config/nvim/lua/custom/linters.lua
+--        and remove following lines
 vim.api.nvim_create_autocmd('BufWritePre', {
   pattern = '*.rs',
   callback = function() vim.lsp.buf.format { async = false } end,
