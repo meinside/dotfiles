@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2023.05.03.
+# last update: 2023.05.08.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -33,7 +33,7 @@ clojure 1.11.1.1273
 # $ asdf install deno
 #
 # https://github.com/denoland/deno/releases
-deno 1.31.1
+deno 1.33.2
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -155,7 +155,7 @@ nodejs 18.16.0
 #   $ pip install --user python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.11.2
+python 3.11.3
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
