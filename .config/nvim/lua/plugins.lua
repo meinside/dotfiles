@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.05.08.
+-- last update: 2023.05.09.
 
 
 -- variables and constants
@@ -243,7 +243,9 @@ require'lazy'.setup({
   -- marks
   {
     'chentoast/marks.nvim', config = function()
-      require'marks'.setup { }
+      require'marks'.setup {
+        force_write_shada = true, -- FIXME: marks are not removed across sessions without this configuration
+      }
     end,
   },
 
