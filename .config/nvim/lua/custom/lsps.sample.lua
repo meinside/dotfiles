@@ -22,6 +22,9 @@ return {
   -- clojure
   clojure_lsp = true,
 
+  -- cmake
+  cmake = true,
+
   -- fennel
   fennel_language_server = true,
 
