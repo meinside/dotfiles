@@ -4,13 +4,16 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.05.09.
+-- last update: 2023.05.12.
 
 
 -- variables and constants
 local tools = require'tools'  -- ~/.config/nvim/lua/tools.lua
 local custom = require'custom'  -- ~/.config/nvim/lua/custom/init.lua
 
+
+-- enable conjure only for lispy languages
+vim.g['conjure#filetypes'] = custom.lisps
 
 ------------------------------------------------
 --
@@ -746,7 +749,7 @@ require'lazy'.setup({
           'perl', 'php', 'python',
           'query',
           'regex', 'ruby', 'rust',
-          'scheme', 'scss', 'sql', 'swift',
+          'scss', 'sql', 'swift',
           'toml', 'typescript',
           'yaml',
           'zig',
@@ -878,15 +881,7 @@ require'lazy'.setup({
   -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
   -- for reloading everything: \rr
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-  {
-    'Olical/conjure', config = function()
-      -- for scheme
-      vim.api.nvim_exec([[
-        let g:conjure#client#scheme#stdio#command = "petite"
-        let g:conjure#client#scheme#stdio#prompt_pattern = "> $?"
-      ]], false)
-    end
-  },
+  { 'Olical/conjure' },
   { 'dmac/vim-cljfmt', ft = { 'clojure' } }, -- $ go install github.com/cespare/goclj/cljfmt
   {
     'bakpakin/fennel.vim', config = function()

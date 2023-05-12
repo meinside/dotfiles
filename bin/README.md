@@ -10,10 +10,6 @@ A script for generating self-signed certificates for development.
 
 A script for installing [asdf](https://github.com/asdf-vm/asdf).
 
-## install_chezscheme.sh
-
-A script for installing [ChezScheme](https://github.com/racket/ChezScheme).
-
 ## install_docker.sh
 
 A script for installing [Docker](https://www.docker.com/).
