@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.05.12.
+-- last update: 2023.05.18.
 
 
 -- variables and constants
@@ -732,13 +732,11 @@ require'lazy'.setup({
   {
     --'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = function()
     'nvim-treesitter/nvim-treesitter', config = function()
-      require'nvim-dap-repl-highlights'.setup() -- for `dap_repl`
-
       require'nvim-treesitter.configs'.setup {
         ensure_installed = {
           'bash',
           'c', 'clojure', 'cmake', 'comment', 'cpp', 'css',
-          'dap_repl', 'dart', 'diff', 'dockerfile',
+          'dart', 'diff', 'dockerfile',
           'fennel',
           'go', 'gomod', 'gowork', 'gitignore',
           'haskell', 'html', 'http',
@@ -816,9 +814,6 @@ require'lazy'.setup({
     'theHamsta/nvim-dap-virtual-text', config = function()
       require'nvim-dap-virtual-text'.setup { commented = true }
     end,
-  },
-  {
-    'LiadOz/nvim-dap-repl-highlights'
   },
 
 
