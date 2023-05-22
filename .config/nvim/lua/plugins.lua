@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.05.18.
+-- last update: 2023.05.22.
 
 
 -- variables and constants
@@ -45,38 +45,16 @@ require'lazy'.setup({
   -- colorschemes
   -- (https://github.com/rockerBOO/awesome-neovim#colorscheme)
   {
-    'marko-cerovac/material.nvim', config = function()
-      require'material'.setup {
-        styles = {
-          comments = { italic = true },
-          strings = { },
-          keywords = { },
-          functions = { bold = true },
-          variables = { },
-          operators = { },
-          types = { },
-        },
-        plugins = {
-          'dap',
-          'gitsigns',
-          'indent-blankline',
-          'nvim-navic',
-          'nvim-web-devicons',
-          'telescope',
-          'which-key',
-        },
-        disable = {
-          background = true,
-        },
-        lualine_style = 'stealth',
-        custom_highlights = {
-          TabLineSel = { bg = '#FF9800', fg = '#000000' },
-        },
+    'projekt0n/github-nvim-theme',
+    config = function()
+      require('github-theme').setup {
+        -- ...
       }
 
-      vim.g.material_style = 'darker'
-      vim.cmd('colorscheme material')
-    end,
+      vim.cmd('colorscheme github_dark_colorblind')
+      --vim.cmd('colorscheme github_dark_high_contrast')
+      --vim.cmd('colorscheme github_dark_tritanopia')
+    end
   },
 
 
@@ -458,7 +436,6 @@ require'lazy'.setup({
             'gitcommit',
           },
           globalstatus = true,
-          theme = 'material',
         },
         extensions = { 'nvim-dap-ui', 'quickfix' },
         sections = {
