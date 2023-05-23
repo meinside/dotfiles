@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2023.03.31.
+# updated on 2023.05.23.
 #
 # ... by meinside@duck.com
 #
@@ -11,21 +11,14 @@
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-# Path to your oh-my-zsh installation.
-# (https://github.com/robbyrussell/oh-my-zsh)
 export ZSH=$HOME/.oh-my-zsh
 
-# If you would like oh-my-zsh to automatically update itself
-# without prompting you
 DISABLE_UPDATE_PROMPT="true"
 
 # Uncomment following line if you want to disable autosetting terminal title.
 DISABLE_AUTO_TITLE="true"
 
-# Set name of the theme to load.
-# Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
+# oh-my-zsh theme
 ZSH_THEME="steeef"
 
 # Uncomment the following line to display red dots whilst waiting for completion.
@@ -36,21 +29,16 @@ COMPLETION_WAITING_DOTS="true"
 # much, much faster.
 # DISABLE_UNTRACKED_FILES_DIRTY="true"
 
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 HIST_STAMPS="yyyy-mm-dd"
 
-# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
-# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
+# oh-my-zsh plugins
 plugins=(asdf colored-man-pages command-not-found copypath dotenv encode64 git git-flow golang history history-substring-search macos mosh nmap rust sudo urltools zsh-syntax-highlighting)
 
 # Search for oh-my-zsh.sh
 if ! [ -f $ZSH/oh-my-zsh.sh ]; then
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" -s '--keep-zshrc'
 fi
-source $ZSH/oh-my-zsh.sh
+. $ZSH/oh-my-zsh.sh
 
 # Setup for zsh-syntax-highlighting
 if ! [ -d ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting ]; then
@@ -92,7 +80,7 @@ export W3M_DIR="$XDG_STATE_HOME/w3m"
 export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"; find_git_branch; find_git_dirty;'
 
 # colors
-source $XDG_CONFIG_HOME/lscolors
+. $XDG_CONFIG_HOME/lscolors
 
 # readline
 export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
@@ -145,7 +133,7 @@ if [[ -z $TMUX ]]; then
     fi
 
     # for haskell
-    [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
+    [ -f "$HOME/.ghcup/env" ] && . "$HOME/.ghcup/env" # ghcup-env
 
     # for lein (clojure)
     export LEIN_JVM_OPTS=""
