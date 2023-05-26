@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2023.05.23.
+# updated on 2023.05.26.
 #
 # ... by meinside@duck.com
 #
@@ -32,7 +32,7 @@ COMPLETION_WAITING_DOTS="true"
 HIST_STAMPS="yyyy-mm-dd"
 
 # oh-my-zsh plugins
-plugins=(asdf colored-man-pages command-not-found copypath dotenv encode64 git git-flow golang history history-substring-search macos mosh nmap rust sudo urltools zsh-syntax-highlighting)
+plugins=(asdf colored-man-pages command-not-found copypath dotenv encode64 git git-flow history history-substring-search macos mosh nmap rust sudo urltools zsh-syntax-highlighting)
 
 # Search for oh-my-zsh.sh
 if ! [ -f $ZSH/oh-my-zsh.sh ]; then
