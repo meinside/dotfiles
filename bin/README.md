@@ -66,6 +66,10 @@ A script for renaming files in a given directory, [from NFD to NFC](https://en.w
 
 A script for un/installing [Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader) on Steam Deck.
 
+## steamdeck/install_tailscale.sh
+
+A script for installing [Tailscale](https://tailscale.com/) on Steam Deck.
+
 ## steamdeck/unlock.sh
 
 A script for unlocking read-only file system of Steam Deck.
