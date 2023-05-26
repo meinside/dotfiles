@@ -6,6 +6,11 @@
 #
 # (referenced [this guide](https://gist.github.com/legowerewolf/1b1670457cfac9201ee9d67840952147))
 #
+# NOTE: If there's an error: 'Partition /usr is mounted read only',
+# NOTE: do `sudo systemd-sysext unmerge`
+# NOTE: try something again, and
+# NOTE: do `sudo systemd-sysext merge` back.
+#
 # created on : 2023.05.26.
 # last update: 2023.05.26.
 
