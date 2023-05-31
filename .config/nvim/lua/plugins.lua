@@ -51,9 +51,9 @@ require'lazy'.setup({
         -- ...
       }
 
-      vim.cmd('colorscheme github_dark_colorblind')
+      --vim.cmd('colorscheme github_dark_colorblind')
       --vim.cmd('colorscheme github_dark_high_contrast')
-      --vim.cmd('colorscheme github_dark_tritanopia')
+      vim.cmd('colorscheme github_dark_tritanopia')
     end
   },
 
