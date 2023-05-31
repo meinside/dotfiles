@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.05.22.
+-- last update: 2023.05.31.
 
 
 -- variables and constants
@@ -510,6 +510,7 @@ require'lazy'.setup({
       require'lsp_signature'.setup {
         bind = true,
         handler_opts = { border = 'single' },
+        hi_parameter = 'CurSearch',
       }
     end,
   },
