@@ -3,13 +3,13 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2023.05.31.
+# last update: 2023.06.02.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
 #
 # https://github.com/babashka/babashka/releases
-babashka 1.3.179
+babashka 1.3.180
 
 # For bash-language-server,
 #   :MasonInstall bash-language-server
@@ -27,7 +27,7 @@ babashka 1.3.179
 #   $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
 #
 # https://clojure.org/releases/tools#_releases
-clojure 1.11.1.1342
+clojure 1.11.1.1347
 
 # $ asdf plugin add deno
 # $ asdf install deno
@@ -102,7 +102,7 @@ leiningen 2.10.0
 # and put `luarocks path` result to .custom_env file
 #
 # https://www.lua.org/versions.html
-lua 5.4.4
+lua 5.4.6
 
 # $ asdf plugin add meson
 # $ asdf install meson
@@ -179,7 +179,7 @@ ruby 3.2.2
 #   $ cargo xtask install --server
 #
 # https://github.com/rust-lang/rust/releases
-rust 1.69.0
+rust 1.70.0
 
 # $ asdf plugin add zig
 # $ asdf install zig
