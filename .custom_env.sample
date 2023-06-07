@@ -1,6 +1,6 @@
 # .custom_env.sample
 #
-# last update: 2022.08.18.
+# last update: 2023.06.07.
 
 # for macOS ($ brew install coreutils)
 #alias ls='gls --color=auto'
@@ -36,4 +36,9 @@ export DOCKER_CLI_EXPERIMENTAL=enabled
 if [ -x "$(which luarocks)" ]; then
     eval "$(luarocks path)"
 fi
+
+# for steam deck
+alias auth-tailscale="sudo tailscale up --qr --operator=steamdeck"
+alias start-tailscale="sudo systemd-sysext merge && sudo systemctl restart tailscaled"
+alias stop-tailscale="sudo systemctl stop tailscaled && sudo systemd-sysext unmerge"
 
