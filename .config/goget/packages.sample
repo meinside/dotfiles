@@ -3,9 +3,9 @@
 # $ go install github.com/meinside/goget@latest
 # $ goget
 #
-# then it will automatically  `go install` or `go get -u` all packages listed in this file(~/.gogets)
+# then it will automatically  `go install` or `go get -u` all packages listed in this file(~/.config/goget/packages)
 #
-# last update: 2023.03.29.
+# last update: 2023.06.09.
 
 # official packages
 golang.org/x/tools/cmd/godoc
@@ -32,4 +32,5 @@ github.com/meinside/goget@latest
 github.com/meinside/backupboxxx@latest
 github.com/meinside/pb-send@latest
 github.com/meinside/google-ddns-updater@latest
+github.com/meinside/nfc-normalizer-go/cmd/nfcmv@latest
 
