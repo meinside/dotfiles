@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2023.06.21.
+# last update: 2023.06.28.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -132,7 +132,7 @@ neovim 0.9.0
 #   $ nimble install nimlsp
 #
 # https://nim-lang.org/install.html
-nim 1.6.12
+nim 1.6.14
 
 # $ asdf plugin add ninja
 # $ asdf install ninja
