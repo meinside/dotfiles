@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2023.05.26.
+# updated on 2023.06.29.
 #
 # ... by meinside@duck.com
 #
@@ -141,6 +141,9 @@ if [[ -z $TMUX ]]; then
 
     # for nodejs
     export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+    if [ -d "$HOME/.local/share/npm/bin" ]; then
+        export PATH=$PATH:.local/share/npm/bin
+    fi
 
     # for ruby
     export IRBRC="$XDG_CONFIG_HOME/irb/irbrc"

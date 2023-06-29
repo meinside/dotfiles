@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2023.03.31.
+# updated on 2023.06.29.
 #
 # ... by meinside@duck.com
 
@@ -112,6 +112,9 @@ if [[ -z $TMUX ]]; then
 
     # for nodejs
     export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+    if [ -d "$HOME/.local/share/npm/bin" ]; then
+        export PATH=$PATH:.local/share/npm/bin
+    fi
 
     # for ruby
     export IRBRC="$XDG_CONFIG_HOME/irb/irbrc"
