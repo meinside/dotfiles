@@ -5,7 +5,7 @@
 #
 # then it will automatically  `go install` or `go get -u` all packages listed in this file(~/.config/goget/packages)
 #
-# last update: 2023.06.09.
+# last update: 2023.06.30.
 
 # official packages
 golang.org/x/tools/cmd/godoc
@@ -27,10 +27,10 @@ github.com/errata-ai/vale@latest # get from: https://github.com/errata-ai/vale/r
 github.com/rclone/rclone
 
 # my packages
-github.com/meinside/gtmx@latest
-github.com/meinside/goget@latest
 github.com/meinside/backupboxxx@latest
-github.com/meinside/pb-send@latest
-github.com/meinside/google-ddns-updater@latest
+github.com/meinside/cloudflare-go/cmd/cf-dns-cli@latest
+github.com/meinside/goget@latest
+github.com/meinside/gtmx@latest
 github.com/meinside/nfc-normalizer-go/cmd/nfcmv@latest
+github.com/meinside/pb-send@latest
 
