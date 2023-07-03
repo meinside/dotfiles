@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.05.31.
+-- last update: 2023.07.03.
 
 
 -- variables and constants
@@ -20,6 +20,7 @@ vim.g['conjure#filetypes'] = custom.lisps
 -- install `lazy` automatically
 -- (https://github.com/folke/lazy.nvim#-installation)
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
+-- NOTE: TODO: replace `vim.loop` with `vim.uv` after neovim 0.10 becomes stable
 if not vim.loop.fs_stat(lazypath) then
   vim.fn.system({
     'git',
