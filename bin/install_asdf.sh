@@ -5,9 +5,9 @@
 # Install asdf
 #
 # created on : 2022.04.14.
-# last update: 2023.06.23.
+# last update: 2023.07.05.
 #
-# by meinside@duck.com
+# by meinside@meinside.dev
 
 
 ################################

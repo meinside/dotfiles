@@ -5,7 +5,9 @@
 # Unlocks steam deck's read-only file system.
 #
 # created on : 2022.09.27.
-# last update: 2022.09.28.
+# last update: 2023.07.05.
+#
+# by meinside@meinside.dev
 
 sudo steamos-readonly disable && \
 	sudo pacman-key --init && \

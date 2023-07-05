@@ -7,9 +7,9 @@
 # https://datasheets.raspberrypi.org/pico/getting-started-with-pico.pdf
 #
 # created on: 2021.08.24.
-# updated on: 2022.09.27.
+# updated on: 2023.07.05.
 #
-# by meinside@duck.com
+# by meinside@meinside.dev
 
 
 ################################
@@ -48,12 +48,12 @@ PICO_EXAMPLES_DIR="$PICO_DIR/$PICO_EXAMPLES_DIRNAME"
 
 function pull_repositories {
     warn ">>> pulling repositories..." && \
-	mkdir -p $PICO_DIR && \
-	cd $PICO_DIR && \
-	git clone -b master https://github.com/raspberrypi/pico-sdk.git $PICO_SDK_DIRNAME && \
-	cd $PICO_SDK_DIRNAME && \
+	mkdir -p "$PICO_DIR" && \
+	cd "$PICO_DIR" && \
+	git clone -b master https://github.com/raspberrypi/pico-sdk.git "$PICO_SDK_DIRNAME" && \
+	cd "$PICO_SDK_DIRNAME" && \
 	git submodule update --init && \
-	cd $PICO_DIR && \
+	cd "$PICO_DIR" && \
 	git clone -b master https://github.com/raspberrypi/pico-examples.git
 }
 
@@ -86,7 +86,7 @@ function install_linux_packages {
 }
 
 function install_linux {
-    if [ -z $TERMUX_VERSION ]; then
+    if [ -z "$TERMUX_VERSION" ]; then
 	install_linux_packages && \
 	    pull_repositories && \
 	    show_guides

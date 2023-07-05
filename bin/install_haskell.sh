@@ -5,9 +5,9 @@
 # Install haskell and its tools.
 # 
 # created on : 2021.07.12.
-# last update: 2024.04.12.
+# last update: 2023.07.05.
 # 
-# by meinside@duck.com
+# by meinside@meinside.dev
 
 
 ################################

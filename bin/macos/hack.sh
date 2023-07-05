@@ -4,7 +4,9 @@
 #
 # cherry-picked from: https://gist.github.com/erikh/2260182
 #
-# last update: 2022.12.21.
+# last update: 2023.07.05.
+#
+# by meinside@meinside.dev
 
 # This is a script with usefull tips taken from:
 #   https://github.com/mathiasbynens/dotfiles/blob/master/.osx
@@ -66,7 +68,7 @@ defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
 echo "Expand print panel by default"
 defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
 
-echo "Disable the “Are you sure you want to open this application?” dialog"
+echo "Disable the \"Are you sure you want to open this application?\" dialog"
 defaults write com.apple.LaunchServices LSQuarantine -bool false
 
 echo "Disable shadow in screenshots"

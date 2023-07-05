@@ -5,9 +5,9 @@
 # Install fennel script or binary.
 #
 # created on : 2021.11.24.
-# last update: 2023.04.12.
+# last update: 2023.07.05.
 #
-# by meinside@duck.com
+# by meinside@meinside.dev
 
 
 ################################
@@ -110,7 +110,7 @@ function install_macos {
 
 # for linux
 function install_linux {
-	if [ -z $TERMUX_VERSION ]; then
+	if [ -z "$TERMUX_VERSION" ]; then
 		prep_linux && install
 	else  # termux
 		prep_termux && install_termux

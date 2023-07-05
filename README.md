@@ -1,6 +1,6 @@
 # My dot/config files for various machines
 
-by Sungjin Han <meinside@duck.com>
+by Sungjin Han <meinside@meinside.dev>
 
 ## Description
 

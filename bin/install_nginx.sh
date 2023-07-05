@@ -41,9 +41,9 @@
 #   0 5 1 */1 * sudo tailscale cert --cert-file /path/to/cert.crt --key-file /path/to/cert.key "subdomain.my-tailnet-name.ts.net"
 #
 # created on : 2017.08.16.
-# last update: 2023.06.01.
+# last update: 2023.07.05.
 # 
-# by meinside@duck.com
+# by meinside@meinside.dev
 
 
 ################################
@@ -114,35 +114,31 @@ function prep {
     # openssl: download and unzip
     warn ">>> downloading OpenSSL..."
     url=$OPENSSL_SRC_URL
-    file=`basename $url`
     cd $TEMP_DIR && \
 	wget $url && \
-	tar -xzvf $file
+	tar -xzvf "$(basename $url)"
 
     # zlib: download and unzip
     warn ">>> downloading Zlib..."
     url=$ZLIB_SRC_URL
-    file=`basename $url`
     cd $TEMP_DIR && \
 	wget $url && \
-	tar -xzvf $file
+	tar -xzvf "$(basename $url)"
 
     # pcre: download and unzip
     warn ">>> downloading PCRE..."
     url=$PCRE_SRC_URL
-    file=`basename $url`
     cd $TEMP_DIR && \
 	wget $url && \
-	tar -xzvf $file
+	tar -xzvf "$(basename $url)"
 }
 
 function build {
     # download, unzip,
     url=$NGINX_SRC_URL
-    file=`basename $url`
     cd $TEMP_DIR && \
 	wget $url && \
-	tar -xzvf $file && \
+	tar -xzvf "$(basename $url)" && \
 	cd $NGINX_SRC_DIR
 
     # configure,
@@ -280,7 +276,7 @@ function clean {
 
     # delete files
     cd $TEMP_DIR
-    sudo rm -rf `basename $NGINX_SRC_URL` `basename $OPENSSL_SRC_URL` `basename $ZLIB_SRC_URL` `basename $PCRE_SRC_URL`
+    sudo rm -rf "$(basename $NGINX_SRC_URL)" "$(basename $OPENSSL_SRC_URL)" "$(basename $ZLIB_SRC_URL)" "$(basename $PCRE_SRC_URL)"
 
     # and directories
     sudo rm -rf $NGINX_SRC_DIR $OPENSSL_SRC_DIR $ZLIB_SRC_DIR $PCRE_SRC_DIR
@@ -288,7 +284,7 @@ function clean {
 
 # linux
 function install_linux {
-    if [ -z $TERMUX_VERSION ]; then
+    if [ -z "$TERMUX_VERSION" ]; then
 	prep && build && configure && clean
     else  # termux
 	pkg install nginx

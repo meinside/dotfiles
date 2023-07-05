@@ -6,9 +6,9 @@
 #
 # (pass '--do-not-clean' argument for preserving files after install)
 # 
-# last update: 2023.04.12.
+# last update: 2023.07.05.
 # 
-# by meinside@duck.com
+# by meinside@meinside.dev
 
 
 ################################

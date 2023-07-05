@@ -6,7 +6,9 @@
 #
 # (referenced: https://docs.docker.com/engine/security/https/)
 #
-# last update: 2020.02.14.
+# last update: 2023.07.05.
+#
+# by meinside@meinside.dev
 
 EXPIRE_IN=3650	# valid for 10 years
 
@@ -20,7 +22,7 @@ O="Example Company"
 args=( "$@" )
 num_args=${#args[@]}
 
-if [ $num_args -gt 0 ]; then
+if [ "$num_args" -gt 0 ]; then
 	# hostname
 	hostname="${args[0]}"
 

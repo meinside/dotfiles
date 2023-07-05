@@ -5,7 +5,9 @@
 # Manually build mosh from `master` branch. (1.3.2 doesn't support 24-bit colors yet)
 #
 # created on : 2021.08.11.
-# last update: 2023.04.12.
+# last update: 2023.07.05.
+#
+# by meinside@meinside.dev
 
 
 ################################

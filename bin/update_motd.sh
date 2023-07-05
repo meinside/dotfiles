@@ -5,9 +5,9 @@
 # (used: https://manytools.org/hacker-tools/convert-images-to-ascii-art/)
 # 
 # created on : 2012.08.21.
-# last update: 2022.05.26.
+# last update: 2023.07.05.
 # 
-# by meinside@duck.com
+# by meinside@meinside.dev
 
 read -r -d '' ASCII_ART <<EOF
 .                            ...........
