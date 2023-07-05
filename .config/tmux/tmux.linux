@@ -1,8 +1,6 @@
 # partial tmux.conf for linux
 #
-# by meinside@duck.com
-#
-# last update: 2023.03.29.
+# last update: 2023.07.05.
 
 set -g message-command-style fg=colour255,bg=colour235
 set -g message-style fg=colour255,bg=colour235

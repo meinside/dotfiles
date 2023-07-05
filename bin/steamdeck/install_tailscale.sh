@@ -13,8 +13,6 @@
 #
 # created on : 2023.05.26.
 # last update: 2023.07.05.
-#
-# by meinside@meinside.dev
 
 
 ################################

@@ -7,8 +7,6 @@
 # from: https://gist.github.com/XVilka/8346728
 #
 # last update: 2023.07.05.
-#
-# by meinside@meinside.dev
 
 awk 'BEGIN{
     s="/\\/\\/\\/\\/\\"; s=s s s s s s s s;

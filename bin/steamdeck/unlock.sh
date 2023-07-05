@@ -6,8 +6,6 @@
 #
 # created on : 2022.09.27.
 # last update: 2023.07.05.
-#
-# by meinside@meinside.dev
 
 sudo steamos-readonly disable && \
 	sudo pacman-key --init && \

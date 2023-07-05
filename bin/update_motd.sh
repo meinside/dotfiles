@@ -6,8 +6,6 @@
 # 
 # created on : 2012.08.21.
 # last update: 2023.07.05.
-# 
-# by meinside@meinside.dev
 
 read -r -d '' ASCII_ART <<EOF
 .                            ...........

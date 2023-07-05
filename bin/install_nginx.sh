@@ -42,8 +42,6 @@
 #
 # created on : 2017.08.16.
 # last update: 2023.07.05.
-# 
-# by meinside@meinside.dev
 
 
 ################################

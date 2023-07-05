@@ -1,8 +1,6 @@
 # .config/readline/intpurc
 #
-# meinside@duck.com
-#
-# last update: 2023.03.29.
+# last update: 2023.07.05.
 
 "\e[3~": delete-char
 # this is actually equivalent to "\C-?": delete-char

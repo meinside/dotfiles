@@ -6,8 +6,6 @@
 # (https://github.com/neovim/neovim/wiki/Installing-Neovim#install-from-source)
 #
 # last update: 2023.07.05.
-# 
-# by meinside@meinside.dev
 
 # * To install nightly version:
 #

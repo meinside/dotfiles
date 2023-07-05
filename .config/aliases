@@ -1,8 +1,6 @@
 # .config/aliases for common aliases
 #
-# created by meinside@duck.com
-#
-# last update: 2023.03.31.
+# last update: 2023.07.05.
 
 alias ls="ls --color=auto"
 alias grep="grep --color=auto"

@@ -1,8 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2023.04.25.
-#
-# meinside@duck.com
+# last update: 2023.07.05.
 
 # unnecessary binary files
 *.a

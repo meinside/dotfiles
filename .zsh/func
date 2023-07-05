@@ -3,10 +3,7 @@
 # my zsh functions
 #
 # created on 2014.10.06.
-# updated on 2023.03.31.
-#
-# ... by meinside@duck.com
-#
+# updated on 2023.07.05.
 
 # list files changed in given days
 # (referenced: http://gotofritz.net/blog/howto/finding-recently-changed-files-osx-terminal/)

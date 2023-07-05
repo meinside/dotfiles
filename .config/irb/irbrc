@@ -2,9 +2,7 @@
 
 # .config/irb/irbrc
 #
-# meinside@duck.com
-#
-# last update: 2023.03.29.
+# last update: 2023.07.05.
 
 # turn on auto completion
 require 'irb/completion'
@@ -39,4 +37,3 @@ end
 
 # for loading gems installed from git with bundler
 require 'bundler/setup'
-

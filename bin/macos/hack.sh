@@ -5,8 +5,6 @@
 # cherry-picked from: https://gist.github.com/erikh/2260182
 #
 # last update: 2023.07.05.
-#
-# by meinside@meinside.dev
 
 # This is a script with usefull tips taken from:
 #   https://github.com/mathiasbynens/dotfiles/blob/master/.osx

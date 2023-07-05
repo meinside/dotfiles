@@ -1,9 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2023.06.29.
-#
-# ... by meinside@duck.com
+# updated on 2023.07.05.
 #
 # $ chsh -s /bin/zsh
 #

@@ -7,8 +7,6 @@
 # (referenced: https://docs.docker.com/engine/security/https/)
 #
 # last update: 2023.07.05.
-#
-# by meinside@meinside.dev
 
 EXPIRE_IN=3650	# valid for 10 years
 

@@ -7,8 +7,6 @@
 # (pass '--do-not-clean' argument for preserving files after install)
 # 
 # last update: 2023.07.05.
-# 
-# by meinside@meinside.dev
 
 
 ################################

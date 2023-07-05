@@ -1,9 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2023.06.29.
-#
-# ... by meinside@duck.com
+# updated on 2023.07.05.
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return

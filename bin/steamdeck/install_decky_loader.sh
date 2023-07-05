@@ -6,8 +6,6 @@
 #
 # created on : 2023.01.11.
 # last update: 2023.07.05.
-#
-# by meinside@meinside.dev
 
 if [[ $1 == "--uninstall" ]]; then
 	# uninstall
