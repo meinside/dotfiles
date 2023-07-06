@@ -6,7 +6,7 @@
 #
 # (https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh)
 # 
-# last update: 2023.07.05.
+# last update: 2023.07.06.
 
 # colors
 RED="\033[0;31m"
@@ -45,13 +45,13 @@ function pull_configs {
 	check_git
 
 	# clone config files
-	rm -rf "$TMP_DIR"
-	git clone $REPOSITORY "$TMP_DIR"
+	rm -rf "$TMP_DIR" && \
+		git clone $REPOSITORY "$TMP_DIR"
 
 	# move temp files to $HOME directory
-	shopt -s dotglob nullglob
-	mv "$TMP_DIR/*" "$HOME/"
-	rm -rf "$TMP_DIR"
+	shopt -s dotglob nullglob && \
+		mv "$TMP_DIR/*" "$HOME/" && \
+		rm -rf "$TMP_DIR"
 }
 
 function check_git {
