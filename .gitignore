@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2023.07.05.
+# last update: 2023.07.07.
 
 # unnecessary binary files
 *.a
@@ -44,7 +44,7 @@ wget-log*
 .subversion/
 .svn
 
-# macOS files/dirs
+# macOS or Desktop files/dirs
 .AppleDB
 .AppleDesktop
 .AppleDouble
@@ -56,6 +56,7 @@ Applications/
 Desktop/
 Documents/
 Downloads/
+Games/
 Library/
 Movies/
 Music/
@@ -194,6 +195,7 @@ xcuserdata
 .ssh/
 .swiftpm/
 .wget-hsts
+.wine/
 .termux/
 .tooling/
 .vnc/
