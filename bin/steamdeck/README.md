@@ -25,20 +25,6 @@
 - [ ] Right-click and get into 'Management' - 'Controller Layout' screen
 - [ ] Search for community controller templates, apply one, and finished.
 
-# Install Battle.net with Lutris
-
-Reference: [reddit](https://www.reddit.com/r/SteamDeck/comments/11tv6ro/diablo_iv_lutris_configuration/)
-
-- [ ] (switch to the desktop mode)
-- [ ] Install 'Lutris' from 'Discover'
-- [ ] Launch 'Lutris'
-- [ ] Install the latest lutris-ge by pressing 'Manage Versions' button of the 'Wine' tab
-- [ ] Press '+' button on the top-left corner
-- [ ] Select 'Search the Lutris website for installers'
-- [ ] Search for 'Battle.net'
-- [ ] Install it, **(DO NOT LOGIN YET!)** and wait for it to finish (until it shows 'Installation completed!')
-- [ ] If needed, add 'Lutris' to Steam for launching 'Battle.net' later.
-
 # NOTES
 
 * Keys, shortcuts
