@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2023.07.05.
+# updated on 2023.07.07.
 #
 # $ chsh -s /bin/zsh
 #
@@ -122,13 +122,8 @@ if [[ -z $TMUX ]]; then
     fi
 
     # for go
-    if [ -x "`which go`" ]; then
-        export GOROOT=`go env GOROOT`
-    fi
-    if [ -d $GOROOT ]; then
-        export GOPATH=$HOME/srcs/go
-        export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-    fi
+    export GOPATH=$HOME/srcs/go
+    export PATH=$PATH:$GOPATH/bin
 
     # for haskell
     [ -f "$HOME/.ghcup/env" ] && . "$HOME/.ghcup/env" # ghcup-env

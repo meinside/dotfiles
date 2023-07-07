@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2023.07.05.
+# updated on 2023.07.07.
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -93,13 +93,8 @@ if [[ -z $TMUX ]]; then
     fi
 
     # for go
-    if [ -x "`which go`" ]; then
-        export GOROOT=`go env GOROOT`
-    fi
-    if [ -d $GOROOT ]; then
-        export GOPATH=$HOME/srcs/go
-        export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-    fi
+    export GOPATH=$HOME/srcs/go
+    export PATH=$PATH:$GOPATH/bin
 
     # for haskell
     [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
