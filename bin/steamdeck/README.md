@@ -1,4 +1,4 @@
-# Thins to do before using Steam Deck
+# Things to do before using Steam Deck
 
 - [ ] Settings - System - Enable Developer Mode
 - [ ] Settings - Developer - Enable CEF Remote Debugging
@@ -27,6 +27,13 @@
 
 # NOTES
 
-* Mouse Left-click = Steam Button + Right Trigger
-* Mouse Right-click = Steam Button + Left Trigger
+* Keys, shortcuts
+  * Mouse Left-click = Steam Button + Right Trigger
+  * Mouse Right-click = Steam Button + Left Trigger
+
+# Troubles?
+
+* If [barrier](https://github.com/debauchee/barrier)
+  * [doesn't work on macOS due to the notarization problem](https://github.com/debauchee/barrier/issues/602), try: `xattr -rd com.apple.quarantine /Applications/Barrier.app`
+  * [doesn't work on macOS due to SSL certificate errors](https://github.com/debauchee/barrier/issues/1609), try: `cd ~/Library/Application\ Support/barrier/SSL; openssl req -new -x509 -sha256 -days 9999 -nodes -out Barrier.pem -keyout Barrier.pem`
 
