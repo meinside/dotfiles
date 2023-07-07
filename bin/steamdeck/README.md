@@ -11,7 +11,7 @@
 - [ ] Unlock the Steam Deck by running `bin/steamdeck/unlock.sh`
 - [ ] Install decky loader with `bin/steamdeck/install_decky_loader.sh`
 
-# For Xbox Game Pass
+# Setup Xbox Game Pass with Microsoft Edge
 
 - [ ] (switch to the desktop mode)
 - [ ] Install 'Microsoft Edge' from 'Discover'
@@ -25,11 +25,41 @@
 - [ ] Right-click and get into 'Management' - 'Controller Layout' screen
 - [ ] Search for community controller templates, apply one, and finished.
 
+# Install Battle.net with Lutris
+
+Reference: [reddit](https://www.reddit.com/r/SteamDeck/comments/11tv6ro/diablo_iv_lutris_configuration/)
+
+- [ ] (switch to the desktop mode)
+- [ ] Install 'Lutris' from 'Discover'
+- [ ] Launch 'Lutris'
+- [ ] Install the latest lutris-ge by pressing 'Manage Versions' button of the 'Wine' tab
+- [ ] Press '+' button on the top-left corner
+- [ ] Select 'Search the Lutris website for installers'
+- [ ] Search for 'Battle.net'
+- [ ] Install it, **(DO NOT LOGIN YET!)** and wait for it to finish (until it shows 'Installation completed!')
+- [ ] If needed, add 'Lutris' to Steam for launching 'Battle.net' later.
+
 # NOTES
 
 * Keys, shortcuts
-  * Mouse Left-click = Steam Button + Right Trigger
-  * Mouse Right-click = Steam Button + Left Trigger
+  * Game Mode
+    * Force-stop Game = Steam Button + Long Press 'B'
+    * Show Software Keyboard = Steam Button + 'X'
+    * Take screenshot = Steam Button + R1
+    * 'Enter' = Steam Button + 'Right' D-Pad
+    * 'Tab' = Steam Button + 'Down' D-Pad
+    * 'ESC' = Steam Button + 'Left' D-Pad
+  * Desktop Mode
+    * Mouse Left-click = R2 (Right Trigger)
+    * Mouse Right-click = L2 (Left Trigger)
+    * Scrolling vertically/horizontally = Left Touchpad
+    * Show Software Keyboard = 'X'
+    * 'Enter' = 'A'
+    * 'ESC' = 'B' or 'Start'
+    * 'Space' = 'Y'
+    * 'Tab' = 'Select'
+    * 'PgUp' = Upper Right Paddle
+    * 'PgDn' = Lower Right Paddle
 
 # Troubles?
 
