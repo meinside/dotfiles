@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2023.07.07.
+# updated on 2023.07.11.
 #
 # $ chsh -s /bin/zsh
 #
@@ -161,13 +161,13 @@ if [[ -z $TMUX ]]; then
     # additional paths
     export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
-    # for asdf settings
-    if [ -d ~/.asdf ]; then
-        . $HOME/.asdf/asdf.sh
-
-        fpath=(${ASDF_DIR}/completions $fpath)  # append completions to fpath
-        autoload -Uz compinit && compinit   # initialise completions with ZSH's compinit
-    fi
+    # for asdf settings (handled by omz's 'asdf' plugin)
+    #if [ -d ~/.asdf ]; then
+    #    . $HOME/.asdf/asdf.sh
+    #
+    #    fpath=(${ASDF_DIR}/completions $fpath)  # append completions to fpath
+    #    autoload -Uz compinit && compinit   # initialise completions with ZSH's compinit
+    #fi
 
 fi
 
