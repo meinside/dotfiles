@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2023.07.07.
+# updated on 2023.07.11.
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -41,11 +41,11 @@ shopt -s checkwinsize
 shopt -s nullglob
 
 # prompt
-source ~/.bash/colors
-source ~/.bash/git-prompt
+. "$HOME/.bash/colors"
+. "$HOME/.bash/git-prompt"
 case ${TERM} in
     xterm*|rxvt*|Eterm|aterm|kterm|gnome*|screen*)
-        if [ `whoami` = "root" ]; then
+        if [ "$(whoami)" = "root" ]; then
             PS1="\[$bldred\]\u@\h\[$txtrst\]:\[$bldblu\]\w\[$txtgrn\]\$git_branch\[$txtylw\]\$git_dirty\[$txtrst\]\$ "
         else
             PS1="\[$bldgrn\]\u@\h\[$txtrst\]:\[$bldblu\]\w\[$txtgrn\]\$git_branch\[$txtylw\]\$git_dirty\[$txtrst\]\$ "
@@ -58,7 +58,7 @@ esac
 export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"; find_git_branch; find_git_dirty;'
 
 # colors
-source $XDG_CONFIG_HOME/lscolors
+. "$XDG_CONFIG_HOME/lscolors"
 
 # readline
 export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
@@ -97,7 +97,7 @@ if [[ -z $TMUX ]]; then
     export PATH=$PATH:$GOPATH/bin
 
     # for haskell
-    [ -f "$HOME/.ghcup/env" ] && source "$HOME/.ghcup/env" # ghcup-env
+    [ -f "$HOME/.ghcup/env" ] && . "$HOME/.ghcup/env" # ghcup-env
 
     # for lein (clojure)
     export LEIN_JVM_OPTS=""
@@ -117,7 +117,7 @@ if [[ -z $TMUX ]]; then
     if [ -d "$HOME/.cargo/bin" ]; then
         export PATH="$HOME/.cargo/bin:$PATH"
     else
-        for r in $HOME/.asdf/installs/rust/*; do
+        for r in "$HOME/.asdf/installs/rust"/*; do
             . "${r}/env"; break
         done
     fi
@@ -132,17 +132,17 @@ if [[ -z $TMUX ]]; then
 
     # asdf settings
     if [ -d ~/.asdf ]; then
-        . $HOME/.asdf/asdf.sh
-        . $HOME/.asdf/completions/asdf.bash
+        . "$HOME/.asdf/asdf.sh"
+        . "$HOME/.asdf/completions/asdf.bash"
     fi
 
 fi
 
 # aliases
-. $XDG_CONFIG_HOME/aliases
+. "$XDG_CONFIG_HOME/aliases"
 
 # load custom environment variables (like GOPRIVATE, PATH, alias, ...) if exist
 if [ -f ~/.custom_env ]; then
-    . ~/.custom_env
+    . "$HOME/.custom_env"
 fi
 
