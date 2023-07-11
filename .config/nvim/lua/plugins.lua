@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.07.03.
+-- last update: 2023.07.11.
 
 
 -- variables and constants
@@ -154,21 +154,6 @@ require'lazy'.setup({
 
   -- d2
   { 'terrastruct/d2-vim', ft = { 'd2' } },
-
-
-  -- vale (see ~/.vale.ini)
-  {
-    'jose-elias-alvarez/null-ls.nvim', config = function()
-      if tools.fs.executable('vale') then -- install `vale` with :Mason
-        local null_ls = require'null-ls'
-        null_ls.setup {
-          sources = {
-            null_ls.builtins.diagnostics.vale,
-          },
-        }
-      end
-    end,
-  },
 
 
   -- fold and preview (zc for closing, zo for opening / zM for closing all, zR opening all)
