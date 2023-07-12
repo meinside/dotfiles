@@ -1,7 +1,7 @@
--- My .config/nvim/init.lua file for neovim 0.8+
+-- My .config/nvim/init.lua file for neovim 0.9+
 --
 -- created on : 2021.05.27.
--- last update: 2023.07.05.
+-- last update: 2023.07.12.
 
 
 ------------------------------------------------
