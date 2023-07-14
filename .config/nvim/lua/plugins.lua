@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.07.11.
+-- last update: 2023.07.14.
 
 
 -- variables and constants
@@ -1121,9 +1121,6 @@ require'rust-tools'.setup {
     ),
   },
 }
--- FIXME: `rustfmt` doesn't support aarch64 yet,
--- FIXME: when fixed, put "rust = { 'rustfmt' }," in  ~/.config/nvim/lua/custom/linters.lua
---        and remove following lines
 vim.api.nvim_create_autocmd('BufWritePre', {
   pattern = '*.rs',
   callback = function() vim.lsp.buf.format { async = false } end,
