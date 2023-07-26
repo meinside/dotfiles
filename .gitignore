@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2023.07.07.
+# last update: 2023.07.26.
 
 # unnecessary binary files
 *.a
@@ -212,6 +212,7 @@ Calibre Library/
 Dropbox
 Google Drive/
 mbox
+pCloud Drive/
 pprof/
 VirtualBox VMs/
 
