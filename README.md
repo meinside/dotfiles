@@ -84,7 +84,7 @@ $ scrcpy --tcpip=YOUR_DEVICE_IP:5555
 For forwarding audio only:
 
 ```bash
-$ scrcpy --tcpip=YOUR_DEVICE_IP:5555 --no-video --audio-buffer=300
+$ scrcpy --tcpip=YOUR_DEVICE_IP:5555 --no-video --audio-buffer=200 --audio-bit-rate=320K
 ```
 
 ---
