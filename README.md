@@ -63,13 +63,13 @@ Connect the Android device to macOS with USB cable, and get its IP address with:
 $ adb shell ip route
 ```
 
-disconnect the Android device, enable `adb` over TCP/IP with:
+enable `adb` over TCP/IP with:
 
 ```bash
 $ adb tcpip 5555
 ```
 
-and connect it over TCP/IP with:
+disconnect the USB cable, and connect it over TCP/IP with:
 
 ```bash
 $ adb connect YOUR_DEVICE_IP:5555
