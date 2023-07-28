@@ -42,6 +42,51 @@ Have a look at this script: [`bin/macos/hack.sh`](https://github.com/meinside/do
 $ xcrun simctl delete unavailable
 ```
 
+#### c. Forward video/audio from Android devices
+
+Firstly, enable USB debugging in the developer menu in the Android device.
+
+Install [scrcpy](https://github.com/Genymobile/scrcpy) with:
+
+```bash
+$ brew install scrcpy
+$ brew brew install android-platform-tools
+```
+
+##### How to connect
+
+[Here](https://github.com/Genymobile/scrcpy/blob/master/doc/connection.md) is the guide.
+
+Connect the Android device to macOS with USB cable, and get its IP address with:
+
+```bash
+$ adb shell ip route
+```
+
+disconnect the Android device, enable `adb` over TCP/IP with:
+
+```bash
+$ adb tcpip 5555
+```
+
+and connect it over TCP/IP with:
+
+```bash
+$ adb connect YOUR_DEVICE_IP:5555
+```
+
+##### Run scrcpy
+
+```bash
+$ scrcpy --tcpip=YOUR_DEVICE_IP:5555
+```
+
+For forwarding audio only:
+
+```bash
+$ scrcpy --tcpip=YOUR_DEVICE_IP:5555 --no-video --audio-buffer=300
+```
+
 ---
 
 ## 2. Tips for Raspberry Pi
