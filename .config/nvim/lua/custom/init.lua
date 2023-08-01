@@ -71,7 +71,7 @@ function Custom.features()
 end
 
 -- lisp types
-Custom.lisps = { 'lisp', 'clojure', 'fennel', 'janet' }
+Custom.lisps = { 'clojure', 'fennel', 'janet', 'lisp' }
 
 
 -- export things
