@@ -1,0 +1,5 @@
+;;; .sbclrc
+
+;;; load quicklisp
+(load "~/.local/share/quicklisp/setup.lisp")
+
