@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.07.14.
+-- last update: 2023.08.01.
 
 
 -- variables and constants
@@ -656,6 +656,7 @@ require'lazy'.setup({
           { name = 'nvim_lua', keyword_length = 2 },
           { name = 'codeium' },
           { name = 'conjure' },
+          { name = 'nvlime' },
         },
         formatting = {
           format = lspkind.cmp_format {
@@ -699,7 +700,7 @@ require'lazy'.setup({
       require'nvim-treesitter.configs'.setup {
         ensure_installed = {
           'bash',
-          'c', 'clojure', 'cmake', 'comment', 'cpp', 'css',
+          'c', 'clojure', 'cmake', 'comment', 'commonlisp', 'cpp', 'css',
           'dart', 'diff', 'dockerfile',
           'fennel',
           'go', 'gomod', 'gowork', 'gitignore',
@@ -835,22 +836,13 @@ require'lazy'.setup({
   },
 
 
-  -- lispy languages
+  -- <lispy languages>
+  --
   -- for auto completion: <C-x><C-o>
   -- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
   -- for reloading everything: \rr
   -- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
   { 'Olical/conjure' },
-  { 'dmac/vim-cljfmt', ft = { 'clojure' } }, -- $ go install github.com/cespare/goclj/cljfmt
-  {
-    'bakpakin/fennel.vim', config = function()
-      -- https://github.com/Olical/conjure/wiki/Quick-start:-Fennel-(stdio)
-      vim.api.nvim_exec([[let g:conjure#filetype#fennel = "conjure.client.fennel.stdio"]], false)
-    end,
-    ft = { 'fennel' },
-  },
-  -- run janet LSP with: $ janet -e '(import spork/netrepl) (netrepl/server)'
-  { 'janet-lang/janet.vim', ft = { 'janet' } },
   -- >f, <f : move a form
   -- >e, <e : move an element
   -- >), <), >(, <( : move a parenthesis
@@ -868,6 +860,22 @@ require'lazy'.setup({
   { 'tpope/vim-sexp-mappings-for-regular-people', ft = custom.lisps },
   { 'gpanders/nvim-parinfer', ft = custom.lisps },
   { 'PaterJason/cmp-conjure', ft = custom.lisps },
+  -- (clojure)
+  { 'dmac/vim-cljfmt', ft = { 'clojure' } }, -- $ go install github.com/cespare/goclj/cljfmt
+  -- (SBCL)
+  -- \rr: start server
+  { 'monkoose/nvlime', ft = { 'commonlisp', 'lisp' }, dependencies = { 'monkoose/parsley' } },
+  -- (fennel)
+  {
+    'bakpakin/fennel.vim', config = function()
+      -- https://github.com/Olical/conjure/wiki/Quick-start:-Fennel-(stdio)
+      vim.api.nvim_exec([[let g:conjure#filetype#fennel = "conjure.client.fennel.stdio"]], false)
+    end,
+    ft = { 'fennel' },
+  },
+  -- (janet)
+  -- run janet LSP with: $ janet -e '(import spork/netrepl) (netrepl/server)'
+  { 'janet-lang/janet.vim', ft = { 'janet' } },
 
 
   -- nim
