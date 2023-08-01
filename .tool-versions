@@ -181,6 +181,12 @@ ruby 3.2.2
 # https://github.com/rust-lang/rust/releases
 rust 1.71.0
 
+# $ asdf plugin add sbcl
+# $ asdf install sbcl
+#
+# https://www.sbcl.org/news.html
+sbcl 2.3.7
+
 # $ asdf plugin add zig
 # $ asdf install zig
 #
