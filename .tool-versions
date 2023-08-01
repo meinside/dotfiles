@@ -184,6 +184,10 @@ rust 1.71.0
 # $ asdf plugin add sbcl
 # $ asdf install sbcl
 #
+# For installing quicklisp,
+#   $ curl -o /tmp/quicklisp.lisp https://beta.quicklisp.org/quicklisp.lisp
+#   $ sbcl --load /tmp/quicklisp.lisp --eval "(quicklisp-quickstart:install :path \"~/.local/share/quicklisp\")"
+#
 # https://www.sbcl.org/news.html
 sbcl 2.3.7
 
