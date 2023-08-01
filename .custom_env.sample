@@ -1,20 +1,31 @@
 # .custom_env.sample
 #
-# last update: 2023.06.07.
+# last update: 2023.08.01.
 
-# for macOS ($ brew install coreutils)
-#alias ls='gls --color=auto'
+# for macOS only
+if [[ $OSTYPE == darwin* ]]; then
+    # $ brew install coreutils
+    alias ls='gls --color=auto'
 
-# for macOS
-#export EDITOR="/opt/homebrew/bin/nvim"
-# or
-#export EDITOR="~/.asdf/shims/nvim"
-#export SVN_EDITOR=$EDITOR
-#alias vi=$EDITOR
-#alias vim=$EDITOR
+    #export EDITOR="~/.asdf/shims/nvim"
+    export EDITOR="/opt/homebrew/bin/nvim"
+    export SVN_EDITOR=$EDITOR
+    alias vi=$EDITOR
+    alias vim=$EDITOR
 
-# for kitty
-#alias icat="kitty +kitten icat"
+    # for kitty
+    alias icat="kitty +kitten icat"
+fi
+
+# launch a simple http server
+alias httpserver="ruby -run -e httpd . -p 8888"
+
+# for janet nrepl
+alias janetnrepl="janet -e \"(import spork/netrepl) (netrepl/server)\""
+
+# for SBCL REPL and Conjure
+alias sbcl="rlwrap sbcl"
+alias sbcl-swank="sbcl --eval '(ql:quickload :swank)' --eval '(swank:create-server :dont-close t)'"
 
 # print go version of a compiled binary
 gobuildversion() {
@@ -37,8 +48,6 @@ if [ -x "$(which luarocks)" ]; then
     eval "$(luarocks path)"
 fi
 
-# for steam deck
-alias auth-tailscale="sudo tailscale up --qr --operator=steamdeck"
-alias start-tailscale="sudo systemd-sysext merge && sudo systemctl restart tailscaled"
-alias stop-tailscale="sudo systemctl stop tailscaled && sudo systemd-sysext unmerge"
+# Raspberry Pi Pico SDK
+export PICO_SDK_PATH=/home/ubuntu/srcs/pico/pico-sdk
 

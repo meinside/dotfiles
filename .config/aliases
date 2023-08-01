@@ -1,6 +1,6 @@
 # .config/aliases for common aliases
 #
-# last update: 2023.07.05.
+# last update: 2023.08.01.
 
 alias ls="ls --color=auto"
 alias grep="grep --color=auto"
@@ -10,21 +10,12 @@ alias ngrep="sudo ngrep -q -W byline"
 alias ctags='ctags -R --totals=yes'
 alias vimdiff='nvim -d'
 
-alias httpserver="ruby -run -e httpd . -p 8888"
-
-# for janet nrepl
-alias janetnrepl="janet -e \"(import spork/netrepl) (netrepl/server)\""
-
-# for SBCL REPL
-alias sbcl="rlwrap sbcl"
-
 # referenced: https://thorsten-hans.com/5-types-of-zsh-aliases
 
-# for macOS
+# for macOS only
 if [[ $OSTYPE == darwin* ]]; then
 	alias flush='dscacheutil -flushcache'
-
-	alias chrome="open -a /Applications/Google\ Chrome.app"
+	alias firefox="open -a /Applications/Firefox.app"
 fi
 
 # workarounds for kitty
@@ -34,6 +25,6 @@ fi
 
 # suffix aliases (for zsh only)
 if [[ $SHELL == *"/bin/zsh"* ]]; then
-	alias -s {cljc,cljs,c,cc,cpp,css,go,html,json,md,rs,zig}=vi
+	alias -s {cljc,cljs,c,cc,cpp,css,go,html,json,lisp,md,rs,zig}=vi
 fi
 
