@@ -21,6 +21,7 @@ local custom = require'custom'  -- ~/.config/nvim/lua/custom/init.lua
 local lisps = { 'clojure', 'fennel', 'janet' }
 -- for conjure
 vim.g['conjure#filetypes'] = lisps
+vim.g['conjure#filetype#fennel'] = 'conjure.client.fennel.stdio' -- for fennel
 
 
 ------------------------------------------------
@@ -872,13 +873,7 @@ require'lazy'.setup({
   -- (clojure)
   { 'dmac/vim-cljfmt', ft = { 'clojure' } }, -- $ go install github.com/cespare/goclj/cljfmt
   -- (fennel)
-  {
-    'bakpakin/fennel.vim', config = function()
-      -- https://github.com/Olical/conjure/wiki/Quick-start:-Fennel-(stdio)
-      vim.api.nvim_exec([[let g:conjure#filetype#fennel = "conjure.client.fennel.stdio"]], false)
-    end,
-    ft = { 'fennel' },
-  },
+  { 'bakpakin/fennel.vim', ft = { 'fennel' } },
   -- (janet)
   -- run janet LSP with: $ janet -e '(import spork/netrepl) (netrepl/server)'
   { 'janet-lang/janet.vim', ft = { 'janet' } },
