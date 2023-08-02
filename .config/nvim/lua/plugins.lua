@@ -18,11 +18,9 @@ local custom = require'custom'  -- ~/.config/nvim/lua/custom/init.lua
 -- global variables
 --
 -- for all lispy languages
-local lisps = { 'clojure', 'commonlisp', 'fennel', 'janet', 'lisp' }
+local lisps = { 'clojure', 'fennel', 'janet' }
 -- for conjure
-vim.g['conjure#filetypes'] = { 'clojure', 'fennel', 'janet' } -- clojure, fennel, janet only
--- for nvlime (sbcl)
-vim.g['nvlime_config'] = { cmp = { enabled = true } } -- for `cmp`
+vim.g['conjure#filetypes'] = lisps
 
 
 ------------------------------------------------
@@ -667,7 +665,6 @@ require'lazy'.setup({
           { name = 'luasnip', keyword_length = 2 },
           { name = 'nvim_lsp', keyword_length = 3 },
           { name = 'nvim_lua', keyword_length = 2 },
-          { name = 'nvlime', keyword_length = 2 },
           { name = 'path' },
         },
         formatting = {
@@ -712,7 +709,7 @@ require'lazy'.setup({
       require'nvim-treesitter.configs'.setup {
         ensure_installed = {
           'bash',
-          'c', 'clojure', 'cmake', 'comment', 'commonlisp', 'cpp', 'css',
+          'c', 'clojure', 'cmake', 'comment', 'cpp', 'css',
           'dart', 'diff', 'dockerfile',
           'fennel',
           'go', 'gomod', 'gowork', 'gitignore',
@@ -874,9 +871,6 @@ require'lazy'.setup({
   { 'PaterJason/cmp-conjure', ft = lisps },
   -- (clojure)
   { 'dmac/vim-cljfmt', ft = { 'clojure' } }, -- $ go install github.com/cespare/goclj/cljfmt
-  -- (sbcl)
-  -- \rr: start server
-  { 'monkoose/nvlime', dependencies = { 'monkoose/parsley' }, ft = { 'commonlisp', 'lisp' } },
   -- (fennel)
   {
     'bakpakin/fennel.vim', config = function()
