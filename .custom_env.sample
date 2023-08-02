@@ -1,6 +1,6 @@
 # .custom_env.sample
 #
-# last update: 2023.08.01.
+# last update: 2023.08.02.
 
 # for macOS only
 if [[ $OSTYPE == darwin* ]]; then
@@ -22,10 +22,6 @@ alias httpserver="ruby -run -e httpd . -p 8888"
 
 # for janet nrepl
 alias janetnrepl="janet -e \"(import spork/netrepl) (netrepl/server)\""
-
-# for SBCL REPL and Conjure
-alias sbcl="rlwrap sbcl"
-alias sbcl-swank="sbcl --eval '(ql:quickload :swank)' --eval '(swank:create-server :dont-close t)'"
 
 # print go version of a compiled binary
 gobuildversion() {

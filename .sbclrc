@@ -1,6 +1,6 @@
 ;;; .sbclrc
 ;;;
-;;; last update: 2023.08.01.
+;;; last update: 2023.08.02.
 
 ;;; The following lines added by ql:add-to-init-file:
 #-quicklisp
@@ -8,4 +8,13 @@
                                        (user-homedir-pathname))))
   (when (probe-file quicklisp-init)
     (load quicklisp-init)))
+
+;;; Check for --no-linedit command-line option.
+(if (member "--no-linedit" sb-ext:*posix-argv* :test 'equal)
+    (setf sb-ext:*posix-argv*
+      (remove "--no-linedit" sb-ext:*posix-argv* :test 'equal))
+    (when (interactive-stream-p *terminal-io*)
+      (require :sb-aclrepl)
+      (require :linedit)
+      (funcall (intern "INSTALL-REPL" :linedit) :wrap-current t)))
 

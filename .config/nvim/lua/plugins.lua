@@ -4,18 +4,29 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.08.01.
+-- last update: 2023.08.02.
 
 
--- variables and constants
+------------------------------------------------
+-- imports
+--
 local tools = require'tools'  -- ~/.config/nvim/lua/tools.lua
 local custom = require'custom'  -- ~/.config/nvim/lua/custom/init.lua
 
 
--- enable conjure only for lispy languages
-vim.g['conjure#filetypes'] = custom.lisps
+------------------------------------------------
+-- global variables
+--
+-- for all lispy languages
+local lisps = { 'clojure', 'commonlisp', 'fennel', 'janet', 'lisp' }
+-- for conjure
+vim.g['conjure#filetypes'] = { 'clojure', 'fennel', 'janet' } -- clojure, fennel, janet only
+-- for nvlime (sbcl)
+vim.g['nvlime_config'] = { cmp = { enabled = true } } -- for `cmp`
+
 
 ------------------------------------------------
+-- lazy
 --
 -- install `lazy` automatically
 -- (https://github.com/folke/lazy.nvim#-installation)
@@ -35,6 +46,7 @@ vim.opt.rtp:prepend(lazypath)
 
 
 ------------------------------------------------
+-- lazy
 --
 -- load `lazy` plugins here
 require'lazy'.setup({
@@ -649,14 +661,14 @@ require'lazy'.setup({
         },
         sources = {
           { name = 'buffer', keyword_length = 3 },
-          { name = 'path' },
           { name = 'calc' },
-          { name = 'nvim_lsp', keyword_length = 3 },
+          { name = 'codeium', keyword_length = 4 },
+          { name = 'conjure', keyword_length = 2 },
           { name = 'luasnip', keyword_length = 2 },
+          { name = 'nvim_lsp', keyword_length = 3 },
           { name = 'nvim_lua', keyword_length = 2 },
-          { name = 'codeium' },
-          { name = 'conjure' },
-          { name = 'nvlime' },
+          { name = 'nvlime', keyword_length = 2 },
+          { name = 'path' },
         },
         formatting = {
           format = lspkind.cmp_format {
@@ -852,19 +864,19 @@ require'lazy'.setup({
   -- cse[, cse] : surround an element with brackets
   -- cse{, cse} : surround an element with braces
   {
-    'guns/vim-sexp', ft = custom.lisps, config = function()
+    'guns/vim-sexp', ft = lisps, config = function()
       vim.g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
-      vim.g['sexp_filetypes'] = table.concat(custom.lisps, ',')
+      vim.g['sexp_filetypes'] = table.concat(lisps, ',')
     end,
   },
-  { 'tpope/vim-sexp-mappings-for-regular-people', ft = custom.lisps },
-  { 'gpanders/nvim-parinfer', ft = custom.lisps },
-  { 'PaterJason/cmp-conjure', ft = custom.lisps },
+  { 'tpope/vim-sexp-mappings-for-regular-people', ft = lisps },
+  { 'gpanders/nvim-parinfer', ft = lisps },
+  { 'PaterJason/cmp-conjure', ft = lisps },
   -- (clojure)
   { 'dmac/vim-cljfmt', ft = { 'clojure' } }, -- $ go install github.com/cespare/goclj/cljfmt
-  -- (SBCL)
+  -- (sbcl)
   -- \rr: start server
-  { 'monkoose/nvlime', ft = { 'commonlisp', 'lisp' }, dependencies = { 'monkoose/parsley' } },
+  { 'monkoose/nvlime', dependencies = { 'monkoose/parsley' }, ft = { 'commonlisp', 'lisp' } },
   -- (fennel)
   {
     'bakpakin/fennel.vim', config = function()

@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2023.08.01.
+# last update: 2023.08.02.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -44,7 +44,7 @@ deno 1.33.2
 #   $ go install golang.org/x/tools/gopls@latest
 #
 # https://go.dev/doc/devel/release
-golang 1.20.6
+golang 1.20.7
 
 # $ asdf plugin add janet
 # $ asdf install janet
@@ -132,7 +132,7 @@ neovim 0.9.0
 #   $ nimble install nimlsp
 #
 # https://nim-lang.org/install.html
-nim 1.6.14
+nim 2.0.0
 
 # $ asdf plugin add ninja
 # $ asdf install ninja
@@ -188,8 +188,8 @@ rust 1.71.0
 #   $ curl -o /tmp/quicklisp.lisp https://beta.quicklisp.org/quicklisp.lisp
 #   $ sbcl --load /tmp/quicklisp.lisp --eval '(quicklisp-quickstart:install :path "~/.local/share/quicklisp")'
 #
-# For Conjure,
-#   $ sbcl --eval '(ql:quickload :swank)'  --eval '(swank:create-server :dont-close t)'
+# For installing linedit, run
+#   $ sbcl --eval '(ql:quickload "linedit")'
 #
 # https://www.sbcl.org/news.html
 sbcl 2.3.7

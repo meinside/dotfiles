@@ -2,7 +2,7 @@
 --
 -- My custom functions and variable/constants.
 --
--- last update: 2023.08.01.
+-- last update: 2023.08.02.
 
 local Custom = {}
 
@@ -69,9 +69,6 @@ function Custom.features()
     }
   end
 end
-
--- lisp types
-Custom.lisps = { 'clojure', 'commonlisp', 'fennel', 'janet', 'lisp' }
 
 
 -- export things
