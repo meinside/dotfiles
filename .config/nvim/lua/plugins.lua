@@ -22,6 +22,11 @@ local lisps = { 'clojure', 'fennel', 'janet' }
 -- for conjure
 vim.g['conjure#filetypes'] = lisps
 vim.g['conjure#filetype#fennel'] = 'conjure.client.fennel.stdio' -- for fennel
+-- for nvim-parinfer
+vim.g['parinfer_filetypes'] = lisps
+-- for guns/vim-sexp
+vim.g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
+vim.g['sexp_filetypes'] = table.concat(lisps, ',')
 
 
 ------------------------------------------------
@@ -514,6 +519,7 @@ require'lazy'.setup({
     dependencies = { 'nvim-tree/nvim-web-devicons' },
   },
 
+
   -- auto pair/close
   {
     'windwp/nvim-autopairs', config = function()
@@ -897,12 +903,7 @@ require'lazy'.setup({
   -- cse(, cse), cseb : surround an element with parenthesis
   -- cse[, cse] : surround an element with brackets
   -- cse{, cse} : surround an element with braces
-  {
-    'guns/vim-sexp', ft = lisps, config = function()
-      vim.g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
-      vim.g['sexp_filetypes'] = table.concat(lisps, ',')
-    end,
-  },
+  { 'guns/vim-sexp', ft = lisps },
   { 'tpope/vim-sexp-mappings-for-regular-people', ft = lisps },
   { 'gpanders/nvim-parinfer', ft = lisps },
   { 'PaterJason/cmp-conjure', ft = lisps },
