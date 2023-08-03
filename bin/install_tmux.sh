@@ -69,8 +69,9 @@ function install_linux {
 		fi
 
 		cd $TMP_DIR && \
-			rm -rf tmux && \
-			error ">>> removed temporary directory."
+			rm -f "${TMUX_SRC_FILENAME}"
+			rm -rf "tmux-${TMUX_VERSION}" && \
+			error ">>> removed temporary directory and files."
 	else  # termux
 		pkg install tmux
 	fi
