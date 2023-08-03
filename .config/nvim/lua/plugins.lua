@@ -55,20 +55,56 @@ require'lazy'.setup({
 
 
   -- colorschemes
-  -- (https://github.com/rockerBOO/awesome-neovim#colorscheme)
   {
-    'projekt0n/github-nvim-theme',
-    lazy = false,
+    'catppuccin/nvim',
+    name = 'catppuccin',
     priority = 1000,
     config = function()
-      require('github-theme').setup {
-        -- ...
+      require'catppuccin'.setup {
+        flavour = 'mocha',
+        term_colors = true,
+        transparent_background = false,
+        no_italic = false,
+        no_bold = false,
+        styles = {
+          comments = {},
+          conditionals = {},
+          loops = {},
+          functions = {},
+          keywords = {},
+          strings = {},
+          variables = {},
+          numbers = {},
+          booleans = {},
+          properties = {},
+          types = {},
+        },
+        color_overrides = {
+          mocha = {
+            base = "#000000",
+            mantle = "#000000",
+            crust = "#000000",
+          },
+        },
+        highlight_overrides = {
+          mocha = function(C)
+            return {
+              TabLineSel = { bg = C.pink },
+              CmpBorder = { fg = C.surface2 },
+              Pmenu = { bg = C.none },
+              TelescopeBorder = { link = "FloatBorder" },
+            }
+          end,
+        },
+        integrations = {
+          notify = true,
+          mason = true,
+          navic = { enabled = true, custom_bg = 'NONE' },
+          which_key = true,
+        },
       }
-
-      --vim.cmd('colorscheme github_dark_colorblind')
-      --vim.cmd('colorscheme github_dark_high_contrast')
-      vim.cmd('colorscheme github_dark_tritanopia')
-    end
+      vim.cmd.colorscheme 'catppuccin'
+    end,
   },
 
 
@@ -425,8 +461,10 @@ require'lazy'.setup({
   {
     'nvim-lualine/lualine.nvim', config = function()
       local navic = require'nvim-navic'
+      navic.setup { highlight = true }
       require'lualine'.setup {
         options = {
+          theme = 'catppuccin',
           disabled_filetypes = {
             'help',
             'packer',
