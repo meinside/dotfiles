@@ -42,6 +42,10 @@ A script for building and installing [neovim](https://neovim.io/).
 
 A script for installing sdk and sample codes for [raspberry pi pico](https://datasheets.raspberrypi.org/pico/getting-started-with-pico.pdf).
 
+## install_tmux.sh
+
+A script for installing the latest version of [tmux](https://github.com/tmux/tmux/wiki/Installing).
+
 ## prep.sh
 
 A script that will clone this repository and install things.
