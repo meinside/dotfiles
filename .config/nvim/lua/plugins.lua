@@ -63,13 +63,10 @@ require'lazy'.setup({
       require'catppuccin'.setup {
         flavour = 'mocha',
         term_colors = true,
-        transparent_background = false,
-        no_italic = false,
-        no_bold = false,
         styles = {
-          comments = {},
-          conditionals = {},
-          loops = {},
+          comments = { 'italic' },
+          conditionals = { 'italic' },
+          loops = { 'italic' },
           functions = {},
           keywords = {},
           strings = {},
@@ -81,9 +78,9 @@ require'lazy'.setup({
         },
         color_overrides = {
           mocha = {
-            base = "#000000",
-            mantle = "#000000",
-            crust = "#000000",
+            base = '#000000',
+            mantle = '#000000',
+            crust = '#000000',
           },
         },
         highlight_overrides = {
@@ -92,7 +89,7 @@ require'lazy'.setup({
               TabLineSel = { bg = C.pink },
               CmpBorder = { fg = C.surface2 },
               Pmenu = { bg = C.none },
-              TelescopeBorder = { link = "FloatBorder" },
+              TelescopeBorder = { link = 'FloatBorder' },
             }
           end,
         },
