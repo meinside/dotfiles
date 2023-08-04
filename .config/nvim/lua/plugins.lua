@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.08.02.
+-- last update: 2023.08.04.
 
 
 ------------------------------------------------
@@ -860,7 +860,10 @@ require'lazy'.setup({
   -- go
   {
     'ray-x/go.nvim', config = function()
-      require'go'.setup { gofmt = 'gopls' }
+      require'go'.setup {
+        gofmt = 'gopls',
+        lsp_inlay_hints = { enable = false }, -- FIXME: inlay hints break screen
+      }
       vim.api.nvim_create_autocmd('BufWritePre', {
         pattern = '*.go',
         callback = function() require'go.format'.goimport() end,
