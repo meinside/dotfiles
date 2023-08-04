@@ -992,6 +992,8 @@ require'lazy'.setup({
 
 ----------------
 -- lsp settings
+vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
+vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' })
 local on_attach_lsp = function(client, bufnr) -- default setup for language servers
   -- Enable completion triggered by <c-x><c-o>
   vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
@@ -1060,6 +1062,7 @@ local on_attach_lsp = function(client, bufnr) -- default setup for language serv
     signs = true,
     severity_sort = true,
     update_in_insert = false,
+    float = { border = 'rounded' },
   })
   vim.fn.sign_define('DiagnosticSignError', {
     text = '✗',
