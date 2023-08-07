@@ -1,17 +1,18 @@
 # partial tmux.conf for linux
 #
-# last update: 2023.07.05.
+# last update: 2023.08.07.
 
-set -g message-command-style fg=colour255,bg=colour235
-set -g message-style fg=colour255,bg=colour235
+set -g message-command-style fg=colour255,bg=default
+set -g message-style fg=colour255,bg=default
 set -g pane-active-border-style fg=colour160
-set -g status-style fg=colour255,bg=colour235
+set -g status-style fg=colour255,bg=default
 
 set -g status-left-length 30
-set -g status-left '#[fg=colour232,bg=colour124] #S #[fg=colour124,bg=colour235,nobold,nounderscore,noitalics]'
-set -g status-right '#[fg=colour235,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour121,bg=colour235] %R  %b/%d (%a) #[fg=colour124,bg=colour235,nobold,nounderscore,noitalics]#[fg=colour232,bg=colour124] #H '
+set -g status-left '#[fg=colour232,bg=colour124] #S #[fg=colour124,bg=default,nobold,nounderscore,noitalics]'
+set -g status-right-length 50
+set -g status-right '#[fg=colour121,bg=default]  %Y-%m-%d (%a) %R #[fg=colour124,bg=default,nobold,nounderscore,noitalics]#[fg=colour232,bg=colour124] @#H '
 
 setw -g window-status-separator ''
-setw -g window-status-format '#{?window_activity_flag,#[fg=colour235 bg=colour124 bold],#[fg=colour124 bg=colour235 nobold nounderscore noitalics]} #I #W '
-setw -g window-status-current-format '#[fg=colour226,bg=colour235,bold] #I #W '
+setw -g window-status-format '#{?window_activity_flag,#[fg=default bg=colour124 bold],#[fg=colour124 bg=default nobold nounderscore noitalics]} #I #W '
+setw -g window-status-current-format '#[fg=colour226,bg=default,bold] #I #W '
 
