@@ -5,7 +5,7 @@
 set -g message-command-style fg=colour255,bg=default
 set -g message-style fg=colour255,bg=default
 set -g pane-active-border-style fg=colour160
-set -g status-style fg=colour255,bg=default
+set -g status-style fg=colour232,bg=default
 
 set -g status-left-length 30
 set -g status-left '#[fg=colour232,bg=colour124] #S #[fg=colour124,bg=default,nobold,nounderscore,noitalics]'
