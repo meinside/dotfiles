@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.08.04.
+-- last update: 2023.08.07.
 
 
 ------------------------------------------------
@@ -458,7 +458,11 @@ require'lazy'.setup({
 
 
   -- statusline
-  { 'WhoIsSethDaniel/lualine-lsp-progress.nvim' },
+  {
+    'linrongbin16/lsp-progress.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function() require'lsp-progress'.setup() end
+  },
   {
     'nvim-lualine/lualine.nvim', config = function()
       local navic = require'nvim-navic'
@@ -479,13 +483,13 @@ require'lazy'.setup({
         sections = {
           lualine_c = {
             'filename',
-            'lsp_progress',
+            'require"lsp-progress".progress()',
             { navic.get_location, cond = navic.is_available },
           },
         },
       }
     end,
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    dependencies = { 'nvim-tree/nvim-web-devicons', 'linrongbin16/lsp-progress.nvim' },
   },
   { 'SmiteshP/nvim-navic', dependencies = { 'neovim/nvim-lspconfig' } },
 
@@ -860,10 +864,8 @@ require'lazy'.setup({
   -- go
   {
     'ray-x/go.nvim', config = function()
-      require'go'.setup {
-        gofmt = 'gopls',
-        lsp_inlay_hints = { enable = false }, -- FIXME: inlay hints break screen
-      }
+      require'go'.setup { gofmt = 'gopls' }
+
       vim.api.nvim_create_autocmd('BufWritePre', {
         pattern = '*.go',
         callback = function() require'go.format'.goimport() end,
