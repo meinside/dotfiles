@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2023.07.26.
+# last update: 2023.08.08.
 
 # unnecessary binary files
 *.a
@@ -168,6 +168,7 @@ xcuserdata
 .gdrive/
 .Genymobile/
 .ghidra/
+.hex/
 .htoprc
 .httpie/
 .ipfs/

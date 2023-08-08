@@ -758,6 +758,7 @@ require'lazy'.setup({
           'bash',
           'c', 'clojure', 'cmake', 'comment', 'cpp', 'css',
           'dart', 'diff', 'dockerfile',
+          'elixir',
           'fennel',
           'go', 'gomod', 'gowork', 'gitignore',
           'haskell', 'html', 'http',
@@ -859,6 +860,21 @@ require'lazy'.setup({
 
   -- bash
   { 'bash-lsp/bash-language-server', ft = { 'sh' } },
+
+
+  -- elixir
+  {
+    'elixir-tools/elixir-tools.nvim',
+    version = '*',
+    event = { 'BufReadPre', 'BufNewFile' },
+    config = function()
+      require'elixir'.setup {
+        nextls = { enable = true },
+        credo = {},
+      }
+    end,
+    dependencies = { 'nvim-lua/plenary.nvim' },
+  },
 
 
   -- go
@@ -1125,6 +1141,10 @@ capabilities.textDocument.completion.completionItem.resolveSupport = {
   properties = { 'documentation', 'detail', 'additionalTextEdits' },
 }
 local lsp_settings = {
+  elixirls = {
+    dialyzerEnabled = false,
+    enableTestLenses = false,
+  },
   gopls = {
     hints = {
       assignVariableTypes = true,

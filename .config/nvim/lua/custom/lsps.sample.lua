@@ -25,6 +25,9 @@ return {
   -- cmake
   cmake = true,
 
+  -- elixir
+  elixirls = true,
+
   -- fennel
   fennel_language_server = true,
 
