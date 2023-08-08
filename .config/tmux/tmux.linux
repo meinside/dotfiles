@@ -24,9 +24,9 @@ setw -g window-status-style 'fg=color124,bg=default,nobold,nounderscore,noitalic
 setw -g window-status-current-format ' #I #W '
 setw -g window-status-current-style 'fg=color226,bg=default,bold'
 
-# last window = red+bold
+# last window = red + bold
 setw -g window-status-last-style 'fg=color124,bg=default,bold'
 
-# window with activity = red+underscore
+# window with activity = red + underscore
 setw -g window-status-activity-style 'fg=color124,bg=default,underscore'
 

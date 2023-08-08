@@ -1,6 +1,10 @@
 # partial tmux.conf for macOS
 #
-# last update: 2023.08.07.
+# last update: 2023.08.08.
+
+# color121 = light green
+# color66 = sage green
+# color226 = yellow
 
 set -g default-terminal xterm-256color
 
@@ -15,6 +19,16 @@ set -g status-right-length 50
 set -g status-right '#[fg=color121,bg=default]  %Y-%m-%d (%a) %R #[fg=color66,bg=default,nobold,nounderscore,noitalics]#[fg=color232,bg=color66] @#H '
 
 setw -g window-status-separator ''
-setw -g window-status-format '#{?window_activity_flag,#[fg=default bg=color66 bold],#[fg=color66 bg=default nobold nounderscore noitalics]} #I #W '
-setw -g window-status-current-format '#[fg=color226,bg=default,bold] #I #W '
+setw -g window-status-format ' #I #W '
+setw -g window-status-style 'fg=color66,bg=default,nobold,nounderscore,noitalics'
+
+# current window = yellow
+setw -g window-status-current-format ' #I #W '
+setw -g window-status-current-style 'fg=color226,bg=default,bold'
+
+# last window = sage green + bold
+setw -g window-status-last-style 'fg=color66,bg=default,bold'
+
+# window with activity = sage green + underscore
+setw -g window-status-activity-style 'fg=color66,bg=default,underscore'
 
