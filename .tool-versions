@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2023.08.08.
+# last update: 2023.08.09.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -47,7 +47,7 @@ elixir 1.15.4
 # $ KERL_BUILD_DOCS=yes asdf install erlang
 #
 # https://github.com/erlang/otp/releases
-erlang 25.3.2.5
+erlang 26.0.2
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -58,7 +58,7 @@ erlang 25.3.2.5
 #   $ go install golang.org/x/tools/gopls@latest
 #
 # https://go.dev/doc/devel/release
-golang 1.20.7
+golang 1.21.0
 
 # $ asdf plugin add janet
 # $ asdf install janet
@@ -122,7 +122,7 @@ lua 5.4.6
 # $ asdf install meson
 #
 # https://github.com/mesonbuild/meson/releases
-meson 1.2.0
+meson 1.2.1
 
 # $ asdf plugin add neovim
 # $ asdf install neovim
