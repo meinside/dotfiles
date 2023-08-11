@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.08.07.
+-- last update: 2023.08.11.
 
 
 ------------------------------------------------
@@ -484,7 +484,14 @@ require'lazy'.setup({
           lualine_c = {
             'filename',
             'require"lsp-progress".progress()',
-            { navic.get_location, cond = navic.is_available },
+            {
+              function()
+                return navic.get_location()
+              end,
+              cond = function()
+                return navic.is_available()
+              end,
+            },
           },
         },
       }
