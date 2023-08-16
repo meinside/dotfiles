@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.08.14.
+-- last update: 2023.08.16.
 
 
 ------------------------------------------------
@@ -809,7 +809,7 @@ require'lazy'.setup({
     'mfussenegger/nvim-dap', config = function()
       -- dap sign icons and colors
       vim.fn.sign_define('DapBreakpoint', {
-        text = '',
+        text = '•',
         texthl = 'LspDiagnosticsSignError',
         linehl = '',
         numhl = '',
