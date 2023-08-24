@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.08.16.
+-- last update: 2023.08.24.
 
 
 ------------------------------------------------
@@ -105,6 +105,19 @@ require'lazy'.setup({
         },
       }
       vim.cmd.colorscheme 'catppuccin'
+    end,
+  },
+
+
+  -- file browser
+  {
+    'echasnovski/mini.files', version = false, config = function()
+      require'mini.files'.setup {}
+
+      -- for toggling minifiles: \mf
+      vim.keymap.set('n', '<leader>mf', function()
+        MiniFiles.open()
+      end, { remap = false, silent = true, desc = 'mini-files: Open' })
     end,
   },
 
