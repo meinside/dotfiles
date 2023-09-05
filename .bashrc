@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2023.07.11.
+# updated on 2023.09.05.
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -95,9 +95,6 @@ if [[ -z $TMUX ]]; then
     # for go
     export GOPATH=$HOME/srcs/go
     export PATH=$PATH:$GOPATH/bin
-
-    # for haskell
-    [ -f "$HOME/.ghcup/env" ] && . "$HOME/.ghcup/env" # ghcup-env
 
     # for lein (clojure)
     export LEIN_JVM_OPTS=""

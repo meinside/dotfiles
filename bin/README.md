@@ -22,10 +22,6 @@ A script for installing [fennel](https://fennel-lang.org/setup#downloading-fenne
 
 A script for building and installing latest [ffmpeg](https://www.ffmpeg.org/).
 
-## install_haskell.sh
-
-A script for installing [GHC](https://www.haskell.org/ghc/), [stack](https://github.com/commercialhaskell/stack), and [HLS](https://github.com/haskell/haskell-language-server).
-
 ## install_mosh.sh
 
 A script for installing [mosh](https://github.com/mobile-shell/mosh/issues/928), for 24-bit colors' support.

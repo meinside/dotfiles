@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.08.24.
+-- last update: 2023.09.05.
 
 
 ------------------------------------------------
@@ -781,7 +781,7 @@ require'lazy'.setup({
           'elixir',
           'fennel',
           'go', 'gomod', 'gowork', 'gitignore',
-          'haskell', 'html', 'http',
+          'html', 'http',
           'java', 'javascript', 'jq', 'jsdoc', 'json', 'json5', 'jsonc', 'julia',
           'kotlin',
           'latex', 'llvm', 'lua',
@@ -919,16 +919,6 @@ require'lazy'.setup({
       require'dap-go'.setup()
     end,
     ft = { 'go' },
-  },
-
-
-  -- haskell
-  { 'neovimhaskell/haskell-vim', ft = { 'haskell' } },
-  { 'itchyny/vim-haskell-indent', ft = { 'haskell' } },
-  {
-    'alx741/vim-stylishask',
-    ft = { 'haskell' },
-    cond = tools.fs.executable('stylish-haskell'),
   },
 
 

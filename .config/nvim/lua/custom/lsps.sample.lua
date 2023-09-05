@@ -5,7 +5,7 @@
 -- (duplicate this file to: ~/.config/nvim/lua/custom/lsps.lua
 -- and edit it)
 --
--- last update: 2023.04.21.
+-- last update: 2023.09.05.
 
 -- following lsps will be configured automatically or manually
 -- in: ~/.config/nvim/lua/plugins.lua
@@ -33,9 +33,6 @@ return {
 
   -- go
   gopls = true,
-
-  -- haskell
-  hls = true,
 
   -- json
   jsonls = true,
