@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.09.05.
+-- last update: 2023.09.18.
 
 
 ------------------------------------------------
@@ -267,7 +267,19 @@ require'lazy'.setup({
   },
   { 'tpope/vim-ragtag' }, -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
   { 'tpope/vim-sleuth' },
-  { 'HiPhish/nvim-ts-rainbow2', lazy = true },
+  {
+    'https://gitlab.com/HiPhish/rainbow-delimiters.nvim', config = function()
+      local rd = require'rainbow-delimiters'
+      require'rainbow-delimiters.setup' {
+        strategy = {
+          [''] = rd.strategy['global'],
+        },
+        query = {
+          [''] = 'rainbow-delimiters',
+        },
+      }
+    end,
+  },
 
 
   -- marks
@@ -799,7 +811,7 @@ require'lazy'.setup({
         rainbow = {
           enable = true,
           query = 'rainbow-parens',
-          strategy = require'ts-rainbow'.strategy.global,
+          strategy = require'rainbow-delimiters'.strategy.global,
         },
       }
     end,
