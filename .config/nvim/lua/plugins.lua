@@ -268,7 +268,7 @@ require'lazy'.setup({
   { 'tpope/vim-ragtag' }, -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
   { 'tpope/vim-sleuth' },
   {
-    'https://gitlab.com/HiPhish/rainbow-delimiters.nvim', config = function()
+    'HiPhish/rainbow-delimiters.nvim', config = function()
       local rd = require'rainbow-delimiters'
       require'rainbow-delimiters.setup' {
         strategy = {
