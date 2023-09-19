@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2023.09.18.
+# last update: 2023.09.19.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -158,7 +158,7 @@ ninja 1.11.1
 # $ asdf install nodejs
 #
 # https://nodejs.org/en/about/releases/
-nodejs 20.6.1
+nodejs 20.7.0
 
 # $ asdf plugin add python
 # $ asdf install python
