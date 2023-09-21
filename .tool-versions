@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2023.09.20.
+# last update: 2023.09.21.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -33,7 +33,7 @@ clojure 1.11.1.1413
 # $ asdf install deno
 #
 # https://github.com/denoland/deno/releases
-deno 1.36.3
+deno 1.37.0
 
 # $ asdf plugin add elixir
 # $ asdf install elixir
@@ -41,13 +41,13 @@ deno 1.36.3
 # * NOTE: `erlang` needs to be installed.
 #
 # https://github.com/elixir-lang/elixir/releases
-elixir 1.15.5
+elixir 1.15.6
 
 # $ asdf plugin add erlang
 # $ KERL_BUILD_DOCS=yes asdf install erlang
 #
 # https://github.com/erlang/otp/releases
-erlang 26.0.2
+erlang 26.1
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -137,7 +137,7 @@ meson 1.2.1
 # $ sudo update-alternatives --set editor `which nvim`
 #
 # https://github.com/neovim/neovim/releases
-neovim 0.9.1
+neovim 0.9.2
 
 # $ asdf plugin add nim
 # $ asdf install nim
