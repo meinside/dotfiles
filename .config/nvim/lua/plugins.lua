@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.09.18.
+-- last update: 2023.09.25.
 
 
 ------------------------------------------------
@@ -92,6 +92,7 @@ require'lazy'.setup({
           mocha = function(C)
             return {
               CmpBorder = { fg = C.surface2 },
+              CursorLine = { bg = '#423030' },
               Pmenu = { bg = C.none },
               TelescopeBorder = { link = 'FloatBorder' },
             }
