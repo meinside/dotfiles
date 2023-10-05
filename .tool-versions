@@ -33,7 +33,7 @@ clojure 1.11.1.1413
 # $ asdf install deno
 #
 # https://github.com/denoland/deno/releases
-deno 1.37.0
+deno 1.37.1
 
 # $ asdf plugin add elixir
 # $ asdf install elixir
@@ -169,7 +169,7 @@ nodejs 20.8.0
 #   $ pip install --user python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.11.5
+python 3.12.0
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
