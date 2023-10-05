@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.09.25.
+-- last update: 2023.10.05.
 
 
 ------------------------------------------------
@@ -257,13 +257,8 @@ require'lazy'.setup({
     end,
   },
   {
-    'lukas-reineke/indent-blankline.nvim', config = function()
-      require'indent_blankline'.setup {
-        char = '▏',
-        buftype_exclude = { 'terminal' },
-        show_current_context = true,
-        show_current_context_start = true,
-      }
+    'lukas-reineke/indent-blankline.nvim', main = 'ibl', config = function()
+      require'ibl'.setup {}
     end,
   },
   { 'tpope/vim-ragtag' }, -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
