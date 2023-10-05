@@ -504,7 +504,7 @@ require'lazy'.setup({
         sections = {
           lualine_c = {
             'filename',
-            'require"lsp-progress".progress()',
+            require'lsp-progress'.progress,
             {
               function()
                 return navic.get_location()
