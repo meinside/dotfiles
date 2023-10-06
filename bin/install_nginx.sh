@@ -157,7 +157,8 @@ function build {
 	--with-openssl="${OPENSSL_SRC_DIR}" \
 	--with-openssl-opt="no-weak-ssl-ciphers no-ssl3 no-shared $ECFLAG -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
 	--with-pcre="${PCRE_SRC_DIR}" \
-	--with-zlib="${ZLIB_SRC_DIR}"
+	--with-zlib="${ZLIB_SRC_DIR}" \
+	--with-http_v3_module
 
     # make
     warn ">>> building nginx..."
