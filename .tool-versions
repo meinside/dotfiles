@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2023.10.11.
+# last update: 2023.10.13.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -47,7 +47,7 @@ elixir 1.15.6
 # $ KERL_BUILD_DOCS=yes asdf install erlang
 #
 # https://github.com/erlang/otp/releases
-erlang 26.1.1
+erlang 26.1.2
 
 # $ asdf plugin add golang
 # $ asdf install golang
