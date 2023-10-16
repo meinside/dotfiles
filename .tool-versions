@@ -80,7 +80,7 @@ golang 1.21.3
 #   $ janet -e "(import spork/netrepl) (netrepl/server)"
 #
 # https://github.com/janet-lang/janet/releases
-janet 1.32.1
+janet 1.31.0
 
 # $ asdf plugin add java
 # $ asdf install java
