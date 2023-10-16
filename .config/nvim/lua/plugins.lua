@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.10.05.
+-- last update: 2023.10.16.
 
 
 ------------------------------------------------
@@ -266,7 +266,7 @@ require'lazy'.setup({
   {
     'HiPhish/rainbow-delimiters.nvim', config = function()
       local rd = require'rainbow-delimiters'
-      require'rainbow-delimiters.setup' {
+      require'rainbow-delimiters.setup'.setup {
         strategy = {
           [''] = rd.strategy['global'],
         },
