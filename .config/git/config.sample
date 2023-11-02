@@ -2,7 +2,7 @@
 #
 # (copy as `~/.config/git/config` and customize it)
 #
-# last update: 2023.10.30.
+# last update: 2023.11.02.
 
 [init]
   defaultBranch = master
@@ -63,6 +63,9 @@
 #  default = simple
 #[diff]
 #  tool = nvimdiff
+[diff "sqlite3"]
+  binary = true
+  textconv = "echo .dump | sqlite3"
 #[difftool]
 #  prompt = true
 #[difftool "nvimdiff"]
