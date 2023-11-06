@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.10.16.
+-- last update: 2023.11.06.
 
 
 ------------------------------------------------
@@ -131,6 +131,33 @@ require'lazy'.setup({
       vim.notify = notify -- override `vim.notify`
     end,
     event = 'VeryLazy',
+  },
+
+
+  -- dim unused things (LSP)
+  {
+    'zbirenbaum/neodim',
+    event = 'LspAttach',
+    config = function()
+      require'neodim'.setup {
+        refresh_delay = 75,
+        alpha = 0.75,
+        blend_color = '#000000',
+        hide = {
+          underline = true,
+          virtual_text = true,
+          signs = true,
+        },
+        regex = {
+          '[uU]nused',
+          '[nN]ever [rR]ead',
+          '[nN]ot [rR]ead',
+        },
+        priority = 128,
+        disable = {},
+      }
+    end,
+    cond = function() return vim.fn.has('nvim-0.10') == 1 end, -- NOTE: TODO: remove this line after neovim 0.10 becomes stable
   },
 
 
