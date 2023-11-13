@@ -1,8 +1,10 @@
 # git attributes file
 #
-# last update: 2023.11.02.
+# last update: 2023.11.13.
 
 *.pbxproj -crlf -diff -merge
 
+*.rb diff=ruby
+*.swift diff=swift
 *.sqlite diff=sqlite3
 
