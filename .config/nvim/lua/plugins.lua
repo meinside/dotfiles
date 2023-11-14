@@ -590,7 +590,7 @@ require'lazy'.setup({
   -- code generation & completion
   {
     -- :Codeium Auth
-    'jcdickinson/codeium.nvim', config = function()
+    'Exafunction/codeium.nvim', config = function()
       require'codeium'.setup { }
     end,
     dependencies = {
