@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.11.06.
+-- last update: 2023.11.17.
 
 
 ------------------------------------------------
@@ -1233,7 +1233,16 @@ end
 local mason_pkgs_dir = vim.env.HOME .. '/.local/share/nvim/mason/packages'
 require'rust-tools'.setup {
   tools = { hover_actions = { auto_focus = true } },
-  server = { on_attach = on_attach_lsp, capabilities = capabilities },
+  server = {
+    on_attach = on_attach_lsp,
+    capabilities = capabilities,
+    settings = {
+      ['rust-analyzer'] = {
+        checkOnSave = { enable = true, command = 'clippy' },
+        cargo = { allFeatures = true },
+      },
+    },
+  },
   dap = {
     -- install `codelldb` with :Mason
     -- :RustDebuggables for debugging
