@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2023.09.25.
+# last update: 2023.11.22.
 
 # unnecessary binary files
 *.a
@@ -157,6 +157,7 @@ xcuserdata
 .asdf/
 .aws/
 .AndroidStudio*/
+.codeium/
 .cortex-debug
 .cpan/
 .cups/
