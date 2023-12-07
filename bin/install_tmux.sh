@@ -5,7 +5,7 @@
 # Build and install the latest version of tmux.
 #
 # created on : 2023.08.03.
-# last update: 2023.08.03.
+# last update: 2023.12.07.
 
 
 ################################
@@ -36,6 +36,7 @@ function warn {
 ################################
 
 
+# https://github.com/tmux/tmux/releases
 TMUX_VERSION="3.3a" # NOTE: target version
 TMUX_SRC_FILENAME="tmux-${TMUX_VERSION}.tar.gz"
 TMUX_SRC_URL="https://github.com/tmux/tmux/releases/download/${TMUX_VERSION}/${TMUX_SRC_FILENAME}"
