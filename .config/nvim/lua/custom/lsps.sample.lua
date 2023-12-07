@@ -5,7 +5,7 @@
 -- (duplicate this file to: ~/.config/nvim/lua/custom/lsps.lua
 -- and edit it)
 --
--- last update: 2023.09.05.
+-- last update: 2023.12.07.
 
 -- following lsps will be configured automatically or manually
 -- in: ~/.config/nvim/lua/plugins.lua
@@ -17,45 +17,45 @@ return {
   bashls = true,
 
   -- clang
-  clangd = true,
+  --clangd = true,
 
   -- clojure
-  clojure_lsp = true,
+  --clojure_lsp = true,
 
   -- cmake
-  cmake = true,
+  --cmake = true,
 
   -- elixir
-  elixirls = true,
+  --elixirls = true,
 
   -- fennel
-  fennel_language_server = true,
+  --fennel_language_server = true,
 
   -- go
-  gopls = true,
+  --gopls = true,
 
   -- json
   jsonls = true,
 
   -- nim
-  nimls = true,
+  --nimls = true,
 
   -- lua
   lua_ls = true,
 
   -- python
-  pylsp = true,
+  --pylsp = true,
 
   -- ruby
-  solargraph = true,
+  --solargraph = true,
 
   -- sql
-  sqlls = true,
+  --sqlls = true,
 
   -- rust
-  rust_analyzer = false, -- will be configured automatically by `rust-tools`
+  --rust_analyzer = false, -- will be configured automatically by `rust-tools`
 
   -- zig
-  zls = true,
+  --zls = true,
 }
 

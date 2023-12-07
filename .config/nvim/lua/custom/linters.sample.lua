@@ -5,18 +5,18 @@
 -- (duplicate this file to: ~/.config/nvim/lua/custom/linters.lua
 -- and edit it)
 --
--- last update: 2023.04.21.
+-- last update: 2023.12.07.
 
 -- following linters will be configured automatically
 -- in: .config/nvim/lua/plugins.lua
 return {
-  clojure = { 'clj-kondo' },
-  cmake = { 'cmakelint' },
-  fennel = { 'fennel' },
+  --clojure = { 'clj-kondo' },
+  --cmake = { 'cmakelint' },
+  --fennel = { 'fennel' },
   go = { 'golangcilint' },
-  janet = { 'janet' },
-  lua = { 'luacheck' },
+  --janet = { 'janet' },
+  --lua = { 'luacheck' },
   markdown = { 'vale' },
-  ruby = { 'rubocop' },
+  --ruby = { 'rubocop' },
   sh = { 'shellcheck' },
 }

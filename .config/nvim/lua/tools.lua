@@ -2,7 +2,7 @@
 --
 -- My neovim utility functions
 --
--- last update: 2023.04.26.
+-- last update: 2023.12.07.
 
 -- Checks if given `path` is executable or not
 local function is_executable(path)
@@ -13,6 +13,44 @@ end
 local function file_exists(path)
    local f = io.open(path, 'r')
    return f ~= nil and io.close(f)
+end
+
+-- Copies file at `from` to `to` and returns the result as true/false
+local function copy_file(from, to)
+  local result = false
+
+  local source_handle = io.open(from, 'rb')
+  if not source_handle then
+    vim.notify('Failed to copy file from: ' .. from)
+  end
+
+  local target_handle = io.open(to, 'wb')
+  if not target_handle then
+    vim.notify('Failed to copy file to: ' .. to)
+  end
+
+  -- copy bytes
+  if source_handle and target_handle then
+    while true do
+      local chunk = source_handle:read('*a')
+      if not chunk or chunk == '' then break end
+      target_handle:write(chunk)
+    end
+    result = true
+  end
+
+  if source_handle then source_handle:close() end
+  if target_handle then target_handle:close() end
+
+  return result
+end
+
+-- Copies file `from` to `to` if it doesn't exist
+local function copy_if_needed(from, to)
+  if not file_exists(to) then
+    return copy_file(from, to)
+  end
+  return false
 end
 
 -- Runs given `command` and returns the result
@@ -70,6 +108,7 @@ local Tools = {
   fs = {
     executable = is_executable,
     exists = file_exists,
+    copy_if_needed = copy_if_needed,
   },
 
   -- functions for managing the machine
