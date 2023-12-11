@@ -1,0 +1,2 @@
+# scripts for termux
+
