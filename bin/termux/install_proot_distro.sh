@@ -38,12 +38,15 @@ function warn {
 
 function print_usage {
 	info "Usage:" && \
-		info "-- install and setup --" && \
+		info "# install and setup" && \
 		info "$ pd install ubuntu" && \
 		info "$ pd login ubuntu" && \
 		info "$ useradd -U -m USERNAME" && \
 		info "$ exit" && \
-		info "-- login with options --" && \
+		info "# login as root" && \
+		info "$ pd login --termux-home --shared-tmp ubuntu" && \
+		info "$ apt install sudo git" && \
+		info "# or login as a user" && \
 		info "$ pd login --user USERNAME --termux-home --shared-tmp ubuntu"
 }
 
