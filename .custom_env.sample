@@ -1,6 +1,6 @@
 # .custom_env.sample
 #
-# last update: 2023.08.02.
+# last update: 2023.12.11.
 
 # for macOS only
 if [[ $OSTYPE == darwin* ]]; then
@@ -15,6 +15,12 @@ if [[ $OSTYPE == darwin* ]]; then
 
     # for kitty
     alias icat="kitty +kitten icat"
+elif [ -z "$TERMUX_VERSION" ]; then # linux
+    # empty
+else # termux
+    # proot-distro on termux
+    alias pdu="proot-distro login --user $USER --termux-home --shared-tmp ubuntu"
+    alias pdr="proot-distro login --termux-home --shared-tmp ubuntu"
 fi
 
 # launch a simple http server
