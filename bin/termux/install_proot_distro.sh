@@ -36,9 +36,22 @@ function warn {
 ################################
 
 
+function print_usage {
+	info "Usage:" && \
+		info "-- install and setup --" && \
+		info "$ pd install ubuntu" && \
+		info "$ pd login ubuntu" && \
+		info "$ useradd -U -m USERNAME" && \
+		info "$ exit" && \
+		info "-- login with options --" && \
+		info "$ pd login --user USERNAME --termux-home --shared-tmp ubuntu"
+}
+
+
 if [ -z "$TERMUX_VERSION" ]; then
 	error "* proot-distro requires Termux"
 else  # termux
-	pkg install proot-distro
+	pkg install proot-distro && \
+		print_usage
 fi
 
