@@ -1,19 +1,11 @@
 #!/usr/bin/env bash
 
-# bin/install_asdf.sh
+# bin/install_distrobox.sh
 #
-# Install asdf
+# Install distrobox (https://distrobox.it/#installation)
 #
-# created on : 2022.04.14.
+# created on : 2023.12.11.
 # last update: 2023.12.11.
-
-
-################################
-#
-# frequently updated values
-
-# https://github.com/asdf-vm/asdf/releases
-VERSION="0.13.1"
 
 
 ################################
@@ -43,27 +35,26 @@ function warn {
 #
 ################################
 
-function checkout {
-	rm -rf ~/.asdf && \
-		git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v$VERSION
-}
 
-function install_macos {
-	checkout
-}
+DISTROBOX_PREFIX="$HOME/.local"
 
 function install_termux {
-	error "* termux is not supported yet"
+	error "* in termux: use proot-distro instead"
 }
 
 function install_linux {
-	checkout
+	if [[ $1 == "--uninstall" ]]; then
+		# uninstall
+		curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/uninstall | sh -s -- --prefix "$DISTROBOX_PREFIX"
+	else
+		# install
+		curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --prefix "$DISTROBOX_PREFIX"
+	fi
 }
 
 case "$OSTYPE" in
-	darwin*) install_macos ;;
 	linux-android) install_termux ;;
-	linux*) install_linux ;;
+	linux*) install_linux "$1" ;;
 	*) error "* not supported yet: $OSTYPE" ;;
 esac
 

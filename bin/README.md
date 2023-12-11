@@ -10,6 +10,10 @@ A script for generating self-signed certificates for development.
 
 A script for installing [asdf](https://github.com/asdf-vm/asdf).
 
+## install_distrobox.sh
+
+A script for installing [Distrobox](https://distrobox.it).
+
 ## install_docker.sh
 
 A script for installing [Docker](https://www.docker.com/).
