@@ -6,7 +6,7 @@
 #
 # (https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh)
 # 
-# last update: 2023.07.06.
+# last update: 2023.12.13.
 
 # colors
 RED="\033[0;31m"
@@ -50,7 +50,7 @@ function pull_configs {
 
 	# move temp files to $HOME directory
 	shopt -s dotglob nullglob && \
-		mv "$TMP_DIR/*" "$HOME/" && \
+		mv "$TMP_DIR"/* "$HOME"/ && \
 		rm -rf "$TMP_DIR"
 }
 
