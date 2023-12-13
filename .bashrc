@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2023.09.05.
+# updated on 2023.12.13.
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -117,11 +117,6 @@ if [[ -z $TMUX ]]; then
         for r in "$HOME/.asdf/installs/rust"/*; do
             . "${r}/env"; break
         done
-    fi
-
-    # for zig
-    if [ -d /opt/zig ]; then
-        export PATH=$PATH:/opt/zls/zig-out/bin
     fi
 
     # additional paths

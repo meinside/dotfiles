@@ -154,11 +154,6 @@ if [[ -z $TMUX ]]; then
         done
     fi
 
-    # for zig
-    if [ -d /opt/zig ]; then
-        export PATH=$PATH:/opt/zls/zig-out/bin
-    fi
-
     # additional paths
     export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
