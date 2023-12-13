@@ -5,24 +5,33 @@
 # For building neovim from source code.
 # (https://github.com/neovim/neovim/wiki/Installing-Neovim#install-from-source)
 #
-# last update: 2023.10.11.
+# last update: 2023.12.13.
 
 # * To install nightly version:
 #
-# $ ./install_neovim.sh --nightly
+#   $ ./install_neovim.sh --nightly
+#
+#
+# * To install locally (for distrobox, etc.):
+#
+#   $ ./install_neovim.sh --locally
 #
 #
 # * To uninstall:
 #
-# $ sudo rm /usr/local/bin/nvim
-# $ sudo rm -r /usr/local/share/nvim/
+#   $ sudo rm /usr/local/bin/nvim
+#   $ sudo rm -r /usr/local/share/nvim/
+#
+#   or
+#
+#   $ rm -rf ~/.local/nvim
 #
 #
 # * To install tree-sitter:
 #
-# $ cargo install tree-sitter-cli
-# or
-# $ npm -g install tree-sitter-cli
+#   $ cargo install tree-sitter-cli
+#   or
+#   $ npm -g install tree-sitter-cli
 
 
 ################################
@@ -61,7 +70,22 @@ function warn {
 ################################
 
 
-TMP_DIR=/tmp/nvim
+LOCAL_INSTALL_DIR="$HOME/.local/nvim"
+TMP_DIR="/tmp/nvim"
+
+# check arguments
+nightly=false
+locally=false
+for arg in "$@"; do
+    case "$arg" in
+	-n | --nightly )
+	    nightly=true
+	    ;;
+	-l | --locally )
+	    locally=true
+	    ;;
+    esac
+done
 
 function prep {
     # install needed packages
@@ -81,12 +105,26 @@ function clean {
     sudo rm -rf $TMP_DIR
 }
 
+# $1: locally or not
+function install_binary {
+    if $1; then
+	warn ">>> installing binary locally..." && \
+	    make CMAKE_INSTALL_PREFIX="$LOCAL_INSTALL_DIR" install
+    else
+	warn ">>> installing binary globally..." && \
+	    sudo make install
+    fi
+}
+
+# clone, configure, build, and install
+#
 # $1: nightly or not
+# $2: locally or not
 function install {
     tag=$NVIM_VERSION
     buildtype="Release"
 
-    if [[ $1 == "--nightly" ]]; then
+    if $1; then
 	tag="nightly"
 	buildtype="RelWithDebInfo"
     fi
@@ -96,50 +134,67 @@ function install {
     unset LUA_PATH
     unset LUA_CPATH
 
-    # clone, configure, build, and install
     git clone https://github.com/neovim/neovim.git $TMP_DIR && \
 	cd $TMP_DIR && \
 	git checkout ${tag} && \
 	rm -rf build && \
 	make CMAKE_BUILD_TYPE=${buildtype} && \
-	sudo make install
+	install_binary "$2"
 }
 
 # install for macOS
+#
+# $1: nightly or not
 function install_macos {
-    if [[ $1 == "--nightly" ]]; then
-	brew install neovim --HEAD
+    if $1; then
+	warn ">>> installing HEAD with brew..." && \
+	    brew install neovim --HEAD
     else
-	brew install neovim
+	warn ">>> installing with brew..." && \
+	    brew install neovim
     fi
 }
 
 # install for linux
 #
 # $1: nightly or not
+# $2: locally or not
 function install_linux {
     if [ -z "$TERMUX_VERSION" ]; then
-	prep && install "$1" && clean && update_alternatives
+	prep && \
+	    install "$1" "$2" && \
+	    clean && \
+	    update_alternatives "$2"
     else  # termux
 	pkg install neovim
     fi
 }
 
+# update alternatives for `vi(m)`
+#
+# $1: locally or not
 function update_alternatives {
     if [ -x /usr/bin/update-alternatives ]; then
-	NVIM_BIN_PATH="/usr/local/bin/nvim" && \
-	    sudo update-alternatives --install /usr/bin/vi vi $NVIM_BIN_PATH 60 && \
-	    sudo update-alternatives --set vi $NVIM_BIN_PATH && \
-	    sudo update-alternatives --install /usr/bin/vim vim $NVIM_BIN_PATH 60 && \
-	    sudo update-alternatives --set vim $NVIM_BIN_PATH && \
-	    sudo update-alternatives --install /usr/bin/editor editor $NVIM_BIN_PATH 60 && \
-	    sudo update-alternatives --set editor $NVIM_BIN_PATH
+	if $1; then
+	    NVIM_BIN_PATH="$LOCAL_INSTALL_DIR/bin/nvim"
+	    warn ">>> updating alternatives for vi(m) to locally installed neovim: $NVIM_BIN_PATH"
+	else
+	    NVIM_BIN_PATH="/usr/local/bin/nvim"
+	    warn ">>> updating alternatives for vi(m) to: $NVIM_BIN_PATH"
+	fi
+
+	sudo update-alternatives --install /usr/bin/vi vi "$NVIM_BIN_PATH" 60 && \
+	    sudo update-alternatives --set vi "$NVIM_BIN_PATH" && \
+	    sudo update-alternatives --install /usr/bin/vim vim "$NVIM_BIN_PATH" 60 && \
+	    sudo update-alternatives --set vim "$NVIM_BIN_PATH" && \
+	    sudo update-alternatives --install /usr/bin/editor editor "$NVIM_BIN_PATH" 60 && \
+	    sudo update-alternatives --set editor "$NVIM_BIN_PATH"
     fi
 }
 
 case "$OSTYPE" in
-    darwin*) install_macos "$1" ;;
-    linux*) install_linux "$1" ;;
+    darwin*) install_macos $nightly ;;
+    linux*) install_linux $nightly $locally ;;
     *) error "* not supported yet: $OSTYPE" ;;
 esac
 
