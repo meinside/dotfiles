@@ -1,9 +1,9 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2023.09.05.
+# updated on 2023.12.13.
 #
-# $ chsh -s /bin/zsh
+# $ chsh -s /usr/bin/zsh
 #
 
 # If not running interactively, don't do anything
@@ -17,7 +17,11 @@ DISABLE_UPDATE_PROMPT="true"
 DISABLE_AUTO_TITLE="true"
 
 # oh-my-zsh theme
-ZSH_THEME="steeef"
+if [ -z $CONTAINER_ID ]; then
+    ZSH_THEME="steeef" # when not in container (eg. distrobox)
+else
+    ZSH_THEME="strug"
+fi
 
 # Uncomment the following line to display red dots whilst waiting for completion.
 COMPLETION_WAITING_DOTS="true"
