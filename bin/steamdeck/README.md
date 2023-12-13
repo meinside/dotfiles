@@ -8,15 +8,16 @@
 - [ ] Run `wget -O - "https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh" | bash`
   * If `prep.sh` fails due to pre-existing `.config` directory,
   * run `git restore .config` and remove the temporary directory 'configs.tmp'
-- [ ] Unlock the Steam Deck by running `bin/steamdeck/unlock.sh`
-- [ ] Install decky loader with `bin/steamdeck/install_decky_loader.sh`
+- [ ] ~~Unlock the Steam Deck by running `bin/steamdeck/unlock.sh`~~
+  * No need to unlock anymore; use [distrobox](https://github.com/89luca89/distrobox).
+- [ ] Install [Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader) by downloading and running the [installer](https://github.com/SteamDeckHomebrew/decky-installer/releases/latest/download/decky_installer.desktop).
 
 # Setup Xbox Game Pass with Microsoft Edge
 
 - [ ] (switch to the desktop mode)
 - [ ] Install 'Microsoft Edge' from 'Discover'
 - [ ] Right-click on the 'Microsoft Edge' and select 'Add to Steam'
-- [ ] Open 'Konsole'
+- [ ] Open 'Konsole', and
 - [ ] Run `flatpak --user override --filesystem=/run/udev:ro com.microsoft.Edge`
 - [ ] Launch 'Steam'
 - [ ] Open 'Properties' by right-clicking on 'Microsoft Edge' in the 'Library'
