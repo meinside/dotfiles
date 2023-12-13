@@ -4,8 +4,18 @@
 #
 # Install distrobox (https://distrobox.it/#installation)
 #
+# * create containers with custom home directories:
+#
+#	$ distrobox create -n ubuntu -i ubuntu:22.04 -H /path/to/distrobox/home \
+#		--additional-packages "git zsh tmux locales" \
+#		--init-hooks "sudo locale-gen en_US.UTF-8 && wget -O - 'https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh' | bash"
+#
+# * and enter the containers with those home directories:
+#
+#	$ distrobox enter -nw ubuntu
+#
 # created on : 2023.12.11.
-# last update: 2023.12.11.
+# last update: 2023.12.13.
 
 
 ################################
