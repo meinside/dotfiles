@@ -10,8 +10,8 @@ My personal dot/config files for:
 - Raspberry Pi (**Raspberry Pi OS Bullseye**)
 - Linux (**Debian/Ubuntu**)
 - WSL2 (**Windows 11**) + [Windows Terminal](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701)
-- Android Termux (**[F-Droid](https://f-droid.org/en/packages/com.termux/)**)
-- [SteamOS](https://store.steampowered.com/steamos) on [Steam Deck](https://store.steampowered.com/steamdeck)
+- Android Termux (**[F-Droid](https://f-droid.org/en/packages/com.termux/)**) with [proot-distro](https://github.com/termux/proot-distro)
+- [SteamOS](https://store.steampowered.com/steamos) on [Steam Deck](https://store.steampowered.com/steamdeck) with bundled [distrobox](https://github.com/89luca89/distrobox)
 
 ---
 
