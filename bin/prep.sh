@@ -97,7 +97,7 @@ function install_packages_linux {
 		if [ -x /usr/bin/apt-get ]; then
 			sudo apt-get update && \
 				sudo apt-get -y upgrade && \
-				sudo apt-get -y install zsh vim tmux psmisc locales && \
+				sudo apt-get -y install zsh tmux psmisc locales && \
 				sudo locale-gen en_US.UTF-8
 		else
 			error "* distro not supported"
