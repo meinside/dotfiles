@@ -1,11 +1,11 @@
--- .config/nvim/lua/custom/linters.sample.lua
+-- .config/nvim/lua/custom/linters_sample.lua
 --
 -- sample linter list
 --
 -- (duplicate this file to: ~/.config/nvim/lua/custom/linters.lua
 -- and edit it)
 --
--- last update: 2023.12.07.
+-- last update: 2023.12.14.
 
 -- following linters will be configured automatically
 -- in: .config/nvim/lua/plugins.lua

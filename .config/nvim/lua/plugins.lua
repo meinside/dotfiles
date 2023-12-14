@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.11.17.
+-- last update: 2023.12.14.
 
 
 ------------------------------------------------
@@ -696,7 +696,7 @@ require'lazy'.setup({
     'williamboman/mason-lspconfig.nvim', config = function()
       -- install lsp servers
       require'mason-lspconfig'.setup {
-        ensure_installed = custom.installable_lsp_names(), -- NOTE: .config/nvim/lua/custom/lsps.sample.lua
+        ensure_installed = custom.installable_lsp_names(), -- NOTE: .config/nvim/lua/custom/lsps_sample.lua
         automatic_installation = false,
       }
 
@@ -1221,7 +1221,7 @@ local lsp_settings = {
 }
 -------- automatic configuration with `lspconfig` --------
 local nvim_lsp = require'lspconfig'
-for _, lsp in ipairs(custom.autoconfigurable_lsp_names()) do -- NOTE: ~/.config/nvim/lua/custom/lsps.sample.lua
+for _, lsp in ipairs(custom.autoconfigurable_lsp_names()) do -- NOTE: ~/.config/nvim/lua/custom/lsps_sample.lua
   nvim_lsp[lsp].setup {
     on_attach = on_attach_lsp,
     capabilities = capabilities,

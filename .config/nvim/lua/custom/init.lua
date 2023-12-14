@@ -16,7 +16,7 @@ local Custom = {}
 -- Loads and returns LSP names if possible
 local function load_lsps(filter)
   -- will try loading: ~/.config/nvim/lua/custom/lsps.lua
-  -- sample file here: ~/.config/nvim/lua/custom/lsps.sample.lua
+  -- sample file here: ~/.config/nvim/lua/custom/lsps_sample.lua
   local ok, lsps = pcall(require, 'custom/lsps')
   if ok then
     local names = {}
@@ -27,14 +27,14 @@ local function load_lsps(filter)
     end
     return names
   else
-    -- default: ~/.config/nvim/lua/custom/lsps.sample.lua
-    return require('custom/lsps.sample')
+    -- default: ~/.config/nvim/lua/custom/lsps_sample.lua
+    return require('custom/lsps_sample')
   end
 end
 
 -- Returns LSP names for configuration
 local lsp_names = function(filter)
-  tools.fs.copy_if_needed(lua_filepath('custom/lsps.sample.lua'), lua_filepath('custom/lsps.lua'))
+  tools.fs.copy_if_needed(lua_filepath('custom/lsps_sample.lua'), lua_filepath('custom/lsps.lua'))
 
   return load_lsps(filter)
 end
@@ -56,14 +56,14 @@ local function load_linters()
   if ok then
     return linters
   else
-    -- default: ~/.config/nvim/lua/custom/linters.sample.lua
-    return require('custom/linters.sample')
+    -- default: ~/.config/nvim/lua/custom/linters_sample.lua
+    return require('custom/linters_sample')
   end
 end
 
 -- Returns linter names for configuration
 function Custom.linters()
-  tools.fs.copy_if_needed(lua_filepath('custom/linters.sample.lua'), lua_filepath('custom/linters.lua'))
+  tools.fs.copy_if_needed(lua_filepath('custom/linters_sample.lua'), lua_filepath('custom/linters.lua'))
 
   return load_linters()
 end
@@ -75,14 +75,14 @@ local function load_features()
   if ok then
     return features
   else
-    -- default: ~/.config/nvim/lua/custom/features.sample.lua
-    return require('custom/features.sample')
+    -- default: ~/.config/nvim/lua/custom/features_sample.lua
+    return require('custom/features_sample')
   end
 end
 
 -- Returns features' on/off for configuration
 function Custom.features()
-  tools.fs.copy_if_needed(lua_filepath('custom/features.sample.lua'), lua_filepath('custom/features.lua'))
+  tools.fs.copy_if_needed(lua_filepath('custom/features_sample.lua'), lua_filepath('custom/features.lua'))
 
   return load_features()
 end
