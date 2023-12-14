@@ -2,11 +2,11 @@
 
 # bin/prep.sh
 # 
-# for cloning config files from github, and setting up several things
+# for cloning dotfiles from github, and setting up several things
 #
 # (https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh)
 # 
-# last update: 2023.12.13.
+# last update: 2023.12.14.
 
 # colors
 RED="\033[0;31m"
@@ -31,7 +31,7 @@ if [ "$(whoami)" == 'meinside' ]; then
 else
 	REPOSITORY="https://github.com/meinside/dotfiles.git"
 fi
-TMP_DIR="$HOME/configs.tmp"
+TMP_DIR="$HOME/dotfiles.tmp"
 
 info ">>> this script will setup several things for you..."
 info
@@ -41,17 +41,20 @@ if [ -z "$TERMUX_VERSION" ]; then  # not in termux
 	sudo -l > /dev/null
 fi
 
-function pull_configs {
-	check_git
+function pull_dotfiles {
+	# pull dotfiles if not already pulled down
+	if [ ! -d "$HOME/.git" ]; then
+		check_git
 
-	# clone config files
-	rm -rf "$TMP_DIR" && \
-		git clone $REPOSITORY "$TMP_DIR"
+		# clone config files
+		rm -rf "$TMP_DIR" && \
+			git clone $REPOSITORY "$TMP_DIR"
 
-	# move temp files to $HOME directory
-	shopt -s dotglob nullglob && \
-		mv "$TMP_DIR"/* "$HOME"/ && \
-		rm -rf "$TMP_DIR"
+		# move temp files to $HOME directory
+		shopt -s dotglob nullglob && \
+			mv "$TMP_DIR"/* "$HOME"/ && \
+			rm -rf "$TMP_DIR"
+	fi
 }
 
 function check_git {
@@ -136,13 +139,13 @@ function show_guide {
 
 function show_guide_linux {
 	error
-	error "*** NOTICE: logout, and login again for reloading configs ***"
+	error "*** NOTICE: logout, and login again for reloading stuffs ***"
 	error
 }
 
 function show_guide_macos {
 	error
-	error "*** logout, and login again for reloading configs ***"
+	error "*** logout, and login again for reloading stuffs ***"
 	error
 	info "for installing brew bundles:"
 	info "  $ brew tap Homebrew/bundle"
@@ -150,7 +153,7 @@ function show_guide_macos {
 	info
 }
 
-pull_configs && \
+pull_dotfiles && \
 	install_packages && \
 	cleanup && \
 	show_guide
