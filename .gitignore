@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2023.12.04.
+# last update: 2023.12.20.
 
 # unnecessary binary files
 *.a
@@ -153,6 +153,7 @@ xcuserdata
 
 # other applications' files & dirs
 .android/
+.ape-*
 .aptitude/
 .asdf/
 .aws/
