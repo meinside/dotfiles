@@ -169,7 +169,7 @@ nodejs 21.4.0
 #   $ pip install --user python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.12.1
+python 3.11.7 3.12.1
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
