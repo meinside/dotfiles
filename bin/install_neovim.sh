@@ -5,7 +5,7 @@
 # For building neovim from source code.
 # (https://github.com/neovim/neovim/wiki/Installing-Neovim#install-from-source)
 #
-# last update: 2023.12.13.
+# last update: 2023.12.26.
 
 # * To install nightly version:
 #
@@ -105,28 +105,26 @@ function clean {
     sudo rm -rf $TMP_DIR
 }
 
-# $1: locally or not
-function install_binary {
-    if $1; then
+function make_install {
+    buildtype="Release"
+    if $nightly; then
+	buildtype="RelWithDebInfo"
+    fi
+
+    if $locally; then
 	warn ">>> installing binary locally..." && \
-	    make CMAKE_INSTALL_PREFIX="$LOCAL_INSTALL_DIR" install
+	    make CMAKE_BUILD_TYPE="$buildtype" CMAKE_INSTALL_PREFIX="$LOCAL_INSTALL_DIR" install
     else
 	warn ">>> installing binary globally..." && \
-	    sudo make install
+	    sudo CMAKE_BUILD_TYPE="$buildtype" make install
     fi
 }
 
 # clone, configure, build, and install
-#
-# $1: nightly or not
-# $2: locally or not
 function install {
     tag=$NVIM_VERSION
-    buildtype="Release"
-
-    if $1; then
+    if $nightly; then
 	tag="nightly"
-	buildtype="RelWithDebInfo"
     fi
 
     warn ">>> installing neovim version ${tag}..."
@@ -138,15 +136,12 @@ function install {
 	cd $TMP_DIR && \
 	git checkout ${tag} && \
 	rm -rf build && \
-	make CMAKE_BUILD_TYPE=${buildtype} && \
-	install_binary "$2"
+	make_install
 }
 
 # install for macOS
-#
-# $1: nightly or not
 function install_macos {
-    if $1; then
+    if $locally; then
 	warn ">>> installing HEAD with brew..." && \
 	    brew install neovim --HEAD
     else
@@ -156,26 +151,21 @@ function install_macos {
 }
 
 # install for linux
-#
-# $1: nightly or not
-# $2: locally or not
 function install_linux {
     if [ -z "$TERMUX_VERSION" ]; then
 	prep && \
-	    install "$1" "$2" && \
+	    install && \
 	    clean && \
-	    update_alternatives "$2"
+	    update_alternatives
     else  # termux
 	pkg install neovim
     fi
 }
 
 # update alternatives for `vi(m)`
-#
-# $1: locally or not
 function update_alternatives {
     if [ -x /usr/bin/update-alternatives ]; then
-	if $1; then
+	if $locally; then
 	    NVIM_BIN_PATH="$LOCAL_INSTALL_DIR/bin/nvim"
 	    warn ">>> updating alternatives for vi(m) to locally installed neovim: $NVIM_BIN_PATH"
 	else
@@ -193,8 +183,8 @@ function update_alternatives {
 }
 
 case "$OSTYPE" in
-    darwin*) install_macos $nightly ;;
-    linux*) install_linux $nightly $locally ;;
+    darwin*) install_macos ;;
+    linux*) install_linux ;;
     *) error "* not supported yet: $OSTYPE" ;;
 esac
 
