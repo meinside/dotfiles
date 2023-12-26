@@ -14,10 +14,6 @@ A script for installing [asdf](https://github.com/asdf-vm/asdf).
 
 A script for installing [Distrobox](https://distrobox.it).
 
-## install_docker.sh
-
-A script for installing [Docker](https://www.docker.com/).
-
 ## install_fennel.sh
 
 A script for installing [fennel](https://fennel-lang.org/setup#downloading-fennel).
@@ -30,13 +26,13 @@ A script for building and installing latest [ffmpeg](https://www.ffmpeg.org/).
 
 A script for installing [mosh](https://github.com/mobile-shell/mosh/issues/928), for 24-bit colors' support.
 
-## install_nginx.sh
-
-A script for installing [Nginx](https://www.nginx.com/).
-
 ## install_neovim.sh
 
 A script for building and installing [neovim](https://neovim.io/).
+
+## install_nginx.sh
+
+A script for installing [Nginx](https://www.nginx.com/).
 
 ## install_pico_sdk.sh
 
@@ -62,15 +58,7 @@ A script for updating MOTD.
 
 A script for macOS hacks (originates from https://gist.github.com/erikh/2260182).
 
-## steamdeck/install_decky_loader.sh
+## termux/install_proot_distro.sh
 
-A script for un/installing [Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader) on Steam Deck.
-
-## steamdeck/install_tailscale.sh
-
-A script for installing [Tailscale](https://tailscale.com/) on Steam Deck.
-
-## steamdeck/unlock.sh
-
-A script for unlocking read-only file system of Steam Deck.
+A script for installing [proot-distro](https://github.com/termux/proot-distro) on Termux on Android.
 
