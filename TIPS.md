@@ -8,7 +8,13 @@
 
 Have a look at this script: [`bin/macos/hack.sh`](https://github.com/meinside/dotfiles/blob/master/bin/macos/hack.sh).
 
+```bash
+$ bin/macos/hack.sh
+```
+
 #### b. How to remove unused Xcode simulators
+
+For removing unused iOS simulators from Xcode:
 
 ```bash
 $ xcrun simctl delete unavailable
@@ -25,7 +31,7 @@ $ brew install scrcpy
 $ brew brew install android-platform-tools
 ```
 
-##### How to connect
+##### (i) How to connect
 
 [Here](https://github.com/Genymobile/scrcpy/blob/master/doc/connection.md) is the guide.
 
@@ -47,7 +53,7 @@ disconnect the USB cable, and connect it over TCP/IP with:
 $ adb connect YOUR_DEVICE_IP:5555
 ```
 
-##### Run scrcpy
+##### (ii) Run scrcpy
 
 ```bash
 $ scrcpy --tcpip=YOUR_DEVICE_IP:5555
@@ -134,7 +140,7 @@ $ sudo usermod -a -G i2c USERNAME
 
 #### a. WiFi Configuration
 
-##### i. Add a file on the sdcard and reboot
+##### (i) Add a file on the sdcard and reboot
 
 Create a file named `wpa_supplicant.conf` with following content:
 
@@ -183,7 +189,7 @@ $ wpa_passphrase my_ssid 0123456789abc
 
 Now put the file on the root of your **Raspberry-Pi-ready** sdcard and boot with it.
 
-##### ii. Edit conf file
+##### (ii) Edit conf file
 
 Do the same on file: `/etc/wpa_supplicant/wpa_supplicant.conf`.
 
@@ -208,14 +214,14 @@ $ ls /sys/class/net | grep wl
 
 #### b. AFP & Zero-conf DNS configuration
 
-##### i. Install netatalk and avahi-daemon
+##### (i) Install netatalk and avahi-daemon
 
 ```bash
 $ sudo apt-get install netatalk
 $ sudo apt-get install avahi-daemon
 ```
 
-##### ii. Add an avahi-daemon service
+##### (ii) Add an avahi-daemon service
 
 Create a service file:
 
@@ -268,7 +274,7 @@ See [this article](https://haydenjames.io/increase-performance-lifespan-ssds-sd-
 
 If the SSD [supports TRIM](https://www.jeffgeerling.com/blog/2020/enabling-trim-on-external-ssd-on-raspberry-pi),
 
-##### i. Add a udev rule
+##### (i) Add a udev rule
 
 Create `/etc/udev/rules.d/10-trim.rules` file with the following line:
 
@@ -287,7 +293,7 @@ Bus 001 Device 002: ID 2109:3431 VIA Labs, Inc. Hub
 Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
 ```
 
-##### ii. Enable a timer
+##### (ii) Enable a timer
 
 For running `fstrim` automatically, enable a timer with:
 
@@ -313,9 +319,9 @@ supersede domain-name-servers 8.8.8.8, 8.8.4.4;
 
 #### b. Using bluetooth
 
-##### 1. With on-board bluetooth module
+##### (i) With on-board bluetooth module
 
-###### i. Install required packages
+###### 1. Install required packages
 
 Install pi-bluetooth:
 
@@ -325,7 +331,7 @@ $ sudo apt-get install pi-bluetooth
 
 and reboot.
 
-###### ii. Use bluetoothctl
+###### 2. Use bluetoothctl
 
 After reboot, use ``bluetoothctl`` for turning up, scanning, and connecting.
 
@@ -335,11 +341,11 @@ $ sudo bluetoothctl
 
 Type ``help`` for commands and options.
 
-##### 2. With dongle
+##### (ii) With dongle
 
 * referenced: http://wiki.debian.org/BluetoothUser
 
-###### i. Make Raspberry Pi discoverable by other bluetooth devices
+###### 1. Make Raspberry Pi discoverable by other bluetooth devices
 
 ```bash
 $ sudo hciconfig hci0 piscan
@@ -352,19 +358,19 @@ Do as the screen says, and make Raspberry Pi hidden from other bluetooth devices
 $ sudo hciconfig hci0 noscan
 ```
 
-###### ii. Display bluetooth device (for checking proper installation)
+###### 2. Display bluetooth device (for checking proper installation)
 
 ```bash
 $ hcitool dev
 ```
 
-###### iii. Scan nearby bluetooth devices
+###### 3. Scan nearby bluetooth devices
 
 ```bash
 $ hcitool scan
 ```
 
-###### iv. Settings
+###### 4. Settings
 
 Open conf:
 

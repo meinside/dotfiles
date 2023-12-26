@@ -15,9 +15,9 @@ My dotfiles, configs, and bash scripts for:
 
 ---
 
-## 0. Get things
+## 0. How to get files
 
-### A. With prep scripts
+### A. With a prep script:
 
 Following commands will clone files from this repository and install several things automatically:
 
@@ -28,7 +28,7 @@ $ wget -O - "https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep
 
 ---
 
-## 1. Tips
+## 1. Any other tips?
 
-[Here](https://github.com/meinside/dotfiles/blob/master/TIPS.md)
+- [Here](https://github.com/meinside/dotfiles/blob/master/TIPS.md)
 
