@@ -7,6 +7,8 @@
 - [ ] Set your password with `passwd`,
 - [ ] ~~Unlock the Steam Deck by running `bin/steamdeck/unlock.sh`,~~ No need to unlock anymore; use [distrobox](https://github.com/89luca89/distrobox):
   * Create a container with: `distrobox create -n ubuntu -i ubuntu:22.04 --additional-packages "git"`
+    * or, create with manifest: `distrobox assemble create --file bin/steamdeck/distrobox.ini`
+    * (NOTE: bundled distrobox seems outdated, `--additional-packages` may not work)
   * then enter the container with: `distrobox enter ubuntu`
   * and run: `wget -O - 'https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh' | bash`
 - [ ] And install [Decky Loader](https://github.com/SteamDeckHomebrew/decky-loader) by downloading and running the [installer](https://github.com/SteamDeckHomebrew/decky-installer/releases/latest/download/decky_installer.desktop).
