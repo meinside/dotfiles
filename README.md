@@ -30,5 +30,5 @@ $ wget -O - "https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep
 
 ## 1. Any other tips?
 
-- [Here](https://github.com/meinside/dotfiles/blob/master/TIPS.md)
+- [Here](https://github.com/meinside/dotfiles/blob/master/docs/tips.md)
 
