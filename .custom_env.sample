@@ -26,8 +26,9 @@ fi
 # launch a simple http server
 alias httpserver="ruby -run -e httpd . -p 8888"
 
-# for janet nrepl
+# for janet
 alias janetnrepl="janet -e \"(import spork/netrepl) (netrepl/server)\""
+export LD_LIBRARY_PATH=$HOME/.asdf/installs/janet/M.mm.bb/lib
 
 # print go version of a compiled binary
 gobuildversion() {

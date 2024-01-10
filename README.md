@@ -32,3 +32,9 @@ $ wget -O - "https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep
 
 - [Here](https://github.com/meinside/dotfiles/blob/master/docs/tips.md)
 
+---
+
+## 999. License
+
+MIT
+

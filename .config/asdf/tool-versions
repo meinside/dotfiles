@@ -1,4 +1,4 @@
-# My .tool-versions for `asdf`
+# .config/asdf/tool-versions
 #
 # https://github.com/asdf-vm/asdf-plugins
 #
@@ -79,8 +79,12 @@ golang 1.21.6
 #   $ jpm install spork
 #   $ janet -e "(import spork/netrepl) (netrepl/server)"
 #
+# * NOTE: if an error like "cannot open shared object file: No such file or directory" occurs,
+#   append following line in the shell rc file:
+#   `export LD_LIBRARY_PATH=$HOME/.asdf/installs/janet/X.XX.XX/lib`
+#
 # https://github.com/janet-lang/janet/releases
-janet 1.31.0
+janet 1.33.0
 
 # $ asdf plugin add java
 # $ asdf install java
