@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2024.01.10.
+# updated on 2024.01.11.
 #
 # $ chsh -s /usr/bin/zsh
 #
@@ -116,6 +116,11 @@ bindkey "^N" history-beginning-search-forward
 # zsh options
 unsetopt nomatch
 
+# brew
+if [ -d /opt/homebrew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
 ######################
 ##  for development  #
 ######################
@@ -123,11 +128,6 @@ unsetopt nomatch
 if [[ -z $TMUX ]]; then
 
     # NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
-
-    # brew
-    if [ -d /opt/homebrew ]; then
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-    fi
 
     # for go
     export GOPATH=$HOME/srcs/go

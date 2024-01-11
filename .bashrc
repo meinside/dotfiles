@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2024.01.10.
+# updated on 2024.01.11.
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -79,6 +79,11 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
+# brew
+if [ -d /opt/homebrew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
 ######################
 ##  for development  #
 ######################
@@ -86,11 +91,6 @@ fi
 if [[ -z $TMUX ]]; then
 
     # NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
-
-    # brew
-    if [ -d /opt/homebrew ]; then
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-    fi
 
     # for go
     export GOPATH=$HOME/srcs/go
