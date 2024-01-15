@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2023.12.14.
+-- last update: 2024.01.15.
 
 
 ------------------------------------------------
@@ -27,6 +27,9 @@ vim.g['parinfer_filetypes'] = lisps
 -- for guns/vim-sexp
 vim.g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
 vim.g['sexp_filetypes'] = table.concat(lisps, ',')
+--
+-- for suppressing the install notification of elixirls
+vim.g['elixirnvim_has_prompted_for_install'] = true
 
 
 ------------------------------------------------
@@ -813,10 +816,10 @@ require'lazy'.setup({
           'bash',
           'c', 'clojure', 'cmake', 'comment', 'cpp', 'css',
           'dart', 'diff', 'dockerfile',
-          'elixir',
+          'eex', 'elixir',
           'fennel',
           'go', 'gomod', 'gowork', 'gitignore',
-          'html', 'http',
+          'heex', 'html', 'http',
           'java', 'javascript', 'jq', 'jsdoc', 'json', 'json5', 'jsonc', 'julia',
           'kotlin',
           'latex', 'llvm', 'lua',
@@ -924,8 +927,9 @@ require'lazy'.setup({
     event = { 'BufReadPre', 'BufNewFile' },
     config = function()
       require'elixir'.setup {
-        nextls = { enable = true },
-        credo = {},
+        nextls = { enable = false },
+        credo = { enable = true },
+        elixirls = { enable = true },
       }
     end,
     dependencies = { 'nvim-lua/plenary.nvim' },
