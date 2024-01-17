@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.01.15.
+-- last update: 2024.01.17.
 
 
 ------------------------------------------------
@@ -17,19 +17,16 @@ local custom = require'custom'  -- ~/.config/nvim/lua/custom/init.lua
 ------------------------------------------------
 -- global variables
 --
--- for all lispy languages
+-- (for all lispy languages)
 local lisps = { 'clojure', 'fennel', 'janet' }
--- for conjure
+-- (for conjure)
 vim.g['conjure#filetypes'] = lisps
 vim.g['conjure#filetype#fennel'] = 'conjure.client.fennel.stdio' -- for fennel
--- for nvim-parinfer
+-- (for nvim-parinfer)
 vim.g['parinfer_filetypes'] = lisps
--- for guns/vim-sexp
+-- (for guns/vim-sexp)
 vim.g['sexp_enable_insert_mode_mappings'] = 0 -- '"' key works weirdly in insert mode
 vim.g['sexp_filetypes'] = table.concat(lisps, ',')
---
--- for suppressing the install notification of elixirls
-vim.g['elixirnvim_has_prompted_for_install'] = true
 
 
 ------------------------------------------------
@@ -926,6 +923,9 @@ require'lazy'.setup({
     version = '*',
     event = { 'BufReadPre', 'BufNewFile' },
     config = function()
+      -- for suppressing installation notifications of elixirls
+      vim.g['elixirnvim_has_prompted_for_install'] = true
+
       require'elixir'.setup {
         nextls = { enable = false },
         credo = { enable = true },
@@ -933,6 +933,15 @@ require'lazy'.setup({
       }
     end,
     dependencies = { 'nvim-lua/plenary.nvim' },
+    ft = { 'elixir' },
+  },
+  {
+    'mhinz/vim-mix-format',
+    config = function()
+      vim.g['mix_format_on_save'] = 1
+      vim.g['mix_format_silent_errors'] = 1
+    end,
+    ft = { 'elixir' },
   },
 
 
