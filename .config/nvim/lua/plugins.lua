@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.01.17.
+-- last update: 2024.01.18.
 
 
 ------------------------------------------------
@@ -923,13 +923,20 @@ require'lazy'.setup({
     version = '*',
     event = { 'BufReadPre', 'BufNewFile' },
     config = function()
-      -- for suppressing installation notifications of elixirls
-      vim.g['elixirnvim_has_prompted_for_install'] = true
-
+      local elixirls = require'elixir.elixirls'
       require'elixir'.setup {
         nextls = { enable = false },
-        credo = { enable = true },
-        elixirls = { enable = true },
+        credo = { enable = false },
+        elixirls = {
+          enable = true,
+          cmd = vim.env.HOME .. '/.local/share/nvim/mason/bin/elixir-ls',
+          settings = elixirls.settings {
+            dialyzerEnabled = true,
+            fetchDeps = true,
+            enableTestLenses = true,
+            suggestSpecs = true,
+          },
+        },
       }
     end,
     dependencies = { 'nvim-lua/plenary.nvim' },

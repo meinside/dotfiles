@@ -5,7 +5,7 @@
 -- (duplicate this file to: ~/.config/nvim/lua/custom/lsps.lua
 -- and edit it)
 --
--- last update: 2023.12.14.
+-- last update: 2024.01.18.
 
 -- following lsps will be configured automatically or manually
 -- in: ~/.config/nvim/lua/plugins.lua
