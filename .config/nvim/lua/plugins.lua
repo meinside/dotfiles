@@ -931,7 +931,7 @@ require'lazy'.setup({
           enable = true,
           cmd = vim.env.HOME .. '/.local/share/nvim/mason/bin/elixir-ls',
           settings = elixirls.settings {
-            dialyzerEnabled = true,
+            dialyzerEnabled = false,
             fetchDeps = true,
             enableTestLenses = true,
             suggestSpecs = true,
