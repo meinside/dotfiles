@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2023.12.20.
+# last update: 2024.01.22.
 
 # unnecessary binary files
 *.a
@@ -167,6 +167,8 @@ xcuserdata
 .dropbox/
 .eclipse/
 .elinks/
+.elixir_ls/
+.elixir-tools/
 .ethash/
 .fastlane/
 .flutter
@@ -201,14 +203,14 @@ xcuserdata
 .srcclr/
 .ssh/
 .swiftpm/
-.wget-hsts
-.wine/
 .termux/
 .tooling/
 .vnc/
 .vim/
 .viminfo
 .vscode*/
+.wget-hsts
+.wine/
 .wireshark-etc/
 .wireshark/
 .Xresources
