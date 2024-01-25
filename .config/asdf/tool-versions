@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2024.01.24.
+# last update: 2024.01.26.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -82,7 +82,7 @@ janet 1.33.0
 
 # $ asdf plugin add java
 # $ asdf install java
-java openjdk-17.0.2
+java openjdk-21.0.2
 
 # $ asdf plugin add leiningen
 # $ asdf install leiningen
