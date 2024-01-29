@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2024.01.11.
+# updated on 2024.01.29.
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -139,5 +139,11 @@ fi
 # load custom environment variables (like GOPRIVATE, PATH, alias, ...) if exist
 if [ -f ~/.custom_env ]; then
     . "$HOME/.custom_env"
+fi
+
+# (starship)
+# $ cargo install starship --locked
+if command -v starship &> /dev/null; then
+    eval "$(starship init bash)"
 fi
 

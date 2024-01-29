@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2024.01.11.
+# updated on 2024.01.29.
 #
 # $ chsh -s /usr/bin/zsh
 #
@@ -184,4 +184,10 @@ fi
 
 # remove redundant paths
 typeset -aU path
+
+# (starship)
+# $ cargo install starship --locked
+if command -v starship &> /dev/null; then
+    eval "$(starship init zsh)"
+fi
 

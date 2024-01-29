@@ -1,0 +1,66 @@
+# ~/.config/starship.toml
+#
+# $ asdf plugin add rust
+# $ asdf install rust
+# $ cargo install starship --locked
+# $ asdf reshim
+#
+# created on : 2024.01.29.
+# last update: 2024.01.29.
+
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# Inserts a blank line between shell prompts
+add_newline = true
+
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$package\
+$c\
+$cmake\
+$elixir\
+$fennel\
+$golang\
+$java\
+$kotlin\
+$lua\
+$nim\
+$nodejs\
+$python\
+$ruby\
+$rust\
+$swift\
+$zig\
+$cmd_duration\
+$status\
+$character
+\\$ """
+
+[username]
+style_user = 'blue'
+
+[hostname]
+style = 'bright-red'
+
+[directory]
+style = 'dimmed green'
+
+[git_branch]
+style = 'cyan'
+
+[git_status]
+style = 'red'
+
+[character]
+success_symbol = '[❯](bold green) '
+error_symbol = '[✗](bold red) '
+
+[status]
+disabled = false
+
