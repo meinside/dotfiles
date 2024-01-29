@@ -18,11 +18,9 @@ if [[ $OSTYPE == darwin* ]]; then
 elif [ -z "$TERMUX_VERSION" ]; then # linux
     # empty
 else # termux
-    # $ pkg install proot-distro
-    # $ proot-distro install ubuntu
-    alias pdr="proot-distro login --termux-home --shared-tmp ubuntu"
-    # $ useradd -U -s `which $SHELL` $USER
-    alias pdu="proot-distro login --user $USER --termux-home --shared-tmp ubuntu"
+    # read guides in bin/termux/README.md
+    alias pdr="proot-distro login ubuntu"
+    alias pdu="proot-distro login ubuntu --user USERNAME"
 fi
 
 # launch a simple http server
