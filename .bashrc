@@ -55,7 +55,6 @@ case ${TERM} in
         PS1='\u@\h \w \$ '
         ;;
 esac
-export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"; find_git_branch; find_git_dirty;'
 
 # colors
 . "$XDG_CONFIG_HOME/lscolors"
@@ -141,9 +140,13 @@ if [ -f ~/.custom_env ]; then
     . "$HOME/.custom_env"
 fi
 
+# shell prompt
+#
 # (starship)
 # $ cargo install starship --locked
 if command -v starship &> /dev/null; then
     eval "$(starship init bash)"
+else
+    export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"; find_git_branch; find_git_dirty;'
 fi
 

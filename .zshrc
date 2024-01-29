@@ -82,9 +82,6 @@ export HISTCONTROL=erasedups
 export HISTSIZE=10000
 export W3M_DIR="$XDG_STATE_HOME/w3m"
 
-# prompt
-export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"; find_git_branch; find_git_dirty;'
-
 # colors
 . $XDG_CONFIG_HOME/lscolors
 
@@ -185,9 +182,13 @@ fi
 # remove redundant paths
 typeset -aU path
 
+# shell prompt
+#
 # (starship)
 # $ cargo install starship --locked
 if command -v starship &> /dev/null; then
     eval "$(starship init zsh)"
+else
+    export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"; find_git_branch; find_git_dirty;'
 fi
 
