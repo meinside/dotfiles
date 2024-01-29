@@ -21,7 +21,7 @@ else # termux
     # $ pkg install proot-distro
     # $ proot-distro install ubuntu
     alias pdr="proot-distro login --termux-home --shared-tmp ubuntu"
-    # $ useradd -U -m $USER
+    # $ useradd -U -s `which $SHELL` $USER
     alias pdu="proot-distro login --user $USER --termux-home --shared-tmp ubuntu"
 fi
 
