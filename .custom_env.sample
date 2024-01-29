@@ -1,6 +1,6 @@
 # .custom_env.sample
 #
-# last update: 2024.01.10.
+# last update: 2024.01.29.
 
 # for macOS only
 if [[ $OSTYPE == darwin* ]]; then
@@ -18,9 +18,11 @@ if [[ $OSTYPE == darwin* ]]; then
 elif [ -z "$TERMUX_VERSION" ]; then # linux
     # empty
 else # termux
-    # proot-distro on termux
-    alias pdu="proot-distro login --user $USER --termux-home --shared-tmp ubuntu"
+    # $ pkg install proot-distro
+    # $ proot-distro install ubuntu
     alias pdr="proot-distro login --termux-home --shared-tmp ubuntu"
+    # $ useradd -U -m $USER
+    alias pdu="proot-distro login --user $USER --termux-home --shared-tmp ubuntu"
 fi
 
 # launch a simple http server
