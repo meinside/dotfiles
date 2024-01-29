@@ -41,7 +41,7 @@
 #   0 5 1 */1 * sudo tailscale cert --cert-file /path/to/cert.crt --key-file /path/to/cert.key "subdomain.my-tailnet-name.ts.net"
 #
 # created on : 2017.08.16.
-# last update: 2023.11.24.
+# last update: 2024.01.29.
 
 
 ################################
@@ -51,7 +51,7 @@
 # nginx/library versions
 NGINX_VERSION="1.25.3"  # https://nginx.org/en/download.html
 OPENSSL_VERSION="3.2.0" # https://github.com/openssl/openssl/tags
-ZLIB_VERSION="1.3"	# https://github.com/madler/zlib/tags
+ZLIB_VERSION="1.3.1"	# https://github.com/madler/zlib/tags
 PCRE_VERSION="10.42"	# https://github.com/PCRE2Project/pcre2/releases
 
 
