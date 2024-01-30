@@ -40,6 +40,8 @@ and install essential packages:
 ```bash
 $ apt update
 $ apt install sudo git zsh
+# for building things
+$ apt install build-essential cmake
 ```
 
 #### add a user with separate home directory
@@ -55,7 +57,7 @@ $ exit
 then you can login as the user with:
 
 ```bash
-$ proot-distro login --user USERNAME ubuntu
+$ proot-distro login ubuntu --user USERNAME
 ```
 
 #### add a user with shared home & tmp directory
@@ -70,6 +72,12 @@ $ exit
 then you can login as the user with:
 
 ```bash
-$ proot-distro login --user USERNAME --termux-home --shared-tmp ubuntu
+$ proot-distro login ubuntu --user USERNAME --termux-home --shared-tmp
+```
+
+#### mount host folders
+
+```bash
+$ proot-distro login ubuntu --user USERNAME --bind /storage/emulated/0/Download:/home/USERNAME/files
 ```
 
