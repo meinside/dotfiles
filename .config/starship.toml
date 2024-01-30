@@ -5,8 +5,10 @@
 # $ cargo install starship --locked
 # $ asdf reshim
 #
+# https://starship.rs/config/
+#
 # created on : 2024.01.29.
-# last update: 2024.01.29.
+# last update: 2024.01.30.
 
 # Get editor completions based on the config schema
 "$schema" = 'https://starship.rs/config-schema.json'
@@ -39,6 +41,7 @@ $swift\
 $zig\
 $cmd_duration\
 $status\
+$container\
 $character
 \\$ """
 

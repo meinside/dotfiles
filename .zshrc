@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2024.01.29.
+# updated on 2024.01.30.
 #
 # $ chsh -s /usr/bin/zsh
 #
@@ -187,6 +187,7 @@ typeset -aU path
 # (starship)
 # $ cargo install starship --locked
 if command -v starship &> /dev/null; then
+    # config file in ~/.config/starship.toml
     eval "$(starship init zsh)"
 else
     export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"; find_git_branch; find_git_dirty;'

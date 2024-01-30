@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2024.01.29.
+# updated on 2024.01.30.
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -145,6 +145,7 @@ fi
 # (starship)
 # $ cargo install starship --locked
 if command -v starship &> /dev/null; then
+    # config file in ~/.config/starship.toml
     eval "$(starship init bash)"
 else
     export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"; find_git_branch; find_git_dirty;'
