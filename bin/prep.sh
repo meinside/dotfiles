@@ -6,7 +6,7 @@
 #
 # (https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh)
 # 
-# last update: 2023.12.14.
+# last update: 2024.01.31.
 
 # colors
 RED="\033[0;31m"
@@ -103,7 +103,7 @@ function install_packages_linux {
 			error "* distro not supported"
 		fi
 	else  # termux
-		pkg install zsh tmux psmisc
+		pkg install zsh psmisc proot-distro
 	fi
 }
 
