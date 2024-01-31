@@ -1,10 +1,12 @@
-# scripts for termux
+# scripts and tips for termux
 
-## install_proot_distro.sh
+## scripts
+
+### install_proot_distro.sh
 
 A script for installing proot-distro and printing help messages.
 
-## other guides
+## guides and tips
 
 ### setup termux and other things
 
@@ -80,4 +82,8 @@ $ proot-distro login ubuntu --user USERNAME --termux-home --shared-tmp
 ```bash
 $ proot-distro login ubuntu --user USERNAME --bind /storage/emulated/0/Download:/home/USERNAME/files
 ```
+
+### setup nerd fonts
+
+Put [downloaded .ttf files](https://www.nerdfonts.com/font-downloads) into `~/.termux/` directory.
 
