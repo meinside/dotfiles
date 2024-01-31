@@ -3,7 +3,7 @@
 # my zsh functions
 #
 # created on 2014.10.06.
-# updated on 2023.07.05.
+# updated on 2024.01.31.
 
 # list files changed in given days
 # (referenced: http://gotofritz.net/blog/howto/finding-recently-changed-files-osx-terminal/)
@@ -92,7 +92,7 @@ update-all () {
 	omz update
 
 	# update asdf plugins
-	if [[ -d ~/.asdf/bin ]]; then
+	if [[ -d "$ASDF_DIR/bin" ]]; then
 		asdf update
 		asdf plugin update --all
 		asdf reshim
