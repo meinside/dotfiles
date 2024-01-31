@@ -3,18 +3,14 @@
 # created on 2014.06.30.
 # updated on 2024.01.31.
 #
-# $ chsh -s /usr/bin/zsh
+# $ chsh -s `which zsh`
 #
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
+# oh-my-zsh location
 export ZSH=$HOME/.oh-my-zsh
-
-DISABLE_UPDATE_PROMPT="true"
-
-# Uncomment following line if you want to disable autosetting terminal title.
-DISABLE_AUTO_TITLE="true"
 
 # oh-my-zsh theme
 if [ -z $CONTAINER_ID ]; then
@@ -23,14 +19,9 @@ else
     ZSH_THEME="strug"
 fi
 
-# Uncomment the following line to display red dots whilst waiting for completion.
+DISABLE_UPDATE_PROMPT="true"
+DISABLE_AUTO_TITLE="true"
 COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
 HIST_STAMPS="yyyy-mm-dd"
 
 # comply with XDG base directory specification
@@ -83,7 +74,7 @@ export HISTCONTROL=erasedups
 export HISTSIZE=10000
 export W3M_DIR="$XDG_STATE_HOME/w3m"
 
-# colors
+# ls colors
 . $XDG_CONFIG_HOME/lscolors
 
 # readline
@@ -119,9 +110,11 @@ if [ -d /opt/homebrew ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
+
 ######################
-##  for development  #
-######################
+#
+#  for development
+#
 
 # NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
 
@@ -165,6 +158,9 @@ export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 #    autoload -Uz compinit && compinit   # initialise completions with ZSH's compinit
 #fi
 
+#
+######################
+
 
 # aliases
 . $XDG_CONFIG_HOME/aliases
@@ -174,16 +170,18 @@ export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 # load custom environment variables (like GOPRIVATE, PATH, alias, ...) if exist
 if [ -f $HOME/.custom_env ]; then
+    # sample in $HOME/.custom_env.sample
     . $HOME/.custom_env
 fi
 
 # remove redundant paths
 typeset -aU path
 
-# shell prompt
+
+# run starship (not in containers)
+#
+# $ cargo install starship --locked
 if [ -z $CONTAINER_ID ]; then
-    # (starship)
-    # $ cargo install starship --locked
     if command -v starship &> /dev/null; then
         # config file in $HOME/.config/starship.toml
         eval "$(starship init zsh)"

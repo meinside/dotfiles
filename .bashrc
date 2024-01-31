@@ -2,6 +2,9 @@
 #
 # created on 2012.05.31.
 # updated on 2024.01.31.
+#
+# $ chsh -s `which zsh`
+#
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -56,7 +59,7 @@ case ${TERM} in
         ;;
 esac
 
-# colors
+# ls colors
 . "$XDG_CONFIG_HOME/lscolors"
 
 # readline
@@ -84,8 +87,9 @@ if [ -d /opt/homebrew ]; then
 fi
 
 ######################
-##  for development  #
-######################
+#
+#  for development
+#
 
 # NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
 
@@ -129,6 +133,9 @@ if [ -d "$HOME/.asdf" ]; then
     . "$HOME/.asdf/completions/asdf.bash"
 fi
 
+#
+######################
+
 
 # aliases
 . "$XDG_CONFIG_HOME/aliases"
@@ -138,10 +145,10 @@ if [ -f "$HOME/.custom_env" ]; then
     . "$HOME/.custom_env"
 fi
 
-# shell prompt
+# run starship (not in containers)
+#
+# $ cargo install starship --locked
 if [ -z $CONTAINER_ID ]; then
-    # (starship)
-    # $ cargo install starship --locked
     if command -v starship &> /dev/null; then
         # config file in $HOME/.config/starship.toml
         eval "$(starship init zsh)"
