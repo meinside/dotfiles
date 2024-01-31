@@ -123,61 +123,58 @@ fi
 ##  for development  #
 ######################
 
-if [[ -z $TMUX ]]; then
+# NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
 
-    # NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
+# for go
+export GOPATH=$HOME/srcs/go
+export PATH="$GOPATH/bin:$PATH"
 
-    # for go
-    export GOPATH=$HOME/srcs/go
-    export PATH=$PATH:$GOPATH/bin
+# for lein (clojure)
+export LEIN_JVM_OPTS=""
+export LEIN_USE_BOOTCLASSPATH=no # https://github.com/venantius/ultra/issues/108
 
-    # for lein (clojure)
-    export LEIN_JVM_OPTS=""
-    export LEIN_USE_BOOTCLASSPATH=no # https://github.com/venantius/ultra/issues/108
-
-    # for nodejs
-    export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
-    if [ -d "$HOME/.local/share/npm/bin" ]; then
-        export PATH=$PATH:.local/share/npm/bin
-    fi
-
-    # for ruby
-    export IRBRC="$XDG_CONFIG_HOME/irb/irbrc"
-    export SOLARGRAPH_CACHE="$XDG_CACHE_HOME/solargraph"
-
-    # for rust
-    if [ -d "$HOME/.cargo/bin" ]; then
-        export PATH="$HOME/.cargo/bin:$PATH"
-    else
-        for r in $HOME/.asdf/installs/rust/*; do
-            if [ -d $r ]; then
-                . "${r}/env"; break
-            fi
-        done
-    fi
-
-    # additional paths
-    export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
-
-    # for asdf settings (handled by omz's 'asdf' plugin)
-    #if [ -d ~/.asdf ]; then
-    #    . $HOME/.asdf/asdf.sh
-    #
-    #    fpath=(${ASDF_DIR}/completions $fpath)  # append completions to fpath
-    #    autoload -Uz compinit && compinit   # initialise completions with ZSH's compinit
-    #fi
-
+# for nodejs
+export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+if [ -d "$HOME/.local/share/npm/bin" ]; then
+    export PATH="$HOME/.local/share/npm/bin:$PATH"
 fi
+
+# for ruby
+export IRBRC="$XDG_CONFIG_HOME/irb/irbrc"
+export SOLARGRAPH_CACHE="$XDG_CACHE_HOME/solargraph"
+
+# for rust
+if [ -d "$HOME/.cargo/bin" ]; then
+    export PATH="$HOME/.cargo/bin:$PATH"
+else
+    for r in $HOME/.asdf/installs/rust/*; do
+        if [ -d $r ]; then
+            . "${r}/env"; break
+        fi
+    done
+fi
+
+# additional paths
+export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
+
+# for asdf settings (handled by omz's 'asdf' plugin)
+#if [ -d $HOME/.asdf ]; then
+#    . $HOME/.asdf/asdf.sh
+#
+#    fpath=(${ASDF_DIR}/completions $fpath)  # append completions to fpath
+#    autoload -Uz compinit && compinit   # initialise completions with ZSH's compinit
+#fi
+
 
 # aliases
 . $XDG_CONFIG_HOME/aliases
 
 # zsh functions
-. ~/.zsh/func
+. $HOME/.zsh/func
 
 # load custom environment variables (like GOPRIVATE, PATH, alias, ...) if exist
-if [ -f ~/.custom_env ]; then
-    . ~/.custom_env
+if [ -f $HOME/.custom_env ]; then
+    . $HOME/.custom_env
 fi
 
 # remove redundant paths
@@ -188,7 +185,7 @@ typeset -aU path
 # (starship)
 # $ cargo install starship --locked
 if command -v starship &> /dev/null; then
-    # config file in ~/.config/starship.toml
+    # config file in $HOME/.config/starship.toml
     eval "$(starship init zsh)"
 else
     export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"; find_git_branch; find_git_dirty;'
