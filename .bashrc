@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2024.01.30.
+# updated on 2024.01.31.
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
@@ -123,6 +123,7 @@ if [[ -z $TMUX ]]; then
 
     # asdf settings
     if [ -d ~/.asdf ]; then
+        export ASDF_DIR=$HOME/.asdf
         export ASDF_CONFIG_FILE=$XDG_CONFIG_HOME/asdf/asdfrc
         export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME=$XDG_CONFIG_HOME/asdf/tool-versions
 

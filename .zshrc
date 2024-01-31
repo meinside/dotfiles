@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2024.01.30.
+# updated on 2024.01.31.
 #
 # $ chsh -s /usr/bin/zsh
 #
@@ -48,6 +48,7 @@ if [[ -z "$XDG_CACHE_HOME" ]]; then
 fi
 
 # asdf-vm
+export ASDF_DIR=$HOME/.asdf
 export ASDF_CONFIG_FILE=$XDG_CONFIG_HOME/asdf/asdfrc
 export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME=$XDG_CONFIG_HOME/asdf/tool-versions
 
