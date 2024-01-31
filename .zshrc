@@ -181,13 +181,12 @@ fi
 typeset -aU path
 
 # shell prompt
-#
-# (starship)
-# $ cargo install starship --locked
-if command -v starship &> /dev/null; then
-    # config file in $HOME/.config/starship.toml
-    eval "$(starship init zsh)"
-else
-    export PROMPT_COMMAND='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}: ${PWD/#$HOME/~}\007"; find_git_branch; find_git_dirty;'
+if [ -z $CONTAINER_ID ]; then
+    # (starship)
+    # $ cargo install starship --locked
+    if command -v starship &> /dev/null; then
+        # config file in $HOME/.config/starship.toml
+        eval "$(starship init zsh)"
+    fi
 fi
 
