@@ -83,6 +83,26 @@ $ proot-distro login ubuntu --user USERNAME --termux-home --shared-tmp
 $ proot-distro login ubuntu --user USERNAME --bind /storage/emulated/0/Download:/home/USERNAME/files
 ```
 
+#### run sshd
+
+```bash
+# install sshd,
+$ sudo apt install openssh-server
+
+# edit config,
+$ sudo vi /etc/ssh/sshd_config
+
+# run service,
+$ sudo service ssh start
+
+# connect to the server,
+$ ssh -p PORTNUMBER USERNAME@IP-ADDRESS
+$ exit
+
+# and stop service
+$ sudo service ssh stop
+```
+
 ### setup nerd fonts
 
 Put [downloaded .ttf files](https://www.nerdfonts.com/font-downloads) into `~/.termux/` directory.
