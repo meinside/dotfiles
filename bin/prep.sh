@@ -77,7 +77,8 @@ function check_git_linux {
 				error "* distro not supported"
 			fi
 		else  # termux
-			pkg install git
+			pkg update && \
+				pkg install git
 		fi
 	fi
 }
@@ -103,7 +104,8 @@ function install_packages_linux {
 			error "* distro not supported"
 		fi
 	else  # termux
-		pkg install zsh psmisc proot-distro
+		pkg update && \
+			pkg install zsh psmisc proot-distro
 	fi
 }
 
