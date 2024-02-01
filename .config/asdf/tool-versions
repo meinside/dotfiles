@@ -82,7 +82,7 @@ janet 1.33.0
 
 # $ asdf plugin add java
 # $ asdf install java
-java openjdk-21.0.2
+java openjdk-17.0.2
 
 # $ asdf plugin add leiningen
 # $ asdf install leiningen
