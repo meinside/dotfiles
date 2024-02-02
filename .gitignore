@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2024.01.22.
+# last update: 2024.02.02.
 
 # unnecessary binary files
 *.a
@@ -200,6 +200,7 @@ xcuserdata
 .rest-client/
 .rnd
 .rstudio-desktop/
+.shortcuts/
 .srcclr/
 .ssh/
 .swiftpm/

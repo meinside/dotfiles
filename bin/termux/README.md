@@ -107,3 +107,17 @@ $ sudo service ssh stop
 
 Put [downloaded .ttf files](https://www.nerdfonts.com/font-downloads) into `~/.termux/` directory.
 
+### setup things for development
+
+Install [Termux:API from F-Droid](https://f-droid.org/packages/com.termux.api/), and install `termux-api`:
+
+```bash
+$ pkg install termux-api
+```
+
+Install [Termux:Widget from F-Droid](https://f-droid.org/en/packages/com.termux.widget), and create directories for scripts:
+
+```bash
+$ mkdir -p ~/.shortcuts/tasks
+```
+
