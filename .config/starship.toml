@@ -8,7 +8,7 @@
 # https://starship.rs/config/
 #
 # created on : 2024.01.29.
-# last update: 2024.01.30.
+# last update: 2024.02.02.
 
 # Get editor completions based on the config schema
 "$schema" = 'https://starship.rs/config-schema.json'
@@ -21,6 +21,7 @@ $username\
 $hostname\
 $directory\
 $git_branch\
+$git_commit\
 $git_state\
 $git_status\
 $package\
