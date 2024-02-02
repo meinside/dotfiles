@@ -1,11 +1,5 @@
 # scripts and tips for termux
 
-## scripts
-
-### install_proot_distro.sh
-
-A script for installing proot-distro and printing help messages.
-
 ## guides and tips
 
 ### setup termux and other things
@@ -109,15 +103,27 @@ Put [downloaded .ttf files](https://www.nerdfonts.com/font-downloads) into `~/.t
 
 ### setup things for development
 
+#### Termux:API
+
 Install [Termux:API from F-Droid](https://f-droid.org/packages/com.termux.api/), and install `termux-api`:
 
 ```bash
 $ pkg install termux-api
 ```
 
+API documents can be found [here](https://wiki.termux.com/wiki/Termux:API).
+
+#### Termux:Widget
+
 Install [Termux:Widget from F-Droid](https://f-droid.org/en/packages/com.termux.widget), and create directories for scripts:
 
 ```bash
-$ mkdir -p ~/.shortcuts/tasks
+$ mkdir -p ~/.shortcuts/tasks ~/.shortcuts/icons
+```
+
+Bash scripts should start with the following line:
+
+```bash
+#!/data/data/com.termux/files/usr/bin/env bash
 ```
 
