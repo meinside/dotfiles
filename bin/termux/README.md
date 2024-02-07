@@ -99,7 +99,7 @@ $ sudo service ssh stop
 
 ### setup nerd fonts
 
-Put [downloaded .ttf files](https://www.nerdfonts.com/font-downloads) into `~/.termux/` directory.
+Install [Termux:Styling](https://f-droid.org/en/packages/com.termux.styling/) and select appropriate font from the settings.
 
 ### setup things for development
 
