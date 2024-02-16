@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2024.02.14.
+# last update: 2024.02.16.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -88,7 +88,7 @@ java openjdk-17.0.2
 # $ asdf install leiningen
 #
 # https://github.com/technomancy/leiningen/releases
-leiningen 2.11.1
+leiningen 2.11.2
 
 # $ asdf plugin add lua
 # $ asdf install lua
@@ -141,7 +141,7 @@ ninja 1.11.1
 # $ asdf install nodejs
 #
 # https://nodejs.org/en/about/releases/
-nodejs 21.6.1
+nodejs 21.6.2
 
 # $ asdf plugin add python
 # $ asdf install python
