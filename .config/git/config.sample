@@ -95,7 +95,7 @@
 
 [merge]
   tool = vimdiff
-  conflictstyle = zdiff3
+#  conflictstyle = zdiff3 # since git 2.35.0
 
 [branch]
 #  autoSetupMerge = always
