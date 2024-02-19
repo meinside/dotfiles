@@ -2,7 +2,7 @@
 #
 # (copy as `~/.config/git/config` and customize it)
 #
-# last update: 2023.11.02.
+# last update: 2024.02.19.
 
 [init]
   defaultBranch = master
@@ -59,10 +59,12 @@
 [core]
 #  editor = nvim
   editor = vim
+#  pager = delta
 [push]
-#  default = simple
-#[diff]
+  default = simple
+[diff]
 #  tool = nvimdiff
+  algorithm = histogram
 [diff "sqlite3"]
   binary = true
   textconv = "echo .dump | sqlite3"
@@ -72,12 +74,17 @@
 #  cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 [merge]
   tool = vimdiff
+  conflictstyle = zdiff3
 [branch]
 #  autoSetupMerge = always
 #  autosetuprebase = always    # or `git pull --rebase`
+  sort = -committerdate
 [pull]
 #  rebase = false
 #  ff = only
+[rebase]
+  autosquash = true
+  autostash = true  # auto `git stash/pop` before and after `git rebase`
 [user]
   name = Sungjin Han
   email = meinside@meinside.dev
