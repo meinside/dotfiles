@@ -46,61 +46,94 @@
 
   # remove remotely deleted branches
   gone = ! "git fetch -p && git for-each-ref --format '%(refname:short) %(upstream:track)' | awk '$2 == \"[gone]\" {print $1}' | xargs -r git branch -D"
+
 [status]
   showUntrackedFiles = all
+
 [commit]
   template = ~/.config/git/commit-template
+
 [grep]
   extendRegexp = true
   lineNumber = true
   fullname = true
+
 [color]
   ui = auto
+
 [core]
-#  editor = nvim
   editor = vim
-#  pager = delta  # https://dandavison.github.io/delta/installation.html
+#  editor = nvim
+#  pager = delta  # $ cargo install git-delta (https://dandavison.github.io/delta/installation.html)
+
+[interactive]
+#  diffFilter = delta --color-only
+
+[delta]
+  navigate = true
+  light = false
+  side-by-side = true
+  line-numbers = true
+
 [push]
   default = simple
+
 [diff]
 #  tool = nvimdiff
   algorithm = histogram
+  colorMoved = default
+
 [diff "sqlite3"]
   binary = true
   textconv = "echo .dump | sqlite3"
+
 #[difftool]
 #  prompt = true
+
 #[difftool "nvimdiff"]
 #  cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
+
 [merge]
   tool = vimdiff
   conflictstyle = zdiff3
+
 [branch]
 #  autoSetupMerge = always
 #  autosetuprebase = always    # or `git pull --rebase`
   sort = -committerdate
+
 [pull]
 #  rebase = false
 #  ff = only
+
 [rebase]
   autosquash = true
   autostash = true  # auto `git stash/pop` before and after `git rebase`
+
 [user]
   name = Sungjin Han
   email = meinside@meinside.dev
+
 [github]
   user = meinside
+
 [tag]
   sort = version:refname
+
 [submodule]
   recurse = true
+
 [fetch]
   prune = true
 
+
+################
 # gitflow
+
 [gitflow "branch"]
   master = master
   develop = develop
+
 [gitflow "prefix"]
   feature = feature/
   release = release/
@@ -108,6 +141,7 @@
   bugfix = bugfix/
   support = support/
   versiontag = v
+
 
 # force ssh for my own repositories
 #[url "ssh://git@github.com/meinside/"]
