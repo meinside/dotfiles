@@ -59,7 +59,7 @@
 [core]
 #  editor = nvim
   editor = vim
-#  pager = delta
+#  pager = delta  # https://dandavison.github.io/delta/installation.html
 [push]
   default = simple
 [diff]
