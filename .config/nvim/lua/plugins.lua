@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.01.18.
+-- last update: 2024.02.28.
 
 
 ------------------------------------------------
@@ -1043,17 +1043,17 @@ require'lazy'.setup({
   --
 
   {
-    'meinside/openai.nvim', config = function()
-      require'openai'.setup {
-        credentialsFilepath = '~/.config/openai-nvim.json',
-        models = {
-          completeChat = 'gpt-3.5-turbo',
-          moderation = 'text-moderation-latest',
-        },
-        timeout = 60 * 1000,
+    'meinside/gemini.nvim', config = function()
+      require'gemini'.setup {
+        configFilepath = '~/.config/gemini.nvim/config.json',
+        timeout = 30 * 1000,
+        verbose = false, -- for debugging
       }
     end,
     dependencies = { { 'nvim-lua/plenary.nvim' } },
+
+    -- for testing local changes
+    --dir = '~/srcs/lua/gemini.nvim/',
   },
 
 }, {
