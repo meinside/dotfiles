@@ -608,7 +608,8 @@ require'lazy'.setup({
     cmd = 'Silicon',
     config = function()
       require'silicon'.setup {
-        font = 'JetBrainsMono Nerd Font Mono=20;Noto Color Emoji', -- NOTE: list fonts with $ fc-list : file family
+        font = 'JetBrainsMono Nerd Font Mono=20;Nanum Gothic;Noto Color Emoji', -- NOTE: $ silicon --list-fonts
+        theme = 'Visual Studio Dark+', -- NOTE: $ silicon --list-themes
         background = '#000000',
         no_round_corner = true,
         no_window_controls = true,
