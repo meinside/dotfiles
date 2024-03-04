@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.02.28.
+-- last update: 2024.03.04.
 
 
 ------------------------------------------------
@@ -240,6 +240,19 @@ require'lazy'.setup({
     'iamcco/markdown-preview.nvim',
     build = 'cd app && npm install',
     ft = { 'markdown' },
+  },
+
+
+  -- screenshot codeblock
+  {
+    'krivahtoo/silicon.nvim',
+    config = function()
+      require'silicon'.setup {
+        font = 'JetBrainsMono Nerd Font=16',
+        theme = 'Monokai Extended',
+      }
+    end,
+    cond = function() return vim.fn.executable('silicon') == 1 end, -- $ cargo install silicon
   },
 
 
