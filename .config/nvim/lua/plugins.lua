@@ -1068,6 +1068,9 @@ require'lazy'.setup({
       require'gemini'.setup {
         configFilepath = '~/.config/gemini.nvim/config.json',
         timeout = 30 * 1000,
+        stripOutermostCodeblock = function()
+          return vim.bo.filetype ~= 'markdown'
+        end,
         verbose = false, -- for debugging
       }
     end,
