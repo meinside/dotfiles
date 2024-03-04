@@ -601,6 +601,26 @@ require'lazy'.setup({
   },
 
 
+  -- screenshot codeblocks
+  {
+    'michaelrommel/nvim-silicon',
+    lazy = true,
+    cmd = 'Silicon',
+    config = function()
+      require'silicon'.setup {
+        font = 'JetBrainsMono Nerd Font Mono=20;Noto Color Emoji', -- NOTE: list fonts with $ fc-list : file family
+        background = '#000000',
+        no_round_corner = true,
+        no_window_controls = true,
+        tab_width = 2,
+        shadow_blur_radius = 0,
+        output = function() return './silicon_' .. os.date('!%Y-%m-%dT%H-%M-%S') .. '.png' end,
+      }
+    end,
+    cond = function() return vim.fn.executable('silicon') == 1 end, -- $ cargo install silicon
+  },
+
+
   -- lsp
   { 'neovim/nvim-lspconfig' },
   {
