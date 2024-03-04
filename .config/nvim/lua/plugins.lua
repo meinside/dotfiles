@@ -243,19 +243,6 @@ require'lazy'.setup({
   },
 
 
-  -- screenshot codeblock
-  {
-    'krivahtoo/silicon.nvim',
-    config = function()
-      require'silicon'.setup {
-        font = 'JetBrainsMono Nerd Font=16',
-        theme = 'Monokai Extended',
-      }
-    end,
-    cond = function() return vim.fn.executable('silicon') == 1 end, -- $ cargo install silicon
-  },
-
-
   -- d2
   { 'terrastruct/d2-vim', ft = { 'd2' } },
 
