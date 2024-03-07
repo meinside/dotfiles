@@ -60,6 +60,10 @@ info
 root_run useradd -U -m -s /usr/bin/zsh $PR_USERNAME
 root_run usermod -a -G sudo $PR_USERNAME
 
+error ">>> append following line to '/etc/sudoers':"
+warn "$PR_USERNAME ALL=(ALL) NOPASSWD:ALL"
+info
+
 # [termux] create .custom_env
 if [ ! -f ~/.custom_env ]; then
 	bash -c "cat > ~/.custom_env" <<EOF
