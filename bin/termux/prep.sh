@@ -58,7 +58,7 @@ root_run apt install sudo git zsh build-essential cmake
 info ">>> adding sudoer '$PR_USERNAME' to proot-distro..."
 info
 root_run useradd -U -m -s /usr/bin/zsh $PR_USERNAME
-root_run sed -i "\$a$PR_USERNAME ALL=(ALL) NOPASSWD:ALL" /etc/sudoers
+root_run usermod -a -G sudo $PR_USERNAME
 
 # [termux] create .custom_env
 if [ ! -f ~/.custom_env ]; then
