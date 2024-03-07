@@ -39,7 +39,7 @@ function root_run {
 # [termux] setting things up
 info ">>> setting things up for termux..."
 info
-termux-setup-stroage
+termux-setup-storage
 pkg update
 pkg install proot-distro
 
