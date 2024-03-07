@@ -2,7 +2,7 @@
 #
 # (copy as `~/.config/git/config` and customize it)
 #
-# last update: 2024.02.19.
+# last update: 2024.03.07.
 
 [init]
   defaultBranch = master
@@ -49,6 +49,9 @@
 
 [status]
   showUntrackedFiles = all
+
+[log]
+  date = local
 
 [commit]
   template = ~/.config/git/commit-template
