@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.03.04.
+-- last update: 2024.03.07.
 
 
 ------------------------------------------------
@@ -1068,6 +1068,7 @@ require'lazy'.setup({
       require'gemini'.setup {
         configFilepath = '~/.config/gemini.nvim/config.json',
         timeout = 30 * 1000,
+        safetyThreshold = 'BLOCK_NONE',
         stripOutermostCodeblock = function()
           return vim.bo.filetype ~= 'markdown'
         end,
