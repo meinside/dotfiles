@@ -1,5 +1,13 @@
 # scripts and tips for termux
 
+In termux, download [bin/termux/prep.sh](https://raw.githubusercontent.com/meinside/dotfiles/master/bin/termux/prep.sh),
+
+edit constants `PR_DISTRO` and `PR_USERNAME`,
+
+and run it with bash to setup termux + proot-distro.
+
+Or do things manually with following guides and tips:
+
 ## guides and tips
 
 ### setup termux and other things
@@ -13,7 +21,7 @@ $ termux-setup-storage
 
 ### setup ubuntu on proot-distro
 
-Install proot-distro,
+In termux, install proot-distro,
 
 ```bash
 $ pkg install proot-distro
@@ -31,7 +39,7 @@ login as root,
 $ proot-distro login ubuntu
 ```
 
-and install essential packages:
+and install essential packages in proot-distro:
 
 ```bash
 $ apt update
@@ -42,7 +50,7 @@ $ apt install build-essential cmake
 
 #### add a user with separate home directory
 
-Add a user and exit,
+In proot-distro, add a sudoer and exit,
 
 ```bash
 $ useradd -U -m -s `which zsh` USERNAME
@@ -50,7 +58,7 @@ $ echo "USERNAME ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 $ exit
 ```
 
-then you can login as the user with:
+then in termux, you can login as the sudoer with:
 
 ```bash
 $ proot-distro login ubuntu --user USERNAME
@@ -58,14 +66,14 @@ $ proot-distro login ubuntu --user USERNAME
 
 #### add a user with shared home & tmp directory
 
-Add a user and exit,
+In proot-distro, add a user and exit,
 
 ```bash
 $ useradd -U -s `which zsh` USERNAME
 $ exit
 ```
 
-then you can login as the user with:
+then in termux, you can login as the user with:
 
 ```bash
 $ proot-distro login ubuntu --user USERNAME --termux-home --shared-tmp
@@ -73,11 +81,15 @@ $ proot-distro login ubuntu --user USERNAME --termux-home --shared-tmp
 
 #### mount host folders
 
+In termux,
+
 ```bash
 $ proot-distro login ubuntu --user USERNAME --bind /storage/emulated/0/Download:/home/USERNAME/files
 ```
 
 #### run sshd
+
+In proot-distro,
 
 ```bash
 # install sshd,

@@ -1,6 +1,6 @@
 # .custom_env.sample
 #
-# last update: 2024.01.29.
+# last update: 2024.03.07.
 
 # for macOS only
 if [[ $OSTYPE == darwin* ]]; then
@@ -49,6 +49,13 @@ export DOCKER_CLI_EXPERIMENTAL=enabled
 if [ -x "$(which luarocks)" ]; then
     eval "$(luarocks path)"
 fi
+
+# [termux] sshd service aliases for proot-distro
+alias sshd-start="sudo service ssh start"
+alias sshd-stop="sudo service ssh stop"
+
+# [termux] useful paths
+export TERMUX_HOME="/data/data/com.termux/files/home"
 
 # Raspberry Pi Pico SDK
 export PICO_SDK_PATH=/home/ubuntu/srcs/pico/pico-sdk
