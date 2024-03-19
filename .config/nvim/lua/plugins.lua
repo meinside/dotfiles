@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.03.07.
+-- last update: 2024.03.19.
 
 
 ------------------------------------------------
@@ -906,7 +906,7 @@ require'lazy'.setup({
       dap.listeners.before.event_terminated['dapui_config'] = dapui.close
       dap.listeners.before.event_exited['dapui_config'] = dapui.close
     end,
-    dependencies = { 'mfussenegger/nvim-dap' },
+    dependencies = { 'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio' },
   },
   {
     'theHamsta/nvim-dap-virtual-text', config = function()
