@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2024.03.19.
+# last update: 2024.03.25.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -141,7 +141,7 @@ ninja 1.11.1
 # $ asdf install nodejs
 #
 # https://nodejs.org/en/about/releases/
-nodejs 21.6.2
+nodejs 21.7.1
 
 # $ asdf plugin add python
 # $ asdf install python
@@ -176,7 +176,7 @@ ruby 3.3.0
 #   $ cargo xtask install --server
 #
 # https://github.com/rust-lang/rust/releases
-rust 1.76.0
+rust 1.77.0
 
 # $ asdf plugin add zig
 # $ asdf install zig
