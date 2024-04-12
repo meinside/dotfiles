@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2024.01.31.
+# updated on 2024.04.12.
 #
 # $ chsh -s `which zsh`
 #
@@ -22,7 +22,21 @@ fi
 DISABLE_UPDATE_PROMPT="true"
 DISABLE_AUTO_TITLE="true"
 COMPLETION_WAITING_DOTS="true"
+
+# zsh history
 HIST_STAMPS="yyyy-mm-dd"
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=10000
+SAVEHIST=10000
+HISTORY_IGNORE="(ls|cd|pwd|exit|clear)*"
+setopt EXTENDED_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+setopt HIST_SAVE_NO_DUPS
+setopt HIST_NO_STORE
+setopt HIST_REDUCE_BLANKS
 
 # comply with XDG base directory specification
 if [[ -z "$XDG_CONFIG_HOME" ]]; then
@@ -70,8 +84,6 @@ if [ -z "$TMUX" ]; then
         export TERM="xterm-256color"
     fi
 fi
-export HISTCONTROL=erasedups
-export HISTSIZE=10000
 export W3M_DIR="$XDG_STATE_HOME/w3m"
 
 # ls colors
