@@ -35,13 +35,13 @@ clojure 1.11.2.1446
 # * NOTE: `erlang` needs to be installed.
 #
 # https://github.com/elixir-lang/elixir/releases
-elixir 1.16.1
+elixir 1.16.2
 
 # $ asdf plugin add erlang
 # $ KERL_BUILD_DOCS=yes asdf install erlang
 #
 # https://github.com/erlang/otp/releases
-erlang 26.2.3
+erlang 26.2.4
 
 # $ asdf plugin add golang
 # $ asdf install golang
