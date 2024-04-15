@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2023.08.16.
+-- last update: 2024.04.15.
 
 
 ------------------------------------------------
@@ -78,6 +78,5 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- disable unneeded providers
-vim.g['loaded_python_provider'] = 0
 vim.g['loaded_perl_provider'] = 0
 
