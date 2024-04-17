@@ -155,7 +155,7 @@ function build {
 	--with-stream \
 	--with-stream_ssl_module \
 	--with-openssl="${OPENSSL_SRC_DIR}" \
-	--with-openssl-opt="no-weak-ssl-ciphers no-ssl3 no-shared $ECFLAG -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
+	--with-openssl-opt="enable-ec_nistp_64_gcc_128 no-nextprotoneg no-weak-ssl-ciphers no-ssl3 no-ssl3-method no-shared $ECFLAG -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
 	--with-pcre="${PCRE_SRC_DIR}" \
 	--with-zlib="${ZLIB_SRC_DIR}" \
 	--with-http_v3_module
