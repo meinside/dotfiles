@@ -3,13 +3,13 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2024.04.16.
+# last update: 2024.04.22.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
 #
 # https://github.com/babashka/babashka/releases
-babashka 1.3.189
+babashka 1.3.190
 
 # For bash-language-server,
 #   :MasonInstall bash-language-server
@@ -129,7 +129,7 @@ meson 1.4.0
 #   $ nimble install nimlsp
 #
 # https://nim-lang.org/install.html
-nim 2.0.2
+nim 2.0.4
 
 # $ asdf plugin add ninja
 # $ asdf install ninja
@@ -152,7 +152,7 @@ nodejs 21.7.3
 #   $ pip install --user python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.11.7 3.12.2
+python 3.11.7 3.12.3
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
@@ -194,5 +194,5 @@ rust 1.77.2
 #   $ zig-out/bin/zls config
 #
 # https://github.com/ziglang/zig/releases
-zig 0.11.0
+zig 0.12.0
 
