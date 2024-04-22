@@ -1,4 +1,4 @@
--- .config/nvim/lua/lsp.lua
+-- .config/nvim/lua/lsps.lua
 --
 -- LSP settings
 --

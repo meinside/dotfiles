@@ -11,7 +11,7 @@
 -- imports
 --
 local tools = require'tools'    -- ~/.config/nvim/lua/tools.lua
-local lsp = require'lsp'        -- ~/.config/nvim/lua/lsp.lua
+local lsps = require'lsps'      -- ~/.config/nvim/lua/lsps.lua
 local custom = require'custom'  -- ~/.config/nvim/lua/custom/init.lua
 
 
@@ -1104,5 +1104,5 @@ require'lazy'.setup({
 
 ----------------
 -- lsp settings
-lsp.setup(require'lspconfig', custom.autoconfigurable_lsp_names())  -- NOTE: ~/.config/nvim/lua/custom/lsps_sample.lua
+lsps.setup(require'lspconfig', custom.autoconfigurable_lsp_names())  -- NOTE: ~/.config/nvim/lua/custom/lsps_sample.lua
 
