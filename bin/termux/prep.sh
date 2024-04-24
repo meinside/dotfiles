@@ -6,7 +6,7 @@
 #
 # (https://raw.githubusercontent.com/meinside/dotfiles/master/bin/termux/prep.sh)
 # 
-# last update: 2024.03.07.
+# last update: 2024.04.24.
 
 # colors
 RED="\033[0;31m"
@@ -16,13 +16,25 @@ RESET="\033[0m"
 
 # functions for pretty-printing
 function error {
-	echo -e "${RED}$1${RESET}"
+	if [ -t 0 ] && [ -t 1 ]; then
+		echo -e "${RED}$1${RESET}"
+	else
+		echo "$1"
+	fi
 }
 function info {
-	echo -e "${GREEN}$1${RESET}"
+	if [ -t 0 ] && [ -t 1 ]; then
+		echo -e "${GREEN}$1${RESET}"
+	else
+		echo "$1"
+	fi
 }
 function warn {
-	echo -e "${YELLOW}$1${RESET}"
+	if [ -t 0 ] && [ -t 1 ]; then
+		echo -e "${YELLOW}$1${RESET}"
+	else
+		echo "$1"
+	fi
 }
 
 # constants

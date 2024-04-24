@@ -5,7 +5,7 @@
 # Install fennel script or binary.
 #
 # created on : 2021.11.24.
-# last update: 2023.12.04.
+# last update: 2024.04.24.
 
 
 ################################
@@ -13,7 +13,7 @@
 # frequently updated values
 
 # https://fennel-lang.org/setup#downloading-the-fennel-script
-VERSION="1.4.0"	# XXX - edit for different version
+VERSION="1.4.2"	# XXX - edit for different version
 
 
 ################################
@@ -31,13 +31,25 @@ RESET="\033[0m"
 
 # functions for pretty-printing
 function error {
-	echo -e "${RED}$1${RESET}"
+	if [ -t 0 ] && [ -t 1 ]; then
+		echo -e "${RED}$1${RESET}"
+	else
+		echo "$1"
+	fi
 }
 function info {
-	echo -e "${GREEN}$1${RESET}"
+	if [ -t 0 ] && [ -t 1 ]; then
+		echo -e "${GREEN}$1${RESET}"
+	else
+		echo "$1"
+	fi
 }
 function warn {
-	echo -e "${YELLOW}$1${RESET}"
+	if [ -t 0 ] && [ -t 1 ]; then
+		echo -e "${YELLOW}$1${RESET}"
+	else
+		echo "$1"
+	fi
 }
 
 #

@@ -5,7 +5,7 @@
 # For building neovim from source code.
 # (https://github.com/neovim/neovim/wiki/Installing-Neovim#install-from-source)
 #
-# last update: 2024.01.26.
+# last update: 2024.04.24.
 
 # * To install nightly version:
 #
@@ -57,13 +57,25 @@ RESET="\033[0m"
 
 # functions for pretty-printing
 function error {
-    echo -e "${RED}$1${RESET}"
+    if [ -t 0 ] && [ -t 1 ]; then
+	echo -e "${RED}$1${RESET}"
+    else
+	echo "$1"
+    fi
 }
 function info {
-    echo -e "${GREEN}$1${RESET}"
+    if [ -t 0 ] && [ -t 1 ]; then
+	echo -e "${GREEN}$1${RESET}"
+    else
+	echo "$1"
+    fi
 }
 function warn {
-    echo -e "${YELLOW}$1${RESET}"
+    if [ -t 0 ] && [ -t 1 ]; then
+	echo -e "${YELLOW}$1${RESET}"
+    else
+	echo "$1"
+    fi
 }
 
 #

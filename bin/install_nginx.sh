@@ -41,7 +41,7 @@
 #   0 5 1 */1 * sudo tailscale cert --cert-file /path/to/cert.crt --key-file /path/to/cert.key "subdomain.my-tailnet-name.ts.net"
 #
 # created on : 2017.08.16.
-# last update: 2024.04.17.
+# last update: 2024.04.24.
 
 
 ################################
@@ -70,13 +70,25 @@ RESET="\033[0m"
 
 # functions for pretty-printing
 function error {
-    echo -e "${RED}$1${RESET}"
+    if [ -t 0 ] && [ -t 1 ]; then
+	echo -e "${RED}$1${RESET}"
+    else
+	echo "$1"
+    fi
 }
 function info {
-    echo -e "${GREEN}$1${RESET}"
+    if [ -t 0 ] && [ -t 1 ]; then
+	echo -e "${GREEN}$1${RESET}"
+    else
+	echo "$1"
+    fi
 }
 function warn {
-    echo -e "${YELLOW}$1${RESET}"
+    if [ -t 0 ] && [ -t 1 ]; then
+	echo -e "${YELLOW}$1${RESET}"
+    else
+	echo "$1"
+    fi
 }
 
 #
