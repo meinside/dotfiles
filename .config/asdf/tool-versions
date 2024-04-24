@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2024.04.22.
+# last update: 2024.04.25.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -27,7 +27,7 @@ babashka 1.3.190
 #   $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
 #
 # https://clojure.org/releases/tools#_releases
-clojure 1.11.2.1446
+clojure 1.11.3.1456
 
 # $ asdf plugin add elixir
 # $ asdf install elixir
@@ -163,7 +163,7 @@ python 3.11.7 3.12.3
 #   $ gem install --user-install solargraph
 #
 # https://www.ruby-lang.org/en/downloads/releases/
-ruby 3.3.0
+ruby 3.3.1
 
 # $ asdf plugin add rust
 # $ asdf install rust
