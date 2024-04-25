@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2024.04.15.
+-- last update: 2024.04.25.
 
 
 ------------------------------------------------
@@ -23,7 +23,10 @@ opt.expandtab = true
 opt.encoding = 'utf-8'
 opt.guicursor = 'n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20'
 opt.fileencodings = { 'ucs-bom', 'utf-8', 'korea' }
-opt.foldmethod = 'indent' -- automatically fold on indent
+opt.foldmethod = 'expr'
+opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
+opt.foldcolumn = '0'
+opt.foldtext = ''
 opt.foldlevelstart = 20 -- but open all folds on file open
 opt.history = 50
 opt.incsearch = true
