@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.04.22.
+-- last update: 2024.04.25.
 
 
 ------------------------------------------------
@@ -248,7 +248,7 @@ require'lazy'.setup({
   { 'terrastruct/d2-vim', ft = { 'd2' } },
 
 
-  -- fold and preview (zc for closing, zo for opening / zM for closing all, zR opening all)
+  -- fold and preview (zc for closing, zo for opening, za for toggling / zM for closing all, zR for opening all)
   {
     'anuvyklack/pretty-fold.nvim', config = function()
       require'pretty-fold'.setup {
