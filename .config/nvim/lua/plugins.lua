@@ -250,7 +250,8 @@ require'lazy'.setup({
 
   -- fold and preview (zc for closing, zo for opening, za for toggling / zM for closing all, zR for opening all)
   {
-    'anuvyklack/pretty-fold.nvim', config = function()
+    --'anuvyklack/pretty-fold.nvim', config = function() -- FIXME: https://github.com/anuvyklack/pretty-fold.nvim/issues/38
+    'bbjornstad/pretty-fold.nvim', config = function()
       require'pretty-fold'.setup {
         keep_indentation = false,
         fill_char = '━',
