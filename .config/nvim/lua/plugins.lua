@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.04.25.
+-- last update: 2024.04.29.
 
 
 ------------------------------------------------
@@ -980,7 +980,7 @@ require'lazy'.setup({
     'ray-x/go.nvim', config = function()
       require'go'.setup {
         gofmt = 'gopls',
-        lsp_inlay_hints = { enable = false }, -- FIXME: inlay hints break screen
+        --lsp_inlay_hints = { enable = false }, -- FIXME: inlay hints break screen
       }
 
       vim.api.nvim_create_autocmd('BufWritePre', {
