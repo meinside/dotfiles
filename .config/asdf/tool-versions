@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2024.05.02.
+# last update: 2024.05.03.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -41,7 +41,7 @@ elixir 1.16.2
 # $ KERL_BUILD_DOCS=yes asdf install erlang
 #
 # https://github.com/erlang/otp/releases
-erlang 26.2.4
+erlang 26.2.5
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -176,7 +176,7 @@ ruby 3.3.1
 #   $ cargo xtask install --server
 #
 # https://github.com/rust-lang/rust/releases
-rust 1.77.2
+rust 1.78.0
 
 # $ asdf plugin add zig
 # $ asdf install zig
