@@ -1,6 +1,6 @@
 # .custom_env.sample
 #
-# last update: 2024.03.07.
+# last update: 2024.05.13.
 
 # for macOS only
 if [[ $OSTYPE == darwin* ]]; then
@@ -39,7 +39,7 @@ gobuildversion() {
 }
 
 # private go modules
-# (https://tip.golang.org/cmd/go/#hdr-Module_configuration_for_non_public_modules)
+# (https://pkg.go.dev/cmd/go@master#hdr-Configuration_for_downloading_non_public_code)
 export GOPRIVATE=github.com/meinside
 
 # docker cli options
