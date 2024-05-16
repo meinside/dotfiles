@@ -36,8 +36,7 @@ vim.g['sexp_filetypes'] = table.concat(lisps, ',')
 -- install `lazy` automatically
 -- (https://github.com/folke/lazy.nvim#-installation)
 local lazypath = vim.fn.stdpath('data') .. '/lazy/lazy.nvim'
--- NOTE: TODO: replace `vim.loop` with `vim.uv` after neovim 0.10 becomes stable
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system({
     'git',
     'clone',
@@ -158,7 +157,6 @@ require'lazy'.setup({
         disable = {},
       }
     end,
-    cond = function() return vim.fn.has('nvim-0.10') == 1 end, -- NOTE: TODO: remove this line after neovim 0.10 becomes stable
   },
 
 
