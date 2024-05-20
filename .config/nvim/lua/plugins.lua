@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.05.03.
+-- last update: 2024.05.20.
 
 
 ------------------------------------------------
@@ -216,13 +216,6 @@ require'lazy'.setup({
         vim.notify 'Toggled minimap.'
       end, { remap = false, silent = true, desc = 'minimap: Toggle' })
     end,
-  },
-
-
-  -- comment (gcc, gbc / visual block + gc, gb)
-  {
-    'numToStr/Comment.nvim',
-    config = function() require'Comment'.setup() end
   },
 
 
