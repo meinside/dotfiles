@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2024.04.25.
+-- last update: 2024.05.20.
 
 
 ------------------------------------------------
@@ -18,6 +18,7 @@ opt.breakindent = true
 opt.cindent = true
 opt.clipboard = opt.clipboard + 'unnamedplus' -- copy/paste to/from system clipboard
 opt.colorcolumn = '80'
+opt.conceallevel = 2 -- render hyperlinks in markdown
 opt.cursorline = true -- highlight current line
 opt.expandtab = true
 opt.encoding = 'utf-8'

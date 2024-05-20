@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/lua/plugins.lua
 --
--- last update: 2024.04.22.
+-- last update: 2024.05.20.
 
 local M = {}
 
@@ -54,16 +54,6 @@ function M.setup(nvim_lsp, autoconfigurable_lsp_names)
       silent = true,
       desc = 'lsp: Code action',
     })
-    vim.keymap.set('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', {
-      remap = false,
-      silent = true,
-      desc = 'lsp: Previous diagnostic',
-    })
-    vim.keymap.set('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', {
-      remap = false,
-      silent = true,
-      desc = 'lsp: Next diagnostic',
-    })
     vim.keymap.set('n', '<leader>dl', '<cmd>lua vim.diagnostic.setloclist()<CR>', {
       remap = false,
       silent = true,
@@ -73,6 +63,11 @@ function M.setup(nvim_lsp, autoconfigurable_lsp_names)
       remap = false,
       silent = true,
       desc = 'lsp: Format',
+    })
+    vim.keymap.set('n', '<leader>li', '<cmd>lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())<CR>', {
+      remap = false,
+      silent = true,
+      desc = 'lsp: Toggle inlay hint',
     })
 
     -- diagnostics configuration
