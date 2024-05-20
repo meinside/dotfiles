@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2024.05.19.
+# last update: 2024.05.21.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -35,13 +35,13 @@ clojure 1.11.3.1463
 # * NOTE: `erlang` needs to be installed.
 #
 # https://github.com/elixir-lang/elixir/releases
-elixir 1.16.2
+elixir 1.16.3
 
 # $ asdf plugin add erlang
 # $ KERL_BUILD_DOCS=yes asdf install erlang
 #
 # https://github.com/erlang/otp/releases
-erlang 26.2.5
+erlang 27.0
 
 # $ asdf plugin add golang
 # $ asdf install golang
