@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/lua/plugins.lua
 --
--- last update: 2024.05.20.
+-- last update: 2024.05.21.
 
 local M = {}
 
@@ -28,11 +28,6 @@ function M.setup(nvim_lsp, autoconfigurable_lsp_names)
       remap = false,
       silent = true,
       desc = 'lsp: Definition',
-    })
-    vim.keymap.set('n', 'K', vim.lsp.buf.hover, {
-      remap = false,
-      silent = true,
-      desc = 'lsp: Hover',
     })
     vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, {
       remap = false,
