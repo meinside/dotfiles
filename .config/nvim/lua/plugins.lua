@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.05.20.
+-- last update: 2024.05.29.
 
 
 ------------------------------------------------
@@ -241,8 +241,9 @@ require'lazy'.setup({
 
   -- fold and preview (zc for closing, zo for opening, za for toggling / zM for closing all, zR for opening all)
   {
-    --'anuvyklack/pretty-fold.nvim', config = function() -- FIXME: https://github.com/anuvyklack/pretty-fold.nvim/issues/38
-    'bbjornstad/pretty-fold.nvim', config = function()
+    -- FIXME: https://github.com/anuvyklack/pretty-fold.nvim/issues/38
+    --'anuvyklack/pretty-fold.nvim', config = function()
+    'e-roux/pretty-fold.nvim', config = function()
       require'pretty-fold'.setup {
         keep_indentation = false,
         fill_char = '━',
@@ -284,7 +285,9 @@ require'lazy'.setup({
   { 'tpope/vim-ragtag' }, -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
   { 'tpope/vim-sleuth' },
   {
-    'HiPhish/rainbow-delimiters.nvim', config = function()
+    -- FIXME: https://github.com/HiPhish/rainbow-delimiters.nvim/issues/119
+    --'HiPhish/rainbow-delimiters.nvim', config = function()
+    'https://gitlab.com/HiPhish/rainbow-delimiters.nvim', config = function()
       local rd = require'rainbow-delimiters'
       require'rainbow-delimiters.setup'.setup {
         strategy = {
@@ -296,7 +299,6 @@ require'lazy'.setup({
       }
     end,
   },
-
 
   -- marks
   {
@@ -971,7 +973,7 @@ require'lazy'.setup({
     'ray-x/go.nvim', config = function()
       require'go'.setup {
         gofmt = 'gopls',
-        lsp_inlay_hints = { enable = false }, -- FIXME: inlay hints break screen
+        lsp_inlay_hints = { enable = false },
       }
 
       vim.api.nvim_create_autocmd('BufWritePre', {
