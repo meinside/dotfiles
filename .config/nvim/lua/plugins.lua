@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.05.29.
+-- last update: 2024.05.30.
 
 
 ------------------------------------------------
@@ -243,7 +243,7 @@ require'lazy'.setup({
   {
     -- FIXME: https://github.com/anuvyklack/pretty-fold.nvim/issues/38
     --'anuvyklack/pretty-fold.nvim', config = function()
-    'e-roux/pretty-fold.nvim', config = function()
+    'bbjornstad/pretty-fold.nvim', config = function()
       require'pretty-fold'.setup {
         keep_indentation = false,
         fill_char = '━',
@@ -285,9 +285,7 @@ require'lazy'.setup({
   { 'tpope/vim-ragtag' }, -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
   { 'tpope/vim-sleuth' },
   {
-    -- FIXME: https://github.com/HiPhish/rainbow-delimiters.nvim/issues/119
-    --'HiPhish/rainbow-delimiters.nvim', config = function()
-    'https://gitlab.com/HiPhish/rainbow-delimiters.nvim', config = function()
+    'HiPhish/rainbow-delimiters.nvim', config = function()
       local rd = require'rainbow-delimiters'
       require'rainbow-delimiters.setup'.setup {
         strategy = {
