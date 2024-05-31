@@ -2,7 +2,12 @@
 --
 -- My neovim utility functions
 --
--- last update: 2023.12.07.
+-- last update: 2024.05.31.
+
+-- Warn: notify silently
+local function warn(msg)
+  vim.api.nvim_echo({ { msg, 'WarningMsg' } }, true, {})
+end
 
 -- Checks if given `path` is executable or not
 local function is_executable(path)
@@ -21,12 +26,12 @@ local function copy_file(from, to)
 
   local source_handle = io.open(from, 'rb')
   if not source_handle then
-    vim.notify('Failed to copy file from: ' .. from)
+    warn('Failed to copy file from: ' .. from)
   end
 
   local target_handle = io.open(to, 'wb')
   if not target_handle then
-    vim.notify('Failed to copy file to: ' .. to)
+    warn('Failed to copy file to: ' .. to)
   end
 
   -- copy bytes
@@ -93,7 +98,9 @@ local function low_performance()
   if memory < 0 or memory >= 4 * 1024 * 1024 then
     return false
   end
-  vim.notify('Running on a machine with low performance.', vim.log.levels.WARN)
+
+  warn('Running on a machine with low performance.')
+
   return true
 end
 
