@@ -495,6 +495,31 @@ $ sudo locale-gen ko_KR.UTF-8
 $ sudo dpkg-reconfigure tzdata
 ```
 
+### Z. Trouble Shooting
+
+#### 1. Tailscaled is too verbose; syslog gets too big
+
+Create a systemd override file for tailscaled:
+
+```bash
+$ sudo mkdir -p /etc/systemd/system/tailscaled.service.d
+$ sudo vi /etc/systemd/system/tailscaled.service.d/override.conf
+```
+
+and add following lines:
+
+```
+[Service]
+LogLevelMax=notice
+```
+
+then restart tailscaled:
+
+```bash
+$ sudo systemctl daemon-reload && sudo systemctl restart tailscaled
+```
+
+
 ---
 
 ## 4. For WSL
