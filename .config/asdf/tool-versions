@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2024.06.12.
+# last update: 2024.06.17.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -78,7 +78,7 @@ golang 1.22.4
 #   `export LD_LIBRARY_PATH=$HOME/.asdf/installs/janet/X.XX.XX/lib`
 #
 # https://github.com/janet-lang/janet/releases
-janet 1.34.0
+janet 1.35.2
 
 # $ asdf plugin add java
 # $ asdf install java
@@ -141,7 +141,7 @@ ninja 1.12.1
 # $ asdf install nodejs
 #
 # https://nodejs.org/en/about/releases/
-nodejs 22.2.0
+nodejs 22.3.0
 
 # $ asdf plugin add python
 # $ asdf install python
@@ -176,7 +176,7 @@ ruby 3.3.1
 #   $ cargo xtask install --server
 #
 # https://github.com/rust-lang/rust/releases
-rust 1.78.0
+rust 1.79.0
 
 # $ asdf plugin add zig
 # $ asdf install zig
