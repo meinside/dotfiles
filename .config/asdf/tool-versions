@@ -35,7 +35,7 @@ clojure 1.11.3.1463
 # * NOTE: `erlang` needs to be installed.
 #
 # https://github.com/elixir-lang/elixir/releases
-elixir 1.16.3
+elixir 1.17.0
 
 # $ asdf plugin add erlang
 # $ KERL_BUILD_DOCS=yes asdf install erlang
@@ -152,7 +152,7 @@ nodejs 22.3.0
 #   $ pip install --user python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.11.7 3.12.3
+python 3.11.7 3.12.4
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
