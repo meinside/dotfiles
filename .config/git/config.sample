@@ -2,7 +2,7 @@
 #
 # (copy as `~/.config/git/config` and customize it)
 #
-# last update: 2024.03.07.
+# last update: 2024.06.17.
 
 [init]
   defaultBranch = master
@@ -67,10 +67,10 @@
 [core]
   editor = vim
 #  editor = nvim
-#  pager = delta  # $ cargo install git-delta (https://dandavison.github.io/delta/installation.html)
+#  pager = delta  # $ sudo apt install git-delta
 
 [interactive]
-#  diffFilter = delta --color-only
+#  diffFilter = delta --color-only  # $ sudo apt install git-delta
 
 [delta]
   navigate = true
