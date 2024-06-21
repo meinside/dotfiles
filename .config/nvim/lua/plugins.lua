@@ -584,7 +584,9 @@ require'lazy'.setup({
   {
     -- :Codeium Auth
     'Exafunction/codeium.nvim', config = function()
-      require'codeium'.setup { }
+      require'codeium'.setup {
+        enable_chat = true,
+      }
     end,
     dependencies = {
       'nvim-lua/plenary.nvim',
