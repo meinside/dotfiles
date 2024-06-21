@@ -2,11 +2,15 @@
 --
 -- My custom functions and variable/constants.
 --
--- last update: 2023.12.07.
+-- last update: 2024.06.21.
 
-local lua_dir = vim.fn.expand('$XDG_CONFIG_HOME/nvim/lua/')
 local function lua_filepath(path)
-  return lua_dir .. path
+  local config_dir = os.getenv('XDG_CONFIG_HOME')
+  if config_dir == nil then
+    config_dir = vim.fn.expand('$HOME/.config')
+  end
+
+  return config_dir .. '/nvim/lua/' .. path
 end
 
 local tools = require('tools')
