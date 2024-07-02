@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2024.05.20.
+-- last update: 2024.07.02.
 
 
 ------------------------------------------------
@@ -30,6 +30,8 @@ opt.foldcolumn = '0'
 opt.foldtext = ''
 opt.foldlevelstart = 20 -- but open all folds on file open
 opt.history = 50
+opt.ignorecase = true
+opt.inccommand = 'split'
 opt.incsearch = true
 opt.mouse = ''
 opt.number = true
@@ -79,6 +81,18 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   group = 'etc',
   pattern = '*',
   callback = function() vim.highlight.on_yank({ on_visual = false }) end,
+})
+
+-- keep windows euqally sized
+vim.api.nvim_create_augroup('Random', {clear = true})
+vim.api.nvim_create_autocmd('VimResized', {
+    group = 'Random',
+    desc = 'Keep windows equally resized',
+    command = 'tabdo wincmd ='
+})
+vim.api.nvim_create_autocmd('TermOpen', {
+    group = 'Random',
+    command = 'setlocal nonumber norelativenumber signcolumn=no'
 })
 
 -- disable unneeded providers

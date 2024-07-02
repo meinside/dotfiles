@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/lua/plugins.lua
 --
--- last update: 2024.05.21.
+-- last update: 2024.07.02.
 
 local M = {}
 
@@ -16,7 +16,7 @@ function M.setup(nvim_lsp, autoconfigurable_lsp_names)
 
   local on_attach_lsp = function(client, bufnr) -- default setup for language servers
     -- Enable completion triggered by <c-x><c-o>
-    vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc') -- NOTE: TODO: use `nvim_set_option_value()` instead (deprecated)
+    vim.api.nvim_set_option_value('omnifunc', 'v:lua.vim.lsp.omnifunc', { buf = bufnr })
 
     -- See `:help vim.lsp.*` for documentation on any of the below functions
     vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, {
