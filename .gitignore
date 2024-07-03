@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2024.06.20.
+# last update: 2024.07.03.
 
 # unnecessary binary files
 *.a
@@ -182,6 +182,7 @@ xcuserdata
 .ipfs/
 .itmstransporter/
 .keras/
+.llamafile/
 .landscape/
 .lesshst
 .lnav/
