@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2024.07.03.
+# last update: 2024.07.11.
 
 # unnecessary binary files
 *.a
@@ -222,7 +222,7 @@ xcuserdata
 .zsh_sessions/
 Calibre Library/
 Dropbox
-Google Drive/
+Google Drive
 mbox
 micromamba/
 Noiselith/
