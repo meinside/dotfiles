@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2024.07.11.
+# last update: 2024.07.30.
 
 # unnecessary binary files
 *.a
@@ -169,6 +169,7 @@ xcuserdata
 .elinks/
 .elixir_ls/
 .elixir-tools/
+.emacs.d/
 .ethash/
 .fastlane/
 .flutter

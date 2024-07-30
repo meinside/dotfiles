@@ -5,7 +5,7 @@
 # For building neovim from source code.
 # (https://github.com/neovim/neovim/wiki/Installing-Neovim#install-from-source)
 #
-# last update: 2024.07.25.
+# last update: 2024.07.30.
 
 # * To install nightly version:
 #
@@ -153,7 +153,7 @@ function install {
 
 # install for macOS
 function install_macos {
-    if $locally; then
+    if $nightly; then
 	warn ">>> installing HEAD with brew..." && \
 	    brew install neovim --HEAD
     else
