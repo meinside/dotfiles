@@ -173,6 +173,7 @@
   :commands (lsp lsp-deferred)
   :hook ( ;; NOTE: add `(XXX-mode . lsp-deferred)`s below
           (go-mode . lsp-deferred)
+          (ruby-mode . lsp-deferred)
 
           ;; which-key integration
           (lsp-mode . lsp-enable-which-key-integration)))
@@ -237,6 +238,16 @@
 
             ;; https://emacs-lsp.github.io/dap-mode/page/configuration/#go
             (require 'dap-dlv-go)))
+
+;; (ruby)
+
+;; https://github.com/ruby/elisp
+(use-package ruby-mode
+  :defer t
+  :mode ("\\.\\(?:cap\\|gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . ruby-mode)
+  :config (progn
+			;; https://emacs-lsp.github.io/dap-mode/page/configuration/#ruby
+			(require 'dap-ruby)))
 
 ;;
 ;;;;;;;;;;;;;;;;
