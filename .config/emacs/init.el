@@ -159,3 +159,17 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;
+;; themes
+;;
+
+;; https://github.com/n3mo/cyberpunk-theme.el
+(use-package cyberpunk-theme)
+(load-theme 'cyberpunk t)
+
+;;
+;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
