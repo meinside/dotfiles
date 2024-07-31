@@ -172,6 +172,7 @@
   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
   :commands (lsp lsp-deferred)
   :hook ( ;; NOTE: add `(XXX-mode . lsp-deferred)`s below
+          (clojure-mode . lsp-deferred)
           (go-mode . lsp-deferred)
           (ruby-mode . lsp-deferred)
 
@@ -207,6 +208,13 @@
 
 ;;;;;;;;;;;;;;;;
 ;; LSP/DAP packages
+
+;; (clojure)
+
+;; https://github.com/clojure-emacs/clojure-mode
+(use-package clojure-mode
+  :defer t
+  :mode ("\\.\\(clj\\|cljc\\)\\'" . clojure-mode))
 
 ;; (golang)
 ;;
