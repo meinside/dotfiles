@@ -162,7 +162,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; themes
+;; themes (https://emacsthemes.com/popular/index.html)
 ;;
 
 ;; https://github.com/n3mo/cyberpunk-theme.el
