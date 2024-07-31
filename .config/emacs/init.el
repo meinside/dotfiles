@@ -65,6 +65,24 @@
   (auto-package-update-maybe)
   (auto-package-update-at-time "09:00"))
 
+;; https://github.com/emacs-evil/evil
+(use-package evil
+  :demand t
+  :bind (("<escape>" . keyboard-escape-quit))
+  :init
+  ;; allows for using cgn
+  ;; (setq evil-search-module 'evil-search)
+  (setq evil-want-keybinding nil)
+  :config
+  (evil-mode 1))
+
+;; https://github.com/emacs-evil/evil-collection
+(use-package evil-collection
+  :after evil
+  :config
+  (setq evil-want-integration t)
+  (evil-collection-init))
+
 ;; https://github.com/emacscollective/no-littering
 (use-package no-littering)
 
