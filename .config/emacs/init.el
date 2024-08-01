@@ -9,6 +9,9 @@
 ;; global configurations
 ;;
 
+;; minimum warning level
+(setq warning-minimum-level :error)
+
 ;; encodings
 (set-language-environment "UTF-8")
 (setopt selection-coding-system 'utf-8)
@@ -178,12 +181,18 @@
   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
   :commands (lsp lsp-deferred)
   :hook ( ;; NOTE: add `(XXX-mode . lsp-deferred)`s below
-         (clojure-mode . lsp-deferred)
-         (go-mode . lsp-deferred)
-         (ruby-mode . lsp-deferred)
+          (clojure-mode . lsp-deferred)
+          (elixir-mode . lsp-deferred)
+          (go-mode . lsp-deferred)
+          (html-mode . lsp-deferred)
+          (json-mode . lsp-deferred)
+          (lua-mode . lsp-deferred)
+          (ruby-mode . lsp-deferred)
+          (rust-mode . lsp-deferred)
+          (sh-mode . lsp-deferred)
 
-         ;; which-key integration
-         (lsp-mode . lsp-enable-which-key-integration)))
+          ;; which-key integration
+          (lsp-mode . lsp-enable-which-key-integration)))
 
 ;; https://github.com/emacs-lsp/lsp-ui
 (use-package lsp-ui
@@ -216,16 +225,21 @@
 ;; LSP/DAP packages
 
 ;; (clojure)
-
+;;
 ;; https://github.com/clojure-emacs/clojure-mode
 (use-package clojure-mode
   :defer t
   :mode ("\\.\\(clj\\|cljc\\)$" . clojure-mode))
 
-;; (golang)
+;; (elixir)
 ;;
-;; https://github.com/golang/tools/blob/master/gopls/doc/emacs.md
+;; https://github.com/elixir-editors/emacs-elixir
+(use-package elixir-mode
+  :defer t
+  :mode ("\\.\\(ex\\|exs\\|elixir\\)$" . elixir-mode))
 
+;; (golang) https://github.com/golang/tools/blob/master/gopls/doc/emacs.md
+;;
 ;; https://github.com/dominikh/go-mode.el
 (use-package go-mode
   :defer t
@@ -253,15 +267,22 @@
             ;; https://emacs-lsp.github.io/dap-mode/page/configuration/#go
             (require 'dap-dlv-go)))
 
-;; (lua)
+;; (json)
+;;
+;; https://github.com/json-emacs/json-mode
+(use-package json-mode
+  :defer t
+  :mode ("\\.json$" . json-mode))
 
+;; (lua)
+;;
 ;; https://github.com/immerrr/lua-mode
 (use-package lua-mode
   :defer t
   :mode ("\\.lua$" . lua-mode))
 
 ;; (ruby)
-
+;;
 ;; https://github.com/ruby/elisp
 (use-package ruby-mode
   :defer t
@@ -272,6 +293,15 @@
 
             ;; https://emacs-lsp.github.io/dap-mode/page/configuration/#ruby
             (require 'dap-ruby)))
+
+;; (rust)
+;;
+;; https://github.com/rust-lang/rust-mode
+(use-package rust-mode
+  :defer t
+  :mode ("\\.rs$" . rust-mode)
+  :config (progn
+            (setq rust-format-on-save t)))
 
 ;;
 ;;;;;;;;;;;;;;;;
