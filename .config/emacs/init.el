@@ -1,9 +1,7 @@
-;; -*- mode: elisp -*-
-;;
 ;; ~/.config/emacs/init.el
 ;;
 ;; created on : 2024.07.30.
-;; last update: 2024.07.31.
+;; last update: 2024.08.01.
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -39,7 +37,11 @@
 (global-display-line-numbers-mode t)
 
 ;; tab width
-(setq-default tab-width 4)
+(add-hook 'after-change-major-mode-hook 
+          '(lambda () 
+             (setq-default indent-tabs-mode nil)
+             (setq c-basic-indent 4)
+             (setq tab-width 4)))
 
 ;; clean up whitespaces before saving
 (add-hook 'before-save-hook 'whitespace-cleanup)
@@ -98,9 +100,11 @@
   (auto-package-update-interval 7)
   (auto-package-update-prompt-before-update t)
   (auto-package-update-hide-results t)
-  :config
-  (auto-package-update-maybe)
-  (auto-package-update-at-time "09:00"))
+  :config (progn
+            (setq auto-package-update-delete-old-versions t)
+            (setq auto-package-update-hide-results t)
+            (auto-package-update-maybe)
+            (auto-package-update-at-time "09:00")))
 
 ;; https://github.com/emacs-evil/evil
 (use-package evil
@@ -110,20 +114,20 @@
   ;; allows for using cgn
   ;; (setq evil-search-module 'evil-search)
   (setq evil-want-keybinding nil)
-  :config
-  (evil-mode 1))
+  :config (progn
+            (evil-mode 1)))
 
 ;; https://github.com/emacs-evil/evil-collection
 (use-package evil-collection
   :after evil
-  :config
-  (setq evil-want-integration t)
-  (evil-collection-init))
+  :config (progn
+            (setq evil-want-integration t)
+            (evil-collection-init)))
 
 ;; https://github.com/emacs-evil/evil-surround
 (use-package evil-surround
-  :config
-  (global-evil-surround-mode 1))
+  :config (progn
+            (global-evil-surround-mode 1)))
 
 ;; https://github.com/emacscollective/no-littering
 (use-package no-littering)
@@ -132,9 +136,9 @@
 (use-package which-key
   :defer 0
   :diminish which-key-mode
-  :config
-  (which-key-mode)
-  (setq which-key-idle-delay 1))
+  :config (progn
+            (which-key-mode)
+            (setq which-key-idle-delay 1)))
 
 ;; https://github.com/magit/magit
 (use-package magit
@@ -147,10 +151,10 @@
   :init
   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-  :config
-  (global-diff-hl-mode)
-  (unless (window-system) ;; fringe not supported in terminals
-	(diff-hl-margin-mode)))
+  :config (progn
+            (global-diff-hl-mode)
+            (unless (window-system) ;; NOTE: fringe not supported in terminals
+              (diff-hl-margin-mode))))
 
 ;; https://github.com/Fuco1/smartparens
 (use-package smartparens
@@ -163,7 +167,9 @@
 
 ;; https://github.com/joaotavora/yasnippet
 (use-package yasnippet
-  :ensure t)
+  :ensure t
+  :config (progn
+            (yas-global-mode 1)))
 
 ;; https://github.com/emacs-lsp/lsp-mode
 (use-package lsp-mode
@@ -172,12 +178,12 @@
   (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
   :commands (lsp lsp-deferred)
   :hook ( ;; NOTE: add `(XXX-mode . lsp-deferred)`s below
-          (clojure-mode . lsp-deferred)
-          (go-mode . lsp-deferred)
-          (ruby-mode . lsp-deferred)
+         (clojure-mode . lsp-deferred)
+         (go-mode . lsp-deferred)
+         (ruby-mode . lsp-deferred)
 
-          ;; which-key integration
-          (lsp-mode . lsp-enable-which-key-integration)))
+         ;; which-key integration
+         (lsp-mode . lsp-enable-which-key-integration)))
 
 ;; https://github.com/emacs-lsp/lsp-ui
 (use-package lsp-ui
@@ -214,7 +220,7 @@
 ;; https://github.com/clojure-emacs/clojure-mode
 (use-package clojure-mode
   :defer t
-  :mode ("\\.\\(clj\\|cljc\\)\\'" . clojure-mode))
+  :mode ("\\.\\(clj\\|cljc\\)$" . clojure-mode))
 
 ;; (golang)
 ;;
@@ -224,7 +230,7 @@
 (use-package go-mode
   :defer t
   :ensure t
-  :mode ("\\.go\\'" . go-mode)
+  :mode ("\\.go$" . go-mode)
   :after dap-mode
   :bind (
          ;; If you want to switch existing go-mode bindings to use lsp-mode/gopls instead
@@ -237,8 +243,8 @@
          (before-save . lsp-organize-imports))
   :config (progn
             (lsp-register-custom-settings
-              '(("gopls.completeUnimported" t t)
-                ("gopls.staticcheck" t t)))
+             '(("gopls.completeUnimported" t t)
+               ("gopls.staticcheck" t t)))
 
             (setq lsp-gopls-staticcheck t)
             (setq lsp-eldoc-render-all t)
@@ -247,15 +253,25 @@
             ;; https://emacs-lsp.github.io/dap-mode/page/configuration/#go
             (require 'dap-dlv-go)))
 
+;; (lua)
+
+;; https://github.com/immerrr/lua-mode
+(use-package lua-mode
+  :defer t
+  :mode ("\\.lua$" . lua-mode))
+
 ;; (ruby)
 
 ;; https://github.com/ruby/elisp
 (use-package ruby-mode
   :defer t
-  :mode ("\\.\\(?:cap\\|gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)\\'" . ruby-mode)
+  :mode ("\\.\\(?:cap\\|gemspec\\|irbrc\\|gemrc\\|rake\\|rb\\|ru\\|thor\\)$" . ruby-mode)
   :config (progn
-			;; https://emacs-lsp.github.io/dap-mode/page/configuration/#ruby
-			(require 'dap-ruby)))
+            (setq ruby-indent-tabs-mode t)
+            (defvaralias 'ruby-indent-level 'tab-width)
+
+            ;; https://emacs-lsp.github.io/dap-mode/page/configuration/#ruby
+            (require 'dap-ruby)))
 
 ;;
 ;;;;;;;;;;;;;;;;
