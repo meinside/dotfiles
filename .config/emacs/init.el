@@ -1,7 +1,7 @@
 ;; ~/.config/emacs/init.el
 ;;
 ;; created on : 2024.07.30.
-;; last update: 2024.08.01.
+;; last update: 2024.08.02.
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -199,7 +199,15 @@
   :ensure t
   :hook (lsp-mode . lsp-ui-mode)
   :custom
-  (lsp-ui-doc-position 'bottom))
+  ;; lsp-ui-sideline
+  (lsp-ui-sideline-show-diagnostics t)
+  (lsp-ui-sideline-show-hover t)
+  (lsp-ui-sideline-update-mode 'line)
+  ;; lsp-ui-doc
+  (lsp-ui-doc-position nil)
+  (lsp-ui-doc-show-with-cursor t)
+  ;; others
+  (lsp-eldoc-enable-hover nil))
 
 ;; https://github.com/emacs-lsp/dap-mode
 (use-package dap-mode)
