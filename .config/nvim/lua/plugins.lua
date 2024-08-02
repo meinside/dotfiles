@@ -176,16 +176,14 @@ require'lazy'.setup({
 
 
   -- dim inactive window
-  { 'levouh/tint.nvim', config = function()
-      require'tint'.setup {}
-end,
-  },
+  -- FIXME: this plugin makes `deadcolumn` leave a color column after opening floating windows (eg. lazy, mason, ...)
+  { 'levouh/tint.nvim', config = function() require'tint'.setup {} end },
 
 
   -- last position
   {
     -- FIXME: repository archived (https://github.com/ethanholz/nvim-lastplace)
-'ethanholz/nvim-lastplace', config = function()
+    'ethanholz/nvim-lastplace', config = function()
       require'nvim-lastplace'.setup {
         lastplace_ignore_buftype = {
           'quickfix',
@@ -456,7 +454,7 @@ end,
   {
     'linrongbin16/lsp-progress.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function() require'lsp-progress'.setup() end
+    config = function() require'lsp-progress'.setup() end,
   },
   {
     'nvim-lualine/lualine.nvim', config = function()
