@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.07.19.
+-- last update: 2024.08.02.
 
 
 ------------------------------------------------
@@ -858,8 +858,22 @@ require'lazy'.setup({
   { 'nvim-treesitter/nvim-treesitter-context' },
 
 
-  -- code action: `\ca`
-  { 'weilbith/nvim-code-action-menu', cmd = 'CodeActionMenu' },
+  -- code actions
+  --
+  -- `\ca` for showing code action previews
+  {
+    'aznhe21/actions-preview.nvim', config = function()
+      local ap = require'actions-preview'
+      ap.setup {
+        diff = {
+          algorithm = 'patience',
+          ignore_whitespace = true,
+        },
+        telescope = require'telescope.themes'.get_dropdown { winblend = 10 },
+      }
+      vim.keymap.set({ 'v', 'n' }, 'ca', ap.code_actions)
+    end,
+  },
   {
     'kosayoda/nvim-lightbulb', config = function()
       require'nvim-lightbulb'.setup { autocmd = { enabled = true } }

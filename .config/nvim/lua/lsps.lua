@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/lua/plugins.lua
 --
--- last update: 2024.07.02.
+-- last update: 2024.08.02.
 
 local M = {}
 
@@ -44,7 +44,7 @@ function M.setup(nvim_lsp, autoconfigurable_lsp_names)
       silent = true,
       desc = 'lsp: Rename',
     })
-    vim.keymap.set('n', '<leader>ca', '<cmd>CodeActionMenu<CR>', {
+    vim.keymap.set('n', '<leader>ca', '<cmd>lua require"actions-preview".code_actions()<CR>', {
       remap = false,
       silent = true,
       desc = 'lsp: Code action',
