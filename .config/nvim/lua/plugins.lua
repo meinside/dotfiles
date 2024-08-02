@@ -140,7 +140,6 @@ require'lazy'.setup({
     event = 'LspAttach',
     config = function()
       require'neodim'.setup {
-        refresh_delay = 75,
         alpha = 0.75,
         blend_color = '#000000',
         hide = {
@@ -162,19 +161,31 @@ require'lazy'.setup({
 
   -- show keymaps
   {
-    'folke/which-key.nvim', config = function()
-      require'which-key'.setup { }
-    end,
+    'folke/which-key.nvim',
+    event = 'VeryLazy',
+    keys = {
+      {
+        '<leader>?',
+        function()
+          require'which-key'.show { global = false }
+        end,
+        desc = 'Buffer Local Keymaps (which-key)',
+      },
+    },
   },
 
 
   -- dim inactive window
-  { 'blueyed/vim-diminactive' },
+  { 'levouh/tint.nvim', config = function()
+      require'tint'.setup {}
+end,
+  },
 
 
   -- last position
   {
-    'ethanholz/nvim-lastplace', config = function()
+    -- FIXME: repository archived (https://github.com/ethanholz/nvim-lastplace)
+'ethanholz/nvim-lastplace', config = function()
       require'nvim-lastplace'.setup {
         lastplace_ignore_buftype = {
           'quickfix',
@@ -273,7 +284,9 @@ require'lazy'.setup({
   -- formatting
   {
     -- cs'" => change ' to " / ds" => remove " / ysiw" => wrap text object with " / yss" => wrap line with "
-    'kylechui/nvim-surround', config = function()
+    'kylechui/nvim-surround',
+    event = 'VeryLazy',
+    config = function()
       require'nvim-surround'.setup {}
     end,
   },
@@ -415,79 +428,20 @@ require'lazy'.setup({
           end, { expr = true, desc = 'gitsigns: Previous hunk' })
 
           -- Actions
-          m(
-            { 'n', 'v' },
-            '<leader>hs',
-            ':Gitsigns stage_hunk<CR>',
-            { desc = 'gitsigns: Stage hunk' }
-          )
-          m(
-            { 'n', 'v' },
-            '<leader>hr',
-            ':Gitsigns reset_hunk<CR>',
-            { desc = 'gitsigns: Reset hunk' }
-          )
-          m(
-            'n',
-            '<leader>hS',
-            gs.stage_buffer,
-            { desc = 'gitsigns: Stage buffer' }
-          )
-          m(
-            'n',
-            '<leader>hu',
-            gs.undo_stage_hunk,
-            { desc = 'gitsigns: Undo stage hunk' }
-          )
-          m(
-            'n',
-            '<leader>hR',
-            gs.reset_buffer,
-            { desc = 'gitsigns: Reset buffer' }
-          )
-          m(
-            'n',
-            '<leader>hp',
-            gs.preview_hunk,
-            { desc = 'gitsigns: Preview hunk' }
-          )
-          m(
-            'n',
-            '<leader>hb',
-            function() gs.blame_line { full = true } end,
-            { desc = 'gitsigns: Blame line' }
-          )
-          m(
-            'n',
-            '<leader>tb',
-            gs.toggle_current_line_blame,
-            { desc = 'gitsigns: Toggle current line blame' }
-          )
-          m(
-            'n',
-            '<leader>hd',
-            gs.diffthis,
-            { desc = 'gitsigns: Diff this' }
-          )
-          m(
-            'n',
-            '<leader>hD',
-            function() gs.diffthis('~') end,
-            { desc = 'gitsigns: Diff this ~' }
-          )
-          m(
-            'n',
-            '<leader>td',
-            gs.toggle_deleted,
-            { desc = 'gitsigns: Toggle deleted' }
-          )
+          m({ 'n', 'v' }, '<leader>hs', ':Gitsigns stage_hunk<CR>', { desc = 'gitsigns: Stage hunk' })
+          m({ 'n', 'v' }, '<leader>hr', ':Gitsigns reset_hunk<CR>', { desc = 'gitsigns: Reset hunk' })
+          m('n', '<leader>hS', gs.stage_buffer, { desc = 'gitsigns: Stage buffer' })
+          m('n', '<leader>hu', gs.undo_stage_hunk, { desc = 'gitsigns: Undo stage hunk' })
+          m('n', '<leader>hR', gs.reset_buffer, { desc = 'gitsigns: Reset buffer' })
+          m('n', '<leader>hp', gs.preview_hunk, { desc = 'gitsigns: Preview hunk' })
+          m('n', '<leader>hb', function() gs.blame_line { full = true } end, { desc = 'gitsigns: Blame line' })
+          m('n', '<leader>tb', gs.toggle_current_line_blame, { desc = 'gitsigns: Toggle current line blame' })
+          m('n', '<leader>hd', gs.diffthis, { desc = 'gitsigns: Diff this' })
+          m('n', '<leader>hD', function() gs.diffthis('~') end, { desc = 'gitsigns: Diff this ~' })
+          m('n', '<leader>td', gs.toggle_deleted, { desc = 'gitsigns: Toggle deleted' })
 
           -- Text object
-          m(
-            { 'o', 'x' },
-            'ih',
-            ':<C-U>Gitsigns select_hunk<CR>'
-          )
+          m({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
         end,
       }
     end,
@@ -565,18 +519,25 @@ require'lazy'.setup({
 
   -- trouble
   {
-    'folke/trouble.nvim', config = function()
-      require'trouble'.setup {}
-    end,
+    'folke/trouble.nvim',
+    cmd = 'Trouble',
+    opts =  {
+      modes = {
+        diagnostics = {
+          auto_open = true,
+          auto_close = true,
+        },
+      },
+    },
     dependencies = { 'nvim-tree/nvim-web-devicons' },
   },
 
 
   -- auto pair/close
   {
-    'windwp/nvim-autopairs', config = function()
-      require'nvim-autopairs'.setup {}
-    end,
+    'windwp/nvim-autopairs',
+    event = 'InsertEnter',
+    config = true,
   },
 
 
@@ -620,13 +581,14 @@ require'lazy'.setup({
   -- lsp
   { 'neovim/nvim-lspconfig' },
   {
-    'ray-x/lsp_signature.nvim', config = function()
-      require'lsp_signature'.setup {
-        bind = true,
-        handler_opts = { border = 'single' },
-        hi_parameter = 'CurSearch',
-      }
-    end,
+    'ray-x/lsp_signature.nvim',
+    event = 'VeryLazy',
+    opts = {
+      bind = true,
+      handler_opts = { border = 'single' },
+      hi_parameter = 'CurSearch',
+    },
+    config = function(_, opts) require'lsp_signature'.setup(opts) end,
   },
   {
     'https://git.sr.ht/~whynothugo/lsp_lines.nvim', config = function()
@@ -790,6 +752,7 @@ require'lazy'.setup({
             mode = 'symbol',
             maxwidth = 50,
             ellipsis_char = '...',
+            show_labelDetails = true,
             symbol_map = { Codeium = '' },
           },
         },
@@ -929,10 +892,7 @@ require'lazy'.setup({
     'mfussenegger/nvim-lint', config = function()
       local lint = require'lint'
       lint.linters_by_ft = custom.linters()
-      vim.api.nvim_create_autocmd(
-        { 'BufWritePost' },
-        { callback = function() lint.try_lint() end }
-      )
+      vim.api.nvim_create_autocmd({ 'BufWritePost' }, { callback = function() lint.try_lint() end })
     end,
     cond = custom.features().linter, -- .config/nvim/lua/custom/init.lua
   },
