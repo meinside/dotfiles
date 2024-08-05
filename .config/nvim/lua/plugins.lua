@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.08.02.
+-- last update: 2024.08.05.
 
 
 ------------------------------------------------
@@ -176,7 +176,6 @@ require'lazy'.setup({
 
 
   -- dim inactive window
-  -- FIXME: this plugin makes `deadcolumn` leave a color column after opening floating windows (eg. lazy, mason, ...)
   { 'levouh/tint.nvim', config = function() require'tint'.setup {} end },
 
 
@@ -219,8 +218,8 @@ require'lazy'.setup({
       local codewindow = require'codewindow'
       codewindow.setup {}
 
-      -- for toggling minimap: \mt
-      vim.keymap.set('n', '<leader>mt', function()
+      -- for toggling minimap: `\tm`
+      vim.keymap.set('n', '<leader>tm', function()
         codewindow.toggle_minimap()
         vim.notify 'Toggled minimap.'
       end, { remap = false, silent = true, desc = 'minimap: Toggle' })
@@ -230,10 +229,6 @@ require'lazy'.setup({
 
   -- relative/absolute linenumber toggling
   { 'cpea2506/relative-toggle.nvim' },
-
-
-  -- show color column
-  { 'Bekaboo/deadcolumn.nvim' },
 
 
   -- markdown preview

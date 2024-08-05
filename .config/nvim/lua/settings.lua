@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2024.07.02.
+-- last update: 2024.08.05.
 
 
 ------------------------------------------------
@@ -17,7 +17,7 @@ opt.backspace = { 'indent', 'eol', 'start' } -- allow backspacing over everythin
 opt.breakindent = true
 opt.cindent = true
 opt.clipboard = opt.clipboard + 'unnamedplus' -- copy/paste to/from system clipboard
-opt.colorcolumn = '80'
+opt.colorcolumn = ''
 opt.conceallevel = 2 -- render hyperlinks in markdown
 opt.cursorline = true -- highlight current line
 opt.expandtab = true
@@ -50,9 +50,21 @@ opt.updatetime = 1000 -- for shortening delay of CursorHold
 opt.wildmenu = true
 vim.o.signcolumn = 'number'
 
--- for toggling mouse: \mm
+-- for toggling color column: `\tc`
+vim.keymap.set('n', '<leader>tc', function()
+  local value = vim.api.nvim_get_option_value('colorcolumn', {})
+  if value == '' then
+    vim.api.nvim_set_option_value('colorcolumn', '79', {})
+    vim.notify 'Color column enabled'
+  else
+    vim.api.nvim_set_option_value('colorcolumn', '', {})
+    vim.notify 'Color column disabled'
+  end
+end, { remap = false, silent = true, desc = 'Toggle color column' })
+
+-- for toggling mouse: `\tm`
 local mouse_enabled = false
-vim.keymap.set('n', '<leader>mm', function()
+vim.keymap.set('n', '<leader>tm', function()
   if mouse_enabled then
     opt.mouse = ''
     vim.notify 'Mouse disabled'
