@@ -590,7 +590,8 @@ require'lazy'.setup({
       vim.diagnostic.config {
         virtual_lines = { only_current_line = true },
       }
-      vim.keymap.set('', '<leader>ll', function()
+      -- for toggling lsp_lines: `\tl`
+      vim.keymap.set('', '<leader>tl', function()
         ll.toggle()
         vim.notify 'Toggled LSP Lines.'
       end, { desc = 'lsp_lines: Toggle' })
