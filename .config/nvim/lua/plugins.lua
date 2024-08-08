@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.08.05.
+-- last update: 2024.08.08.
 
 
 ------------------------------------------------
@@ -811,6 +811,7 @@ require'lazy'.setup({
       }
     end,
   },
+  -- :TSContextToggle for toggling
   { 'nvim-treesitter/nvim-treesitter-context' },
 
 

@@ -1,7 +1,7 @@
 ;; ~/.config/emacs/init.el
 ;;
 ;; created on : 2024.07.30.
-;; last update: 2024.08.02.
+;; last update: 2024.08.08.
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -134,6 +134,13 @@
 
 ;; https://github.com/emacscollective/no-littering
 (use-package no-littering)
+
+;; https://github.com/renzmann/treesit-auto
+(use-package treesit-auto
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (global-treesit-auto-mode))
 
 ;; https://github.com/justbur/emacs-which-key
 (use-package which-key
