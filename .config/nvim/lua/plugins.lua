@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.08.08.
+-- last update: 2024.08.13.
 
 
 ------------------------------------------------
@@ -439,6 +439,15 @@ require'lazy'.setup({
       }
     end,
     dependencies = { { 'nvim-lua/plenary.nvim' } },
+  },
+  {
+    'NeogitOrg/neogit',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'sindrets/diffview.nvim',
+      'nvim-telescope/telescope.nvim',
+    },
+    config = true,
   },
   -- gist (:Gist / :Gist -p / ...)
   { 'mattn/webapi-vim' },
