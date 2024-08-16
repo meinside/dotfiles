@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.08.13.
+-- last update: 2024.08.16.
 
 
 ------------------------------------------------
@@ -606,7 +606,11 @@ require'lazy'.setup({
       local ll = require'lsp_lines'
       ll.setup()
       vim.diagnostic.config {
-        virtual_lines = { only_current_line = true },
+        virtual_text = false,
+        virtual_lines = {
+          only_current_line = true,
+          highlight_whole_line = false,
+        },
       }
       -- for toggling lsp_lines: `\tl`
       vim.keymap.set('', '<leader>tl', function()
