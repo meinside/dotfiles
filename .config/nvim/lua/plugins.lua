@@ -612,6 +612,8 @@ require'lazy'.setup({
           highlight_whole_line = false,
         },
       }
+      -- FIXME: https://github.com/folke/lazy.nvim/issues/620
+      vim.diagnostic.config({ virtual_lines = false }, require'lazy.core.config'.ns)
       -- for toggling lsp_lines: `\tl`
       vim.keymap.set('', '<leader>tl', function()
         ll.toggle()
