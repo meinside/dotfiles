@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.08.16.
+-- last update: 2024.08.20.
 
 
 ------------------------------------------------
@@ -304,6 +304,7 @@ require'lazy'.setup({
     end,
   },
 
+
   -- marks
   {
     'chentoast/marks.nvim', config = function()
@@ -585,6 +586,14 @@ require'lazy'.setup({
     lazy = true,
     cmd = { 'Outline', 'OutlineOpen' },
     keys = { { '<leader>to', '<cmd>Outline<CR>', desc = 'Toggle symbols outline' } },
+    opts = { },
+  },
+
+
+  -- todo comments
+  {
+    'folke/todo-comments.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
     opts = { },
   },
 
