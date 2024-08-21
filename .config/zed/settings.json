@@ -62,7 +62,7 @@
     "Go": {
       "enable_language_server": true,
       "format_on_save": "on",
-      "preferred_line_length": 80,
+      "preferred_line_length": 120,
       "soft_wrap": "preferred_line_length"
     },
     "JSON": {
@@ -73,14 +73,14 @@
     "Lua": {
       "enable_language_server": true,
       "format_on_save": "on",
-      "preferred_line_length": 80,
+      "preferred_line_length": 120,
       "soft_wrap": "preferred_line_length",
       "tab_size": 4
     },
     "Rust": {
       "enable_language_server": true,
       "format_on_save": "on",
-      "preferred_line_length": 80,
+      "preferred_line_length": 120,
       "soft_wrap": "preferred_line_length"
     }
   },
