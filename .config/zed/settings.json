@@ -1,0 +1,119 @@
+// ~/.config/zed/settings.json
+//
+// https://zed.dev/docs/configuring-zed
+{
+  // theme
+  "theme": {
+    "mode": "system",
+    "dark": "Andromeda",
+    "light": "Atelier Cave Light"
+  },
+
+  // font
+  "buffer_font_family": "JetBrainsMono Nerd Font Mono",
+  "buffer_font_fallbacks": ["Zed Plex Mono"],
+  "ui_font_size": 15,
+  "buffer_font_size": 15,
+  "buffer_font_weight": 400,
+  "buffer_line_height": "comfortable",
+
+  // editor
+  "current_line_highlight": "line",
+  "cursor_blink": false,
+  "format_on_save": "on",
+  "hard_tabs": false,
+  "scrollbar": {
+    "show": "auto",
+    "cursors": true,
+    "git_diff": true,
+    "search_results": true,
+    "selected_symbol": true,
+    "diagnostics": true
+  },
+  "show_whitespaces": "boundary",
+  "tab_bar": {
+    "show": true,
+    "show_nav_history_buttons": false
+  },
+  "tabs": {
+    "close_position": "right",
+    "file_icons": true,
+    "git_status": true
+  },
+
+  // git
+  "git": {
+    "inline_blame": {
+      "enabled": true,
+      "delay_ms": 1000
+    }
+  },
+
+  // LSP
+  "inlay_hints": {
+    "enabled": true,
+    "show_type_hints": true,
+    "show_parameter_hints": true,
+    "show_other_hints": true,
+    "edit_debounce_ms": 700,
+    "scroll_debounce_ms": 50
+  },
+  "languages": {
+    "Go": {
+      "enable_language_server": true,
+      "format_on_save": "on",
+      "preferred_line_length": 80,
+      "soft_wrap": "preferred_line_length"
+    },
+    "JSON": {
+      "format_on_save": "on",
+      "hard_tabs": false,
+      "tab_size": 2
+    },
+    "Lua": {
+      "enable_language_server": true,
+      "format_on_save": "on",
+      "preferred_line_length": 80,
+      "soft_wrap": "preferred_line_length",
+      "tab_size": 4
+    },
+    "Rust": {
+      "enable_language_server": true,
+      "format_on_save": "on",
+      "preferred_line_length": 80,
+      "soft_wrap": "preferred_line_length"
+    }
+  },
+
+  // terminal
+  "terminal": {
+    "font_family": "Iosevka Nerd Font Mono",
+    "blinking": "on"
+  },
+
+  // assistant
+  "assistant": {
+    "default_model": {
+      "provider": "zed.dev",
+      "model": "claude-3-5-sonnet-20240620"
+    },
+    "enabled": true,
+    "button": true,
+    "dock": "right",
+    "default_width": 640,
+    "default_height": 320,
+    "version": "2"
+  },
+
+  // others
+  "calls": {
+    "mute_on_join": true
+  },
+  "confirm_quit": false,
+  "hour_format": "hour24",
+  "telemetry": {
+    "diagnostics": true,
+    "metrics": false
+  },
+  "vim_mode": true
+}
