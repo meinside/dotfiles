@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/lua/plugins.lua
 --
--- last update: 2024.08.02.
+-- last update: 2024.08.21.
 
 local M = {}
 
@@ -112,6 +112,11 @@ function M.setup(nvim_lsp, autoconfigurable_lsp_names)
         group = 'lsp_document_highlight',
         callback = function() vim.lsp.buf.clear_references() end,
       })
+    end
+
+    -- inlay hints
+    if client.server_capabilities.inlayHintProvider then
+      vim.lsp.inlay_hint.enable(true)
     end
 
     -- navic
