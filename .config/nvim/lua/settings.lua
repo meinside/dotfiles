@@ -62,9 +62,9 @@ vim.keymap.set('n', '<leader>tc', function()
   end
 end, { remap = false, silent = true, desc = 'color column: Toggle' })
 
--- for toggling mouse: `\tm`
+-- for toggling mouse: `\mm`
 local mouse_enabled = false
-vim.keymap.set('n', '<leader>tm', function()
+vim.keymap.set('n', '<leader>mm', function()
   if mouse_enabled then
     opt.mouse = ''
     vim.notify 'Mouse disabled'
@@ -73,7 +73,7 @@ vim.keymap.set('n', '<leader>tm', function()
     vim.notify 'Mouse enabled'
   end
   mouse_enabled = not mouse_enabled
-end, { remap = false, silent = true, desc = 'Toggle mouse' })
+end, { remap = false, silent = true, desc = 'mouse: Toggle' })
 
 -- tab navigation
 vim.keymap.set('n', '<C-h>', ':tabprevious<CR>', {
