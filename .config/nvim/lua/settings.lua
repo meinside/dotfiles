@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2024.08.05.
+-- last update: 2024.08.27.
 
 
 ------------------------------------------------
@@ -60,7 +60,7 @@ vim.keymap.set('n', '<leader>tc', function()
     vim.api.nvim_set_option_value('colorcolumn', '', {})
     vim.notify 'Color column disabled'
   end
-end, { remap = false, silent = true, desc = 'Toggle color column' })
+end, { remap = false, silent = true, desc = 'color column: Toggle' })
 
 -- for toggling mouse: `\tm`
 local mouse_enabled = false

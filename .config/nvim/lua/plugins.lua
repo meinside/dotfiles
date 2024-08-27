@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.08.20.
+-- last update: 2024.08.27.
 
 
 ------------------------------------------------
@@ -585,7 +585,7 @@ require'lazy'.setup({
     'hedyhli/outline.nvim',
     lazy = true,
     cmd = { 'Outline', 'OutlineOpen' },
-    keys = { { '<leader>to', '<cmd>Outline<CR>', desc = 'Toggle symbols outline' } },
+    keys = { { '<leader>to', '<cmd>Outline<CR>', desc = 'symbols outline: Toggle' } },
     opts = { },
   },
 
