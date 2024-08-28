@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.08.28.
+-- last update: 2024.08.29.
 
 
 ------------------------------------------------
@@ -982,10 +982,23 @@ require'lazy'.setup({
       },
     },
     dependencies = {
-      'nvim-tree/nvim-web-devicons',
       'stevearc/dressing.nvim',
       'nvim-lua/plenary.nvim',
       'MunifTanjim/nui.nvim',
+      'nvim-tree/nvim-web-devicons',
+      {
+        'HakonHarnes/img-clip.nvim',  -- support for image pasting
+        event = 'VeryLazy',
+        opts = {
+          default = {
+            embed_image_as_base64 = false,
+            prompt_for_file_name = false,
+            drag_and_drop = {
+              insert_mode = true,
+            },
+          },
+        },
+      },
       {
         'MeanderingProgrammer/render-markdown.nvim',
         opts = {
