@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.08.27.
+-- last update: 2024.08.28.
 
 
 ------------------------------------------------
@@ -923,6 +923,41 @@ require'lazy'.setup({
       vim.api.nvim_create_autocmd({ 'BufWritePost' }, { callback = function() lint.try_lint() end })
     end,
     cond = custom.features().linter, -- .config/nvim/lua/custom/init.lua
+  },
+
+
+  -- coding assistants
+  {
+    -- `\aa`: :AvanteAsk, `\ar`: :AvanteRefresh, `\ae`: edit selected blocks
+    'yetone/avante.nvim',
+    event = 'VeryLazy',
+    build = 'make',
+    opts = {
+      -- NOTE: environment variable `GEMINI_API_KEY` is needed
+      provider = 'gemini',
+      gemini = {
+        endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
+        model = 'gemini-1.5-flash-latest',
+        timeout = 30000,
+        temperature = 0,
+        max_tokens = 4096,
+        ['local'] = false,
+      },
+    },
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+      'stevearc/dressing.nvim',
+      'nvim-lua/plenary.nvim',
+      'MunifTanjim/nui.nvim',
+      {
+        'MeanderingProgrammer/render-markdown.nvim',
+        opts = {
+          file_types = { 'markdown', 'Avante' },
+        },
+        ft = { 'markdown', 'Avante' },
+      },
+    },
+    cond = custom.features().code_assistance, -- .config/nvim/lua/custom/init.lua
   },
 
 

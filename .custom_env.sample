@@ -1,6 +1,6 @@
 # .custom_env.sample
 #
-# last update: 2024.05.13.
+# last update: 2024.08.28.
 
 # for macOS only
 if [[ $OSTYPE == darwin* ]]; then
@@ -59,4 +59,7 @@ export TERMUX_HOME="/data/data/com.termux/files/home"
 
 # Raspberry Pi Pico SDK
 export PICO_SDK_PATH=/home/ubuntu/srcs/pico/pico-sdk
+
+# for avante.nvim
+export GEMINI_API_KEY="AIabcdefg__hijklmnopqrstuvwxyz0123456789"
 

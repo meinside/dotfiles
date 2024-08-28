@@ -2,7 +2,7 @@
 --
 -- My custom functions and variable/constants.
 --
--- last update: 2024.06.21.
+-- last update: 2024.08.28.
 
 local function lua_filepath(path)
   local config_dir = os.getenv('XDG_CONFIG_HOME')
@@ -19,7 +19,7 @@ local Custom = {}
 
 -- Loads and returns LSP names if possible
 local function load_lsps(filter)
-  -- will try loading: ~/.config/nvim/lua/custom/lsps.lua
+  -- NOTE: will try loading: ~/.config/nvim/lua/custom/lsps.lua
   -- sample file here: ~/.config/nvim/lua/custom/lsps_sample.lua
   local ok, lsps = pcall(require, 'custom/lsps')
   if ok then
@@ -31,7 +31,7 @@ local function load_lsps(filter)
     end
     return names
   else
-    -- default: ~/.config/nvim/lua/custom/lsps_sample.lua
+    -- NOTE: default: ~/.config/nvim/lua/custom/lsps_sample.lua
     return require('custom/lsps_sample')
   end
 end
@@ -55,12 +55,12 @@ end
 
 -- Loads and returns linter names if possible
 local function load_linters()
-  -- will try loading: ~/.config/nvim/lua/custom/linters.lua
+  -- NOTE: will try loading: ~/.config/nvim/lua/custom/linters.lua
   local ok, linters = pcall(require, 'custom/linters')
   if ok then
     return linters
   else
-    -- default: ~/.config/nvim/lua/custom/linters_sample.lua
+    -- NOTE: default: ~/.config/nvim/lua/custom/linters_sample.lua
     return require('custom/linters_sample')
   end
 end
@@ -74,12 +74,12 @@ end
 
 -- Loads and returns features if possible
 local function load_features()
-  -- will try loading: ~/.config/nvim/lua/custom/features.lua
+  -- NOTE: will try loading: ~/.config/nvim/lua/custom/features.lua
   local ok, features = pcall(require, 'custom/features')
   if ok then
     return features
   else
-    -- default: ~/.config/nvim/lua/custom/features_sample.lua
+    -- NOTE: default: ~/.config/nvim/lua/custom/features_sample.lua
     return require('custom/features_sample')
   end
 end
