@@ -112,7 +112,9 @@ require'lazy'.setup({
 
   -- file browser
   {
-    'echasnovski/mini.files', version = false, config = function()
+    'echasnovski/mini.files',
+    version = false,
+    config = function()
       require'mini.files'.setup {}
 
       -- for toggling minifiles: \mf
@@ -125,7 +127,8 @@ require'lazy'.setup({
 
   -- notification
   {
-    'rcarriga/nvim-notify', config = function()
+    'rcarriga/nvim-notify',
+    config = function()
       local notify = require'notify'
       notify.setup { background_colour = '#000000' }
       vim.notify = notify -- override `vim.notify`
@@ -176,13 +179,19 @@ require'lazy'.setup({
 
 
   -- dim inactive window
-  { 'levouh/tint.nvim', config = function() require'tint'.setup {} end },
+  {
+    'levouh/tint.nvim',
+    config = function()
+      require'tint'.setup {}
+    end
+  },
 
 
   -- last position
   {
     -- FIXME: repository archived (https://github.com/ethanholz/nvim-lastplace)
-    'ethanholz/nvim-lastplace', config = function()
+    'ethanholz/nvim-lastplace',
+    config = function()
       require'nvim-lastplace'.setup {
         lastplace_ignore_buftype = {
           'quickfix',
@@ -203,7 +212,8 @@ require'lazy'.setup({
 
   -- split/join blocks of code (<space>m - toggle, <space>j - join, <space>s - split)
   {
-    'Wansmer/treesj', config = function()
+    'Wansmer/treesj',
+    config = function()
       require'treesj'.setup {
         max_join_length = 240,
       }
@@ -214,7 +224,8 @@ require'lazy'.setup({
 
   -- minimap
   {
-    'gorbit99/codewindow.nvim', config = function()
+    'gorbit99/codewindow.nvim',
+    config = function()
       local codewindow = require'codewindow'
       codewindow.setup {}
 
@@ -246,8 +257,9 @@ require'lazy'.setup({
   -- fold and preview (zc for closing, zo for opening, za for toggling / zM for closing all, zR for opening all)
   {
     -- FIXME: https://github.com/anuvyklack/pretty-fold.nvim/issues/38
-    --'anuvyklack/pretty-fold.nvim', config = function()
-    'bbjornstad/pretty-fold.nvim', config = function()
+    --'anuvyklack/pretty-fold.nvim',
+    'bbjornstad/pretty-fold.nvim',
+    config = function()
       require'pretty-fold'.setup {
         keep_indentation = false,
         fill_char = '━',
@@ -284,14 +296,17 @@ require'lazy'.setup({
     end,
   },
   {
-    'lukas-reineke/indent-blankline.nvim', main = 'ibl', config = function()
+    'lukas-reineke/indent-blankline.nvim',
+    main = 'ibl',
+    config = function()
       require'ibl'.setup {}
     end,
   },
   { 'tpope/vim-ragtag' }, -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
   { 'tpope/vim-sleuth' },
   {
-    'HiPhish/rainbow-delimiters.nvim', config = function()
+    'HiPhish/rainbow-delimiters.nvim',
+    config = function()
       local rd = require'rainbow-delimiters'
       require'rainbow-delimiters.setup'.setup {
         strategy = {
@@ -307,7 +322,8 @@ require'lazy'.setup({
 
   -- marks
   {
-    'chentoast/marks.nvim', config = function()
+    'chentoast/marks.nvim',
+    config = function()
       require'marks'.setup {
         force_write_shada = true, -- FIXME: marks are not removed across sessions without this configuration
       }
@@ -318,7 +334,8 @@ require'lazy'.setup({
   -- annotation
   {
     -- :Neogen
-    'danymat/neogen', config = function()
+    'danymat/neogen',
+    config = function()
       require'neogen'.setup { snippet_engine = 'luasnip' }
     end,
     dependencies = 'nvim-treesitter/nvim-treesitter',
@@ -329,7 +346,8 @@ require'lazy'.setup({
   { 'mtth/locate.vim' }, -- :L [query], :lclose, gl
   { 'johngrib/vim-f-hangul' },	-- can use f/t/;/, on Hangul characters
   {
-    'nvim-telescope/telescope.nvim', config = function()
+    'nvim-telescope/telescope.nvim',
+    config = function()
       local telescope = require'telescope'
       telescope.setup {
         extensions = {
@@ -398,7 +416,8 @@ require'lazy'.setup({
   { 'junegunn/gv.vim' }, -- :GV, :GV!, :GV?
   {
     -- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
-    'lewis6991/gitsigns.nvim', config = function()
+    'lewis6991/gitsigns.nvim',
+    config = function()
       require'gitsigns'.setup {
         numhl = true,
         on_attach = function(bufnr)
@@ -459,10 +478,13 @@ require'lazy'.setup({
   {
     'linrongbin16/lsp-progress.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function() require'lsp-progress'.setup() end,
+    config = function()
+      require'lsp-progress'.setup()
+    end,
   },
   {
-    'nvim-lualine/lualine.nvim', config = function()
+    'nvim-lualine/lualine.nvim',
+    config = function()
       local navic = require'nvim-navic'
       navic.setup { highlight = true }
       require'lualine'.setup {
@@ -501,7 +523,8 @@ require'lazy'.setup({
 
   -- tabline
   {
-    'crispgm/nvim-tabline', config = function()
+    'crispgm/nvim-tabline',
+    config = function()
       require'tabline'.setup {
         show_index = false,
         show_modify = true,
@@ -608,10 +631,13 @@ require'lazy'.setup({
       handler_opts = { border = 'single' },
       hi_parameter = 'CurSearch',
     },
-    config = function(_, opts) require'lsp_signature'.setup(opts) end,
+    config = function(_, opts)
+      require'lsp_signature'.setup(opts)
+    end,
   },
   {
-    'https://git.sr.ht/~whynothugo/lsp_lines.nvim', config = function()
+    'https://git.sr.ht/~whynothugo/lsp_lines.nvim',
+    config = function()
       local ll = require'lsp_lines'
       ll.setup()
       vim.diagnostic.config {
@@ -631,7 +657,8 @@ require'lazy'.setup({
     end,
   },
   {
-    'onsails/lspkind-nvim', config = function()
+    'onsails/lspkind-nvim',
+    config = function()
       -- (gray)
       vim.api.nvim_set_hl(0, 'CmpItemAbbrDeprecated', {
         bg = 'NONE',
@@ -685,7 +712,8 @@ require'lazy'.setup({
     end,
   },
   {
-    'williamboman/mason.nvim', config = function()
+    'williamboman/mason.nvim',
+    config = function()
       require'mason'.setup {
         ui = {
           icons = {
@@ -698,7 +726,8 @@ require'lazy'.setup({
     end,
   },
   {
-    'williamboman/mason-lspconfig.nvim', config = function()
+    'williamboman/mason-lspconfig.nvim',
+    config = function()
       -- install lsp servers
       require'mason-lspconfig'.setup {
         ensure_installed = custom.installable_lsp_names(), -- NOTE: .config/nvim/lua/custom/lsps_sample.lua
@@ -718,7 +747,8 @@ require'lazy'.setup({
 
   -- autocompletion
   {
-    'hrsh7th/nvim-cmp', config = function()
+    'hrsh7th/nvim-cmp',
+    config = function()
       local cmp = require'cmp'
       local luasnip = require'luasnip'
       local lspkind = require'lspkind'
@@ -813,7 +843,8 @@ require'lazy'.setup({
   -- NOTE: if it complains about any language, try :TSInstall [xxx]
   {
     --'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = function()
-    'nvim-treesitter/nvim-treesitter', config = function()
+    'nvim-treesitter/nvim-treesitter',
+    config = function()
       require'nvim-treesitter.configs'.setup {
         ensure_installed = {
           'bash',
@@ -853,7 +884,8 @@ require'lazy'.setup({
   --
   -- `\ca` for showing code action previews
   {
-    'aznhe21/actions-preview.nvim', config = function()
+    'aznhe21/actions-preview.nvim',
+    config = function()
       local ap = require'actions-preview'
       ap.setup {
         diff = {
@@ -866,7 +898,8 @@ require'lazy'.setup({
     end,
   },
   {
-    'kosayoda/nvim-lightbulb', config = function()
+    'kosayoda/nvim-lightbulb',
+    config = function()
       require'nvim-lightbulb'.setup { autocmd = { enabled = true } }
     end,
     dependencies = 'antoinemadec/FixCursorHold.nvim',
@@ -875,7 +908,8 @@ require'lazy'.setup({
 
   -- debug adapter
   {
-    'mfussenegger/nvim-dap', config = function()
+    'mfussenegger/nvim-dap',
+    config = function()
       -- dap sign icons and colors
       vim.fn.sign_define('DapBreakpoint', {
         text = '•',
@@ -898,7 +932,8 @@ require'lazy'.setup({
     end,
   },
   {
-    'rcarriga/nvim-dap-ui', config = function()
+    'rcarriga/nvim-dap-ui',
+    config = function()
       local dap, dapui = require 'dap', require 'dapui'
       dapui.setup {}
       -- auto toggle debug UIs
@@ -909,7 +944,8 @@ require'lazy'.setup({
     dependencies = { 'mfussenegger/nvim-dap', 'nvim-neotest/nvim-nio' },
   },
   {
-    'theHamsta/nvim-dap-virtual-text', config = function()
+    'theHamsta/nvim-dap-virtual-text',
+    config = function()
       require'nvim-dap-virtual-text'.setup { commented = true }
     end,
   },
@@ -917,7 +953,8 @@ require'lazy'.setup({
 
   -- lint
   {
-    'mfussenegger/nvim-lint', config = function()
+    'mfussenegger/nvim-lint',
+    config = function()
       local lint = require'lint'
       lint.linters_by_ft = custom.linters()
       vim.api.nvim_create_autocmd({ 'BufWritePost' }, { callback = function() lint.try_lint() end })
@@ -1007,7 +1044,8 @@ require'lazy'.setup({
 
   -- go
   {
-    'ray-x/go.nvim', config = function()
+    'ray-x/go.nvim',
+    config = function()
       require'go'.setup {
         gofmt = 'gopls',
         lsp_inlay_hints = { enable = false },
@@ -1030,7 +1068,8 @@ require'lazy'.setup({
   },
   {
     -- install `delve` with :Mason, :DapContinue for starting debugging
-    'leoluz/nvim-dap-go', config = function()
+    'leoluz/nvim-dap-go',
+    config = function()
       require'dap-go'.setup()
     end,
     ft = { 'go' },
@@ -1072,7 +1111,8 @@ require'lazy'.setup({
   -- ruby
   { 'vim-ruby/vim-ruby', ft = { 'ruby' } },
   {
-    'suketa/nvim-dap-ruby', config = function()
+    'suketa/nvim-dap-ruby',
+    config = function()
       -- $ gem install readapt
       -- :DapContinue for debugging
       require'dap-ruby'.setup()
@@ -1103,7 +1143,8 @@ require'lazy'.setup({
   --
 
   {
-    'meinside/gemini.nvim', config = function()
+    'meinside/gemini.nvim',
+    config = function()
       require'gemini'.setup {
         configFilepath = '~/.config/gemini.nvim/config.json',
         timeout = 30 * 1000,

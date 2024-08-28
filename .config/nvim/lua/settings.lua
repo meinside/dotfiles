@@ -4,7 +4,13 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2024.08.27.
+-- last update: 2024.08.28.
+
+
+-- use new loader with byte-compilation cache
+if vim.loader then
+  vim.loader.enable()
+end
 
 
 ------------------------------------------------
