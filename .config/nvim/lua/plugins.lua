@@ -931,7 +931,7 @@ require'lazy'.setup({
     -- `\aa`: :AvanteAsk, `\ar`: :AvanteRefresh, `\ae`: edit selected blocks
     'yetone/avante.nvim',
     event = 'VeryLazy',
-    build = 'make',
+    --build = 'make',
     opts = {
       -- NOTE: environment variable `GEMINI_API_KEY` is needed
       provider = 'gemini',
