@@ -976,8 +976,10 @@ require'lazy'.setup({
         endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
         model = 'gemini-1.5-flash-latest',
         timeout = 30000,
-        temperature = 0,
-        max_tokens = 4096,
+        generationConfig = {
+          temperature = 0,
+          maxOutputTokens = 4096,
+        },
         ['local'] = false,
       },
     },
