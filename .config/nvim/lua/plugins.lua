@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.08.29.
+-- last update: 2024.08.30.
 
 
 ------------------------------------------------
@@ -967,8 +967,6 @@ require'lazy'.setup({
   {
     -- `\aa`: :AvanteAsk, `\ar`: :AvanteRefresh, `\ae`: edit selected blocks
     'yetone/avante.nvim',
-    event = 'VeryLazy',
-    --build = 'make',
     opts = {
       -- NOTE: environment variable `GEMINI_API_KEY` is needed
       provider = 'gemini',
@@ -982,6 +980,11 @@ require'lazy'.setup({
         },
         ['local'] = false,
       },
+    },
+    keys = {
+      { '<leader>aa', function() require'avante.api'.ask() end, desc = 'avante: ask', mode = { 'n', 'v' } },
+      { '<leader>ar', function() require'avante.api'.refresh() end, desc = 'avante: refresh' },
+      { '<leader>ae', function() require'avante.api'.edit() end, desc = 'avante: edit', mode = 'v' },
     },
     dependencies = {
       'stevearc/dressing.nvim',
@@ -1009,6 +1012,8 @@ require'lazy'.setup({
         ft = { 'markdown', 'Avante' },
       },
     },
+    lazy = false,
+    event = 'VeryLazy',
     cond = custom.features().code_assistance, -- .config/nvim/lua/custom/init.lua
   },
 
