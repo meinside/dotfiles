@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.08.30.
+-- last update: 2024.09.04.
 
 
 ------------------------------------------------
@@ -965,10 +965,12 @@ require'lazy'.setup({
 
   -- coding assistants
   {
+    -- NOTE: build things with `:AvanteBuild source=true`
+    --
     -- `\aa`: :AvanteAsk, `\ar`: :AvanteRefresh, `\ae`: edit selected blocks
     'yetone/avante.nvim',
     opts = {
-      -- NOTE: environment variable `GEMINI_API_KEY` is needed
+      -- NOTE: environment variables `GEMINI_API_KEY` and `HF_TOKEN` is needed
       provider = 'gemini',
       gemini = {
         endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
@@ -979,6 +981,13 @@ require'lazy'.setup({
           maxOutputTokens = 4096,
         },
         ['local'] = false,
+      },
+      behaviour = {
+        auto_suggestions = false,
+        auto_set_highlight_group = true,
+        auto_set_keymaps = true,
+        auto_apply_diff_after_generation = false,
+        support_paste_from_clipboard = false,
       },
     },
     keys = {
