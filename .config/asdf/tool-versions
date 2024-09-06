@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2024.09.04.
+# last update: 2024.09.06.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -27,7 +27,7 @@ babashka 1.3.191
 #   $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
 #
 # https://clojure.org/releases/tools#_releases
-clojure 1.11.4.1474
+clojure 1.12.0.1479
 
 # $ asdf plugin add elixir
 # $ asdf install elixir
@@ -52,7 +52,7 @@ erlang 27.0
 #   $ go install golang.org/x/tools/gopls@latest
 #
 # https://go.dev/doc/devel/release
-golang 1.23.0
+golang 1.23.1
 
 # $ asdf plugin add janet
 # $ asdf install janet
@@ -183,7 +183,7 @@ ruby 3.3.4
 #   $ cargo xtask install --server
 #
 # https://github.com/rust-lang/rust/releases
-rust 1.80.1
+rust 1.81.0
 
 # $ asdf plugin add zig
 # $ asdf install zig
