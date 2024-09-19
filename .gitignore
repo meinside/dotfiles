@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2024.07.30.
+# last update: 2024.09.19.
 
 # unnecessary binary files
 *.a
@@ -197,6 +197,7 @@ xcuserdata
 .ngrok2/
 .oci/
 .oh-my-zsh/
+.pcloud/
 .plotly/
 .putty/
 .RData
