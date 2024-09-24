@@ -607,6 +607,7 @@ require'lazy'.setup({
         filetypes = {
           ['.'] = false,
           ['dap-repl'] = false,
+          DressingInput = false,
           gitcommit = false,
           gitrebase = false,
           help = false,
