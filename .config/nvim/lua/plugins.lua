@@ -791,7 +791,11 @@ require'lazy'.setup({
       local cmp = require'cmp'
       local luasnip = require'luasnip'
       local lspkind = require'lspkind'
-      local neocodeium = require'neocodeium'
+
+      local neocodeium = nil
+      if custom.features().codeium then -- .config/nvim/lua/custom/init.lua
+        neocodeium = require'neocodeium'
+      end
 
       cmp.setup {
         completion = {
@@ -857,12 +861,14 @@ require'lazy'.setup({
       }
 
       -- setup for neocodeium
-      cmp.event:on('menu_opened', function()
-        neocodeium.clear()
-      end)
-      cmp.event:on('menu_closed', function()
-        neocodeium.cycle_or_complete()
-      end)
+      if neocodeium ~= nil then
+        cmp.event:on('menu_opened', function()
+          neocodeium.clear()
+        end)
+        cmp.event:on('menu_closed', function()
+          neocodeium.cycle_or_complete()
+        end)
+      end
 
       -- setup autopairs
       cmp.event:on('confirm_done', require'nvim-autopairs.completion.cmp'.on_confirm_done())
@@ -877,7 +883,6 @@ require'lazy'.setup({
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-calc',
       'saadparwaiz1/cmp_luasnip',
-      'monkoose/neocodeium',
     },
   },
 
