@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.09.06.
+-- last update: 2024.09.24.
 
 
 ------------------------------------------------
@@ -568,14 +568,53 @@ require'lazy'.setup({
 
   -- code generation & completion
   {
-    -- :Codeium Auth
-    'Exafunction/codeium.nvim', config = function()
-      require'codeium'.setup {
-        enable_chat = true,
+    'monkoose/neocodeium',  -- :NeoCodeium auth
+    event = 'VeryLazy',
+    config = function()
+      local neocodeium = require'neocodeium'
+      local cmp = require'cmp'
+      neocodeium.setup {
+        manual = true, -- for nvim-cmp
+        filter = function(bufnr)
+          if vim.tbl_contains({ -- NOTE: enable neocodeium only for these file types
+            'clojure',
+            'fennel',
+            'go',
+            'html',
+            'janet',
+            'lua',
+            'python',
+            'ruby',
+            'sh',
+          }, vim.api.nvim_get_option_value('filetype',  { buf = bufnr })) then
+            return true
+          end
+          return not cmp.visible()
+        end,
+        filetypes = {
+          ['.'] = false,
+          ['dap-repl'] = false,
+          gitcommit = false,
+          gitrebase = false,
+          help = false,
+          TelescopePrompt = false,
+        },
+        root_dir = { '.bzr', '.git', '.hg', '.svn', 'Cargo.toml', 'go.mod', 'package.json' },
       }
+
+      -- create an autocommand which closes nvim-cmp when completions are displayed
+      vim.api.nvim_create_autocmd('User', {
+        pattern = 'NeoCodeiumCompletionDisplayed',
+        callback = require'cmp'.abort,
+      })
+
+      -- alt-e/E: cycle or complete
+      vim.keymap.set('i', '<A-e>', neocodeium.cycle_or_complete)
+      vim.keymap.set('i', '<A-E>', function() neocodeium.cycle_or_complete(-1) end)
+      -- alt-f: accept
+      vim.keymap.set('i', '<A-f>', neocodeium.accept)
     end,
     dependencies = {
-      'nvim-lua/plenary.nvim',
       'hrsh7th/nvim-cmp',
     },
     cond = custom.features().codeium, -- .config/nvim/lua/custom/init.lua
@@ -752,9 +791,12 @@ require'lazy'.setup({
       local cmp = require'cmp'
       local luasnip = require'luasnip'
       local lspkind = require'lspkind'
+      local neocodeium = require'neocodeium'
 
       cmp.setup {
-        completion = { completeopt = 'menu,menuone,noselect' },
+        completion = {
+          completeopt = 'menu,menuone,noselect',
+        },
         snippet = {
           expand = function(args)
             luasnip.lsp_expand(args.body)
@@ -814,6 +856,14 @@ require'lazy'.setup({
           },
         },
       }
+
+      -- setup for neocodeium
+      cmp.event:on('menu_opened', function()
+        neocodeium.clear()
+      end)
+      cmp.event:on('menu_closed', function()
+        neocodeium.cycle_or_complete()
+      end)
 
       -- setup autopairs
       cmp.event:on('confirm_done', require'nvim-autopairs.completion.cmp'.on_confirm_done())
