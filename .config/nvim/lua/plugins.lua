@@ -410,6 +410,17 @@ require'lazy'.setup({
     build = 'make',
     cond = tools.system.not_termux(), -- do not load in termux
   },
+  {
+    'nvim-telescope/telescope-frecency.nvim',
+    config = function()
+      require'telescope'.load_extension 'frecency'
+    end,
+  },
+  {
+    -- :Telescope lazy
+    'nvim-telescope/telescope.nvim',
+    dependencies = 'tsakirist/telescope-lazy.nvim',
+  },
 
 
   -- git
@@ -1153,6 +1164,12 @@ require'lazy'.setup({
       require'dap-go'.setup()
     end,
     ft = { 'go' },
+  },
+  {
+    'catgoose/templ-goto-definition',
+    ft = { 'go' },
+    config = true,
+    dependenciies = 'nvim-treesitter/nvim-treesitter',
   },
 
 
