@@ -588,15 +588,17 @@ require'lazy'.setup({
         manual = true, -- for nvim-cmp
         filter = function(bufnr)
           if vim.tbl_contains({ -- NOTE: enable neocodeium only for these file types
-            'clojure',
+            'c', 'clojure', 'cmake', 'cpp', 'css',
+            'elixir',
             'fennel',
-            'go',
+            'go', 'gomod', 'gowork',
             'html',
-            'janet',
+            'java', 'javascript', 'janet',
             'lua',
             'python',
-            'ruby',
+            'ruby', 'rust',
             'sh',
+            'zig',
           }, vim.api.nvim_get_option_value('filetype',  { buf = bufnr })) then
             return true
           end
@@ -1022,7 +1024,7 @@ require'lazy'.setup({
     'mfussenegger/nvim-lint',
     config = function()
       local lint = require'lint'
-      lint.linters_by_ft = custom.linters()
+      lint.linters_by_ft = custom.linters() -- .config/nvim/lua/custom/linters_sample.lua
       vim.api.nvim_create_autocmd({ 'BufWritePost' }, { callback = function() lint.try_lint() end })
     end,
     cond = custom.features().linter, -- .config/nvim/lua/custom/init.lua
