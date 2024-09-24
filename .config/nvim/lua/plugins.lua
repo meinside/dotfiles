@@ -839,7 +839,6 @@ require'lazy'.setup({
         sources = {
           { name = 'buffer', keyword_length = 3 },
           { name = 'calc' },
-          { name = 'codeium', keyword_length = 4 },
           { name = 'conjure', keyword_length = 2 },
           { name = 'luasnip', keyword_length = 2 },
           { name = 'nvim_lsp', keyword_length = 3 },
@@ -852,7 +851,7 @@ require'lazy'.setup({
             maxwidth = 50,
             ellipsis_char = '...',
             show_labelDetails = true,
-            symbol_map = { Codeium = '' },
+            symbol_map = { },
           },
         },
       }
@@ -878,6 +877,7 @@ require'lazy'.setup({
       'hrsh7th/cmp-path',
       'hrsh7th/cmp-calc',
       'saadparwaiz1/cmp_luasnip',
+      'monkoose/neocodeium',
     },
   },
 
