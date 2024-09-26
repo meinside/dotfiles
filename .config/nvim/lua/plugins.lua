@@ -137,6 +137,10 @@ require'lazy'.setup({
   },
 
 
+  -- flash cursor location
+  { 'danilamihailov/beacon.nvim' },
+
+
   -- dim unused things (LSP)
   {
     'zbirenbaum/neodim',
