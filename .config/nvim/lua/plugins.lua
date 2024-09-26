@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.09.24.
+-- last update: 2024.09.26.
 
 
 ------------------------------------------------
@@ -1033,63 +1033,7 @@ require'lazy'.setup({
 
 
   -- coding assistants
-  {
-    -- NOTE: build things with `:AvanteBuild source=true`
-    --
-    -- `\aa`: :AvanteAsk, `\ar`: :AvanteRefresh, `\ae`: edit selected blocks
-    'yetone/avante.nvim',
-    --build = 'make BUILD_FROM_SOURCE=true',
-    opts = {
-      -- NOTE: environment variables `GEMINI_API_KEY` and `HF_TOKEN` is needed
-      provider = 'gemini',
-      gemini = {
-        endpoint = 'https://generativelanguage.googleapis.com/v1beta/models',
-        model = 'gemini-1.5-flash-latest',
-        timeout = 30000,
-        generationConfig = {
-          temperature = 0,
-          maxOutputTokens = 4096,
-        },
-        ['local'] = false,
-      },
-      behaviour = {
-        auto_suggestions = false,
-        auto_set_highlight_group = true,
-        auto_set_keymaps = true,
-        auto_apply_diff_after_generation = false,
-        support_paste_from_clipboard = false,
-      },
-    },
-    dependencies = {
-      'stevearc/dressing.nvim',
-      'nvim-lua/plenary.nvim',
-      'MunifTanjim/nui.nvim',
-      'nvim-tree/nvim-web-devicons',
-      {
-        'HakonHarnes/img-clip.nvim',  -- support for image pasting
-        event = 'VeryLazy',
-        opts = {
-          default = {
-            embed_image_as_base64 = false,
-            prompt_for_file_name = false,
-            drag_and_drop = {
-              insert_mode = true,
-            },
-          },
-        },
-      },
-      {
-        'MeanderingProgrammer/render-markdown.nvim',
-        opts = {
-          file_types = { 'markdown', 'Avante' },
-        },
-        ft = { 'markdown', 'Avante' },
-      },
-    },
-    lazy = false,
-    event = 'VeryLazy',
-    cond = custom.features().code_assistance, -- .config/nvim/lua/custom/init.lua
-  },
+  -- TODO: ...
 
 
   --------------------------------
