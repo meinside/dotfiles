@@ -1,14 +1,18 @@
 # ~/.config/starship.toml
 #
+# https://starship.rs/config/
+#
+# (with asdf)
 # $ asdf plugin add rust
 # $ asdf install rust
 # $ cargo install starship --locked
 # $ asdf reshim
 #
-# https://starship.rs/config/
+# (with brew)
+# $ brew install starship
 #
 # created on : 2024.01.29.
-# last update: 2024.02.02.
+# last update: 2024.09.27.
 
 # Get editor completions based on the config schema
 "$schema" = 'https://starship.rs/config-schema.json'
