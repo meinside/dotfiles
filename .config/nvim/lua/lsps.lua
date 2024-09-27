@@ -118,11 +118,6 @@ function M.setup(nvim_lsp, autoconfigurable_lsp_names)
     if client.server_capabilities.inlayHintProvider then
       vim.lsp.inlay_hint.enable(true)
     end
-
-    -- navic
-    if client.server_capabilities.documentSymbolProvider then
-      require'nvim-navic'.attach(client, bufnr)
-    end
   end
   local capabilities = vim.lsp.protocol.make_client_capabilities()
   capabilities = require'cmp_nvim_lsp'.default_capabilities(capabilities)

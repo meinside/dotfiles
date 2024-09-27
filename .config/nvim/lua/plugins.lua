@@ -101,7 +101,6 @@ require'lazy'.setup({
         integrations = {
           notify = true,
           mason = true,
-          navic = { enabled = true, custom_bg = 'NONE' },
           which_key = true,
         },
       }
@@ -211,6 +210,13 @@ require'lazy'.setup({
         lastplace_open_folds = true,
       }
     end,
+  },
+
+
+  -- breadcrumbs
+  {
+    'Bekaboo/dropbar.nvim',
+    dependencies = { 'nvim-telescope/telescope-fzf-native.nvim' }
   },
 
 
@@ -515,8 +521,6 @@ require'lazy'.setup({
   {
     'nvim-lualine/lualine.nvim',
     config = function()
-      local navic = require'nvim-navic'
-      navic.setup { highlight = true }
       require'lualine'.setup {
         options = {
           theme = 'catppuccin',
@@ -534,21 +538,12 @@ require'lazy'.setup({
           lualine_c = {
             'filename',
             require'lsp-progress'.progress,
-            {
-              function()
-                return navic.get_location()
-              end,
-              cond = function()
-                return navic.is_available()
-              end,
-            },
           },
         },
       }
     end,
     dependencies = { 'nvim-tree/nvim-web-devicons', 'linrongbin16/lsp-progress.nvim' },
   },
-  { 'SmiteshP/nvim-navic', dependencies = { 'neovim/nvim-lspconfig' } },
 
 
   -- tabline
