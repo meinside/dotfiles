@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2024.10.02.
+# last update: 2024.10.04.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -41,7 +41,7 @@ elixir 1.17.3
 # $ KERL_BUILD_DOCS=yes asdf install erlang
 #
 # https://github.com/erlang/otp/releases
-erlang 27.1
+erlang 27.1.1
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -131,7 +131,7 @@ meson 1.5.2
 #   $ nimble install nimlsp
 #
 # https://nim-lang.org/install.html
-nim 2.0.8
+nim 2.2.0
 
 # $ asdf plugin add ninja
 # $ asdf install ninja
