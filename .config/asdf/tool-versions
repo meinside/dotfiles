@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2024.10.04.
+# last update: 2024.10.08.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -84,7 +84,7 @@ janet 1.36.0
 # $ asdf install java
 #
 # https://github.com/halcyon/asdf-java/tree/master/data
-java openjdk-22.0.1
+java openjdk-22.0.2
 
 # $ asdf plugin add leiningen
 # $ asdf install leiningen
@@ -154,7 +154,7 @@ nodejs 22.9.0
 #   $ pip install --user python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.11.7 3.12.6
+python 3.11.7 3.13.0
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
