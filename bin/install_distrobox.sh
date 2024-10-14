@@ -6,7 +6,7 @@
 #
 # * create containers with custom home directories:
 #
-#	$ distrobox create -n ubuntu -i ubuntu:22.04 -H /path/to/distrobox/home \
+#	$ distrobox create -n ubuntu -i ubuntu:24.04 -H /path/to/distrobox/home \
 #		--additional-packages "git"
 #
 # * and enter the containers with those home directories:
@@ -18,7 +18,7 @@
 #	$ wget -O - "https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh" | bash
 #
 # created on : 2023.12.11.
-# last update: 2024.04.24.
+# last update: 2024.10.14.
 
 
 ################################
