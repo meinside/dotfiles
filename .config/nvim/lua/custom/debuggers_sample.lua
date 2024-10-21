@@ -9,9 +9,11 @@
 
 -- following DAP debuggers will be installed automatically
 -- in: ~/.config/nvim/lua/plugins.lua
+--
+-- if value is `true`, will be installed automatically.
 return {
   -- c, c++, rust, zig
-  codelldb = true,
+  codelldb = false,
 
   -- go
   delve = true,

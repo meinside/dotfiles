@@ -5,7 +5,7 @@
 -- (duplicate this file to: ~/.config/nvim/lua/custom/lsps.lua
 -- and edit it)
 --
--- last update: 2024.01.18.
+-- last update: 2024.10.21.
 
 -- following lsps will be configured automatically or manually
 -- in: ~/.config/nvim/lua/plugins.lua
@@ -53,7 +53,7 @@ return {
   --sqlls = true,
 
   -- rust
-  --rust_analyzer = false, -- will be configured automatically by `rust-tools`
+  --rust_analyzer = false, -- will be configured automatically by `rustaceanvim`
 
   -- zig
   --zls = true,
