@@ -1106,8 +1106,10 @@ require'lazy'.setup({
     'ray-x/go.nvim',
     config = function()
       require'go'.setup {
-        gofmt = 'gopls',
         lsp_inlay_hints = { enable = false },
+
+        trouble = true, -- NOTE: using folke/trouble.nvim
+        luasnip = true, -- NOTE: using L3MON4D3/LuaSnip
       }
 
       vim.api.nvim_create_autocmd('BufWritePre', {
