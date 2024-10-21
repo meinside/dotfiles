@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/lua/plugins.lua
 --
--- last update: 2024.08.21.
+-- last update: 2024.10.18.
 
 local M = {}
 
@@ -174,33 +174,7 @@ function M.setup(nvim_lsp, autoconfigurable_lsp_names)
   end
 
   -------- manual configurations here --------
-  -- (rust)
-  local mason_pkgs_dir = vim.env.HOME .. '/.local/share/nvim/mason/packages'
-  require'rust-tools'.setup {
-    tools = { hover_actions = { auto_focus = true } },
-    server = {
-      on_attach = on_attach_lsp,
-      capabilities = capabilities,
-      settings = {
-        ['rust-analyzer'] = {
-          checkOnSave = { enable = true, command = 'clippy' },
-          cargo = { allFeatures = true },
-        },
-      },
-    },
-    dap = {
-      -- install `codelldb` with :Mason
-      -- :RustDebuggables for debugging
-      adapter = require'rust-tools.dap'.get_codelldb_adapter(
-      mason_pkgs_dir .. '/codelldb/extension/adapter/codelldb',
-      mason_pkgs_dir .. '/codelldb/extension/lldb/lib/liblldb.so'
-      ),
-    },
-  }
-  vim.api.nvim_create_autocmd('BufWritePre', {
-    pattern = '*.rs',
-    callback = function() vim.lsp.buf.format { async = false } end,
-  })
+  -- TODO: add manual configurations here...
 
 end
 

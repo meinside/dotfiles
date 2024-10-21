@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.09.27.
+-- last update: 2024.10.21.
 
 
 ------------------------------------------------
@@ -800,9 +800,6 @@ require'lazy'.setup({
         ensure_installed = custom.installable_lsp_names(), -- NOTE: .config/nvim/lua/custom/lsps_sample.lua
         automatic_installation = false,
       }
-
-      -- NOTE: no way of installing things other than lsp servers for now
-      -- install other things with: :MasonInstall delve codelldb vale
     end,
   },
 
@@ -992,6 +989,7 @@ require'lazy'.setup({
   -- debug adapter
   {
     'mfussenegger/nvim-dap',
+    lazy = true,
     config = function()
       -- dap sign icons and colors
       vim.fn.sign_define('DapBreakpoint', {
@@ -1012,6 +1010,15 @@ require'lazy'.setup({
         linehl = '',
         numhl = '',
       })
+    end,
+  },
+  {
+    'jay-babu/mason-nvim-dap.nvim',
+    config = function()
+      require'mason-nvim-dap'.setup {
+        ensure_installed = custom.installable_debugger_names(), -- NOTE: .config/nvim/lua/custom/debuggers_sample.lua
+        automatic_installation = false,
+      }
     end,
   },
   {
@@ -1181,13 +1188,17 @@ require'lazy'.setup({
 
   -- rust
   {
-    'simrat39/rust-tools.nvim',
+    'mrcjkb/rustaceanvim',
     ft = { 'rust' },
-    dependencies = {
-      { 'neovim/nvim-lspconfig' },
-      { 'nvim-lua/plenary.nvim' },
-      { 'mfussenegger/nvim-dap' },
-    },
+    version = '^5',
+    lazy = false,
+    config = function()
+      -- :RustFmt on save
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        pattern = '*.rs',
+        callback = function() vim.lsp.buf.format { async = false } end,
+      })
+    end,
   },
 
 

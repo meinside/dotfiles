@@ -53,6 +53,32 @@ function Custom.autoconfigurable_lsp_names()
   return lsp_names(true)
 end
 
+-- Loads and returns debugger names if possible
+local function load_debuggers()
+  -- NOTE: will try loading: ~/.config/nvim/lua/custom/debuggers.lua
+  -- sample file here: ~/.config/nvim/lua/custom/debuggers_sample.lua
+  local ok, lsps = pcall(require, 'custom/debuggers')
+  if ok then
+    local names = {}
+    for name, b in pairs(lsps) do
+      if b then
+        table.insert(names, name)
+      end
+    end
+    return names
+  else
+    -- NOTE: default: ~/.config/nvim/lua/custom/debuggers_sample.lua
+    return require('custom/lsps_sample')
+  end
+end
+
+-- Returns debugger names that are installable
+function Custom.installable_debugger_names()
+  tools.fs.copy_if_needed(lua_filepath('custom/debuggers_sample.lua'), lua_filepath('custom/debuggers.lua'))
+
+  return load_debuggers()
+end
+
 -- Loads and returns linter names if possible
 local function load_linters()
   -- NOTE: will try loading: ~/.config/nvim/lua/custom/linters.lua
