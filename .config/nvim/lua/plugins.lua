@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.10.21.
+-- last update: 2024.10.22.
 
 
 ------------------------------------------------
@@ -99,8 +99,25 @@ require'lazy'.setup({
           end,
         },
         integrations = {
-          notify = true,
+          beacon = true,
+          cmp = true,
+          dap = true,
+          dap_ui = true,
+          dropbar = {
+            enabled = true,
+            color_mode = true,
+          },
+          gitsigns = true,
+          lsp_trouble = true,
           mason = true,
+          neogit = true,
+          notify = true,
+          rainbow_delimiters = true,
+          telescope = {
+            enabled = true,
+          },
+          treesitter = true,
+          treesitter_context = true,
           which_key = true,
         },
       }
@@ -126,7 +143,7 @@ require'lazy'.setup({
 
   -- notification
   {
-    'rcarriga/nvim-notify',
+    'rcarriga/nvim-notify', -- for viewing the history, :Telescope notify
     config = function()
       local notify = require'notify'
       notify.setup { background_colour = '#000000' }
@@ -149,9 +166,9 @@ require'lazy'.setup({
         alpha = 0.75,
         blend_color = '#000000',
         hide = {
+          signs = true,
           underline = true,
           virtual_text = true,
-          signs = true,
         },
         regex = {
           '[uU]nused',
@@ -185,30 +202,18 @@ require'lazy'.setup({
   {
     'levouh/tint.nvim',
     config = function()
-      require'tint'.setup {}
+      require'tint'.setup {
+        tint = -60, -- darker than default (-45)
+      }
     end
   },
 
 
-  -- last position
+  -- remember the last cursor position
   {
-    -- FIXME: repository archived (https://github.com/ethanholz/nvim-lastplace)
-    'ethanholz/nvim-lastplace',
+    'vladdoster/remember.nvim',
     config = function()
-      require'nvim-lastplace'.setup {
-        lastplace_ignore_buftype = {
-          'quickfix',
-          'nofile',
-          'help',
-        },
-        lastplace_ignore_filetype = {
-          'gitcommit',
-          'gitrebase',
-          'svn',
-          'hgcommit',
-        },
-        lastplace_open_folds = true,
-      }
+      require'remember'
     end,
   },
 
@@ -323,7 +328,7 @@ require'lazy'.setup({
       end)
 
       vim.g.rainbow_delimiters = { highlight = highlight } -- NOTE: integrate with rainbow-delimiters
-      require("ibl").setup { scope = { highlight = highlight } }
+      require'ibl'.setup { scope = { highlight = highlight } }
       hooks.register(hooks.type.SCOPE_HIGHLIGHT, hooks.builtin.scope_highlight_from_extmark)
     end,
   },
@@ -358,8 +363,7 @@ require'lazy'.setup({
 
   -- annotation
   {
-    -- :Neogen
-    'danymat/neogen',
+    'danymat/neogen', -- create annotations with :Neogen
     config = function()
       require'neogen'.setup { snippet_engine = 'luasnip' }
     end,
@@ -436,7 +440,7 @@ require'lazy'.setup({
     cond = tools.system.not_termux(), -- do not load in termux
   },
   {
-    'nvim-telescope/telescope-frecency.nvim',
+    'nvim-telescope/telescope-frecency.nvim', -- :Telescope frecency
     config = function()
       require'telescope'.load_extension 'frecency'
     end,
@@ -449,7 +453,6 @@ require'lazy'.setup({
 
 
   -- git
-  { 'junegunn/gv.vim' }, -- :GV, :GV!, :GV?
   {
     -- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
     'lewis6991/gitsigns.nvim',
@@ -497,7 +500,7 @@ require'lazy'.setup({
     dependencies = { { 'nvim-lua/plenary.nvim' } },
   },
   {
-    'NeogitOrg/neogit',
+    'NeogitOrg/neogit', -- :Neogit xxx
     dependencies = {
       'nvim-lua/plenary.nvim',
       'sindrets/diffview.nvim',
@@ -805,8 +808,14 @@ require'lazy'.setup({
 
 
   -- snippets
-  { 'L3MON4D3/LuaSnip', build = 'make install_jsregexp' },
-  { 'rafamadriz/friendly-snippets' },
+  {
+    'L3MON4D3/LuaSnip',
+    build = 'make install_jsregexp',
+    config = function()
+      require'luasnip.loaders.from_vscode'.lazy_load()
+    end,
+    dependencies = { 'rafamadriz/friendly-snippets' },
+  },
 
 
   -- autocompletion
@@ -980,9 +989,11 @@ require'lazy'.setup({
   {
     'kosayoda/nvim-lightbulb',
     config = function()
-      require'nvim-lightbulb'.setup { autocmd = { enabled = true } }
+      require'nvim-lightbulb'.setup {
+        autocmd = { enabled = true },
+        code_lenses = true,
+      }
     end,
-    dependencies = 'antoinemadec/FixCursorHold.nvim',
   },
 
 
