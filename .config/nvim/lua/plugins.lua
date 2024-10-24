@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.10.22.
+-- last update: 2024.10.24.
 
 
 ------------------------------------------------
@@ -630,7 +630,13 @@ require'lazy'.setup({
           help = false,
           TelescopePrompt = false,
         },
-        root_dir = { '.bzr', '.git', '.hg', '.svn', 'Cargo.toml', 'go.mod', 'package.json' },
+        root_dir = {
+          '.bzr', '.git', '.hg', '.svn',
+          'build.zig',
+          'Cargo.toml',
+          'Gemfile', 'go.mod',
+          'package.json', 'project.clj', 'project.janet',
+        },
       }
 
       -- create an autocommand which closes nvim-cmp when completions are displayed
