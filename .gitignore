@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2024.09.19.
+# last update: 2024.10.28.
 
 # unnecessary binary files
 *.a
@@ -195,6 +195,7 @@ xcuserdata
 .msf4/
 .netrc
 .ngrok2/
+.npm/
 .oci/
 .oh-my-zsh/
 .pcloud/
