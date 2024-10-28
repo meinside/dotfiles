@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.10.24.
+-- last update: 2024.10.28.
 
 
 ------------------------------------------------
@@ -507,6 +507,7 @@ require'lazy'.setup({
       'nvim-telescope/telescope.nvim',
     },
     config = true,
+    opts = { graph_style = 'kitty' }, -- NOTE: kitty or wezterm + flog symbols font is needed
   },
   -- gist (:Gist / :Gist -p / ...)
   { 'mattn/webapi-vim' },
