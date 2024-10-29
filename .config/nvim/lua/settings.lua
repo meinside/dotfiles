@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2024.08.28.
+-- last update: 2024.10.29.
 
 
 -- use new loader with byte-compilation cache
@@ -29,6 +29,7 @@ opt.cursorline = true -- highlight current line
 opt.expandtab = true
 opt.encoding = 'utf-8'
 opt.guicursor = 'n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20'
+vim.api.nvim_create_autocmd({ 'VimLeave' }, { callback = function() opt.guicursor='a:ver1-blinkon1' end })  -- FIXME: for fixing cursor in tmux
 opt.fileencodings = { 'ucs-bom', 'utf-8', 'korea' }
 opt.foldmethod = 'expr'
 opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
