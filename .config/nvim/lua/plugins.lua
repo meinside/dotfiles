@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.10.28.
+-- last update: 2024.10.29.
 
 
 ------------------------------------------------
@@ -179,6 +179,7 @@ require'lazy'.setup({
         disable = {},
       }
     end,
+    ft = { 'c', 'clojure', 'cpp', 'elixir',  'fennel', 'go', 'janet', 'lua', 'nim', 'ruby', 'rust', 'sh', 'zig' },
   },
 
 
