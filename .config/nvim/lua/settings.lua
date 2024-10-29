@@ -29,7 +29,8 @@ opt.cursorline = true -- highlight current line
 opt.expandtab = true
 opt.encoding = 'utf-8'
 opt.guicursor = 'n-v-c-sm:block,i-ci-ve:ver25,r-cr-o:hor20'
-vim.api.nvim_create_autocmd({ 'VimLeave' }, { callback = function() opt.guicursor='a:ver1-blinkon1' end })  -- FIXME: for fixing cursor in tmux
+-- FIXME: not working in mosh (https://github.com/mobile-shell/mosh/issues/352)
+vim.api.nvim_create_autocmd({ 'VimLeave' }, { callback = function() opt.guicursor='a:ver1-blinkon1' end })  -- NOTE: for fixing cursor in tmux
 opt.fileencodings = { 'ucs-bom', 'utf-8', 'korea' }
 opt.foldmethod = 'expr'
 opt.foldexpr = 'v:lua.vim.treesitter.foldexpr()'
