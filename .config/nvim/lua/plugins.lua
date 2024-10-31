@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.10.29.
+-- last update: 2024.10.31.
 
 
 ------------------------------------------------
@@ -66,6 +66,7 @@ require'lazy'.setup({
     priority = 1000,
     config = function()
       require'catppuccin'.setup {
+        transparent_background = true,
         flavour = 'mocha',
         term_colors = true,
         styles = {
