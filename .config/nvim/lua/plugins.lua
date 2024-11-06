@@ -128,7 +128,21 @@ require'lazy'.setup({
 
 
   -- color column
-  { 'Bekaboo/deadcolumn.nvim' },
+  {
+    'm4xshen/smartcolumn.nvim',
+    opts = {
+      custom_colorcolumns = { },
+      disabled_filetypes = {
+        -- common
+        'checkhealth', 'gitcommit', 'help', 'lspinfo', 'zsh',
+        -- file types
+        'text', 'markdown',
+        -- plugins
+        'lazy', 'mason', 'NvimTree', 'TelescopePrompt', 'Trouble',
+      },
+      scope = 'line',
+    },
+  },
 
 
   -- file browser
@@ -533,11 +547,11 @@ require'lazy'.setup({
         options = {
           theme = 'catppuccin',
           disabled_filetypes = {
-            'help',
-            'packer',
-            'NvimTree',
-            'TelescopePrompt',
             'gitcommit',
+            'help',
+            'NvimTree',
+            'packer',
+            'TelescopePrompt',
           },
           globalstatus = true,
         },
