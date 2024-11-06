@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.10.31.
+-- last update: 2024.11.06.
 
 
 ------------------------------------------------
@@ -125,6 +125,10 @@ require'lazy'.setup({
       vim.cmd.colorscheme 'catppuccin'
     end,
   },
+
+
+  -- color column
+  { 'Bekaboo/deadcolumn.nvim' },
 
 
   -- file browser
@@ -356,9 +360,7 @@ require'lazy'.setup({
   {
     'chentoast/marks.nvim',
     config = function()
-      require'marks'.setup {
-        force_write_shada = true, -- FIXME: marks are not removed across sessions without this configuration
-      }
+      require'marks'.setup { force_write_shada = true }
     end,
   },
 
@@ -726,7 +728,7 @@ require'lazy'.setup({
           highlight_whole_line = false,
         },
       }
-      -- FIXME: https://github.com/folke/lazy.nvim/issues/620
+      -- NOTE: https://github.com/folke/lazy.nvim/issues/620
       vim.diagnostic.config({ virtual_lines = false }, require'lazy.core.config'.ns)
       -- for toggling lsp_lines: `\tl`
       vim.keymap.set('', '<leader>tl', function()

@@ -4,7 +4,7 @@
 --
 -- NOTE: sourced from: `.config/nvim/init.lua`
 --
--- last update: 2024.10.29.
+-- last update: 2024.11.06.
 
 
 -- use new loader with byte-compilation cache
@@ -23,7 +23,7 @@ opt.backspace = { 'indent', 'eol', 'start' } -- allow backspacing over everythin
 opt.breakindent = true
 opt.cindent = true
 opt.clipboard = opt.clipboard + 'unnamedplus' -- copy/paste to/from system clipboard
-opt.colorcolumn = ''
+opt.colorcolumn = '80'
 opt.conceallevel = 2 -- render hyperlinks in markdown
 opt.cursorline = true -- highlight current line
 opt.expandtab = true
@@ -57,18 +57,6 @@ opt.termguicolors = true
 opt.updatetime = 1000 -- for shortening delay of CursorHold
 opt.wildmenu = true
 vim.o.signcolumn = 'number'
-
--- for toggling color column: `\tc`
-vim.keymap.set('n', '<leader>tc', function()
-  local value = vim.api.nvim_get_option_value('colorcolumn', {})
-  if value == '' then
-    vim.api.nvim_set_option_value('colorcolumn', '79', {})
-    vim.notify 'Color column enabled'
-  else
-    vim.api.nvim_set_option_value('colorcolumn', '', {})
-    vim.notify 'Color column disabled'
-  end
-end, { remap = false, silent = true, desc = 'color column: Toggle' })
 
 -- for toggling mouse: `\mm`
 local mouse_enabled = false
