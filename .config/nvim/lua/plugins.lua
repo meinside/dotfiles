@@ -4,7 +4,7 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/init.lua
 --
--- last update: 2024.11.06.
+-- last update: 2024.11.07.
 
 
 ------------------------------------------------
@@ -289,35 +289,24 @@ require'lazy'.setup({
   { 'terrastruct/d2-vim', ft = { 'd2' } },
 
 
-  -- fold and preview (zc for closing, zo for opening, za for toggling / zM for closing all, zR for opening all)
+  -- fold
   {
-    -- FIXME: https://github.com/anuvyklack/pretty-fold.nvim/issues/38
-    --'anuvyklack/pretty-fold.nvim',
-    'bbjornstad/pretty-fold.nvim',
+    -- zM for closing all, zR for opening all
+    -- zc for closing, zo for opening, za for toggling
+    'kevinhwang91/nvim-ufo',
+    dependencies = { 'kevinhwang91/promise-async' },
+  },
+  {
+    -- <Left> for folding, <Right> for unfolding
+    'chrisgrieser/nvim-origami',
+    event = 'VeryLazy',
+    opts = {
+      setupFoldKeymaps = false,
+    },
     config = function()
-      require'pretty-fold'.setup {
-        keep_indentation = false,
-        fill_char = '━',
-        sections = {
-          left = {
-            '━ ',
-            function() return string.rep('*', vim.v.foldlevel) end,
-            ' ━┫',
-            'content',
-            '┣',
-          },
-          right = {
-            '┫ ',
-            'number_of_folded_lines',
-            ': ',
-            'percentage',
-            ' ┣━━',
-          },
-        }
-      }
-      require'fold-preview'.setup {}
+      vim.keymap.set('n', '<Left>', function() require'origami'.h() end)
+      vim.keymap.set('n', '<Right>', function() require'origami'.l() end)
     end,
-    dependencies = { 'anuvyklack/fold-preview.nvim', 'anuvyklack/keymap-amend.nvim' },
   },
 
 
