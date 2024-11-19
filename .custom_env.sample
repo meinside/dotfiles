@@ -1,6 +1,6 @@
 # .custom_env.sample
 #
-# last update: 2024.10.07.
+# last update: 2024.11.19.
 
 # for macOS only
 if [[ $OSTYPE == darwin* ]]; then
@@ -16,7 +16,8 @@ if [[ $OSTYPE == darwin* ]]; then
     # for kitty
     alias icat="kitty +kitten icat"
 elif [ -z "$TERMUX_VERSION" ]; then # linux
-    # empty
+    # $ logtoday some-systemd-service.service
+    alias logtoday="journalctl --no-pager --since 'today' -u"
 else # termux
     # read guides in bin/termux/README.md
     alias pdr="proot-distro login ubuntu"
