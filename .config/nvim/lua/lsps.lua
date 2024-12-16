@@ -4,15 +4,20 @@
 --
 -- NOTE: this will be sourced from: ~/.config/nvim/lua/plugins.lua
 --
--- last update: 2024.10.18.
+-- last update: 2024.12.16.
 
 local M = {}
 
 -- setup LSP settings
 function M.setup(nvim_lsp, autoconfigurable_lsp_names)
   -- Register LSP handlers
-  vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
-  vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' })
+  if vim.lsp.buf.hover ~= nil and vim.lsp.buf.signature_help ~= nil then -- FIXME: remove this when 0.11 becomes stable
+    vim.lsp.handlers['textDocument/hover'] = vim.lsp.buf.hover
+    vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.buf.signature_help
+  else
+    vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(vim.lsp.handlers.hover, { border = 'rounded' })
+    vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(vim.lsp.handlers.signature_help, { border = 'rounded' })
+  end
 
   local on_attach_lsp = function(client, bufnr) -- default setup for language servers
     -- Enable completion triggered by <c-x><c-o>
