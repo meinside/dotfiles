@@ -31,6 +31,12 @@ map("n", "<leader>qf", builtin.quickfix, {
 	desc = "telescope: Quickfix",
 })
 
+-- toggle inlay hint
+map('n', '<leader>li', '<cmd>lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())<CR>', {
+	desc = 'lsp: Toggle inlay hint',
+})
+
+
 -- NOTE: override unwanted default keymaps
 vim.keymap.del("n", "<S-h>")
 vim.keymap.del("n", "<S-l>")
