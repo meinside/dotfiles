@@ -1,17 +1,6 @@
--- My .config/nvim/init.lua file for neovim 0.10+
+-- .config/nvim/init.lua
 --
--- created on : 2021.05.27.
--- last update: 2024.10.29.
+-- last update: 2024.12.24.
 
-
-------------------------------------------------
--- common neovim settings
---
-require'settings' -- ~/.config/nvim/lua/settings.lua
-
-
-------------------------------------------------
--- neovim plugins
---
-require'plugins' -- ~/.config/nvim/lua/plugins.lua
-
+-- bootstrap lazy.nvim, LazyVim and your plugins
+require("config.lazy")
