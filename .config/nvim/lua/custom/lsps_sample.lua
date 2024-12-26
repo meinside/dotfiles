@@ -2,13 +2,15 @@
 --
 -- sample LSP list
 --
--- (duplicate this file to: ~/.config/nvim/lua/custom/lsps.lua
+-- (duplicate this file to:
+--
+-- ~/.config/nvim/lua/custom/lsps.lua
+--
 -- and edit it)
 --
--- last update: 2024.10.21.
+-- last update: 2024.12.26.
 
--- following lsps will be configured automatically or manually
--- in: ~/.config/nvim/lua/plugins.lua
+-- following lsps will be configured automatically or manually.
 --
 -- if value is `true`, will be configured automatically with `lspconfig`.
 -- otherwise (`false`), should be configured manually.
@@ -58,4 +60,3 @@ return {
   -- zig
   --zls = true,
 }
-

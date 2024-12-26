@@ -2,13 +2,15 @@
 --
 -- sample debugger list
 --
--- (duplicate this file to: ~/.config/nvim/lua/custom/debuggers.lua
+-- (duplicate this file to:
+--
+-- ~/.config/nvim/lua/custom/debuggers.lua
+--
 -- and edit it)
 --
--- last update: 2024.10.21.
+-- last update: 2024.12.26.
 
--- following DAP debuggers will be installed automatically
--- in: ~/.config/nvim/lua/plugins.lua
+-- following DAP debuggers will be installed automatically.
 --
 -- if value is `true`, will be installed automatically.
 return {
@@ -18,4 +20,3 @@ return {
   -- go
   delve = true,
 }
-
