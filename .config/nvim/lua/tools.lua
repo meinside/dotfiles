@@ -2,7 +2,7 @@
 --
 -- My neovim utility functions
 --
--- last update: 2024.12.24.
+-- last update: 2025.01.02.
 
 -- Warn: notify silently
 local function warn(msg)
@@ -116,6 +116,22 @@ local function not_termux()
 	return termuxv == nil or termuxv == ""
 end
 
+-- Checks if mouse is enabled
+local function is_mouse_enabled()
+	return vim.o.mouse == "nvi"
+end
+
+-- Toggles mouse
+local function toggle_mouse()
+	if is_mouse_enabled() then
+		vim.opt.mouse = ""
+		vim.notify("Mouse disabled")
+	else
+		vim.opt.mouse = "nvi"
+		vim.notify("Mouse enabled")
+	end
+end
+
 local Tools = {
 	-- functions for managing file system
 	fs = {
@@ -134,6 +150,12 @@ local Tools = {
 	-- functions for manaing shell/commands
 	shell = {
 		execute = shell_execute,
+	},
+
+	-- functions for managing ui
+	ui = {
+		is_mouse_enabled = is_mouse_enabled,
+		toggle_mouse = toggle_mouse,
 	},
 }
 

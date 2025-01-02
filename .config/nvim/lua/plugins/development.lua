@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/development.lua
 --
--- last update: 2024.12.24.
+-- last update: 2025.01.02.
 
 ------------------------------------------------
 -- imports
@@ -230,8 +230,15 @@ return {
 		config = function()
 			local dap, dapui = require("dap"), require("dapui")
 			dapui.setup({})
+
 			-- auto toggle debug UIs
-			dap.listeners.after.event_initialized["dapui_config"] = dapui.open
+			dap.listeners.after.event_initialized["dapui_config"] = function()
+				local tools = require("tools") -- ~/.config/nvim/lua/tools.lua
+				if not tools.ui.is_mouse_enabled() then
+					tools.ui.toggle_mouse()
+				end
+				dapui.open()
+			end
 			dap.listeners.before.event_terminated["dapui_config"] = dapui.close
 			dap.listeners.before.event_exited["dapui_config"] = dapui.close
 		end,

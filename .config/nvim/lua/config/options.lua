@@ -1,6 +1,8 @@
 -- .config/nvim/lua/config/options.lua
 --
 -- default: https://www.lazyvim.org/configuration/general#options
+--
+-- last update: 2025.01.02.
 
 vim.g.mapleader = "\\"
 
@@ -93,19 +95,6 @@ else
 	opt.foldmethod = "indent"
 	opt.foldtext = "v:lua.require'lazyvim.util'.ui.foldtext()"
 end
-
--- for toggling mouse: `\mm`
-local mouse_enabled = false
-vim.keymap.set("n", "<leader>mm", function()
-	if mouse_enabled then
-		opt.mouse = ""
-		vim.notify("Mouse disabled")
-	else
-		opt.mouse = "nvi"
-		vim.notify("Mouse enabled")
-	end
-	mouse_enabled = not mouse_enabled
-end, { remap = false, silent = true, desc = "mouse: Toggle" })
 
 -- diagnostics configuration
 vim.diagnostic.config({

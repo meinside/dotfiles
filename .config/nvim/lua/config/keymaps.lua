@@ -2,7 +2,7 @@
 --
 -- https://www.lazyvim.org/keymaps
 --
--- last update: 2024.12.24.
+-- last update: 2025.01.02.
 
 -- DO NOT USE `LazyVim.safe_keymap_set` IN YOUR OWN CONFIG!!
 -- use `vim.keymap.set` instead
@@ -31,11 +31,15 @@ map("n", "<leader>qf", builtin.quickfix, {
 	desc = "telescope: Quickfix",
 })
 
--- toggle inlay hint
-map('n', '<leader>li', '<cmd>lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())<CR>', {
-	desc = 'lsp: Toggle inlay hint',
+-- for toggling inlay hint: `\li`
+map("n", "<leader>li", "<cmd>lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())<CR>", {
+	desc = "lsp: Toggle inlay hint",
 })
 
+-- for toggling mouse: `\mm`
+map("n", "<leader>mm", function()
+	require("tools").ui.toggle_mouse() -- ~/.config/nvim/lua/tools.lua
+end, { desc = "mouse: Toggle" })
 
 -- NOTE: override unwanted default keymaps
 vim.keymap.del("n", "<S-h>")
