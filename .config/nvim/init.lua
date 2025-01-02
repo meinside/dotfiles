@@ -1,13 +1,13 @@
 -- .config/nvim/init.lua
 --
--- last update: 2024.12.26.
+-- last update: 2025.01.02.
 
 -- bootstrap lazy.nvim, LazyVim and your plugins
 --
 -- ~/.config/nvim/lua/config/lazy.lua
 require("config.lazy")
 
-----------------
+--------------------------------
 -- config files
 --
 -- (autocmds)
@@ -19,7 +19,7 @@ require("config.lazy")
 -- (options)
 -- ~/.config/nvim/lua/config/options.lua
 
-----------------
+--------------------------------
 -- customization files
 --
 -- ~/.config/nvim/lua/custom/init.lua
@@ -36,7 +36,7 @@ require("config.lazy")
 -- (for lsps)
 -- ~/.config/nvim/lua/custom/lsps_sample.lua
 
-----------------
+--------------------------------
 -- plugin files
 --
 -- (for development)
@@ -48,7 +48,7 @@ require("config.lazy")
 -- (for plugins)
 -- ~/.config/nvim/lua/plugins/plugins.lua
 
-----------------
+--------------------------------
 -- my tools
 --
 -- ~/.config/nvim/lua/tools.lua

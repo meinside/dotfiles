@@ -35,31 +35,30 @@ return {
 			local neocodeium = require("neocodeium")
 			local blink = require("blink.cmp")
 			neocodeium.setup({
-				--manual = true, -- for nvim-cmp
 				filter = function(bufnr)
-					if
-						vim.tbl_contains({ -- NOTE: enable neocodeium only for these file types
-							"c",
-							"clojure",
-							"cmake",
-							"cpp",
-							"css",
-							"elixir",
-							"fennel",
-							"go",
-							"gomod",
-							"gowork",
-							"html",
-							"java",
-							"javascript",
-							"janet",
-							"lua",
-							"python",
-							"ruby",
-							"rust",
-							"sh",
-							"zig",
-						}, vim.api.nvim_get_option_value("filetype", { buf = bufnr }))
+					-- NOTE: enable neocodeium only for these file types
+					if vim.tbl_contains({
+								"c",
+								"clojure",
+								"cmake",
+								"cpp",
+								"css",
+								"elixir",
+								"fennel",
+								"go",
+								"gomod",
+								"gowork",
+								"html",
+								"java",
+								"javascript",
+								"janet",
+								"lua",
+								"python",
+								"ruby",
+								"rust",
+								"sh",
+								"zig",
+							}, vim.api.nvim_get_option_value("filetype", { buf = bufnr }))
 					then
 						return true
 					end
@@ -120,8 +119,10 @@ return {
 		cmd = "Silicon",
 		config = function()
 			require("silicon").setup({
-				font = "JetBrainsMono Nerd Font Mono=20;Nanum Gothic;Noto Color Emoji", -- NOTE: $ silicon --list-fonts
-				theme = "Visual Studio Dark+", -- NOTE: $ silicon --list-themes
+				-- NOTE: $ silicon --list-fonts
+				font = "JetBrainsMono Nerd Font Mono=20;Nanum Gothic;Noto Color Emoji",
+				-- NOTE: $ silicon --list-themes
+				theme = "Visual Studio Dark+",
 				background = "#000000",
 				no_round_corner = true,
 				no_window_controls = true,
@@ -164,8 +165,6 @@ return {
 	},
 
 	-- code actions
-	--
-	-- `\ca` for showing code action previews
 	{
 		"aznhe21/actions-preview.nvim",
 		config = function()
@@ -177,6 +176,8 @@ return {
 				},
 				telescope = require("telescope.themes").get_dropdown({ winblend = 10 }),
 			})
+
+			-- `\ca` for showing code action previews
 			vim.keymap.set({ "v", "n" }, "ca", ap.code_actions)
 		end,
 	},
@@ -272,7 +273,10 @@ return {
 	--
 
 	-- bash
-	{ "bash-lsp/bash-language-server", ft = { "sh" } },
+	{
+		"bash-lsp/bash-language-server",
+		ft = { "sh" },
+	},
 
 	-- clojure
 	-- NOTE: enable 'lang.clojure' in :LazyExtras
@@ -295,18 +299,35 @@ return {
 	-- cse(, cse), cseb : surround an element with parenthesis
 	-- cse[, cse] : surround an element with brackets
 	-- cse{, cse} : surround an element with braces
-	{ "guns/vim-sexp", ft = lisps },
-	{ "tpope/vim-sexp-mappings-for-regular-people", ft = lisps },
-	{ "gpanders/nvim-parinfer", ft = lisps },
-	{ "PaterJason/cmp-conjure", ft = lisps },
+	{
+		"guns/vim-sexp",
+		ft = lisps,
+	},
+	{
+		"tpope/vim-sexp-mappings-for-regular-people",
+		ft = lisps,
+	},
+	{
+		"gpanders/nvim-parinfer",
+		ft = lisps,
+	},
 	-- (fennel)
-	{ "bakpakin/fennel.vim", ft = { "fennel" } },
+	{
+		"bakpakin/fennel.vim",
+		ft = { "fennel" },
+	},
 	-- (janet)
 	-- run janet LSP with: $ janet -e '(import spork/netrepl) (netrepl/server)'
-	{ "janet-lang/janet.vim", ft = { "janet" } },
+	{
+		"janet-lang/janet.vim",
+		ft = { "janet" },
+	},
 
 	-- nim
-	{ "alaviss/nim.nvim", ft = { "nim" } },
+	{
+		"alaviss/nim.nvim",
+		ft = { "nim" },
+	},
 
 	-- python
 	-- NOTE: enable 'lang.python' in :LazyExtras

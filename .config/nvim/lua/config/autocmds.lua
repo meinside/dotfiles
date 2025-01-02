@@ -1,6 +1,6 @@
 -- .config/nvim/lua/config/autocmds.lua
 --
--- last update: 2024.12.24.
+-- last update: 2025.01.02.
 
 -- Autocmds are automatically loaded on the VeryLazy event
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
@@ -28,7 +28,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	end,
 })
 
--- keep windows euqally sized
+-- keep windows equally sized
 vim.api.nvim_create_augroup("Random", { clear = true })
 vim.api.nvim_create_autocmd("VimResized", {
 	group = "Random",

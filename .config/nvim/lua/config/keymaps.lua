@@ -41,6 +41,6 @@ map("n", "<leader>mm", function()
 	require("tools").ui.toggle_mouse() -- ~/.config/nvim/lua/tools.lua
 end, { desc = "mouse: Toggle" })
 
--- NOTE: override unwanted default keymaps
+-- NOTE: override/delete unwanted default keymaps
 vim.keymap.del("n", "<S-h>")
 vim.keymap.del("n", "<S-l>")
