@@ -78,10 +78,17 @@ map({ "v", "n" }, "ca", require("actions-preview").code_actions, { desc = "actio
 -- (codeium)
 --
 -- alt-e: cycle through suggestions
-local neocodeium = require("neocodeium")
-map("i", "<A-e>", neocodeium.cycle_or_complete)
+map("i", "<A-e>", function()
+	if require("custom").features().codeium then
+		require("neocodeium").cycle_or_complete()
+	end
+end, { desc = "Neocodeium: Cycle through suggestions" })
 -- alt-f: accept
-map("i", "<A-f>", neocodeium.accept)
+map("i", "<A-f>", function()
+	if require("custom").features().codeium then
+		require("neocodeium").accept()
+	end
+end, { desc = "Neocodeium: Accept suggestion" })
 
 -- NOTE: override/delete unwanted default keymaps
 vim.keymap.del("n", "<S-h>")
