@@ -1,0 +1,24 @@
+# .config/ghostty/config
+#
+# created on : 2025.01.02.
+# last update: 2025.01.02.
+
+# NOTE: `ghostty +list-fonts` for listing fonts
+#
+# JetBrainsMono NF Mono (3.2.1)
+font-family = "JetBrainsMono Nerd Font Mono"
+font-size = 12.0
+
+# NOTE: `ghostty +list-themes` for listing themes
+theme = "Tomorrow Night Bright"
+foreground = ffffff
+background = 000000
+background-opacity = 0.80
+
+macos-titlebar-style = "tabs"
+window-width = 160
+window-height = 50
+
+quit-after-last-window-closed = true
+macos-auto-secure-input = true
+
