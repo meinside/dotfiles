@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/plugins.lua
 --
--- last update: 2024.12.24.
+-- last update: 2025.01.02.
 
 ------------------------------------------------
 -- imports
@@ -17,7 +17,7 @@ return {
 	},
 
 	-- startup time (:StartupTime)
-	"dstein64/vim-startuptime",
+	-- NOTE: enable 'util.startuptime' in :LazyExtras
 
 	-- colorschemes
 	{
@@ -227,31 +227,11 @@ return {
 		version = false,
 		config = function()
 			require("mini.files").setup({})
-
-			-- for toggling minifiles: \mf
-			vim.keymap.set("n", "<leader>mf", function()
-				MiniFiles.open()
-			end, { remap = false, silent = true, desc = "mini-files: Open" })
 		end,
 	},
 
 	-- flash cursor location
 	{ "danilamihailov/beacon.nvim" },
-
-	-- show keymaps
-	{
-		"folke/which-key.nvim",
-		event = "VeryLazy",
-		keys = {
-			{
-				"<leader>?",
-				function()
-					require("which-key").show({ global = false })
-				end,
-				desc = "Buffer Local Keymaps (which-key)",
-			},
-		},
-	},
 
 	-- dim inactive window
 	{
@@ -294,12 +274,6 @@ return {
 		config = function()
 			local codewindow = require("codewindow")
 			codewindow.setup({})
-
-			-- for toggling minimap: `\tm`
-			vim.keymap.set("n", "<leader>tm", function()
-				codewindow.toggle_minimap()
-				vim.notify("Toggled minimap.")
-			end, { remap = false, silent = true, desc = "minimap: Toggle" })
 		end,
 	},
 
@@ -311,6 +285,7 @@ return {
 		"iamcco/markdown-preview.nvim",
 		build = "cd app && npm install",
 		ft = { "markdown" },
+		cond = tools.system.is_macos(), -- NOTE: only on macOS
 	},
 
 	-- d2
@@ -318,26 +293,17 @@ return {
 
 	-- fold
 	{
-		-- zM for closing all, zR for opening all
-		-- zc for closing, zo for opening, za for toggling
+		-- `zM` for closing all, `zR` for opening all
+		-- `zc` for closing, `zo` for opening, `za` for toggling
 		"kevinhwang91/nvim-ufo",
 		dependencies = { "kevinhwang91/promise-async" },
 	},
 	{
-		-- <Left> for folding, <Right> for unfolding
 		"chrisgrieser/nvim-origami",
 		event = "VeryLazy",
 		opts = {
 			setupFoldKeymaps = false,
 		},
-		config = function()
-			vim.keymap.set("n", "<Left>", function()
-				require("origami").h()
-			end)
-			vim.keymap.set("n", "<Right>", function()
-				require("origami").l()
-			end)
-		end,
 	},
 
 	-- formatting

@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/lsps.lua
 --
--- last update: 2024.12.24.
+-- last update: 2025.01.02.
 
 local custom = require("custom") -- ~/.config/nvim/lua/custom/init.lua
 
@@ -23,8 +23,7 @@ return {
 	{
 		"https://git.sr.ht/~whynothugo/lsp_lines.nvim",
 		config = function()
-			local ll = require("lsp_lines")
-			ll.setup()
+			require("lsp_lines").setup()
 			vim.diagnostic.config({
 				virtual_text = false,
 				virtual_lines = {
@@ -34,11 +33,6 @@ return {
 			})
 			-- NOTE: https://github.com/folke/lazy.nvim/issues/620
 			vim.diagnostic.config({ virtual_lines = false }, require("lazy.core.config").ns)
-			-- for toggling lsp_lines: `\tl`
-			vim.keymap.set("", "<leader>tl", function()
-				ll.toggle()
-				vim.notify("Toggled LSP Lines.")
-			end, { desc = "lsp_lines: Toggle" })
 		end,
 	},
 	{

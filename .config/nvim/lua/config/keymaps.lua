@@ -8,7 +8,7 @@
 -- use `vim.keymap.set` instead
 local map = LazyVim.safe_keymap_set
 
--- tab navigation
+-- tab navigations
 map("n", "<C-h>", ":tabprevious<CR>", {
 	desc = "Previous tab",
 }) -- <ctrl-h> for previous tab
@@ -16,7 +16,26 @@ map("n", "<C-l>", ":tabnext<CR>", {
 	desc = "Next tab",
 }) -- <ctrl-l> for next tab
 
--- telescope (https://github.com/nvim-telescope/telescope.nvim#pickers)
+-- for toggling mouse: `\mm`
+map("n", "<leader>mm", function()
+	require("tools").ui.toggle_mouse() -- ~/.config/nvim/lua/tools.lua
+end, { desc = "mouse: Toggle" })
+
+-- <Left> for folding, <Right> for unfolding
+local origami = require("origami")
+map("n", "<Left>", origami.h)
+map("n", "<Right>", origami.l)
+
+-- (minifiles)
+--
+-- for toggling minifiles: `\mf`
+map("n", "<leader>mf", function()
+	MiniFiles.open()
+end, { desc = "mini-files: Open" })
+
+-- (telescope)
+--
+-- https://github.com/nvim-telescope/telescope.nvim#pickers
 local builtin = require("telescope.builtin")
 map("n", "<leader>tt", builtin.builtin, {
 	desc = "telescope: List builtin pickers",
@@ -31,15 +50,38 @@ map("n", "<leader>qf", builtin.quickfix, {
 	desc = "telescope: Quickfix",
 })
 
+-- (lsp)
+--
 -- for toggling inlay hint: `\li`
 map("n", "<leader>li", "<cmd>lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())<CR>", {
 	desc = "lsp: Toggle inlay hint",
 })
+-- for toggling lsp_lines: `\tl`
+map("", "<leader>tl", function()
+	require("lsp_lines").toggle()
+	vim.notify("Toggled LSP Lines.")
+end, { desc = "lsp_lines: Toggle" })
 
--- for toggling mouse: `\mm`
-map("n", "<leader>mm", function()
-	require("tools").ui.toggle_mouse() -- ~/.config/nvim/lua/tools.lua
-end, { desc = "mouse: Toggle" })
+-- (minimap)
+--
+-- for toggling minimap: `\tm`
+map("n", "<leader>tm", function()
+	require("codewindow").toggle_minimap()
+	vim.notify("Toggled minimap.")
+end, { desc = "minimap: Toggle" })
+
+-- (code actions)
+--
+-- `\ca` for showing code action previews
+map({ "v", "n" }, "ca", require("actions-preview").code_actions, { desc = "actions-preview: Code actions" })
+
+-- (codeium)
+--
+-- alt-e: cycle through suggestions
+local neocodeium = require("neocodeium")
+map("i", "<A-e>", neocodeium.cycle_or_complete)
+-- alt-f: accept
+map("i", "<A-f>", neocodeium.accept)
 
 -- NOTE: override/delete unwanted default keymaps
 vim.keymap.del("n", "<S-h>")

@@ -28,13 +28,17 @@ return {
 	--
 
 	-- code generation & completion
+	--
+	-- (github copilot)
+	-- NOTE: enable 'ai.copilot' in :LazyExtras
+	--
+	-- (codeium)
 	{
 		"monkoose/neocodeium", -- :NeoCodeium auth
 		event = "VeryLazy",
 		config = function()
-			local neocodeium = require("neocodeium")
 			local blink = require("blink.cmp")
-			neocodeium.setup({
+			require("neocodeium").setup({
 				filter = function(bufnr)
 					-- NOTE: enable neocodeium only for these file types
 					if vim.tbl_contains({
@@ -93,14 +97,6 @@ return {
 				pattern = "NeoCodeiumCompletionDisplayed",
 				callback = blink.cancel,
 			})
-
-			-- alt-e/E: cycle or complete
-			vim.keymap.set("i", "<A-e>", neocodeium.cycle_or_complete)
-			vim.keymap.set("i", "<A-E>", function()
-				neocodeium.cycle_or_complete(-1)
-			end)
-			-- alt-f: accept
-			vim.keymap.set("i", "<A-f>", neocodeium.accept)
 		end,
 		cond = custom.features().codeium, -- ~/.config/nvim/lua/custom/init.lua
 	},
@@ -134,8 +130,9 @@ return {
 			})
 		end,
 		cond = function()
+			-- NOTE: $ cargo install silicon
 			return vim.fn.executable("silicon") == 1
-		end, -- $ cargo install silicon
+		end,
 	},
 
 	-- symbol outlines
@@ -176,9 +173,6 @@ return {
 				},
 				telescope = require("telescope.themes").get_dropdown({ winblend = 10 }),
 			})
-
-			-- `\ca` for showing code action previews
-			vim.keymap.set({ "v", "n" }, "ca", ap.code_actions)
 		end,
 	},
 	{
