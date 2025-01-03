@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/lsps.lua
 --
--- last update: 2025.01.02.
+-- last update: 2025.01.03.
 
 local custom = require("custom") -- ~/.config/nvim/lua/custom/init.lua
 
@@ -87,20 +87,6 @@ return {
 			vim.api.nvim_set_hl(0, "CmpItemKindUnit", {
 				bg = "NONE",
 				fg = "#D4D4D4",
-			})
-		end,
-	},
-	{
-		"williamboman/mason.nvim",
-		config = function()
-			require("mason").setup({
-				ui = {
-					icons = {
-						package_installed = "✓",
-						package_pending = "➜",
-						package_uninstalled = "✗",
-					},
-				},
 			})
 		end,
 	},

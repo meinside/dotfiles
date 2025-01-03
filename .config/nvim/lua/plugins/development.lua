@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/development.lua
 --
--- last update: 2025.01.02.
+-- last update: 2025.01.03.
 
 ------------------------------------------------
 -- imports
@@ -141,13 +141,6 @@ return {
 		lazy = true,
 		cmd = { "Outline", "OutlineOpen" },
 		keys = { { "<leader>to", "<cmd>Outline<CR>", desc = "symbols outline: Toggle" } },
-		opts = {},
-	},
-
-	-- todo comments
-	{
-		"folke/todo-comments.nvim",
-		dependencies = { "nvim-lua/plenary.nvim" },
 		opts = {},
 	},
 
