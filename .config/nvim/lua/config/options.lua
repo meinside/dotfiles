@@ -2,25 +2,35 @@
 --
 -- default: https://www.lazyvim.org/configuration/general#options
 --
--- last update: 2025.01.02.
+-- last update: 2025.01.06.
 
 vim.g.mapleader = "\\"
 
 local opt = vim.opt
 opt.autoindent = true
-opt.autowrite = true                         -- Enable auto write
+opt.autowrite = true -- Enable auto write
 opt.backspace = { "indent", "eol", "start" } -- allow backspacing over everything in insert mode
 opt.breakindent = true
 opt.cindent = true
--- only set clipboard if not in ssh, to make sure the OSC 52 integration works automatically. Requires Neovim >= 0.10.0
-opt.clipboard = vim.env.SSH_TTY and "" or opt.clipboard + "unnamedplus" -- Sync with system clipboard
+opt.clipboard = opt.clipboard + "unnamedplus"
+vim.g.clipboard = {
+	name = "OSC 52",
+	copy = {
+		["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+		["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+	},
+	paste = {
+		["+"] = require("vim.ui.clipboard.osc52").paste("+"),
+		["*"] = require("vim.ui.clipboard.osc52").paste("*"),
+	},
+}
 opt.colorcolumn = "80"
 opt.completeopt = "menu,menuone,noselect"
-opt.conceallevel = 2  -- Hide * markup for bold and italic, but not markers with substitutions
-opt.confirm = true    -- Confirm to save changes before exiting modified buffer
+opt.conceallevel = 2 -- Hide * markup for bold and italic, but not markers with substitutions
+opt.confirm = true -- Confirm to save changes before exiting modified buffer
 opt.cursorline = true -- Enable highlighting of the current line
 opt.encoding = "utf-8"
-opt.expandtab = true  -- Use spaces instead of tabs
+opt.expandtab = true -- Use spaces instead of tabs
 opt.fileencodings = { "ucs-bom", "utf-8", "korea" }
 opt.fillchars = {
 	foldopen = "",
@@ -48,13 +58,13 @@ opt.jumpoptions = "view"
 opt.laststatus = 3 -- global statusline
 opt.linebreak = true
 opt.list = true
-opt.mouse = ""            -- disable mouse mode
-opt.number = true         -- Print line number
-opt.pumblend = 10         -- Popup blend
-opt.pumheight = 10        -- Maximum number of entries in a popup
+opt.mouse = "" -- disable mouse mode
+opt.number = true -- Print line number
+opt.pumblend = 10 -- Popup blend
+opt.pumheight = 10 -- Maximum number of entries in a popup
 opt.relativenumber = true -- Relative line numbers
 opt.ruler = true
-opt.scrolloff = 5         -- Lines of context
+opt.scrolloff = 5 -- Lines of context
 opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
 opt.shiftround = true
 opt.shiftwidth = 2
@@ -77,11 +87,11 @@ opt.termguicolors = true
 opt.timeoutlen = vim.g.vscode and 1000 or 300 -- Lower than default (1000) to quickly trigger which-key
 opt.undofile = true
 opt.undolevels = 10000
-opt.updatetime = 200               -- Save swap file and trigger CursorHold
-opt.virtualedit = "block"          -- Allow cursor to move where there is no text in visual block mode
+opt.updatetime = 200 -- Save swap file and trigger CursorHold
+opt.virtualedit = "block" -- Allow cursor to move where there is no text in visual block mode
 opt.wildmode = "longest:full,full" -- Command-line completion mode
-opt.winminwidth = 5                -- Minimum window width
-opt.wrap = false                   -- Disable line wrap
+opt.winminwidth = 5 -- Minimum window width
+opt.wrap = false -- Disable line wrap
 
 if vim.fn.has("nvim-0.10") == 1 then
 	opt.smoothscroll = true
