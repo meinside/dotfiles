@@ -4,7 +4,7 @@ by Sungjin Han (<meinside@meinside.dev>)
 
 ## Description
 
-My dotfiles, configs, and bash scripts for:
+My dotfiles, configs, and shell scripts for:
 
 - macOS (**Sonoma**) + [kitty](https://sw.kovidgoyal.net/kitty/)
 - Raspberry Pi (**Raspberry Pi OS Bullseye**)
