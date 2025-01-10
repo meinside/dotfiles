@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/development.lua
 --
--- last update: 2025.01.03.
+-- last update: 2025.01.10.
 
 ------------------------------------------------
 -- imports
@@ -41,28 +41,29 @@ return {
 			require("neocodeium").setup({
 				filter = function(bufnr)
 					-- NOTE: enable neocodeium only for these file types
-					if vim.tbl_contains({
-								"c",
-								"clojure",
-								"cmake",
-								"cpp",
-								"css",
-								"elixir",
-								"fennel",
-								"go",
-								"gomod",
-								"gowork",
-								"html",
-								"java",
-								"javascript",
-								"janet",
-								"lua",
-								"python",
-								"ruby",
-								"rust",
-								"sh",
-								"zig",
-							}, vim.api.nvim_get_option_value("filetype", { buf = bufnr }))
+					if
+						vim.tbl_contains({
+							"c",
+							"clojure",
+							"cmake",
+							"cpp",
+							"css",
+							"elixir",
+							"fennel",
+							"go",
+							"gomod",
+							"gowork",
+							"html",
+							"java",
+							"javascript",
+							"janet",
+							"lua",
+							"python",
+							"ruby",
+							"rust",
+							"sh",
+							"zig",
+						}, vim.api.nvim_get_option_value("filetype", { buf = bufnr }))
 					then
 						return true
 					end
@@ -99,13 +100,6 @@ return {
 			})
 		end,
 		cond = custom.features().codeium, -- ~/.config/nvim/lua/custom/init.lua
-	},
-
-	-- auto pair/close
-	{
-		"windwp/nvim-autopairs",
-		event = "InsertEnter",
-		config = true,
 	},
 
 	-- screenshot codeblocks
