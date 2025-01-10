@@ -236,15 +236,11 @@ return {
 	-- lint
 	{
 		"mfussenegger/nvim-lint",
-		config = function()
-			local lint = require("lint")
-			lint.linters_by_ft = custom.linters() -- .config/nvim/lua/custom/linters_sample.lua
-			vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-				callback = function()
-					lint.try_lint()
-				end,
-			})
-		end,
+		event = "LazyFile",
+		opts = {
+			events = { "BufWritePost", "BufReadPost", "InsertLeave" },
+			linters_by_ft = custom.linters(), -- .config/nvim/lua/custom/linters_sample.lua
+		},
 		cond = custom.features().linter, -- .config/nvim/lua/custom/init.lua
 	},
 
