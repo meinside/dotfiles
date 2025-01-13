@@ -5,16 +5,14 @@
 # Install asdf
 #
 # created on : 2022.04.14.
-# last update: 2024.08.20.
-
+# last update: 2025.01.14.
 
 ################################
 #
 # frequently updated values
 
 # https://github.com/asdf-vm/asdf/releases
-VERSION="0.14.1"
-
+VERSION="0.15.0"
 
 ################################
 #
@@ -56,7 +54,7 @@ function warn {
 ################################
 
 function checkout {
-	rm -rf ~/.asdf && \
+	rm -rf ~/.asdf &&
 		git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v$VERSION
 }
 
@@ -73,9 +71,8 @@ function install_linux {
 }
 
 case "$OSTYPE" in
-	darwin*) install_macos ;;
-	linux-android) install_termux ;;
-	linux*) install_linux ;;
-	*) error "* not supported yet: $OSTYPE" ;;
+darwin*) install_macos ;;
+linux-android) install_termux ;;
+linux*) install_linux ;;
+*) error "* not supported yet: $OSTYPE" ;;
 esac
-
