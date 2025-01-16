@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/plugins.lua
 --
--- last update: 2025.01.03.
+-- last update: 2025.01.16.
 
 ------------------------------------------------
 -- imports
@@ -226,14 +226,6 @@ return {
 			require("tint").setup({
 				tint = -60, -- darker than default (-45)
 			})
-		end,
-	},
-
-	-- remember the last cursor position
-	{
-		"vladdoster/remember.nvim",
-		config = function()
-			require("remember")
 		end,
 	},
 
@@ -483,15 +475,6 @@ return {
 	-- gist (:Gist / :Gist -p / ...)
 	{ "mattn/webapi-vim" },
 	{ "mattn/gist-vim" },
-
-	-- statusline
-	{
-		"linrongbin16/lsp-progress.nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		config = function()
-			require("lsp-progress").setup()
-		end,
-	},
 
 	-- tabline
 	{

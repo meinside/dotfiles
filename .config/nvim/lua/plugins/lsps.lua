@@ -1,13 +1,10 @@
 -- .config/nvim/lua/plugins/lsps.lua
 --
--- last update: 2025.01.03.
+-- last update: 2025.01.16.
 
 local custom = require("custom") -- ~/.config/nvim/lua/custom/init.lua
 
 return {
-	{
-		"neovim/nvim-lspconfig",
-	},
 	{
 		"ray-x/lsp_signature.nvim",
 		event = "VeryLazy",
