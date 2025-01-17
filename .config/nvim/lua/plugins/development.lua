@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/development.lua
 --
--- last update: 2025.01.10.
+-- last update: 2025.01.17.
 
 ------------------------------------------------
 -- imports
@@ -159,15 +159,6 @@ return {
 					ignore_whitespace = true,
 				},
 				telescope = require("telescope.themes").get_dropdown({ winblend = 10 }),
-			})
-		end,
-	},
-	{
-		"kosayoda/nvim-lightbulb",
-		config = function()
-			require("nvim-lightbulb").setup({
-				autocmd = { enabled = true },
-				code_lenses = true,
 			})
 		end,
 	},

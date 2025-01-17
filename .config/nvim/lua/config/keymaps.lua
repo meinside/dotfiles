@@ -2,7 +2,7 @@
 --
 -- https://www.lazyvim.org/keymaps
 --
--- last update: 2025.01.02.
+-- last update: 2025.01.17.
 
 -- DO NOT USE `LazyVim.safe_keymap_set` IN YOUR OWN CONFIG!!
 -- use `vim.keymap.set` instead
@@ -30,6 +30,7 @@ map("n", "<Right>", origami.l)
 --
 -- for toggling minifiles: `\mf`
 map("n", "<leader>mf", function()
+	require("mini.files").setup({})
 	MiniFiles.open()
 end, { desc = "mini-files: Open" })
 

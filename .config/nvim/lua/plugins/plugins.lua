@@ -207,15 +207,6 @@ return {
 		},
 	},
 
-	-- file browser
-	{
-		"echasnovski/mini.files",
-		version = false,
-		config = function()
-			require("mini.files").setup({})
-		end,
-	},
-
 	-- flash cursor location
 	{ "danilamihailov/beacon.nvim" },
 
