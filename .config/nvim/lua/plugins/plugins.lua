@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/plugins.lua
 --
--- last update: 2025.01.16.
+-- last update: 2025.01.21.
 
 ------------------------------------------------
 -- imports
@@ -433,18 +433,23 @@ return {
 						gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
 					end, { desc = "gitsigns: Reset hunk" })
 					map("n", "<leader>hS", gitsigns.stage_buffer, { desc = "gitsigns: Stage buffer" })
-					map("n", "<leader>hu", gitsigns.undo_stage_hunk, { desc = "gitsigns: Undo stage hunk" })
 					map("n", "<leader>hR", gitsigns.reset_buffer, { desc = "gitsigns: Reset buffer" })
 					map("n", "<leader>hp", gitsigns.preview_hunk, { desc = "gitsigns: Preview hunk" })
+					map("n", "<leader>hi", gitsigns.preview_hunk_inline, { desc = "gitsigns: Preview hunk inline" })
 					map("n", "<leader>hb", function()
 						gitsigns.blame_line({ full = true })
 					end, { desc = "gitsigns: Blame line" })
-					map("n", "<leader>tb", gitsigns.toggle_current_line_blame, { desc = "gitsigns: Toggle blame" })
 					map("n", "<leader>hd", gitsigns.diffthis, { desc = "gitsigns: Diff this" })
 					map("n", "<leader>hD", function()
 						gitsigns.diffthis("~")
 					end, { desc = "gitsigns: Diff this ~" })
+					map("n", "<leader>hQ", function()
+						gitsigns.setqflist("all")
+					end, { desc = "gitsigns: Set quickfix list all" })
+					map("n", "<leader>hq", gitsigns.setqflist, { desc = "gitsigns: Set quickfix list" })
+					map("n", "<leader>tb", gitsigns.toggle_current_line_blame, { desc = "gitsigns: Toggle blame" })
 					map("n", "<leader>td", gitsigns.toggle_deleted, { desc = "gitsigns: Toggle deleted" })
+					map("n", "<leader>tw", gitsigns.toggle_word_diff, { desc = "gitsigns: Toggle word diff" })
 
 					-- Text object
 					map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", { desc = "gitsigns: Select hunk" })
