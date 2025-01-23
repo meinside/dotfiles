@@ -249,14 +249,6 @@ return {
 	-- relative/absolute linenumber toggling
 	{ "cpea2506/relative-toggle.nvim" },
 
-	-- markdown preview
-	{
-		"iamcco/markdown-preview.nvim",
-		build = "cd app && npm install",
-		ft = { "markdown" },
-		cond = tools.system.is_macos(), -- NOTE: only on macOS
-	},
-
 	-- d2
 	{ "terrastruct/d2-vim", ft = { "d2" } },
 
