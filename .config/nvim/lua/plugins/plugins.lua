@@ -108,8 +108,8 @@ return {
 	{
 		--'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = function()
 		"nvim-treesitter/nvim-treesitter",
-		config = function()
-			require("nvim-treesitter.configs").setup({
+		opts = function(_, opts)
+			return {
 				ensure_installed = {
 					"bash",
 					"c",
@@ -169,7 +169,7 @@ return {
 					query = "rainbow-parens",
 					strategy = require("rainbow-delimiters").strategy.global,
 				},
-			})
+			}
 		end,
 	},
 	-- :TSContextToggle for toggling
@@ -319,10 +319,9 @@ return {
 	{
 		"HiPhish/rainbow-delimiters.nvim",
 		config = function()
-			local rd = require("rainbow-delimiters")
 			require("rainbow-delimiters.setup").setup({
 				strategy = {
-					[""] = rd.strategy["global"],
+					[""] = require("rainbow-delimiters").strategy["global"],
 				},
 				query = {
 					[""] = "rainbow-delimiters",

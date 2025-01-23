@@ -152,8 +152,7 @@ return {
 	{
 		"aznhe21/actions-preview.nvim",
 		config = function()
-			local ap = require("actions-preview")
-			ap.setup({
+			require("actions-preview").setup({
 				diff = {
 					algorithm = "patience",
 					ignore_whitespace = true,
