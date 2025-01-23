@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/development.lua
 --
--- last update: 2025.01.17.
+-- last update: 2025.01.23.
 
 ------------------------------------------------
 -- imports
@@ -139,14 +139,7 @@ return {
 	},
 
 	-- snippets
-	{
-		"L3MON4D3/LuaSnip",
-		build = "make install_jsregexp",
-		config = function()
-			require("luasnip.loaders.from_vscode").lazy_load()
-		end,
-		dependencies = { "rafamadriz/friendly-snippets" },
-	},
+	-- NOTE: enable 'coding.luasnip' in :LazyExtras
 
 	-- code actions
 	{

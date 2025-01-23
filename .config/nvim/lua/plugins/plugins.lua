@@ -339,13 +339,7 @@ return {
 	},
 
 	-- annotation
-	{
-		"danymat/neogen", -- create annotations with :Neogen
-		config = function()
-			require("neogen").setup({ snippet_engine = "luasnip" })
-		end,
-		dependencies = "nvim-treesitter/nvim-treesitter",
-	},
+	-- NOTE: enable 'coding.neogen' in :LazyExtras
 
 	-- finder / locator
 	{ "mtth/locate.vim" }, -- :L [query], :lclose, gl

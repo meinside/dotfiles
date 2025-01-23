@@ -2,9 +2,11 @@
 --
 -- default: https://www.lazyvim.org/configuration/general#options
 --
--- last update: 2025.01.06.
+-- last update: 2025.01.23.
 
 vim.g.mapleader = "\\"
+
+vim.g.lazyvim_picker = "telescope"
 
 local opt = vim.opt
 opt.autoindent = true
