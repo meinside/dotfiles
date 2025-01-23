@@ -6,7 +6,7 @@
 
 vim.g.mapleader = "\\"
 
-vim.g.lazyvim_picker = "telescope"
+--vim.g.lazyvim_picker = "telescope"
 
 local opt = vim.opt
 opt.autoindent = true
