@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/plugins.lua
 --
--- last update: 2025.01.23.
+-- last update: 2025.01.24.
 
 ------------------------------------------------
 -- imports
@@ -379,6 +379,8 @@ return {
 
 	-- git
 	{
+		-- NOTE: doesn't work with 'editor.mini-diff' in :LazyExtras
+		--
 		-- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
 		"lewis6991/gitsigns.nvim",
 		opts = {
