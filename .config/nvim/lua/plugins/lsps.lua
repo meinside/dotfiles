@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/lsps.lua
 --
--- last update: 2025.01.16.
+-- last update: 2025.01.24.
 
 local custom = require("custom") -- ~/.config/nvim/lua/custom/init.lua
 
@@ -15,21 +15,6 @@ return {
 		},
 		config = function(_, opts)
 			require("lsp_signature").setup(opts)
-		end,
-	},
-	{
-		"https://git.sr.ht/~whynothugo/lsp_lines.nvim",
-		config = function()
-			require("lsp_lines").setup()
-			vim.diagnostic.config({
-				virtual_text = false,
-				virtual_lines = {
-					only_current_line = true,
-					highlight_whole_line = false,
-				},
-			})
-			-- NOTE: https://github.com/folke/lazy.nvim/issues/620
-			vim.diagnostic.config({ virtual_lines = false }, require("lazy.core.config").ns)
 		end,
 	},
 	{
