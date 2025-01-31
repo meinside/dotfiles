@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.01.22.
+# last update: 2025.01.31.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -27,7 +27,7 @@ babashka 1.12.196
 #   $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
 #
 # https://clojure.org/releases/tools#_releases
-clojure 1.12.0.1495
+clojure 1.12.0.1501
 
 # $ asdf plugin add elixir
 # $ asdf install elixir
@@ -35,13 +35,13 @@ clojure 1.12.0.1495
 # * NOTE: `erlang` needs to be installed.
 #
 # https://github.com/elixir-lang/elixir/releases
-elixir 1.18.1
+elixir 1.18.2
 
 # $ asdf plugin add erlang
 # $ KERL_BUILD_DOCS=yes asdf install erlang
 #
 # https://github.com/erlang/otp/releases
-erlang 27.2
+erlang 27.2.1
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -122,7 +122,7 @@ lua 5.4.7
 # $ asdf install meson
 #
 # https://github.com/mesonbuild/meson/releases
-meson 1.6.1
+meson 1.7.0
 
 # $ asdf plugin add nim
 # $ asdf install nim
@@ -183,7 +183,7 @@ ruby 3.4.1
 #   $ cargo xtask install --server
 #
 # https://github.com/rust-lang/rust/releases
-rust 1.84.0
+rust 1.84.1
 
 # $ asdf plugin add zig
 # $ asdf install zig
