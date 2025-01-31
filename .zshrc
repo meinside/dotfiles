@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2024.04.12.
+# updated on 2025.01.31.
 #
 # $ chsh -s `which zsh`
 #
@@ -53,9 +53,10 @@ if [[ -z "$XDG_CACHE_HOME" ]]; then
 fi
 
 # asdf-vm
-export ASDF_DIR=$HOME/.asdf
+export ASDF_DATA_DIR=$HOME/.asdf
 export ASDF_CONFIG_FILE=$XDG_CONFIG_HOME/asdf/asdfrc
 export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME=$XDG_CONFIG_HOME/asdf/tool-versions
+export PATH="$ASDF_DATA_DIR/shims:$ASDF_DATA_DIR/bin:$PATH"
 
 # oh-my-zsh plugins
 plugins=(asdf colored-man-pages command-not-found copypath dotenv encode64 git git-flow history history-substring-search macos mosh nmap rust sudo urltools zsh-syntax-highlighting)

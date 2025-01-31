@@ -53,13 +53,8 @@ function warn {
 #
 ################################
 
-function checkout {
-	rm -rf ~/.asdf &&
-		git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v$VERSION
-}
-
 function install_macos {
-	checkout
+	brew install asdf
 }
 
 function install_termux {
@@ -67,7 +62,14 @@ function install_termux {
 }
 
 function install_linux {
-	checkout
+	case "$(uname -m)" in
+	aarch64) ARCH="arm64" ;;
+	*) ARCH="amd64" ;;
+	esac
+	rm -rf ~/.asdf &&
+		mkdir -p ~/.asdf/bin/ &&
+		wget -qO- "https://github.com/asdf-vm/asdf/releases/download/v$VERSION/asdf-v$VERSION-linux-$ARCH.tar.gz" | gunzip | tar xf - -C ~/.asdf/bin/ &&
+		info "> installed $(~/.asdf/bin/asdf --version)"
 }
 
 case "$OSTYPE" in

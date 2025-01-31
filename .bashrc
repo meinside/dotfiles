@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2024.01.31.
+# updated on 2025.01.31.
 #
 # $ chsh -s `which zsh`
 #
@@ -47,16 +47,16 @@ shopt -s nullglob
 . "$HOME/.bash/colors"
 . "$HOME/.bash/git-prompt"
 case ${TERM} in
-    xterm*|rxvt*|Eterm|aterm|kterm|gnome*|screen*)
-        if [ "$(whoami)" = "root" ]; then
-            PS1="\[$bldred\]\u@\h\[$txtrst\]:\[$bldblu\]\w\[$txtgrn\]\$git_branch\[$txtylw\]\$git_dirty\[$txtrst\]\$ "
-        else
-            PS1="\[$bldgrn\]\u@\h\[$txtrst\]:\[$bldblu\]\w\[$txtgrn\]\$git_branch\[$txtylw\]\$git_dirty\[$txtrst\]\$ "
-        fi
-        ;;
-    *)
-        PS1='\u@\h \w \$ '
-        ;;
+xterm* | rxvt* | Eterm | aterm | kterm | gnome* | screen*)
+    if [ "$(whoami)" = "root" ]; then
+        PS1="\[$bldred\]\u@\h\[$txtrst\]:\[$bldblu\]\w\[$txtgrn\]\$git_branch\[$txtylw\]\$git_dirty\[$txtrst\]\$ "
+    else
+        PS1="\[$bldgrn\]\u@\h\[$txtrst\]:\[$bldblu\]\w\[$txtgrn\]\$git_branch\[$txtylw\]\$git_dirty\[$txtrst\]\$ "
+    fi
+    ;;
+*)
+    PS1='\u@\h \w \$ '
+    ;;
 esac
 
 # ls colors
@@ -67,13 +67,11 @@ export INPUTRC="$XDG_CONFIG_HOME/readline/inputrc"
 
 # OS-specific settings
 case "$OSTYPE" in
-    linux*)
-        ;;
-    darwin*)
-        #export CC="gcc-11"
-        ;;
-    *)
-        ;;
+linux*) ;;
+darwin*)
+    #export CC="gcc-11"
+    ;;
+*) ;;
 esac
 
 # bash completion
@@ -116,7 +114,8 @@ if [ -d "$HOME/.cargo/bin" ]; then
     export PATH="$HOME/.cargo/bin:$PATH"
 else
     for r in "$HOME/.asdf/installs/rust"/*; do
-        . "${r}/env"; break
+        . "${r}/env"
+        break
     done
 fi
 
@@ -125,9 +124,10 @@ export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 # asdf settings
 if [ -d "$HOME/.asdf" ]; then
-    export ASDF_DIR=$HOME/.asdf
+    export ASDF_DATA_DIR=$HOME/.asdf
     export ASDF_CONFIG_FILE=$XDG_CONFIG_HOME/asdf/asdfrc
     export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME=$XDG_CONFIG_HOME/asdf/tool-versions
+    export PATH="$ASDF_DATA_DIR/shims:$ASDF_DATA_DIR/bin:$PATH"
 
     . "$HOME/.asdf/asdf.sh"
     . "$HOME/.asdf/completions/asdf.bash"
@@ -135,7 +135,6 @@ fi
 
 #
 ######################
-
 
 # aliases
 . "$XDG_CONFIG_HOME/aliases"
@@ -149,9 +148,8 @@ fi
 #
 # $ cargo install starship --locked
 if [ -z $CONTAINER_ID ]; then
-    if command -v starship &> /dev/null; then
+    if command -v starship &>/dev/null; then
         # config file in $HOME/.config/starship.toml
         eval "$(starship init zsh)"
     fi
 fi
-
