@@ -5,14 +5,14 @@
 # Install asdf
 #
 # created on : 2022.04.14.
-# last update: 2025.01.14.
+# last update: 2025.01.31.
 
 ################################
 #
 # frequently updated values
 
 # https://github.com/asdf-vm/asdf/releases
-VERSION="0.15.0"
+VERSION="0.16.0"
 
 ################################
 #
