@@ -5,14 +5,14 @@
 # Install asdf
 #
 # created on : 2022.04.14.
-# last update: 2025.01.31.
+# last update: 2025.02.05.
 
 ################################
 #
 # frequently updated values
 
 # https://github.com/asdf-vm/asdf/releases
-VERSION="0.16.0"
+VERSION="0.16.1"
 
 ################################
 #
@@ -66,7 +66,7 @@ function install_linux {
 	aarch64) ARCH="arm64" ;;
 	*) ARCH="amd64" ;;
 	esac
-	rm -rf ~/.asdf &&
+	rm -rf ~/.asdf/bin/asdf &&
 		mkdir -p ~/.asdf/bin/ &&
 		wget -qO- "https://github.com/asdf-vm/asdf/releases/download/v$VERSION/asdf-v$VERSION-linux-$ARCH.tar.gz" | gunzip | tar xf - -C ~/.asdf/bin/ &&
 		info "> installed $(~/.asdf/bin/asdf --version)"

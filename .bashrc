@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2025.01.31.
+# updated on 2025.02.05.
 #
 # $ chsh -s `which zsh`
 #
@@ -126,7 +126,8 @@ export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 if [ -d "$HOME/.asdf" ]; then
     export ASDF_DATA_DIR=$HOME/.asdf
     export ASDF_CONFIG_FILE=$XDG_CONFIG_HOME/asdf/asdfrc
-    export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME=$XDG_CONFIG_HOME/asdf/tool-versions
+    #export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME=$XDG_CONFIG_HOME/asdf/tool-versions # FIXME
+    export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME=.config/asdf/tool-versions
     export PATH="$ASDF_DATA_DIR/shims:$ASDF_DATA_DIR/bin:$PATH"
 
     . "$HOME/.asdf/asdf.sh"
