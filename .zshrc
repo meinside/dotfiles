@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2025.02.05.
+# updated on 2025.02.06.
 #
 # $ chsh -s `which zsh`
 #
@@ -50,6 +50,11 @@ if [[ -z "$XDG_STATE_HOME" ]]; then
 fi
 if [[ -z "$XDG_CACHE_HOME" ]]; then
     export XDG_CACHE_HOME="$HOME/.cache"
+fi
+
+# homebrew on macOS
+if [ -d /opt/homebrew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
 # asdf-vm
@@ -118,11 +123,6 @@ bindkey "^N" history-beginning-search-forward
 
 # zsh options
 unsetopt nomatch
-
-# brew
-if [ -d /opt/homebrew ]; then
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-fi
 
 
 ######################

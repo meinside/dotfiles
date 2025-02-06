@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2025.02.05.
+# updated on 2025.02.06.
 #
 # $ chsh -s `which zsh`
 #
@@ -79,7 +79,7 @@ if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
 
-# brew
+# homebrew on macOS
 if [ -d /opt/homebrew ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
@@ -130,8 +130,7 @@ if [ -d "$HOME/.asdf" ]; then
     export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME=.config/asdf/tool-versions
     export PATH="$ASDF_DATA_DIR/shims:$ASDF_DATA_DIR/bin:$PATH"
 
-    . "$HOME/.asdf/asdf.sh"
-    . "$HOME/.asdf/completions/asdf.bash"
+    . <(asdf completion bash)
 fi
 
 #

@@ -1,6 +1,6 @@
 # .config/aliases for common aliases
 #
-# last update: 2023.08.01.
+# last update: 2025.02.06.
 
 alias ls="ls --color=auto"
 alias grep="grep --color=auto"
@@ -24,7 +24,7 @@ if [[ $TERM == "xterm-kitty" ]]; then
 fi
 
 # suffix aliases (for zsh only)
-if [[ $SHELL == *"/bin/zsh"* ]]; then
+if [[ ! -z "$ZSH_VERSION" ]]; then
 	alias -s {cljc,cljs,c,cc,cpp,css,go,html,json,lisp,md,rs,zig}=vi
 fi
 
