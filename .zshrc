@@ -100,7 +100,6 @@ plugins=(
 
 # oh-my-zsh plugins' configurations
 zstyle ':omz:plugins:alias-finder' autoload yes
-zstyle ':omz:plugins:alias-finder' longer yes
 
 # Search for oh-my-zsh.sh
 if ! [ -f $ZSH/oh-my-zsh.sh ]; then
