@@ -65,7 +65,42 @@ export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME=.config/asdf/tool-versions
 export PATH="$ASDF_DATA_DIR/shims:$ASDF_DATA_DIR/bin:$PATH"
 
 # oh-my-zsh plugins
-plugins=(asdf colored-man-pages command-not-found copypath dotenv encode64 git git-flow history history-substring-search macos mosh nmap rust sudo urltools zsh-syntax-highlighting)
+plugins=(
+    aliases # `als`
+    alias-finder
+    asdf
+    aws
+    brew
+    colored-man-pages
+    colorize
+    command-not-found
+    dotenv
+    encode64 # `encode64`, `encodefile64`, `decode64`
+    extract # `extract`
+    git
+    git-flow
+    golang
+    history
+    history-substring-search
+    macos
+    mosh
+    nmap
+    npm
+    qrcode # `qrcode`, `qrsvg`
+    rust
+    ssh
+    sudo
+    systemd
+    tailscale
+    tmux
+    ubuntu
+    urltools # `urlencode`, `urldecode`
+    zsh-syntax-highlighting
+)
+
+# oh-my-zsh plugins' configurations
+zstyle ':omz:plugins:alias-finder' autoload yes
+zstyle ':omz:plugins:alias-finder' longer yes
 
 # Search for oh-my-zsh.sh
 if ! [ -f $ZSH/oh-my-zsh.sh ]; then
@@ -154,7 +189,7 @@ export SOLARGRAPH_CACHE="$XDG_CACHE_HOME/solargraph"
 if [ -d "$HOME/.cargo/bin" ]; then
     export PATH="$HOME/.cargo/bin:$PATH"
 else
-    for r in $HOME/.asdf/installs/rust/*; do
+    for r in $ASDF_DATA_DIR/installs/rust/*; do
         if [ -d $r ]; then
             . "${r}/env"; break
         fi
@@ -165,11 +200,9 @@ fi
 export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 # for asdf settings (handled by omz's 'asdf' plugin)
-#if [ -d $HOME/.asdf ]; then
-#    . $HOME/.asdf/asdf.sh
-#
-#    fpath=(${ASDF_DIR}/completions $fpath)  # append completions to fpath
-#    autoload -Uz compinit && compinit   # initialise completions with ZSH's compinit
+#if [ -d $ASDF_DATA_DIR ]; then
+#    fpath=(${ASDF_DATA_DIR:-$HOME/.asdf}/completions $fpath)
+#    autoload -Uz compinit && compinit
 #fi
 
 #
