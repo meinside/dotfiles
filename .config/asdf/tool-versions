@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.02.07.
+# last update: 2025.02.10.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -27,7 +27,7 @@ babashka 1.12.196
 #   $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
 #
 # https://clojure.org/releases/tools#_releases
-clojure 1.12.0.1501
+clojure 1.12.0.1517
 
 # $ asdf plugin add elixir
 # $ asdf install elixir
