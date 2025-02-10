@@ -12,6 +12,11 @@ return {
 	{ import = "lazyvim.plugins.extras.coding.luasnip" },
 
 	--------
+	-- lazyvim.plugins.extras.dap.*
+	--
+	{ import = "lazyvim.plugins.extras.dap.core" },
+
+	--------
 	-- lazyvim.plugins.extras.editor.*
 	--
 	{ import = "lazyvim.plugins.extras.editor.mini-files" },
