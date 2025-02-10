@@ -37,6 +37,11 @@ require("config.lazy")
 -- ~/.config/nvim/lua/custom/lsps_sample.lua
 
 --------------------------------
+-- lazyvim.plugins.extras
+--
+-- ~/.config/nvim/lua/extras.lua
+
+--------------------------------
 -- plugin files
 --
 -- (for development)
