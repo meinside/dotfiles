@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/development.lua
 --
--- last update: 2025.01.23.
+-- last update: 2025.02.11.
 
 ------------------------------------------------
 -- imports
@@ -30,7 +30,7 @@ return {
 	-- code generation & completion
 	--
 	-- (github copilot)
-	-- NOTE: enable 'ai.copilot' in :LazyExtras
+	-- NOTE: enable 'ai.copilot' with :LazyExtras
 	--
 	-- (codeium)
 	{
@@ -139,7 +139,7 @@ return {
 	},
 
 	-- snippets
-	-- NOTE: enable 'coding.luasnip' in :LazyExtras
+	-- NOTE: 'coding.luasnip' is enabled in ../extras.lua
 
 	-- code actions
 	{
@@ -239,10 +239,10 @@ return {
 	},
 
 	-- clojure
-	-- NOTE: enable 'lang.clojure' in :LazyExtras
+	-- NOTE: enable 'lang.clojure' with :LazyExtras
 
 	-- golang
-	-- NOTE: enable 'lang.go' in :LazyExtras
+	-- NOTE: enable 'lang.go' with :LazyExtras
 
 	-- <lispy languages>
 	--
@@ -290,17 +290,16 @@ return {
 	},
 
 	-- python
-	-- NOTE: enable 'lang.python' in :LazyExtras
+	-- NOTE: enable 'lang.python' with :LazyExtras
 
 	-- ruby
-	-- NOTE: enable 'lang.ruby' in :LazyExtras
+	-- NOTE: enable 'lang.ruby' with :LazyExtras
 
 	-- rust
-	-- NOTE: enable 'lang.rust' in :LazyExtras
-	-- NOTE: install 'rust-analyzer' with `rustup component add rust-analyzer`
+	-- NOTE: enable 'lang.rust' with :LazyExtras
 
 	-- zig
-	-- NOTE: enable 'lang.zig' in :LazyExtras
+	-- NOTE: enable 'lang.zig' with :LazyExtras
 
 	--------------------------------
 	--

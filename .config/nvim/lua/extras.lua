@@ -2,13 +2,12 @@
 --
 -- lazyvim.plugins.extras
 --
--- last update: 2025.02.10.
+-- last update: 2025.02.11.
 
 return {
 	--------
 	-- lazyvim.plugins.extras.coding.*
 	--
-	{ import = "lazyvim.plugins.extras.coding.blink" },
 	{ import = "lazyvim.plugins.extras.coding.luasnip" },
 
 	--------

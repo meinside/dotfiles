@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/plugins.lua
 --
--- last update: 2025.02.10.
+-- last update: 2025.02.11.
 
 ------------------------------------------------
 -- imports
@@ -17,7 +17,7 @@ return {
 	},
 
 	-- startup time (:StartupTime)
-	-- NOTE: enable 'util.startuptime' in :LazyExtras
+	-- NOTE: enable 'util.startuptime' with :LazyExtras
 
 	-- colorschemes
 	{
@@ -325,7 +325,7 @@ return {
 	},
 
 	-- annotation
-	-- NOTE: enable 'coding.neogen' in :LazyExtras
+	-- NOTE: enable 'coding.neogen' with :LazyExtras
 
 	-- finder / locator
 	{ "mtth/locate.vim" }, -- :L [query], :lclose, gl
@@ -373,7 +373,7 @@ return {
 
 	-- git
 	{
-		-- NOTE: doesn't work with 'editor.mini-diff' in :LazyExtras
+		-- NOTE: doesn't work if 'editor.mini-diff' is enabled with :LazyExtras
 		--
 		-- [c, ]c for prev/next hunk, \hp for preview, \hs for stage, \hu for undo
 		"lewis6991/gitsigns.nvim",
