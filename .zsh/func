@@ -3,7 +3,7 @@
 # my zsh functions
 #
 # created on 2014.10.06.
-# updated on 2024.12.11.
+# updated on 2025.02.12.
 
 # list files changed in given days
 # (referenced: http://gotofritz.net/blog/howto/finding-recently-changed-files-osx-terminal/)
@@ -87,17 +87,13 @@ update-all () {
 		go clean -cache
 	fi
 
-	# update nvim packer plugins
-	#if [[ -x `which nvim` ]]; then
-	#	nvim --headless -c 'autocmd User PackerComplete quitall' -c 'PackerSync'
-	#fi
-
 	# upgrade oh-my-zsh
 	omz update
 
 	# update asdf plugins
 	if [[ -d "$ASDF_DIR/bin" ]]; then
-		asdf update
+		#asdf update # NOTE: does not work since v0.16.0 of asdf-vm
+
 		asdf plugin update --all
 		asdf reshim
 
