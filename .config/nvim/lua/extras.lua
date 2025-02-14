@@ -2,7 +2,7 @@
 --
 -- lazyvim.plugins.extras
 --
--- last update: 2025.02.11.
+-- last update: 2025.02.14.
 
 return {
 	--------
@@ -26,6 +26,8 @@ return {
 	--
 	--{ import = "lazyvim.plugins.extras.lang.clojure" },
 	--{ import = "lazyvim.plugins.extras.lang.cmake" },
+	--{ import = "lazyvim.plugins.extras.lang.elixir" },
+	--{ import = "lazyvim.plugins.extras.lang.erlang" },
 	{ import = "lazyvim.plugins.extras.lang.git" },
 	--{ import = "lazyvim.plugins.extras.lang.go" },
 	--{ import = "lazyvim.plugins.extras.lang.java" },
