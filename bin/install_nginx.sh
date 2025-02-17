@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # bin/install_nginx.sh
-# 
+#
 # Build and install Nginx.
 #
 # (https://docs.nginx.com/nginx/admin-guide/installing-nginx/installing-nginx-open-source/#sources)
@@ -41,19 +41,17 @@
 #   0 5 1 */1 * sudo tailscale cert --cert-file /path/to/cert.crt --key-file /path/to/cert.key "subdomain.my-tailnet-name.ts.net"
 #
 # created on : 2017.08.16.
-# last update: 2024.11.13.
-
+# last update: 2025.02.17.
 
 ################################
 #
 # frequently updated values
 
 # nginx/library versions
-NGINX_VERSION="1.26.2"  # https://nginx.org/en/download.html
-OPENSSL_VERSION="3.4.0" # https://github.com/openssl/openssl/tags
-ZLIB_VERSION="1.3.1"	# https://github.com/madler/zlib/tags
-PCRE_VERSION="10.44"	# https://github.com/PCRE2Project/pcre2/releases
-
+NGINX_VERSION="1.26.3"  # https://nginx.org/en/download.html
+OPENSSL_VERSION="3.4.1" # https://github.com/openssl/openssl/tags
+ZLIB_VERSION="1.3.1"    # https://github.com/madler/zlib/tags
+PCRE_VERSION="10.45"    # https://github.com/PCRE2Project/pcre2/releases
 
 ################################
 #
@@ -70,30 +68,29 @@ RESET="\033[0m"
 
 # functions for pretty-printing
 function error {
-    if [ -t 0 ] && [ -t 1 ]; then
-	echo -e "${RED}$1${RESET}"
-    else
-	echo "$1"
-    fi
+	if [ -t 0 ] && [ -t 1 ]; then
+		echo -e "${RED}$1${RESET}"
+	else
+		echo "$1"
+	fi
 }
 function info {
-    if [ -t 0 ] && [ -t 1 ]; then
-	echo -e "${GREEN}$1${RESET}"
-    else
-	echo "$1"
-    fi
+	if [ -t 0 ] && [ -t 1 ]; then
+		echo -e "${GREEN}$1${RESET}"
+	else
+		echo "$1"
+	fi
 }
 function warn {
-    if [ -t 0 ] && [ -t 1 ]; then
-	echo -e "${YELLOW}$1${RESET}"
-    else
-	echo "$1"
-    fi
+	if [ -t 0 ] && [ -t 1 ]; then
+		echo -e "${YELLOW}$1${RESET}"
+	else
+		echo "$1"
+	fi
 }
 
 #
 ################################
-
 
 # temporary directory
 TEMP_DIR="/tmp"
@@ -119,78 +116,78 @@ NGINX_SERVICE_FILE="/lib/systemd/system/nginx.service"
 NGINX_LOGS_DIR="/var/log/nginx"
 
 function prep {
-    warn ">>> preparing for essential libraries..."
+	warn ">>> preparing for essential libraries..."
 
-    # openssl: download and unzip
-    warn ">>> downloading OpenSSL..."
-    url=$OPENSSL_SRC_URL
-    cd $TEMP_DIR && \
-	wget $url && \
-	tar -xzvf "$(basename $url)"
+	# openssl: download and unzip
+	warn ">>> downloading OpenSSL..."
+	url=$OPENSSL_SRC_URL
+	cd $TEMP_DIR &&
+		wget $url &&
+		tar -xzvf "$(basename $url)"
 
-    # zlib: download and unzip
-    warn ">>> downloading Zlib..."
-    url=$ZLIB_SRC_URL
-    cd $TEMP_DIR && \
-	wget $url && \
-	tar -xzvf "$(basename $url)"
+	# zlib: download and unzip
+	warn ">>> downloading Zlib..."
+	url=$ZLIB_SRC_URL
+	cd $TEMP_DIR &&
+		wget $url &&
+		tar -xzvf "$(basename $url)"
 
-    # pcre: download and unzip
-    warn ">>> downloading PCRE..."
-    url=$PCRE_SRC_URL
-    cd $TEMP_DIR && \
-	wget $url && \
-	tar -xzvf "$(basename $url)"
+	# pcre: download and unzip
+	warn ">>> downloading PCRE..."
+	url=$PCRE_SRC_URL
+	cd $TEMP_DIR &&
+		wget $url &&
+		tar -xzvf "$(basename $url)"
 }
 
 function build {
-    # download, unzip,
-    url=$NGINX_SRC_URL
-    cd $TEMP_DIR && \
-	wget $url && \
-	tar -xzvf "$(basename $url)" && \
-	cd $NGINX_SRC_DIR
+	# download, unzip,
+	url=$NGINX_SRC_URL
+	cd $TEMP_DIR &&
+		wget $url &&
+		tar -xzvf "$(basename $url)" &&
+		cd $NGINX_SRC_DIR
 
-    # configure,
-    warn ">>> configuring nginx..."
-    ./auto/configure \
-	--user=www-data \
-	--group=www-data \
-	--sbin-path="${NGINX_BIN}" \
-	--prefix=/etc/nginx \
-	--pid-path=/run/nginx.pid \
-	--error-log-path="${NGINX_LOGS_DIR}/error.log" \
-	--http-log-path="${NGINX_LOGS_DIR}/access.log" \
-	--with-http_ssl_module \
-	--with-http_sub_module \
-	--with-http_v2_module \
-	--with-stream \
-	--with-stream_ssl_module \
-	--with-openssl="${OPENSSL_SRC_DIR}" \
-	--with-openssl-opt="enable-ec_nistp_64_gcc_128 no-nextprotoneg no-weak-ssl-ciphers no-ssl3 no-ssl3-method no-shared $ECFLAG -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
-	--with-pcre="${PCRE_SRC_DIR}" \
-	--with-zlib="${ZLIB_SRC_DIR}" \
-	--with-http_v3_module
+	# configure,
+	warn ">>> configuring nginx..."
+	./auto/configure \
+		--user=www-data \
+		--group=www-data \
+		--sbin-path="${NGINX_BIN}" \
+		--prefix=/etc/nginx \
+		--pid-path=/run/nginx.pid \
+		--error-log-path="${NGINX_LOGS_DIR}/error.log" \
+		--http-log-path="${NGINX_LOGS_DIR}/access.log" \
+		--with-http_ssl_module \
+		--with-http_sub_module \
+		--with-http_v2_module \
+		--with-stream \
+		--with-stream_ssl_module \
+		--with-openssl="${OPENSSL_SRC_DIR}" \
+		--with-openssl-opt="enable-ec_nistp_64_gcc_128 no-nextprotoneg no-weak-ssl-ciphers no-ssl3 no-ssl3-method no-shared $ECFLAG -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
+		--with-pcre="${PCRE_SRC_DIR}" \
+		--with-zlib="${ZLIB_SRC_DIR}" \
+		--with-http_v3_module
 
-    # make
-    warn ">>> building nginx..."
-    make
+	# make
+	warn ">>> building nginx..."
+	make
 
-    # make install
-    warn ">>> installing..."
-    sudo make install
+	# make install
+	warn ">>> installing..."
+	sudo make install
 }
 
 function configure {
-    # create directories
-    sudo mkdir -p "$NGINX_SITES_DIR"
-    sudo mkdir -p "$NGINX_LOGS_DIR"
+	# create directories
+	sudo mkdir -p "$NGINX_SITES_DIR"
+	sudo mkdir -p "$NGINX_LOGS_DIR"
 
-    # check if there are files in $NGINX_SITES_DIR, if empty:
-    if [ -z "$(ls -A "$NGINX_SITES_DIR")" ]; then
-        warn ">>> creating sample site files in $NGINX_SITES_DIR/ ..."
+	# check if there are files in $NGINX_SITES_DIR, if empty:
+	if [ -z "$(ls -A "$NGINX_SITES_DIR")" ]; then
+		warn ">>> creating sample site files in $NGINX_SITES_DIR/ ..."
 
-        sudo bash -c "cat > $NGINX_SITES_DIR/example.com" <<EOF
+		sudo bash -c "cat > $NGINX_SITES_DIR/example.com" <<EOF
 # An example for a reverse-proxy (http://localhost:8080 => https://example.com:443)
 #
 # (https://ssl-config.mozilla.org/#server=nginx&version=1.18.0&config=intermediate&openssl=1.1.1g&guideline=5.4)
@@ -241,27 +238,27 @@ server {
     }
 }
 EOF
-    else
-        warn ">>> site files already exist in $NGINX_SITES_DIR/ ..."
-    fi
+	else
+		warn ">>> site files already exist in $NGINX_SITES_DIR/ ..."
+	fi
 
-    # check if $NGINX_CONF_FILE is already modified, if not:
-    if grep -q "/etc/nginx/sites-enabled/*.*" "$NGINX_CONF_FILE"; then
-        warn ">>> $NGINX_CONF_FILE is already modified..."
-    else
-        # edit default conf to include enabled sites and limit requests
-        sudo sed -i 's|\(\(\s*\)include\(\s\+\)mime.types;\)|\1\n\2include\3/etc/nginx/sites-enabled/*.*;\n\2limit_req_zone $binary_remote_addr zone=lr_zone:10m rate=100r/s;|' $NGINX_CONF_FILE
+	# check if $NGINX_CONF_FILE is already modified, if not:
+	if grep -q "/etc/nginx/sites-enabled/*.*" "$NGINX_CONF_FILE"; then
+		warn ">>> $NGINX_CONF_FILE is already modified..."
+	else
+		# edit default conf to include enabled sites and limit requests
+		sudo sed -i 's|\(\(\s*\)include\(\s\+\)mime.types;\)|\1\n\2include\3/etc/nginx/sites-enabled/*.*;\n\2limit_req_zone $binary_remote_addr zone=lr_zone:10m rate=100r/s;|' $NGINX_CONF_FILE
 
-        warn ">>> added enabled sites and limit requests in $NGINX_CONF_FILE..."
-    fi
+		warn ">>> added enabled sites and limit requests in $NGINX_CONF_FILE..."
+	fi
 
-    # create systemd service file
-    #
-    # https://www.nginx.com/resources/wiki/start/topics/examples/systemd/
-    if [ ! -e $NGINX_SERVICE_FILE ]; then
-	warn ">>> creating systemd service file: ${NGINX_SERVICE_FILE}..."
+	# create systemd service file
+	#
+	# https://www.nginx.com/resources/wiki/start/topics/examples/systemd/
+	if [ ! -e $NGINX_SERVICE_FILE ]; then
+		warn ">>> creating systemd service file: ${NGINX_SERVICE_FILE}..."
 
-	sudo bash -c "cat > $NGINX_SERVICE_FILE" <<EOF
+		sudo bash -c "cat > $NGINX_SERVICE_FILE" <<EOF
 [Unit]
 Description=NGINX Service
 After=syslog.target network.target remote-fs.target nss-lookup.target
@@ -279,31 +276,30 @@ PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
 EOF
-    fi
+	fi
 }
 
 function clean {
-    warn ">>> cleaning..."
+	warn ">>> cleaning..."
 
-    # delete files
-    cd $TEMP_DIR
-    sudo rm -rf "$(basename $NGINX_SRC_URL)" "$(basename $OPENSSL_SRC_URL)" "$(basename $ZLIB_SRC_URL)" "$(basename $PCRE_SRC_URL)"
+	# delete files
+	cd $TEMP_DIR
+	sudo rm -rf "$(basename $NGINX_SRC_URL)" "$(basename $OPENSSL_SRC_URL)" "$(basename $ZLIB_SRC_URL)" "$(basename $PCRE_SRC_URL)"
 
-    # and directories
-    sudo rm -rf $NGINX_SRC_DIR $OPENSSL_SRC_DIR $ZLIB_SRC_DIR $PCRE_SRC_DIR
+	# and directories
+	sudo rm -rf $NGINX_SRC_DIR $OPENSSL_SRC_DIR $ZLIB_SRC_DIR $PCRE_SRC_DIR
 }
 
 # linux
 function install_linux {
-    if [ -z "$TERMUX_VERSION" ]; then
-	prep && build && configure && clean
-    else  # termux
-	pkg install nginx
-    fi
+	if [ -z "$TERMUX_VERSION" ]; then
+		prep && build && configure && clean
+	else # termux
+		pkg install nginx
+	fi
 }
 
 case "$OSTYPE" in
-    linux*) install_linux ;;
-    *) error "* not supported yet: $OSTYPE" ;;
+linux*) install_linux ;;
+*) error "* not supported yet: $OSTYPE" ;;
 esac
-
