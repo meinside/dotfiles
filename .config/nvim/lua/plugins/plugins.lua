@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/plugins.lua
 --
--- last update: 2025.02.11.
+-- last update: 2025.02.20.
 
 ------------------------------------------------
 -- imports
@@ -462,5 +462,29 @@ return {
 			})
 		end,
 		dependencies = { "nvim-tree/nvim-web-devicons" },
+	},
+
+	--------------------------------
+	--
+	-- my neovim lua plugins for testing & development
+	--
+	{
+		"meinside/gemini.nvim",
+		config = function()
+			require("gemini").setup({
+				configFilepath = "~/.config/gemini.nvim/config.json",
+				timeout = 30 * 1000,
+				model = "gemini-2.0-flash",
+				safetyThreshold = "BLOCK_ONLY_HIGH",
+				stripOutermostCodeblock = function()
+					return vim.bo.filetype ~= "markdown"
+				end,
+				verbose = false, -- for debugging
+			})
+		end,
+		dependencies = { { "nvim-lua/plenary.nvim" } },
+
+		-- for testing local changes
+		--dir = '~/srcs/lua/gemini.nvim/',
 	},
 }
