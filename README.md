@@ -1,6 +1,6 @@
 # My dotfiles for various kinds of machines
 
-by Sungjin Han (<meinside@meinside.dev>)
+by Sungjin Han (<meinside@duck.com>)
 
 ## Description
 
