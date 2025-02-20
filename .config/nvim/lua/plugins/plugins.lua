@@ -8,6 +8,71 @@
 local tools = require("tools") -- ~/.config/nvim/lua/tools.lua
 
 return {
+	-- colorschemes
+	{
+		"catppuccin/nvim",
+		name = "catppuccin",
+		opts = {
+			transparent_background = true,
+			flavour = "mocha",
+			term_colors = true,
+			styles = {
+				comments = { "italic" },
+				conditionals = { "italic" },
+				loops = { "italic" },
+				functions = { "italic" },
+				keywords = { "italic" },
+				strings = {},
+				variables = {},
+				numbers = {},
+				booleans = {},
+				properties = {},
+				types = {},
+			},
+			color_overrides = {
+				mocha = {
+					base = "#000000",
+					mantle = "#000000",
+					crust = "#000000",
+				},
+			},
+			highlight_overrides = {
+				mocha = function(C)
+					return {
+						CmpBorder = { fg = C.surface2 },
+						CursorLine = { bg = "#423030" },
+						Pmenu = { bg = C.none },
+						TelescopeBorder = { link = "FloatBorder" },
+					}
+				end,
+			},
+			integrations = {
+				beacon = true,
+				cmp = true,
+				dap = true,
+				dap_ui = true,
+				dropbar = {
+					enabled = true,
+					color_mode = true,
+				},
+				gitsigns = true,
+				lsp_trouble = true,
+				mason = true,
+				neogit = true,
+				notify = true,
+				rainbow_delimiters = true,
+				telescope = {
+					enabled = true,
+				},
+				treesitter = true,
+				treesitter_context = true,
+				which_key = true,
+			},
+		},
+		priority = 1000,
+		lazy = false,
+	},
+
 	-- lazyvim
 	{
 		"LazyVim/LazyVim",
@@ -18,73 +83,6 @@ return {
 
 	-- startup time (:StartupTime)
 	-- NOTE: enable 'util.startuptime' with :LazyExtras
-
-	-- colorschemes
-	{
-		"catppuccin/nvim",
-		name = "catppuccin",
-		priority = 1000,
-		config = function()
-			require("catppuccin").setup({
-				transparent_background = true,
-				flavour = "mocha",
-				term_colors = true,
-				styles = {
-					comments = { "italic" },
-					conditionals = { "italic" },
-					loops = { "italic" },
-					functions = { "italic" },
-					keywords = { "italic" },
-					strings = {},
-					variables = {},
-					numbers = {},
-					booleans = {},
-					properties = {},
-					types = {},
-				},
-				color_overrides = {
-					mocha = {
-						base = "#000000",
-						mantle = "#000000",
-						crust = "#000000",
-					},
-				},
-				highlight_overrides = {
-					mocha = function(C)
-						return {
-							CmpBorder = { fg = C.surface2 },
-							CursorLine = { bg = "#423030" },
-							Pmenu = { bg = C.none },
-							TelescopeBorder = { link = "FloatBorder" },
-						}
-					end,
-				},
-				integrations = {
-					beacon = true,
-					cmp = true,
-					dap = true,
-					dap_ui = true,
-					dropbar = {
-						enabled = true,
-						color_mode = true,
-					},
-					gitsigns = true,
-					lsp_trouble = true,
-					mason = true,
-					neogit = true,
-					notify = true,
-					rainbow_delimiters = true,
-					telescope = {
-						enabled = true,
-					},
-					treesitter = true,
-					treesitter_context = true,
-					which_key = true,
-				},
-			})
-			vim.cmd.colorscheme("catppuccin")
-		end,
-	},
 
 	-- override nvim-cmp and add cmp-emoji
 	{
