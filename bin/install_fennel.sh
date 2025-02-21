@@ -5,16 +5,14 @@
 # Install fennel script or binary.
 #
 # created on : 2021.11.24.
-# last update: 2024.08.27.
-
+# last update: 2025.02.27.
 
 ################################
 #
 # frequently updated values
 
 # https://fennel-lang.org/setup#downloading-the-fennel-script
-VERSION="1.5.1"	# XXX - edit for different version
-
+VERSION="1.5.3" # XXX - edit for different version
 
 ################################
 #
@@ -55,7 +53,6 @@ function warn {
 #
 ################################
 
-
 INSTALLATION_PATH="/usr/local/bin/fennel"
 
 # prep for linux
@@ -84,19 +81,19 @@ function prep_termux {
 function install {
 	machine=$(uname -m)
 	case $machine in
-		aarch64) # install script
-			sudo wget "https://fennel-lang.org/downloads/fennel-${VERSION}" -O $INSTALLATION_PATH && \
-				sudo chmod +x $INSTALLATION_PATH
-			;;
-		armv7*) # install binary
-			sudo wget "https://fennel-lang.org/downloads/fennel-${VERSION}-arm32" -O $INSTALLATION_PATH && \
-				sudo chmod +x $INSTALLATION_PATH
-			;;
-		x86_64) # install binary
-			sudo wget "https://fennel-lang.org/downloads/fennel-${VERSION}-x86_64" -O $INSTALLATION_PATH && \
-				sudo chmod +x $INSTALLATION_PATH
-			;;
-		*) error "* not supported yet: $machine" ;;
+	aarch64) # install script
+		sudo wget "https://fennel-lang.org/downloads/fennel-${VERSION}" -O $INSTALLATION_PATH &&
+			sudo chmod +x $INSTALLATION_PATH
+		;;
+	armv7*) # install binary
+		sudo wget "https://fennel-lang.org/downloads/fennel-${VERSION}-arm32" -O $INSTALLATION_PATH &&
+			sudo chmod +x $INSTALLATION_PATH
+		;;
+	x86_64) # install binary
+		sudo wget "https://fennel-lang.org/downloads/fennel-${VERSION}-x86_64" -O $INSTALLATION_PATH &&
+			sudo chmod +x $INSTALLATION_PATH
+		;;
+	*) error "* not supported yet: $machine" ;;
 	esac
 
 	if [ -x $INSTALLATION_PATH ]; then
@@ -108,8 +105,8 @@ function install {
 function install_termux {
 	# install script, and prepend shebang
 	INSTALLATION_PATH="/data/data/com.termux/files/home/bin/fennel"
-	wget "https://fennel-lang.org/downloads/fennel-${VERSION}" -O $INSTALLATION_PATH && \
-		chmod +x $INSTALLATION_PATH && \
+	wget "https://fennel-lang.org/downloads/fennel-${VERSION}" -O $INSTALLATION_PATH &&
+		chmod +x $INSTALLATION_PATH &&
 		sed -i 's/#!\/usr\/bin\/env/#!\/data\/data\/com.termux\/files\/usr\/bin\/env/' $INSTALLATION_PATH
 }
 
@@ -122,14 +119,13 @@ function install_macos {
 function install_linux {
 	if [ -z "$TERMUX_VERSION" ]; then
 		prep_linux && install
-	else  # termux
+	else # termux
 		prep_termux && install_termux
 	fi
 }
 
 case "$OSTYPE" in
-	darwin*) install_macos ;;
-	linux*) install_linux ;;
-	*) error "* not supported yet: $OSTYPE" ;;
+darwin*) install_macos ;;
+linux*) install_linux ;;
+*) error "* not supported yet: $OSTYPE" ;;
 esac
-
