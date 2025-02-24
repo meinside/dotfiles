@@ -12,16 +12,16 @@ set -g pane-active-border-style fg=color160
 set -g status-style fg=color232,bg=default
 
 set -g status-left-length 30
-set -g status-left '#[fg=default,bg=color124] #S #[fg=color124,bg=default,nobold,nounderscore,noitalics]◤'
+set -g status-left '#[fg=default,bg=color124] #S #[fg=color124,bg=default,nobold,nounderscore,noitalics]'
 set -g status-right-length 50
-set -g status-right '#[fg=color121,bg=default]  %Y-%m-%d (%a) %R #[fg=color124,bg=default,nobold,nounderscore,noitalics]◢#[[fg=default,bg=color124] @#H '
+set -g status-right '#[fg=color121,bg=default] ╱ %Y-%m-%d (%a) %R #[fg=color124,bg=default,nobold,nounderscore,noitalics]#[[fg=default,bg=color124] @#H '
 
 setw -g window-status-separator ''
-setw -g window-status-format ' #I #W '
+setw -g window-status-format ' #I #W ╱'
 setw -g window-status-style 'fg=color124,bg=default,nobold,nounderscore,noitalics'
 
 # current window = yellow
-setw -g window-status-current-format ' #I #W '
+setw -g window-status-current-format ' #I #W ╱'
 setw -g window-status-current-style 'fg=color226,bg=default,bold'
 
 # last window = red + bold
