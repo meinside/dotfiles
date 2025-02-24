@@ -1,6 +1,6 @@
 # partial tmux.conf for macOS
 #
-# last update: 2023.08.08.
+# last update: 2025.02.24.
 
 # color121 = light green
 # color66 = sage green
@@ -14,9 +14,9 @@ set -g pane-active-border-style fg=color160
 set -g status-style fg=color232,bg=default
 
 set -g status-left-length 30
-set -g status-left '#[fg=color232,bg=color66] #S #[fg=color66,bg=default,nobold,nounderscore,noitalics]'
+set -g status-left '#[fg=color232,bg=color66] #S #[fg=color66,bg=default,nobold,nounderscore,noitalics]◤'
 set -g status-right-length 50
-set -g status-right '#[fg=color121,bg=default]  %Y-%m-%d (%a) %R #[fg=color66,bg=default,nobold,nounderscore,noitalics]#[fg=color232,bg=color66] @#H '
+set -g status-right '#[fg=color121,bg=default]  %Y-%m-%d (%a) %R #[fg=color66,bg=default,nobold,nounderscore,noitalics]◢#[fg=color232,bg=color66] @#H '
 
 setw -g window-status-separator ''
 setw -g window-status-format ' #I #W '
