@@ -68,6 +68,7 @@
   editor = vim
 #  editor = nvim
 #  pager = delta  # $ sudo apt install git-delta
+  fsmonitor = true
 
 [interactive]
 #  diffFilter = delta --color-only  # $ sudo apt install git-delta
@@ -80,11 +81,13 @@
 
 [push]
   default = simple
+  autoSetupRemote = true
+  followTags = true
 
 [diff]
 #  tool = nvimdiff
   algorithm = histogram
-  colorMoved = default
+  colorMoved = plain
 
 [diff "sqlite3"]
   binary = true
