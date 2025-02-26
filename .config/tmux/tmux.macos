@@ -1,6 +1,6 @@
 # partial tmux.conf for macOS
 #
-# last update: 2025.02.24.
+# last update: 2025.02.26.
 
 # color121 = light green
 # color66 = sage green
@@ -16,7 +16,7 @@ set -g status-style fg=color232,bg=default
 set -g status-left-length 30
 set -g status-left '#[fg=color232,bg=color66] #S #[fg=color66,bg=default,nobold,nounderscore,noitalics]'
 set -g status-right-length 50
-set -g status-right '#[fg=color121,bg=default]  %Y-%m-%d (%a) %R #[fg=color66,bg=default,nobold,nounderscore,noitalics]#[fg=color232,bg=color66] @#H '
+set -g status-right '#[fg=color121,bg=default]  %Y-%m-%d (%a) %R #[fg=color66,bg=default,nobold,nounderscore,noitalics]#[fg=color232,bg=color66] @#(hostname -s) '
 
 setw -g window-status-separator ''
 setw -g window-status-format ' #I #W ╱'
@@ -31,4 +31,8 @@ setw -g window-status-last-style 'fg=color66,bg=default,bold'
 
 # window with activity = sage green + underscore
 setw -g window-status-activity-style 'fg=color66,bg=default,underscore'
+
+# for using pbpaste, pbcopy, or mas in tmux:
+if-shell '[ -x "`which reattach-to-user-namespace`" ]' \
+	"set-option -g default-command 'reattach-to-user-namespace -l \"$SHELL\"'"
 
