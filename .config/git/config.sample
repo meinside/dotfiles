@@ -44,6 +44,12 @@
   # remove remotely deleted branches
   gone = ! "git fetch -p && git for-each-ref --format '%(refname:short) %(upstream:track)' | awk '$2 == \"[gone]\" {print $1}' | xargs -r git branch -D"
 
+  # list all unpushed commits
+  out = "log @{u}.."
+
+[apply]
+  whitespace = fix # remove trailing whitespaces
+
 [branch]
 #  autoSetupMerge = always
 #  autosetuprebase = always    # or `git pull --rebase`
@@ -68,15 +74,18 @@
   excludesfile = ~/.gitignore
 
 [delta]
-  navigate = true
+  diff-so-fancy = true
+  hyperlinks = true
   light = false
-  side-by-side = true
   line-numbers = true
+  navigate = true
+  side-by-side = true
 
 [diff]
 #  tool = nvimdiff
   algorithm = histogram
   colorMoved = plain
+  colorMovedWS = allow-indentation-change
   mnemonicPrefix = true
   renames = true
 
@@ -94,6 +103,9 @@
   prune = true
   pruneTags = true
   all = true
+
+[format]
+  pretty = fuller
 
 [github]
 #  user = meinside
