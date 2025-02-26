@@ -2,10 +2,7 @@
 #
 # (copy as `~/.config/git/config` and customize it)
 #
-# last update: 2024.06.17.
-
-[init]
-  defaultBranch = master
+# last update: 2025.02.26.
 
 [alias]
   # commands
@@ -47,31 +44,28 @@
   # remove remotely deleted branches
   gone = ! "git fetch -p && git for-each-ref --format '%(refname:short) %(upstream:track)' | awk '$2 == \"[gone]\" {print $1}' | xargs -r git branch -D"
 
-[status]
-  showUntrackedFiles = all
-
-[log]
-  date = local
-
-[commit]
-  template = ~/.config/git/commit-template
-
-[grep]
-  extendRegexp = true
-  lineNumber = true
-  fullname = true
+[branch]
+#  autoSetupMerge = always
+#  autosetuprebase = always    # or `git pull --rebase`
+  sort = -committerdate
 
 [color]
   ui = auto
+
+[column]
+  ui = auto
+
+[commit]
+  template = ~/.config/git/commit-template
+  verbose = true
 
 [core]
   editor = vim
 #  editor = nvim
 #  pager = delta  # $ sudo apt install git-delta
   fsmonitor = true
-
-[interactive]
-#  diffFilter = delta --color-only  # $ sudo apt install git-delta
+  untrackedCache = true
+  excludesfile = ~/.gitignore
 
 [delta]
   navigate = true
@@ -79,15 +73,12 @@
   side-by-side = true
   line-numbers = true
 
-[push]
-  default = simple
-  autoSetupRemote = true
-  followTags = true
-
 [diff]
 #  tool = nvimdiff
   algorithm = histogram
   colorMoved = plain
+  mnemonicPrefix = true
+  renames = true
 
 [diff "sqlite3"]
   binary = true
@@ -99,38 +90,66 @@
 #[difftool "nvimdiff"]
 #  cmd = "nvim -d \"$LOCAL\" \"$REMOTE\""
 
+[fetch]
+  prune = true
+  pruneTags = true
+  all = true
+
+[github]
+#  user = meinside
+
+[grep]
+  extendRegexp = true
+  lineNumber = true
+  fullname = true
+
+[help]
+  autocorrect = prompt
+
+[init]
+  defaultBranch = master
+
+[interactive]
+#  diffFilter = delta --color-only  # $ sudo apt install git-delta
+
+[log]
+  date = local
+
 [merge]
   tool = vimdiff
+#  tool = nvimdiff
 #  conflictstyle = zdiff3 # since git 2.35.0
-
-[branch]
-#  autoSetupMerge = always
-#  autosetuprebase = always    # or `git pull --rebase`
-  sort = -committerdate
 
 [pull]
 #  rebase = false
 #  ff = only
 
+[push]
+  default = simple
+  autoSetupRemote = true
+  followTags = true
+
 [rebase]
-  autosquash = true
-  autostash = true  # auto `git stash/pop` before and after `git rebase`
+  autoSquash = true
+  autoStash = true  # auto `git stash/pop` before and after `git rebase`
+  updateRefs = true
 
-[user]
-  name = Sungjin Han
-  email = meinside@meinside.dev
+[rerere]
+  enabled = true
+  autoupdate = true
 
-[github]
-  user = meinside
-
-[tag]
-  sort = version:refname
+[status]
+  showUntrackedFiles = all
 
 [submodule]
   recurse = true
 
-[fetch]
-  prune = true
+[tag]
+  sort = version:refname
+
+[user]
+#  name = Sungjin Han
+#  email = meinside@duck.com
 
 
 ################
@@ -148,6 +167,9 @@
   support = support/
   versiontag = v
 
+
+################
+# urls
 
 # force ssh for my own repositories
 #[url "ssh://git@github.com/meinside/"]
