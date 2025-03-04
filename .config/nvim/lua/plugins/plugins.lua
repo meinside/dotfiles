@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/plugins.lua
 --
--- last update: 2025.02.20.
+-- last update: 2025.03.04.
 
 ------------------------------------------------
 -- imports
@@ -467,10 +467,10 @@ return {
 	-- my neovim lua plugins for testing & development
 	--
 	{
-		"meinside/gemini.nvim",
+		"meinside/gmn.nvim",
 		config = function()
-			require("gemini").setup({
-				configFilepath = "~/.config/gemini.nvim/config.json",
+			require("gmn").setup({
+				configFilepath = "~/.config/gmn.nvim/config.json",
 				timeout = 30 * 1000,
 				model = "gemini-2.0-flash",
 				safetyThreshold = "BLOCK_ONLY_HIGH",
@@ -483,6 +483,6 @@ return {
 		dependencies = { { "nvim-lua/plenary.nvim" } },
 
 		-- for testing local changes
-		--dir = '~/srcs/lua/gemini.nvim/',
+		--dir = "~/srcs/lua/gmn.nvim/",
 	},
 }
