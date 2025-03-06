@@ -1,21 +1,19 @@
 #!/usr/bin/env bash
 
 # bin/install_ffmpeg.sh
-# 
+#
 # for building ffmpeg from source code
 #
 # (pass '--do-not-clean' argument for preserving files after install)
-# 
-# last update: 2024.10.04.
-
+#
+# last update: 2025.03.06.
 
 ################################
 #
 # frequently updated values
 
 # https://github.com/FFmpeg/FFmpeg/tags
-FFMPEG_VERSION="n7.1" # XXX - edit for newer ffmpeg version
-
+FFMPEG_VERSION="n7.1.1" # XXX - edit for newer ffmpeg version
 
 ################################
 #
@@ -56,7 +54,6 @@ function warn {
 #
 ################################
 
-
 TMP_DIR=/tmp/ffmpeg
 
 function prep {
@@ -85,14 +82,14 @@ function clean {
 function install {
 	PLATFORM=$(uname -m)
 	case "$PLATFORM" in
-		arm64) ARCH="aarch64" ;;
-		arm*) ARCH="armel" ;;
-		*) ARCH=$PLATFORM ;;
+	arm64) ARCH="aarch64" ;;
+	arm*) ARCH="armel" ;;
+	*) ARCH=$PLATFORM ;;
 	esac
 
 	# clone source code, configure, make, and install
-	git clone --depth=1 -b $FFMPEG_VERSION https://github.com/FFmpeg/FFmpeg.git $TMP_DIR && \
-		cd $TMP_DIR && \
+	git clone --depth=1 -b $FFMPEG_VERSION https://github.com/FFmpeg/FFmpeg.git $TMP_DIR &&
+		cd $TMP_DIR &&
 		./configure --arch="$ARCH" --target-os=linux --enable-gpl --enable-nonfree \
 			--enable-libx264 \
 			--enable-libx265 \
@@ -101,8 +98,8 @@ function install {
 			--enable-libmp3lame \
 			--enable-libvorbis \
 			--enable-libopus \
-			--enable-libdav1d && \
-		make -j$(nproc) && \
+			--enable-libdav1d &&
+		make -j$(nproc) &&
 		sudo make install
 }
 
@@ -116,7 +113,7 @@ function install_linux {
 		else
 			warn ">>> ffmpeg files remain in $TMP_DIR"
 		fi
-	else  # termux
+	else # termux
 		error "* termux not supported yet."
 	fi
 }
@@ -126,8 +123,7 @@ function install_macos {
 }
 
 case "$OSTYPE" in
-	darwin*) install_macos "$@" ;;
-	linux*) install_linux "$@" ;;
-	*) error "* not supported yet: $OSTYPE" ;;
+darwin*) install_macos "$@" ;;
+linux*) install_linux "$@" ;;
+*) error "* not supported yet: $OSTYPE" ;;
 esac
-
