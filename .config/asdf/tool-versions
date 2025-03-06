@@ -27,7 +27,7 @@ babashka 1.12.197
 #   $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
 #
 # https://clojure.org/releases/tools#_releases
-clojure 1.12.0.1527
+clojure 1.12.0.1530
 
 # $ asdf plugin add elixir
 # $ asdf install elixir
