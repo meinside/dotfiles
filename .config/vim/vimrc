@@ -1,8 +1,6 @@
-" meinside's .vimrc file for vim
+" .vimrc file for vim
 "
-" init.vim for neovim is located at: .config/nvim/init.lua
-"
-" last update: 2023.07.05.
+" last update: 2025.03.06.
 
 set t_Co=256
 

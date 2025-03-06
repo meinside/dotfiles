@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2025.02.06.
+# updated on 2025.03.06.
 #
 # $ chsh -s `which zsh`
 #
@@ -25,7 +25,6 @@ COMPLETION_WAITING_DOTS="true"
 
 # zsh history
 HIST_STAMPS="yyyy-mm-dd"
-HISTFILE="$HOME/.zsh_history"
 HISTSIZE=10000
 SAVEHIST=10000
 HISTORY_IGNORE="(ls|cd|pwd|exit|clear)*"
@@ -52,13 +51,20 @@ if [[ -z "$XDG_CACHE_HOME" ]]; then
     export XDG_CACHE_HOME="$HOME/.cache"
 fi
 
+# zsh history file
+ZSH_HISTORY_DIR="$XDG_STATE_HOME/zsh"
+if [[ ! -d $ZSH_HISTORY_DIR ]]; then
+    mkdir -p $ZSH_HISTORY_DIR
+fi
+HISTFILE="$ZSH_HISTORY_DIR/history"
+
 # homebrew on macOS
 if [ -d /opt/homebrew ]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
 fi
 
 # asdf-vm
-export ASDF_DATA_DIR=$HOME/.asdf
+export ASDF_DATA_DIR="$XDG_DATA_HOME/asdf"
 export ASDF_CONFIG_FILE=$XDG_CONFIG_HOME/asdf/asdfrc
 #export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME=$XDG_CONFIG_HOME/asdf/tool-versions # FIXME
 export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME=.config/asdf/tool-versions
@@ -173,9 +179,11 @@ export PATH="$GOPATH/bin:$PATH"
 # for lein (clojure)
 export LEIN_JVM_OPTS=""
 export LEIN_USE_BOOTCLASSPATH=no # https://github.com/venantius/ultra/issues/108
+export LEIN_HOME="$XDG_DATA_HOME/lein"
 
 # for nodejs
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+export NODE_REPL_HISTORY="$XDG_STATE_HOME/node_repl_history"
 if [ -d "$HOME/.local/share/npm/bin" ]; then
     export PATH="$HOME/.local/share/npm/bin:$PATH"
 fi
@@ -185,8 +193,10 @@ export IRBRC="$XDG_CONFIG_HOME/irb/irbrc"
 export SOLARGRAPH_CACHE="$XDG_CACHE_HOME/solargraph"
 
 # for rust
-if [ -d "$HOME/.cargo/bin" ]; then
-    export PATH="$HOME/.cargo/bin:$PATH"
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
+export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
+if [ -d "$CARGO_HOME/bin" ]; then
+    export PATH="$CARGO_HOME/bin:$PATH"
 else
     for r in $ASDF_DATA_DIR/installs/rust/*; do
         if [ -d $r ]; then
@@ -194,6 +204,9 @@ else
         fi
     done
 fi
+
+# for sqlite3
+export SQLITE_HISTORY="$XDG_CACHE_HOME/sqlite_history"
 
 # additional paths
 export PATH="$HOME/bin:$HOME/.local/bin:$PATH"

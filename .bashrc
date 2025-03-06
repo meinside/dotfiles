@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2025.02.06.
+# updated on 2025.03.06.
 #
 # $ chsh -s `which zsh`
 #
@@ -37,6 +37,7 @@ if [ -z "$TMUX" ]; then
 fi
 export W3M_DIR="$XDG_STATE_HOME/w3m"
 export HISTCONTROL=ignoreboth
+export HISTFILE="$XDG_STATE_HOME/bash/history"
 
 # bash options
 shopt -s histappend
@@ -98,9 +99,11 @@ export PATH="$GOPATH/bin:$PATH"
 # for lein (clojure)
 export LEIN_JVM_OPTS=""
 export LEIN_USE_BOOTCLASSPATH=no # https://github.com/venantius/ultra/issues/108
+export LEIN_HOME="$XDG_DATA_HOME/lein"
 
 # for nodejs
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+export NODE_REPL_HISTORY="$XDG_STATE_HOME/node_repl_history"
 if [ -d "$HOME/.local/share/npm/bin" ]; then
     export PATH="$HOME/.local/share/npm/bin:$PATH"
 fi
@@ -110,8 +113,10 @@ export IRBRC="$XDG_CONFIG_HOME/irb/irbrc"
 export SOLARGRAPH_CACHE="$XDG_CACHE_HOME/solargraph"
 
 # for rust
-if [ -d "$HOME/.cargo/bin" ]; then
-    export PATH="$HOME/.cargo/bin:$PATH"
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
+export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
+if [ -d "$CARGO_HOME/bin" ]; then
+    export PATH="$CARGO_HOME/bin:$PATH"
 else
     for r in "$HOME/.asdf/installs/rust"/*; do
         . "${r}/env"
@@ -119,12 +124,15 @@ else
     done
 fi
 
+# for sqlite3
+export SQLITE_HISTORY="$XDG_CACHE_HOME/sqlite_history"
+
 # additional paths
 export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
 
 # asdf settings
-if [ -d "$HOME/.asdf" ]; then
-    export ASDF_DATA_DIR=$HOME/.asdf
+if [ -d "$XDG_DATA_HOME/asdf" ]; then
+    export ASDF_DATA_DIR="$XDG_DATA_HOME/asdf"
     export ASDF_CONFIG_FILE=$XDG_CONFIG_HOME/asdf/asdfrc
     #export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME=$XDG_CONFIG_HOME/asdf/tool-versions # FIXME
     export ASDF_DEFAULT_TOOL_VERSIONS_FILENAME=.config/asdf/tool-versions
