@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.03.06.
+# last update: 2025.03.10.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -201,5 +201,5 @@ rust 1.85.0
 #   $ zig-out/bin/zls config
 #
 # https://github.com/ziglang/zig/releases
-zig 0.13.0
+zig 0.14.0
 
