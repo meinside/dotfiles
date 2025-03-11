@@ -2,7 +2,7 @@
 --
 -- from: https://github.com/LazyVim/starter/blob/main/lua/config/lazy.lua
 --
--- last update: 2025.02.10.
+-- last update: 2025.03.11.
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -25,10 +25,10 @@ require("lazy").setup({
 		-- add LazyVim and import its plugins
 		{ "LazyVim/LazyVim", import = "lazyvim.plugins" },
 
-		-- import extra plugins
+		-- NOTE: will import extra plugins here: ~/.config/nvim/lua/extras.lua
 		{ import = "extras" },
 
-		-- import/override with your plugins
+		-- NOTE: import/override plugins here: ~/.config/nvim/lua/plugins/
 		{ import = "plugins" },
 	},
 	defaults = {
@@ -40,7 +40,7 @@ require("lazy").setup({
 		version = false, -- always use the latest git commit
 		-- version = "*", -- try installing the latest stable version for plugins that support semver
 	},
-	install = { colorscheme = { "tokyonight", "habamax" } },
+	install = { colorscheme = { "catppuccin" } },
 	checker = {
 		enabled = true, -- check for plugin updates periodically
 		notify = false, -- notify on update
