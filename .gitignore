@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2025.01.21.
+# last update: 2025.03.11.
 
 # unnecessary binary files
 *.a
@@ -229,7 +229,6 @@ Dropbox
 Google Drive
 mbox
 micromamba/
-Noiselith/
 pCloud Drive/
 pprof/
 VirtualBox VMs/
