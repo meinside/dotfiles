@@ -8,19 +8,19 @@
 --
 -- and edit it)
 --
--- last update: 2024.12.26.
+-- last update: 2025.03.12.
 
 -- following linters will be configured automatically
 -- in: .config/nvim/lua/plugins.lua
 return {
-  -- https://github.com/mfussenegger/nvim-lint?tab=readme-ov-file#available-linters
-  --clojure = { 'clj-kondo' },
-  --cmake = { 'cmakelint' },
-  --fennel = { 'fennel' },
-  go = { 'golangcilint' },
-  --janet = { 'janet' },
-  --lua = { 'luacheck' },
-  markdown = { 'vale' },
-  --ruby = { 'rubocop' },
-  sh = { 'shellcheck' },
+	-- https://github.com/mfussenegger/nvim-lint?tab=readme-ov-file#available-linters
+	--clojure = { 'clj-kondo' },
+	--cmake = { 'cmakelint' },
+	--fennel = { 'fennel' },
+	go = { "golangcilint" },
+	--janet = { 'janet' },
+	--lua = { 'luacheck' },
+	markdown = { "vale" },
+	--ruby = { 'rubocop' },
+	sh = { "shellcheck" },
 }

@@ -8,15 +8,15 @@
 --
 -- and edit it)
 --
--- last update: 2024.12.26.
+-- last update: 2025.03.12.
 
 -- following DAP debuggers will be installed automatically.
 --
 -- if value is `true`, will be installed automatically.
 return {
-  -- c, c++, rust, zig
-  codelldb = false,
+	-- c, c++, rust, zig
+	codelldb = false,
 
-  -- go
-  delve = true,
+	-- go
+	delve = true,
 }

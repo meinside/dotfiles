@@ -54,15 +54,19 @@ map("n", "<leader>qf", builtin.quickfix, {
 -- (lsp)
 --
 -- for toggling inlay hint: `\li`
-map("n", "<leader>li", "<cmd>lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())<CR>", {
-	desc = "lsp: Toggle inlay hint",
-})
+map("n", "<leader>li", function()
+	local enabled = not vim.lsp.inlay_hint.is_enabled({})
+	vim.lsp.inlay_hint.enable(enabled)
+
+	vim.notify("Toggled LSP inlay hints " .. (enabled and "on" or "off"))
+end, { desc = "lsp: Toggle inlay hint" })
 
 -- (minimap)
 --
 -- for toggling minimap: `\tm`
 map("n", "<leader>tm", function()
 	require("codewindow").toggle_minimap()
+
 	vim.notify("Toggled minimap.")
 end, { desc = "minimap: Toggle" })
 
