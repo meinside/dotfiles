@@ -2,7 +2,7 @@
 --
 -- https://www.lazyvim.org/keymaps
 --
--- last update: 2025.01.17.
+-- last update: 2025.03.12.
 
 -- DO NOT USE `LazyVim.safe_keymap_set` IN YOUR OWN CONFIG!!
 -- use `vim.keymap.set` instead
@@ -57,11 +57,6 @@ map("n", "<leader>qf", builtin.quickfix, {
 map("n", "<leader>li", "<cmd>lua vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())<CR>", {
 	desc = "lsp: Toggle inlay hint",
 })
--- for toggling lsp_lines: `\tl`
-map("", "<leader>tl", function()
-	require("lsp_lines").toggle()
-	vim.notify("Toggled LSP Lines.")
-end, { desc = "lsp_lines: Toggle" })
 
 -- (minimap)
 --
