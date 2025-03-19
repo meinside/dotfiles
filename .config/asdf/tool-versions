@@ -78,7 +78,7 @@ golang 1.24.1
 #   `export LD_LIBRARY_PATH=$HOME/.asdf/installs/janet/X.XX.XX/lib`
 #
 # https://github.com/janet-lang/janet/releases
-janet 1.37.1
+janet 1.38.0
 
 # $ asdf plugin add java
 # $ asdf install java
