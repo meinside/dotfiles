@@ -2,13 +2,15 @@
 
 # .config/irb/irbrc
 #
-# last update: 2025.03.06.
+# last update: 2025.03.20.
 
 # turn on auto completion
 require 'irb/completion'
 
 # history file (~/.local/share/irb/history)
-IRB.conf[:HISTORY_FILE] ||= File.join(ENV['XDG_DATA_HOME'], 'irb', 'history')
+irb_dir = File.join(ENV['XDG_DATA_HOME'], 'irb')
+FileUtils.mkdir_p(irb_dir) unless File.exist?(irb_dir)
+IRB.conf[:HISTORY_FILE] ||= File.join(irb_dir, 'history')
 
 # turn on auto indent
 IRB.conf[:AUTO_INDENT] = true
