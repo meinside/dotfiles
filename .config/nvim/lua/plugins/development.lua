@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/development.lua
 --
--- last update: 2025.02.20.
+-- last update: 2025.03.27.
 
 ------------------------------------------------
 -- imports
@@ -26,6 +26,19 @@ return {
 	--
 	-- tools for development
 	--
+
+	-- auto completion
+	--
+	-- (blink.cmp)
+	{
+		"saghen/blink.cmp",
+		opts = {
+			completion = {
+				menu = { border = "rounded" },
+				documentation = { window = { border = "rounded" } },
+			},
+		},
+	},
 
 	-- code generation & completion
 	--
