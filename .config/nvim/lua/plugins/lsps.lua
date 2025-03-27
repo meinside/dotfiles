@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/lsps.lua
 --
--- last update: 2025.01.24.
+-- last update: 2025.03.27.
 
 local custom = require("custom") -- ~/.config/nvim/lua/custom/init.lua
 
@@ -71,6 +71,12 @@ return {
 				fg = "#D4D4D4",
 			})
 		end,
+	},
+	{
+		"williamboman/mason.nvim",
+		opts = {
+			ui = { border = "rounded" },
+		},
 	},
 	{
 		"williamboman/mason-lspconfig.nvim",

@@ -84,6 +84,14 @@ return {
 	-- startup time (:StartupTime)
 	-- NOTE: enable 'util.startuptime' with :LazyExtras
 
+	-- noice (for messages and notifications)
+	{
+		"folke/noice.nvim",
+		opts = {
+			presets = { lsp_doc_border = true },
+		},
+	},
+
 	-- override nvim-cmp and add cmp-emoji
 	{
 		"hrsh7th/nvim-cmp",
