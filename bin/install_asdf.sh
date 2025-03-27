@@ -5,14 +5,16 @@
 # Install asdf
 #
 # created on : 2022.04.14.
-# last update: 2025.03.24.
+# last update: 2025.03.28.
+
+ASDF_INSTALL_DIR="$HOME/.local/share/asdf/bin"
 
 ################################
 #
 # frequently updated values
 
 # https://github.com/asdf-vm/asdf/releases
-VERSION="0.16.6"
+VERSION="0.16.7"
 
 ################################
 #
@@ -66,10 +68,10 @@ function install_linux {
 	aarch64) ARCH="arm64" ;;
 	*) ARCH="amd64" ;;
 	esac
-	rm -rf ~/.asdf/bin/asdf &&
-		mkdir -p ~/.asdf/bin/ &&
-		wget -qO- "https://github.com/asdf-vm/asdf/releases/download/v$VERSION/asdf-v$VERSION-linux-$ARCH.tar.gz" | gunzip | tar xf - -C ~/.asdf/bin/ &&
-		info "> installed $(~/.asdf/bin/asdf --version)"
+	rm -rf "$ASDF_INSTALL_DIR/asdf" &&
+		mkdir -p "$ASDF_INSTALL_DIR" &&
+		wget -qO- "https://github.com/asdf-vm/asdf/releases/download/v$VERSION/asdf-v$VERSION-linux-$ARCH.tar.gz" | gunzip | tar xf - -C "$ASDF_INSTALL_DIR" &&
+		info "> installed $("$ASDF_INSTALL_DIR/asdf" --version)"
 }
 
 case "$OSTYPE" in
