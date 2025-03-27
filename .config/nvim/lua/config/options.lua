@@ -2,7 +2,7 @@
 --
 -- default: https://www.lazyvim.org/configuration/general#options
 --
--- last update: 2025.01.24.
+-- last update: 2025.03.27.
 
 vim.g.mapleader = "\\"
 
@@ -114,6 +114,7 @@ end
 vim.diagnostic.config({
 	underline = true,
 	virtual_text = true,
+	virtual_lines = { current_line = true },
 	signs = true,
 	severity_sort = true,
 	update_in_insert = false,
