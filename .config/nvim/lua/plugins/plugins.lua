@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/plugins.lua
 --
--- last update: 2025.03.04.
+-- last update: 2025.03.27.
 
 ------------------------------------------------
 -- imports
@@ -198,9 +198,6 @@ return {
 			scope = "line",
 		},
 	},
-
-	-- flash cursor location
-	{ "danilamihailov/beacon.nvim" },
 
 	-- dim inactive window
 	{
