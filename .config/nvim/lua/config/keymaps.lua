@@ -21,6 +21,16 @@ map("n", "<leader>mm", function()
 	require("tools").ui.toggle_mouse() -- ~/.config/nvim/lua/tools.lua
 end, { desc = "mouse: Toggle" })
 
+-- for toggling diagnostics: `\tD`
+map("n", "<leader>tD", function()
+	if vim.diagnostic.is_enabled() then
+		vim.diagnostic.enable(false)
+	else
+		vim.diagnostic.enable(true)
+	end
+	vim.notify("Toggled diagnostics " .. (vim.diagnostic.is_enabled() and "on" or "off"))
+end, { desc = "diagnostics: Toggle" })
+
 -- <Left> for folding, <Right> for unfolding
 local origami = require("origami")
 map("n", "<Left>", origami.h)
