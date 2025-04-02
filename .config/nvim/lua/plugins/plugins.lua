@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/plugins.lua
 --
--- last update: 2025.03.27.
+-- last update: 2025.04.02.
 
 ------------------------------------------------
 -- imports
@@ -260,7 +260,10 @@ return {
 		"chrisgrieser/nvim-origami",
 		event = "VeryLazy",
 		opts = {
-			setupFoldKeymaps = false,
+			foldKeymaps = {
+				setup = false,
+				hOnlyOpensOnFirstColumn = false,
+			},
 		},
 	},
 
