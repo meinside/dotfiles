@@ -2,7 +2,7 @@
 --
 -- https://www.lazyvim.org/keymaps
 --
--- last update: 2025.03.12.
+-- last update: 2025.04.02.
 
 -- DO NOT USE `LazyVim.safe_keymap_set` IN YOUR OWN CONFIG!!
 -- use `vim.keymap.set` instead
@@ -32,9 +32,8 @@ map("n", "<leader>tD", function()
 end, { desc = "diagnostics: Toggle" })
 
 -- <Left> for folding, <Right> for unfolding
-local origami = require("origami")
-map("n", "<Left>", origami.h)
-map("n", "<Right>", origami.l)
+map("n", "<Left>", require("origami").h)
+map("n", "<Right>", require("origami").l)
 
 -- (minifiles)
 --
