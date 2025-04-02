@@ -2,7 +2,7 @@
 --
 -- My neovim utility functions
 --
--- last update: 2025.03.12.
+-- last update: 2025.04.02.
 
 -- Warn: notify silently
 local function warn(msg)
@@ -118,7 +118,7 @@ end
 
 -- Checks if it is macOS
 local function is_macos()
-	return vim.loop.os_uname().sysname == "Darwin"
+	return vim.uv.os_uname().sysname == "Darwin"
 end
 
 -- Checks if mouse is enabled
