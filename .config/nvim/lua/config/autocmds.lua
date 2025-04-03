@@ -80,3 +80,22 @@ vim.api.nvim_create_autocmd("ModeChanged", {
 		pcall(vim.diagnostic.show)
 	end,
 })
+
+-- disable diagnostics for Lazy
+local lazy_diag = vim.api.nvim_create_augroup("LazyDiagnostics", { clear = true })
+-- (when opening Lazy)
+vim.api.nvim_create_autocmd("FileType", {
+	group = lazy_diag,
+	pattern = "lazy",
+	callback = function()
+		vim.diagnostic.enable(false, { bufnr = 0 }) -- current buffer
+	end,
+})
+-- (when closing Lazy)
+vim.api.nvim_create_autocmd("BufLeave", {
+	group = lazy_diag,
+	pattern = "*",
+	callback = function()
+		vim.diagnostic.enable(true, { bufnr = 0 }) -- current buffer
+	end,
+})
