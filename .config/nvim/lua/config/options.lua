@@ -116,12 +116,20 @@ end
 -- NOTE: some related autocmds are defined in: ~/.config/nvim/lua/config/autocmds.lua
 vim.diagnostic.config({
 	underline = true,
-	virtual_text = true,
-	virtual_lines = { current_line = true },
+	virtual_text = {
+		source = "if_many",
+	},
+	virtual_lines = {
+		source = "if_many",
+		current_line = true,
+	},
 	signs = true,
 	severity_sort = true,
 	update_in_insert = false,
-	float = { border = "rounded" },
+	float = {
+		source = "if_many",
+		border = "rounded",
+	},
 })
 vim.fn.sign_define("DiagnosticSignError", {
 	text = "✗",
