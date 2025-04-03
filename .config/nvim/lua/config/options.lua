@@ -2,7 +2,7 @@
 --
 -- default: https://www.lazyvim.org/configuration/general#options
 --
--- last update: 2025.03.27.
+-- last update: 2025.04.03.
 
 vim.g.mapleader = "\\"
 
@@ -112,6 +112,8 @@ else
 end
 
 -- diagnostics configuration
+--
+-- NOTE: some related autocmds are defined in: ~/.config/nvim/lua/config/autocmds.lua
 vim.diagnostic.config({
 	underline = true,
 	virtual_text = true,
