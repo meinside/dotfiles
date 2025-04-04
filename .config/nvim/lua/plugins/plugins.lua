@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/plugins.lua
 --
--- last update: 2025.04.02.
+-- last update: 2025.04.04.
 
 ------------------------------------------------
 -- imports
@@ -185,6 +185,7 @@ return {
 	{
 		"m4xshen/smartcolumn.nvim",
 		opts = {
+			colorcolumn = "80",
 			custom_colorcolumns = {},
 			disabled_filetypes = {
 				-- common

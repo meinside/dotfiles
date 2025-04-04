@@ -2,7 +2,7 @@
 --
 -- default: https://www.lazyvim.org/configuration/general#options
 --
--- last update: 2025.04.03.
+-- last update: 2025.04.04.
 
 vim.g.mapleader = "\\"
 
@@ -31,7 +31,7 @@ if vim.env.SSH_TTY then
 		},
 	}
 end
-opt.colorcolumn = "80"
+--opt.colorcolumn = "80" -- handled by 'smartcolumn.nvim'
 opt.completeopt = "menu,menuone,noselect"
 opt.conceallevel = 2 -- Hide * markup for bold and italic, but not markers with substitutions
 opt.confirm = true -- Confirm to save changes before exiting modified buffer
