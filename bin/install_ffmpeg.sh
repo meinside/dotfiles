@@ -6,7 +6,9 @@
 #
 # (pass '--do-not-clean' argument for preserving files after install)
 #
-# last update: 2025.03.06.
+# last update: 2025.04.03.
+
+# NOTE: see configure options at: https://github.com/FFmpeg/FFmpeg/blob/master/configure
 
 ################################
 #
@@ -60,14 +62,17 @@ function prep {
 	# install needed packages
 	if [ -x /usr/bin/apt-get ]; then
 		sudo apt-get install -y build-essential \
-			libx264-dev \
-			libx265-dev libnuma-dev \
-			libvpx-dev \
+			libdav1d-dev \
 			libfdk-aac-dev \
 			libmp3lame-dev \
-			libvorbis-dev \
+			libnuma-dev \
 			libopus-dev \
-			libdav1d-dev
+			libvorbis-dev \
+			libvpx-dev \
+			libwebp-dev \
+			libx264-dev \
+			libx265-dev \
+			libxvidcore-dev
 	else
 		error "* distro not supported"
 	fi
@@ -91,14 +96,16 @@ function install {
 	git clone --depth=1 -b $FFMPEG_VERSION https://github.com/FFmpeg/FFmpeg.git $TMP_DIR &&
 		cd $TMP_DIR &&
 		./configure --arch="$ARCH" --target-os=linux --enable-gpl --enable-nonfree \
-			--enable-libx264 \
-			--enable-libx265 \
-			--enable-libvpx \
+			--enable-libdav1d \
 			--enable-libfdk-aac \
 			--enable-libmp3lame \
-			--enable-libvorbis \
 			--enable-libopus \
-			--enable-libdav1d &&
+			--enable-libvorbis \
+			--enable-libvpx \
+			--enable-libwebp \
+			--enable-libx264 \
+			--enable-libx265 \
+			--enable-libxvid &&
 		make -j$(nproc) &&
 		sudo make install
 }
