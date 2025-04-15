@@ -6,14 +6,6 @@ local custom = require("custom") -- ~/.config/nvim/lua/custom/init.lua
 
 return {
 	{
-		"ray-x/lsp_signature.nvim",
-		event = "InsertEnter",
-		opts = {
-			bind = true,
-			handler_opts = { border = "single" },
-		},
-	},
-	{
 		"onsails/lspkind-nvim",
 		config = function()
 			require("lspkind").init({
