@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2025.03.11.
+# last update: 2025.04.15.
 
 # unnecessary binary files
 *.a
@@ -93,7 +93,7 @@ snap/
 
 # clojure files/dirs
 .clojure/
-.lein/
+.local/share/lein/
 
 # dart files/dirs
 .dart/

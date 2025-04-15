@@ -1,6 +1,6 @@
-;; A sample for .lein/profiles.clj
+;; A sample for ~/.local/share/lein/profiles.clj
 ;;
-;; last update: 2021.05.13.
+;; last update: 2025.04.15.
 
 {:user {
         ;; plugins
@@ -12,9 +12,9 @@
                   [lein-pprint "1.3.2"]
 
                   ;; https://github.com/clojure-emacs/cider-nrepl
-                  [cider/cider-nrepl "0.26.0"]
+                  [cider/cider-nrepl "0.55.1"]
 
-                  ;; https://github.com/xsc/lein-ancient
+                  ;; https://github.com/xsc/lein-ancient (archived)
                   [lein-ancient "0.7.0"]
 
                   ;; https://github.com/venantius/ultra
@@ -38,10 +38,10 @@
           ;; dependencies
           :dependencies [
                          ;; https://github.com/nrepl/nrepl
-                         [nrepl "0.8.3"]
+                         [nrepl "1.3"]
 
                          ;; https://github.com/vlaaad/reveal
-                         [vlaaad/reveal "1.2.186"]]
+                         [vlaaad/reveal "1.3.284"]]
 
           ;; repl-options
           :repl-options {
