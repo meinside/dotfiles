@@ -1,6 +1,6 @@
 -- .config/nvim/lua/config/autocmds.lua
 --
--- last update: 2025.04.03.
+-- last update: 2025.04.15.
 
 -- Autocmds are automatically loaded on the VeryLazy event
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
@@ -97,5 +97,18 @@ vim.api.nvim_create_autocmd("BufLeave", {
 	pattern = "*",
 	callback = function()
 		vim.diagnostic.enable(true, { bufnr = 0 }) -- current buffer
+	end,
+})
+
+-- change highlight color for function signature help
+vim.api.nvim_create_autocmd("ColorScheme", {
+	pattern = "*",
+	desc = "Custom LSP signature highlights",
+	callback = function()
+		vim.api.nvim_set_hl(0, "LspSignatureActiveParameter", {
+			bg = "#000000",
+			fg = "#ff0000",
+			bold = true, -- Optionally add styles
+		})
 	end,
 })
