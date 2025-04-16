@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/development.lua
 --
--- last update: 2025.03.27.
+-- last update: 2025.04.16.
 
 ------------------------------------------------
 -- imports
@@ -51,9 +51,15 @@ return {
 		event = "VeryLazy",
 		config = function()
 			local blink = require("blink.cmp")
-			require("neocodeium").setup({
+			local neocodeium = require("neocodeium")
+			neocodeium.setup({
 				filter = function(bufnr)
-					-- NOTE: enable neocodeium only for these file types
+					-- disable codeium for .env files (for security?)
+					if vim.endswith(vim.api.nvim_buf_get_name(bufnr), ".env") then
+						return false
+					end
+
+					-- enable neocodeium only for these file types
 					if
 						vim.tbl_contains({
 							"c",
@@ -80,6 +86,8 @@ return {
 					then
 						return true
 					end
+
+					-- show suggestions only when blink.cmp menu is not visible
 					return not blink.is_visible()
 				end,
 				filetypes = {
@@ -106,10 +114,12 @@ return {
 				},
 			})
 
-			-- create an autocommand which closes nvim-cmp when completions are displayed
+			-- clear suggestions when blink.cmp menu is opened
 			vim.api.nvim_create_autocmd("User", {
-				pattern = "NeoCodeiumCompletionDisplayed",
-				callback = blink.cancel,
+				pattern = "BlinkCmpMenuOpen",
+				callback = function()
+					neocodeium.clear()
+				end,
 			})
 		end,
 		cond = custom.features().codeium, -- ~/.config/nvim/lua/custom/init.lua
