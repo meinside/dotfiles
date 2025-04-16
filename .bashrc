@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2025.03.06.
+# updated on 2025.04.16.
 #
 # $ chsh -s `which zsh`
 #
@@ -117,12 +117,11 @@ export CARGO_HOME="$XDG_DATA_HOME/cargo"
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 if [ -d "$CARGO_HOME/bin" ]; then
     export PATH="$CARGO_HOME/bin:$PATH"
-else
-    for r in "$HOME/.asdf/installs/rust"/*; do
-        . "${r}/env"
-        break
-    done
 fi
+for r in "$HOME/.asdf/installs/rust"/*; do
+    . "${r}/env"
+    break
+done
 
 # for sqlite3
 export SQLITE_HISTORY="$XDG_CACHE_HOME/sqlite_history"

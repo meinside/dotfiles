@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2025.03.06.
+# updated on 2025.04.16.
 #
 # $ chsh -s `which zsh`
 #
@@ -197,13 +197,12 @@ export CARGO_HOME="$XDG_DATA_HOME/cargo"
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 if [ -d "$CARGO_HOME/bin" ]; then
     export PATH="$CARGO_HOME/bin:$PATH"
-else
-    for r in $ASDF_DATA_DIR/installs/rust/*; do
-        if [ -d $r ]; then
-            . "${r}/env"; break
-        fi
-    done
 fi
+for r in $ASDF_DATA_DIR/installs/rust/*; do
+    if [ -d $r ]; then
+        . "${r}/env"; break
+    fi
+done
 
 # for sqlite3
 export SQLITE_HISTORY="$XDG_CACHE_HOME/sqlite_history"
