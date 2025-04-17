@@ -11,7 +11,7 @@ local custom = require("custom") -- ~/.config/nvim/lua/custom/init.lua
 -- global variables
 --
 -- (for all lispy languages)
-local lisps = { "fennel", "janet" }
+local lisps = { "clojure", "fennel", "janet", "lisp", "scheme" }
 -- (for conjure)
 vim.g["conjure#filetypes"] = lisps
 vim.g["conjure#filetype#fennel"] = "conjure.client.fennel.stdio" -- for fennel
