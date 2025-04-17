@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/development.lua
 --
--- last update: 2025.04.16.
+-- last update: 2025.04.17.
 
 ------------------------------------------------
 -- imports
@@ -273,7 +273,7 @@ return {
 	-- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
 	-- for reloading everything: \rr
 	-- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
-	--{ "Olical/conjure" },
+	{ "Olical/conjure" },
 	-- >f, <f : move a form
 	-- >e, <e : move an element
 	-- >), <), >(, <( : move a parenthesis
