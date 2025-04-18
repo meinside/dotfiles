@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/plugins.lua
 --
--- last update: 2025.04.17.
+-- last update: 2025.04.18.
 
 ------------------------------------------------
 -- imports
@@ -255,12 +255,6 @@ return {
 	{ "terrastruct/d2-vim", ft = { "d2" } },
 
 	-- fold
-	{
-		-- `zM` for closing all, `zR` for opening all
-		-- `zc` for closing, `zo` for opening, `za` for toggling
-		"kevinhwang91/nvim-ufo",
-		dependencies = { "kevinhwang91/promise-async" },
-	},
 	{
 		"chrisgrieser/nvim-origami",
 		event = "VeryLazy",

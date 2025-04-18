@@ -2,7 +2,7 @@
 --
 -- default: https://www.lazyvim.org/configuration/general#options
 --
--- last update: 2025.04.04.
+-- last update: 2025.04.18.
 
 vim.g.mapleader = "\\"
 
@@ -48,7 +48,7 @@ opt.fillchars = {
 	eob = " ",
 }
 opt.foldcolumn = "0"
-opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+opt.foldexpr = "v:lua.require'lazyvim.util'.ui.foldexpr()"
 opt.foldlevel = 99
 opt.foldlevelstart = 20 -- but open all folds on file open
 opt.foldmethod = "expr"
@@ -83,6 +83,7 @@ opt.sidescrolloff = 8 -- Columns of context
 opt.signcolumn = "auto"
 opt.smartcase = true
 opt.smartindent = true
+opt.smoothscroll = true
 opt.softtabstop = 2
 opt.spelllang = { "en" }
 opt.splitbelow = true -- Put new windows below current
@@ -100,16 +101,6 @@ opt.wildmode = "longest:full,full" -- Command-line completion mode
 opt.winborder = "none"
 opt.winminwidth = 5 -- Minimum window width
 opt.wrap = true
-
-if vim.fn.has("nvim-0.10") == 1 then
-	opt.smoothscroll = true
-	opt.foldexpr = "v:lua.require'lazyvim.util'.ui.foldexpr()"
-	opt.foldmethod = "expr"
-	opt.foldtext = ""
-else
-	opt.foldmethod = "indent"
-	opt.foldtext = "v:lua.require'lazyvim.util'.ui.foldtext()"
-end
 
 -- diagnostics configuration
 --
