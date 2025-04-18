@@ -3,28 +3,22 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.04.07.
+# last update: 2025.04.18.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
 #
 # https://github.com/babashka/babashka/releases
-babashka 1.12.197
+babashka 1.12.198
 
 # For bash-language-server,
 #   :MasonInstall bash-language-server
-# or
-#   $ npm i -g bash-language-server
 
 # $ asdf plugin add clojure https://github.com/asdf-community/asdf-clojure.git
 # $ asdf install clojure
 #
-# For clojure-lsp,
+# For language server,
 #   :MasonInstall clojure-lsp
-# or
-#   $ brew install clojure-lsp/brew/clojure-lsp-native
-# or
-#   $ sudo bash < <(curl -s https://raw.githubusercontent.com/clojure-lsp/clojure-lsp/master/install)
 #
 # https://clojure.org/releases/tools#_releases
 clojure 1.12.0.1530
@@ -41,7 +35,7 @@ elixir 1.18.3
 # $ KERL_BUILD_DOCS=yes asdf install erlang
 #
 # https://github.com/erlang/otp/releases
-erlang 27.3
+erlang 27.3.3
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -69,7 +63,7 @@ golang 1.24.2
 # or
 #   $ pip3 install --user meson
 #
-# For LSP,
+# For language server,
 #   $ jpm install spork
 #   $ janet -e "(import spork/netrepl) (netrepl/server)"
 #
@@ -95,18 +89,10 @@ leiningen 2.11.2
 # $ asdf plugin add lua
 # $ asdf install lua
 #
-# For lua-language-server,
+# For language server,
 #   :MasonInstall lua-language-server
-# or
-#   $ brew install lua-language-server
-# or
-#   $ DIR="/opt/lua-language-server"
-#   $ sudo mkdir -p $DIR && sudo chown -R $USER $DIR && git clone https://github.com/sumneko/lua-language-server $DIR
-#   $ cd $DIR && git submodule update --init --recursive
-#   $ cd 3rd/luamake && ./compile/install.sh && cd ../../ && ./3rd/luamake/luamake rebuild
 #
 # For readline in REPL,
-#
 #   $ sudo apt install liblua5.4-dev libreadline-dev
 #   $ luarocks --local install readline HISTORY_LIBDIR=/usr/lib/aarch64-linux-gnu HISTORY_INCDIR=/usr/include READLINE_LIBDIR=/usr/lib/aarch64-linux-gnu
 # or
@@ -128,7 +114,7 @@ meson 1.7.2
 # $ asdf install nim
 #
 # For language server,
-#   $ nimble install nimlsp
+#   :MasonInstall nimlsp
 #
 # https://nim-lang.org/install.html
 nim 2.2.2
@@ -150,37 +136,27 @@ nodejs 23.11.0
 #
 # For language server,
 #   :MasonInstall python-lsp-server
-# or
-#   $ pip install --user python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.13.2
+python 3.13.3
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
 #
-# FIXME: (aarch64) ruby fails to install with recent versions of rust
-# $ asdf install rust 1.77.2
-# $ asdf shell rust 1.77.2
-# $ asdf install ruby
+# NOTE: if the latest version is not available yet,
+# ASDF_RUBY_BUILD_VERSION=master asdf install ruby x.y.z
 #
 # For language server,
 #   :MasonInstall solargraph
-# or
-#   $ gem install --user-install solargraph
 #
 # https://www.ruby-lang.org/en/downloads/releases/
-ruby 3.4.2
+ruby 3.4.3
 
 # $ asdf plugin add rust
 # $ asdf install rust
 #
 # For rust-analyzer, (https://rust-analyzer.github.io/manual.html#installation)
 #   :MasonInstall rust-analyzer
-# or
-#   $ git clone https://github.com/rust-analyzer/rust-analyzer.git
-#   $ cd rust-analyzer/
-#   $ cargo xtask install --server
 #
 # https://github.com/rust-lang/rust/releases
 rust 1.86.0
@@ -188,17 +164,8 @@ rust 1.86.0
 # $ asdf plugin add zig
 # $ asdf install zig
 #
-# For zls, (https://github.com/zigtools/zls)
+# For language server,
 #   :MasonInstall zls
-# or
-#   $ sudo rm -rf /opt/zls
-#   $ sudo mkdir -p /opt/zls
-#   $ sudo chown -R "$USER" /opt/zls
-#   $ git clone --recurse-submodules https://github.com/zigtools/zls /opt/zls
-#   $ cd /opt/zls
-#   $ git checkout master
-#   $ zig build -Drelease-safe
-#   $ zig-out/bin/zls config
 #
 # https://github.com/ziglang/zig/releases
 zig 0.14.0
