@@ -2,7 +2,7 @@
 --
 -- default: https://www.lazyvim.org/configuration/general#options
 --
--- last update: 2025.04.18.
+-- last update: 2025.04.28.
 
 vim.g.mapleader = "\\"
 
@@ -71,7 +71,7 @@ opt.pumblend = 10 -- Popup blend
 opt.pumheight = 10 -- Maximum number of entries in a popup
 opt.relativenumber = true -- Relative line numbers
 opt.ruler = true
-opt.scrolloff = 5 -- Lines of context
+opt.scrolloff = 0 -- NOTE: scrolling: <C-y> and <C-e> by one line, <C-u> and <C-d> by half page, `zz` for centering the cursor
 opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
 opt.shiftround = true
 opt.shiftwidth = 2

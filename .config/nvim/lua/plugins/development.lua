@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/development.lua
 --
--- last update: 2025.04.17.
+-- last update: 2025.04.28.
 
 ------------------------------------------------
 -- imports
@@ -37,6 +37,17 @@ return {
 				menu = { border = "rounded" },
 				documentation = { window = { border = "rounded" } },
 			},
+		},
+	},
+
+	-- auto pairs
+	--
+	-- (mini.pairs)
+	{
+		"echasnovski/mini.pairs",
+		opts = {
+			-- not to close pairs in command, search mode
+			modes = { insert = true, command = false, terminal = false },
 		},
 	},
 
