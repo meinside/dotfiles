@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/lsps.lua
 --
--- last update: 2025.04.15.
+-- last update: 2025.05.08.
 
 local custom = require("custom") -- ~/.config/nvim/lua/custom/init.lua
 
@@ -42,19 +42,20 @@ return {
 		end,
 	},
 	{
-		"williamboman/mason.nvim",
+		"mason-org/mason.nvim",
 		opts = {
 			ui = { border = "rounded" },
 		},
 	},
 	{
-		"williamboman/mason-lspconfig.nvim",
+		"mason-org/mason-lspconfig.nvim",
 		config = function()
 			require("mason-lspconfig").setup({
 				ensure_installed = custom.installable_lsp_names(), -- NOTE: ~/.config/nvim/lua/custom/lsps_sample.lua
-				automatic_installation = false,
+				automatic_enable = true,
 			})
 		end,
+		branch = "v1.x", -- FIXME: https://github.com/LazyVim/LazyVim/pull/6041
 	},
 
 	-- dim unused things
