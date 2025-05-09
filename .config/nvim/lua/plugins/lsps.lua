@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/lsps.lua
 --
--- last update: 2025.05.08.
+-- last update: 2025.05.09.
 
 local custom = require("custom") -- ~/.config/nvim/lua/custom/init.lua
 
@@ -55,7 +55,7 @@ return {
 				automatic_enable = true,
 			})
 		end,
-		branch = "v1.x", -- FIXME: https://github.com/LazyVim/LazyVim/pull/6041
+		branch = "v1.x", -- FIXME: https://github.com/LazyVim/LazyVim/pull/6053
 	},
 
 	-- dim unused things
