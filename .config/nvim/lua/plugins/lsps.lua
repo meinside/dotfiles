@@ -55,7 +55,6 @@ return {
 				automatic_enable = true,
 			})
 		end,
-		branch = "v1.x", -- FIXME: https://github.com/LazyVim/LazyVim/pull/6053
 	},
 
 	-- dim unused things
