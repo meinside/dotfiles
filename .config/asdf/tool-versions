@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.05.21.
+# last update: 2025.05.22.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -40,10 +40,11 @@ erlang 27.3.4
 # $ asdf plugin add golang
 # $ asdf install golang
 #
-# For gopls,
-#   :MasonInstall gopls
-# or
-#   $ go install golang.org/x/tools/gopls@latest
+# reshim is needed after installing things with `go install`:
+#   $ asdf reshim golang
+#
+# link or copy binaries to $GOPATH/bin/ if needed:
+#   $ cp `asdf which XXXX` $GOPATH/bin/
 #
 # https://go.dev/doc/devel/release
 golang 1.24.3
