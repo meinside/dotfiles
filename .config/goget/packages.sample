@@ -19,4 +19,5 @@ github.com/meinside/goget@latest
 github.com/meinside/gtmx@latest
 github.com/meinside/nfc-normalizer-go/cmd/nfcmv@latest
 github.com/meinside/pb-send@latest
+github.com/meinside/telegram-remotecontrol-bot/cmd/telegram-bot-broadcast
 
