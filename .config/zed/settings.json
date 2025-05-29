@@ -1,12 +1,15 @@
 // ~/.config/zed/settings.json
 //
 // https://zed.dev/docs/configuring-zed
+//
+// last update: 2025.05.29.
+
 {
   // theme
   "theme": {
     "mode": "system",
-    "dark": "Andromeda",
-    "light": "Atelier Cave Light"
+    "dark": "Catppuccin Frappé",
+    "light": "Catppuccin Latte"
   },
 
   // font
@@ -28,7 +31,7 @@
     "git_diff": true,
     "search_results": true,
     "selected_symbol": true,
-    "diagnostics": true
+    "diagnostics": "warning"
   },
   "show_whitespaces": "boundary",
   "tab_bar": {
@@ -87,12 +90,12 @@
 
   // terminal
   "terminal": {
-    "font_family": "Iosevka Nerd Font Mono",
+    "font_family": "Noto Sans",
     "blinking": "on"
   },
 
   // assistant
-  "assistant": {
+  "agent": {
     "default_model": {
       "provider": "zed.dev",
       "model": "claude-3-7-sonnet-latest"
