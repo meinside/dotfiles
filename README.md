@@ -6,7 +6,7 @@ by Sungjin Han (<meinside@duck.com>)
 
 My dotfiles, configs, and shell scripts for:
 
-- macOS (**Sonoma**) + [kitty](https://sw.kovidgoyal.net/kitty/)
+- macOS (**Sequoia**) + [kitty](https://sw.kovidgoyal.net/kitty/)
 - Raspberry Pi (**Raspberry Pi OS Bullseye**)
 - Linux (**Debian/Ubuntu**)
 - WSL2 (**Windows 11**) + [Windows Terminal](https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701)
