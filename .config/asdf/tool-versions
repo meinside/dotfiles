@@ -147,6 +147,9 @@ python 3.13.3
 # NOTE: if the latest version is not available yet,
 # ASDF_RUBY_BUILD_VERSION=master asdf install ruby x.y.z
 #
+# if installation fails with psych on macOS,
+# $ brew install libyaml
+#
 # For language server,
 #   :MasonInstall solargraph
 #
