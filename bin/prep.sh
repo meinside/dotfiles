@@ -6,7 +6,7 @@
 #
 # (https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh)
 # 
-# last update: 2024.04.24.
+# last update: 2025.06.04.
 
 # colors
 RED="\033[0;31m"
@@ -123,7 +123,7 @@ function install_packages_linux {
 
 function install_packages_macos {
 	# install Homebrew
-	/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 }
 
 function cleanup {
