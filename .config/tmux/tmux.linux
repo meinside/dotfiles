@@ -1,7 +1,8 @@
 # partial tmux.conf for linux
 #
-# last update: 2025.02.26.
+# last update: 2025.06.05.
 
+# https://www.ditig.com/256-colors-cheat-sheet
 # color121 = light green
 # color124 = red
 # color226 = yellow

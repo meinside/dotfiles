@@ -1,9 +1,10 @@
 # partial tmux.conf for macOS
 #
-# last update: 2025.02.26.
+# last update: 2025.06.05.
 
+# https://www.ditig.com/256-colors-cheat-sheet
 # color121 = light green
-# color66 = sage green
+# color153 = light sky blue
 # color226 = yellow
 
 set -g default-terminal xterm-256color
@@ -14,23 +15,23 @@ set -g pane-active-border-style fg=color160
 set -g status-style fg=color232,bg=default
 
 set -g status-left-length 30
-set -g status-left '#[fg=color232,bg=color66] #S #[fg=color66,bg=default,nobold,nounderscore,noitalics]'
+set -g status-left '#[fg=color232,bg=color153] #S #[fg=color153,bg=default,nobold,nounderscore,noitalics]'
 set -g status-right-length 50
-set -g status-right '#[fg=color121,bg=default]  %Y-%m-%d (%a) %R #[fg=color66,bg=default,nobold,nounderscore,noitalics]#[fg=color232,bg=color66] @#(hostname -s) '
+set -g status-right '#[fg=color121,bg=default]  %Y-%m-%d (%a) %R #[fg=color153,bg=default,nobold,nounderscore,noitalics]#[fg=color232,bg=color153] @#(hostname -s) '
 
 setw -g window-status-separator ''
 setw -g window-status-format ' #I #W ╱'
-setw -g window-status-style 'fg=color66,bg=default,nobold,nounderscore,noitalics'
+setw -g window-status-style 'fg=color153,bg=default,nobold,nounderscore,noitalics'
 
 # current window = yellow
 setw -g window-status-current-format ' #I #W ╱'
 setw -g window-status-current-style 'fg=color226,bg=default,bold'
 
 # last window = sage green + bold
-setw -g window-status-last-style 'fg=color66,bg=default,bold'
+setw -g window-status-last-style 'fg=color153,bg=default,bold'
 
 # window with activity = sage green + underscore
-setw -g window-status-activity-style 'fg=color66,bg=default,underscore'
+setw -g window-status-activity-style 'fg=color153,bg=default,underscore'
 
 # for using pbpaste, pbcopy, or mas in tmux:
 if-shell '[ -x "`which reattach-to-user-namespace`" ]' \
