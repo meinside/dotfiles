@@ -5,7 +5,9 @@
 #
 # then it will automatically  `go install` or `go get -u` all packages listed in this file
 #
-# last update: 2025.05.23.
+# last update: 2025.06.09.
+#
+# NOTE: make sure to put things also in `~/.default-golang-pkgs` file
 
 # for backup/sync
 github.com/rclone/rclone

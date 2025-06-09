@@ -1,0 +1,13 @@
+// .default-golang-pkgs.sample
+
+// for backup/sync
+github.com/rclone/rclone
+
+// my packages
+github.com/meinside/backupboxxx
+github.com/meinside/cloudflare-go/cmd/cf-dns-cli
+github.com/meinside/gmn
+github.com/meinside/goget
+github.com/meinside/gtmx
+github.com/meinside/pb-send
+
