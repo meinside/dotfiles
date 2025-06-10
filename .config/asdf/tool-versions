@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.06.06.
+# last update: 2025.06.10.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -29,13 +29,13 @@ clojure 1.12.1.1550
 # * NOTE: `erlang` needs to be installed.
 #
 # https://github.com/elixir-lang/elixir/releases
-elixir 1.18.3
+elixir 1.18.4
 
 # $ asdf plugin add erlang
 # $ KERL_BUILD_DOCS=yes asdf install erlang
 #
 # https://github.com/erlang/otp/releases
-erlang 27.3.4
+erlang 28.0
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -103,13 +103,13 @@ leiningen 2.11.2
 # and put `luarocks path` result to .custom_env file
 #
 # https://www.lua.org/versions.html
-lua 5.4.7
+lua 5.4.8
 
 # $ asdf plugin add meson
 # $ asdf install meson
 #
 # https://github.com/mesonbuild/meson/releases
-meson 1.8.1
+meson 1.8.2
 
 # $ asdf plugin add nim
 # $ asdf install nim
@@ -139,7 +139,7 @@ nodejs 24.1.0
 #   :MasonInstall python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.13.3
+python 3.13.4
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
