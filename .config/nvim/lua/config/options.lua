@@ -2,7 +2,7 @@
 --
 -- default: https://www.lazyvim.org/configuration/general#options
 --
--- last update: 2025.04.28.
+-- last update: 2025.06.30.
 
 vim.g.mapleader = "\\"
 
@@ -50,7 +50,7 @@ opt.fillchars = {
 opt.foldcolumn = "0"
 opt.foldexpr = "v:lua.require'lazyvim.util'.ui.foldexpr()"
 opt.foldlevel = 99
-opt.foldlevelstart = 20 -- but open all folds on file open
+opt.foldlevelstart = 99
 opt.foldmethod = "expr"
 opt.foldtext = ""
 opt.formatexpr = "v:lua.require'lazyvim.util'.format.formatexpr()"
@@ -71,7 +71,8 @@ opt.pumblend = 10 -- Popup blend
 opt.pumheight = 10 -- Maximum number of entries in a popup
 opt.relativenumber = true -- Relative line numbers
 opt.ruler = true
-opt.scrolloff = 0 -- NOTE: scrolling: <C-y> and <C-e> by one line, <C-u> and <C-d> by half page, `zz` for centering the cursor
+-- NOTE: scrolling: <C-y> and <C-e> by one line, <C-u> and <C-d> by half page, `zz` for centering the cursor
+opt.scrolloff = 0
 opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
 opt.shiftround = true
 opt.shiftwidth = 2
@@ -104,7 +105,8 @@ opt.wrap = true
 
 -- diagnostics configuration
 --
--- NOTE: some related autocmds are defined in: ~/.config/nvim/lua/config/autocmds.lua
+-- NOTE: some related autocmds are defined in:
+-- ~/.config/nvim/lua/config/autocmds.lua
 vim.diagnostic.config({
 	underline = true,
 	virtual_text = {
