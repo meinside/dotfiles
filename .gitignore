@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2025.06.09.
+# last update: 2025.06.26.
 
 # unnecessary binary files
 *.a
@@ -176,6 +176,7 @@ xcuserdata
 .flutter
 .ganttproject
 .gdrive/
+.gemini/
 .Genymobile/
 .ghidra/
 .hex/

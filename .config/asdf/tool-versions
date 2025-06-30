@@ -3,13 +3,13 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.06.11.
+# last update: 2025.06.27.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
 #
 # https://github.com/babashka/babashka/releases
-babashka 1.12.200
+babashka 1.12.204
 
 # For bash-language-server,
 #   :MasonInstall bash-language-server
@@ -29,13 +29,13 @@ clojure 1.12.1.1550
 # * NOTE: `erlang` needs to be installed.
 #
 # https://github.com/elixir-lang/elixir/releases
-elixir 1.18.4
+elixir 1.19
 
 # $ asdf plugin add erlang
 # $ KERL_BUILD_DOCS=yes asdf install erlang
 #
 # https://github.com/erlang/otp/releases
-erlang 28.0
+erlang 28.0.1
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -124,13 +124,13 @@ nim 2.2.4
 # $ asdf install ninja
 #
 # https://github.com/ninja-build/ninja/releases
-ninja 1.12.1
+ninja 1.13.0
 
 # $ asdf plugin add nodejs
 # $ asdf install nodejs
 #
 # https://nodejs.org/en/about/releases/
-nodejs 24.2.0
+nodejs 24.3.0
 
 # $ asdf plugin add python
 # $ asdf install python
@@ -139,7 +139,7 @@ nodejs 24.2.0
 #   :MasonInstall python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.13.4
+python 3.13.5
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
@@ -163,7 +163,7 @@ ruby 3.4.4
 #   :MasonInstall rust-analyzer
 #
 # https://github.com/rust-lang/rust/releases
-rust 1.87.0
+rust 1.88.0
 
 # $ asdf plugin add zig
 # $ asdf install zig
@@ -172,5 +172,5 @@ rust 1.87.0
 #   :MasonInstall zls
 #
 # https://github.com/ziglang/zig/releases
-zig 0.14.0
+zig 0.14.1
 
