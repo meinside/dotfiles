@@ -5,7 +5,7 @@
 # $ brew tap Homebrew/bundle
 # $ brew bundle --file=$XDG_CONFIG_HOME/homebrew/Brewfile
 # 
-# last update: 2025.06.05.
+# last update: 2025.07.02.
 
 cask_args appdir: '/Applications'
 
@@ -32,6 +32,7 @@ brew 'neovim', args: ['HEAD']
 brew 'pstree'
 brew 'reattach-to-user-namespace'	# for using `pbcopy`, `pbpaste`, or `mas` in tmux
 brew 'starship'
+brew 'stats'
 brew 'tmux'
 brew 'tree'
 brew 'wget'
