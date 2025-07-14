@@ -2,9 +2,10 @@
 #
 # bin/macos/hack.sh
 #
-# cherry-picked from: https://gist.github.com/erikh/2260182
+# * cherry-picked from: https://gist.github.com/erikh/2260182
+# * all defaults: https://macos-defaults.com/
 #
-# last update: 2023.07.05.
+# last update: 2025.07.12.
 
 # This is a script with usefull tips taken from:
 #   https://github.com/mathiasbynens/dotfiles/blob/master/.osx
@@ -29,8 +30,8 @@ defaults write com.apple.dock autohide -bool true
 echo "Make Dock icons of hidden applications translucent"
 defaults write com.apple.dock showhidden -bool true
 
-echo "Enable iTunes track notifications in the Dock"
-defaults write com.apple.dock itunes-notifications -bool true
+#echo "Enable iTunes track notifications in the Dock"
+#defaults write com.apple.dock itunes-notifications -bool true
 
 # Disable menu bar transparency
 defaults write NSGlobalDomain AppleEnableMenuBarTransparency -bool false
@@ -41,6 +42,9 @@ defaults write NSGlobalDomain AppleEnableMenuBarTransparency -bool false
 
 # echo "Always show scrollbars"
 # defaults write NSGlobalDomain AppleShowScrollBars -string "Auto"
+
+echo "Keep folders on top when sorting by name"
+defaults write com.apple.finder "_FXSortFoldersFirst" -bool "true"
 
 echo "Allow quitting Finder via ⌘ + Q; doing so will also hide desktop icons"
 defaults write com.apple.finder QuitMenuItem -bool true
@@ -66,11 +70,15 @@ defaults write NSGlobalDomain NSNavPanelExpandedStateForSaveMode -bool true
 echo "Expand print panel by default"
 defaults write NSGlobalDomain PMPrintingExpandedStateForPrint -bool true
 
-echo "Disable the \"Are you sure you want to open this application?\" dialog"
-defaults write com.apple.LaunchServices LSQuarantine -bool false
+# (not working anymore)
+#echo "Disable the \"Are you sure you want to open this application?\" dialog"
+#defaults write com.apple.LaunchServices LSQuarantine -bool false
 
 echo "Disable shadow in screenshots"
 defaults write com.apple.screencapture disable-shadow -bool true
+
+echo "Set screenshot format to jpeg"
+defaults write com.apple.screencapture "type" -string "jpg"
 
 echo "Enable highlight hover effect for the grid view of a stack (Dock)"
 defaults write com.apple.dock mouse-over-hilte-stack -bool true
@@ -105,8 +113,8 @@ defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
 # Disable opening and closing window animations
 # defaults write NSGlobalDomain NSAutomaticWindowAnimationsEnabled -bool false
 
-echo "Enable AirDrop over Ethernet and on unsupported Macs running Lion"
-defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
+#echo "Enable AirDrop over Ethernet and on unsupported Macs running Lion"
+#defaults write com.apple.NetworkBrowser BrowseAllInterfaces -bool true
 
 echo "Disable disk image verification"
 defaults write com.apple.frameworks.diskimages skip-verify -bool true
@@ -225,5 +233,4 @@ sudo nvram SystemAudioVolume=%80
 #defaults write com.apple.PowerChime ChimeOnAllHardware -bool true
 
 # change screenshot save location
-#defaults write com.apple.screencapture location ~/Downloads; killall SystemUIServer
-
+defaults write com.apple.screencapture location ~/Downloads && killall SystemUIServer
