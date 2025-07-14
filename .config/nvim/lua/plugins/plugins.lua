@@ -40,7 +40,8 @@ return {
 				mocha = function(C)
 					return {
 						CmpBorder = { fg = C.surface2 },
-						CursorLine = { bg = "#423030" },
+						CursorLine = { bg = "#303060" },
+						CursorColumn = { bg = "#303060" },
 						Pmenu = { bg = C.none },
 						TelescopeBorder = { link = "FloatBorder" },
 					}
