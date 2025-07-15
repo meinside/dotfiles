@@ -4,8 +4,6 @@
 #
 # * cherry-picked from: https://gist.github.com/erikh/2260182
 # * all defaults: https://macos-defaults.com/
-#
-# last update: 2025.07.12.
 
 # This is a script with usefull tips taken from:
 #   https://github.com/mathiasbynens/dotfiles/blob/master/.osx
@@ -13,6 +11,7 @@
 # install it:
 #   curl -sL https://raw.github.com/gist/2108403/hack.sh | sh
 #
+# last update: 2025.07.15.
 
 echo "Enable full keyboard access for all controls (e.g. enable Tab in modal dialogs)"
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 0
@@ -100,12 +99,10 @@ echo "Disable press-and-hold for keys in favor of key repeat"
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
 echo "Set a blazingly fast keyboard repeat rate"
-#defaults write NSGlobalDomain KeyRepeat -int 0.02
-defaults write NSGlobalDomain KeyRepeat -int 0.01
+defaults write NSGlobalDomain KeyRepeat -int 2
 
 echo "Set a shorter Delay until key repeat"
-#defaults write NSGlobalDomain InitialKeyRepeat -int 12
-defaults write NSGlobalDomain InitialKeyRepeat -int 24
+defaults write NSGlobalDomain InitialKeyRepeat -int 15
 
 echo "Disable auto-correct"
 defaults write NSGlobalDomain NSAutomaticSpellingCorrectionEnabled -bool false
