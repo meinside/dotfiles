@@ -226,6 +226,9 @@ sudo nvram SystemAudioVolume=%80
 # (for reenabling it)
 #sudo nvram -d SystemAudioVolume
 
+# disable automatic boot-up when opening the lid or connecting to power
+sudo nvram BootPreference=%00
+
 # enable chime on connection of power cable
 #defaults write com.apple.PowerChime ChimeOnAllHardware -bool true
 
