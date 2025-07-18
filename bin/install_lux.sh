@@ -6,7 +6,7 @@
 # https://github.com/nvim-neorocks/lux
 #
 # created on : 2025.04.16.
-# last update: 2025.04.16.
+# last update: 2025.07.18.
 
 ################################
 #
@@ -61,12 +61,15 @@ function install_linux {
 	install_cargo_things
 }
 
+# FIXME: TODO: when this project releases stable releases, download and use them
 function install_cargo_things {
-	# install rust toolchain
-	cargo install cargo-binstall
+	## install rust toolchain
+	#cargo install cargo-binstall
+	#
+	## install lux
+	#cargo binstall lux-cli --locked
 
-	# install lux
-	cargo binstall lux-cli --locked
+	cargo install lux-cli --locked
 }
 
 case "$OSTYPE" in
