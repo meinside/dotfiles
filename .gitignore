@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2025.06.26.
+# last update: 2025.07.21.
 
 # unnecessary binary files
 *.a
@@ -97,6 +97,7 @@ snap/
 
 # dart files/dirs
 .dart/
+.dart-tool/
 .dartServer/
 .pub-cache/
 .stagehand
