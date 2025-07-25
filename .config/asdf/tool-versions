@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.07.16.
+# last update: 2025.07.25.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -154,7 +154,7 @@ python 3.13.5
 #   :MasonInstall solargraph
 #
 # https://www.ruby-lang.org/en/downloads/releases/
-ruby 3.4.4
+ruby 3.4.5
 
 # $ asdf plugin add rust
 # $ asdf install rust
