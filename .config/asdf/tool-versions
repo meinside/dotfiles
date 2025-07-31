@@ -3,13 +3,13 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.07.25.
+# last update: 2025.08.01.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
 #
 # https://github.com/babashka/babashka/releases
-babashka 1.12.204
+babashka 1.12.206
 
 # For bash-language-server,
 #   :MasonInstall bash-language-server
@@ -35,7 +35,7 @@ elixir 1.19
 # $ KERL_BUILD_DOCS=yes asdf install erlang
 #
 # https://github.com/erlang/otp/releases
-erlang 28.0.1
+erlang 28.0.2
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -109,7 +109,7 @@ lua 5.4.8
 # $ asdf install meson
 #
 # https://github.com/mesonbuild/meson/releases
-meson 1.8.2
+meson 1.8.3
 
 # $ asdf plugin add nim
 # $ asdf install nim
