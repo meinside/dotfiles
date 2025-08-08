@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.08.07.
+# last update: 2025.08.08.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -163,7 +163,7 @@ ruby 3.4.5
 #   :MasonInstall rust-analyzer
 #
 # https://github.com/rust-lang/rust/releases
-rust 1.88.0
+rust 1.89.0
 
 # $ asdf plugin add zig
 # $ asdf install zig
