@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.08.08.
+# last update: 2025.08.13.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -47,7 +47,7 @@ erlang 28.0.2
 #   $ cp `asdf which XXXX` $GOPATH/bin/
 #
 # https://go.dev/doc/devel/release
-golang 1.24.6
+golang 1.25.0
 
 # $ asdf plugin add janet
 # $ asdf install janet
