@@ -2,7 +2,7 @@
 --
 -- default: https://www.lazyvim.org/configuration/general#options
 --
--- last update: 2025.07.14.
+-- last update: 2025.08.13.
 
 vim.g.mapleader = "\\"
 
@@ -37,7 +37,7 @@ opt.conceallevel = 2 -- Hide * markup for bold and italic, but not markers with 
 opt.confirm = true -- Confirm to save changes before exiting modified buffer
 opt.cursorline = true -- Enable highlighting of the current line
 opt.cursorlineopt = "screenline"
-opt.cursorcolumn = not require("tools").system.low_perf() -- NOTE: disable cursorcolumn on low-perf machines
+--opt.cursorcolumn = not require("tools").system.low_perf() -- NOTE: disable cursorcolumn on low-perf machines
 opt.encoding = "utf-8"
 opt.expandtab = true -- Use spaces instead of tabs
 opt.fileencodings = { "ucs-bom", "utf-8", "korea" }
