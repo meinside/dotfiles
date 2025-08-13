@@ -2,7 +2,7 @@
 //
 // https://zed.dev/docs/configuring-zed
 //
-// last update: 2025.05.29.
+// last update: 2025.08.13.
 
 {
   // theme
@@ -104,8 +104,7 @@
     "button": true,
     "dock": "right",
     "default_width": 640,
-    "default_height": 320,
-    "version": "2"
+    "default_height": 320
   },
 
   // others
