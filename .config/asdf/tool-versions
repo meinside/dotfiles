@@ -165,6 +165,12 @@ ruby 3.4.5
 # https://github.com/rust-lang/rust/releases
 rust 1.89.0
 
+# $ asdf plugin add tinygo https://github.com/troyjfarrell/asdf-tinygo
+# $ asdf install tinygo
+#
+# https://github.com/tinygo-org/tinygo/releases/
+tinygo 0.38.0
+
 # $ asdf plugin add zig
 # $ asdf install zig
 #
