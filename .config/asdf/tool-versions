@@ -3,13 +3,13 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.08.18.
+# last update: 2025.08.19.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
 #
 # https://github.com/babashka/babashka/releases
-babashka 1.12.206
+babashka 1.12.207
 
 # For bash-language-server,
 #   :MasonInstall bash-language-server
@@ -139,7 +139,7 @@ nodejs 24.6.0
 #   :MasonInstall python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.13.5
+python 3.13.7
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
