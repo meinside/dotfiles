@@ -1,6 +1,6 @@
 -- .config/nvim/lua/plugins/plugins.lua
 --
--- last update: 2025.04.18.
+-- last update: 2025.08.20.
 
 ------------------------------------------------
 -- imports
@@ -253,7 +253,9 @@ return {
 	{ "cpea2506/relative-toggle.nvim" },
 
 	-- d2
-	{ "terrastruct/d2-vim", ft = { "d2" } },
+	-- * \d2 for viewing .d2 file content in a preview pane
+	-- * \rd2 for replacing selected text into a diagram
+	{ "terrastruct/d2-vim" },
 
 	-- fold
 	{
