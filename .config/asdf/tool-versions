@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.08.19.
+# last update: 2025.08.20.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -169,7 +169,7 @@ rust 1.89.0
 # $ asdf install tinygo
 #
 # https://github.com/tinygo-org/tinygo/releases/
-tinygo 0.38.0
+tinygo 0.39.0
 
 # $ asdf plugin add zig
 # $ asdf install zig
