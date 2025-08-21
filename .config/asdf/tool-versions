@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.08.20.
+# last update: 2025.08.21.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -109,7 +109,7 @@ lua 5.4.8
 # $ asdf install meson
 #
 # https://github.com/mesonbuild/meson/releases
-meson 1.8.3
+meson 1.8.4
 
 # $ asdf plugin add nim
 # $ asdf install nim
@@ -178,5 +178,5 @@ tinygo 0.39.0
 #   :MasonInstall zls
 #
 # https://github.com/ziglang/zig/releases
-zig 0.14.1
+zig 0.15.1
 
