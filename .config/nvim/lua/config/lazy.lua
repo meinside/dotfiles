@@ -2,7 +2,7 @@
 --
 -- from: https://github.com/LazyVim/starter/blob/main/lua/config/lazy.lua
 --
--- last update: 2025.04.10.
+-- last update: 2025.08.22.
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -25,10 +25,10 @@ require("lazy").setup({
 		-- add LazyVim and import its plugins
 		{ "LazyVim/LazyVim", import = "lazyvim.plugins" },
 
-		-- NOTE: will import extra plugins here: ~/.config/nvim/lua/extras.lua
+		-- NOTE: (customized) will import extra plugins here: ~/.config/nvim/lua/extras.lua
 		{ import = "extras" },
 
-		-- NOTE: will import/override plugins here: ~/.config/nvim/lua/plugins/
+		-- NOTE: (customized) will import/override plugins here: ~/.config/nvim/lua/plugins/
 		{ import = "plugins" },
 	},
 	defaults = {

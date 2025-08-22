@@ -1,11 +1,12 @@
 -- .config/nvim/lua/plugins/development.lua
 --
--- last update: 2025.04.28.
+-- last update: 2025.08.22.
 
 ------------------------------------------------
 -- imports
 --
 local custom = require("custom") -- ~/.config/nvim/lua/custom/init.lua
+local tools = require("tools") -- ~/.config/nvim/lua/tools.lua
 
 ------------------------------------------------
 -- global variables
@@ -134,6 +135,49 @@ return {
 			})
 		end,
 		cond = custom.features().codeium, -- ~/.config/nvim/lua/custom/init.lua
+	},
+	-- (codecompanion)
+	{
+		"olimorris/codecompanion.nvim",
+		opts = {},
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+		},
+		config = function()
+			-- read gemini api key from: ~/.config/gmn.nvim/config.json
+			local api_key = tools.fs.read_json_key(vim.fn.expand("~/.config/gmn.nvim/config.json"), "api_key")
+
+			require("codecompanion").setup({
+				adapters = {
+					gemini = function()
+						return require("codecompanion.adapters").extend("gemini", {
+							env = {
+								api_key = api_key,
+							},
+						})
+					end,
+				},
+				strategies = {
+					chat = {
+						adapter = "gemini",
+						model = "gemini-2.5-pro",
+						think = true,
+					},
+					inline = {
+						adapter = "gemini",
+						model = "gemini-2.5-flash",
+						think = true,
+					},
+				},
+			})
+		end,
+		cond = custom.features().code_assistance, -- ~/.config/nvim/lua/custom/init.lua
+	},
+	{
+		-- for rendering in codecompanion's chat buffer
+		"MeanderingProgrammer/render-markdown.nvim",
+		ft = { "codecompanion" },
 	},
 
 	-- screenshot codeblocks

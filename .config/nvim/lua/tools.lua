@@ -2,12 +2,33 @@
 --
 -- My neovim utility functions
 --
--- last update: 2025.04.02.
+-- last update: 2025.08.22.
 
--- Warn: notify silently
-local function warn(msg)
+--------------------------------
+-- functions for debugging
+
+-- w for notifying silently
+local function w(msg)
 	vim.api.nvim_echo({ { msg, "WarningMsg" } }, true, {})
 end
+
+-- d for notifying debugging messages
+local function d(something)
+	vim.notify(vim.inspect(something), vim.log.levels.DEBUG)
+end
+
+-- e for notifying error messages
+local function e(something)
+	vim.notify(vim.inspect(something), vim.log.levels.ERROR)
+end
+
+-- i for notifying info messages
+local function i(something)
+	vim.notify(vim.inspect(something), vim.log.levels.INFO)
+end
+
+--------------------------------
+-- functions for file system
 
 -- Checks if given `path` is executable or not
 local function is_executable(path)
@@ -26,12 +47,12 @@ local function copy_file(from, to)
 
 	local source_handle = io.open(from, "rb")
 	if not source_handle then
-		warn("Failed to copy file from: " .. from)
+		w("Failed to copy file from: " .. from)
 	end
 
 	local target_handle = io.open(to, "wb")
 	if not target_handle then
-		warn("Failed to copy file to: " .. to)
+		w("Failed to copy file to: " .. to)
 	end
 
 	-- copy bytes
@@ -64,6 +85,43 @@ local function copy_if_needed(from, to)
 	return false
 end
 
+-- Reads file content at `path`, returns nil if failed.
+local function read_file(path)
+	local file = io.open(path, "r")
+	if not file then
+		w(string.format("Failed to open file: %s", path))
+	else
+		local content = file:read("*all")
+		file:close()
+		if not content then
+			w(string.format("Failed to read file: %s", path))
+		else
+			return content
+		end
+	end
+	return nil
+end
+
+-- Reads JSON file at `path` and returns the value of `key`.
+local function read_json_key(path, key)
+	local content = read_file(path)
+	if content then
+		local success, decoded = pcall(vim.fn.json_decode, content)
+		if not success then
+			w(string.format("JSON parse failed (file: %s, message: %s)", path, decoded))
+		else
+			if type(decoded) == "table" and decoded[key] ~= nil then
+				return decoded[key]
+			end
+			w(string.format("Failed to read key '%s' from JSON", key))
+		end
+	end
+	return nil
+end
+
+--------------------------------
+-- functions for shell
+
 -- Runs given `command` and returns the result
 local function shell_execute(command)
 	local handle = io.popen(command)
@@ -74,11 +132,16 @@ local function shell_execute(command)
 	return result
 end
 
--- Check if given `port` is opened or not
+--------------------------------
+-- functions for OS
+
+-- Checks if given `port` is opened or not
 local function is_port_opened(port)
 	if is_executable("lsof") then
 		local listen = shell_execute("lsof -i:" .. tostring(port) .. " | grep LISTEN")
 		return string.len(listen) > 0
+	else
+		w(string.format("Could not check if port %d is opened: `lsof` not installed.", port))
 	end
 	return false
 end
@@ -105,7 +168,7 @@ local function low_performance()
 		return false
 	end
 
-	warn("Running on a machine with low performance.")
+	w("Running on a machine with low performance.")
 
 	return true
 end
@@ -121,6 +184,9 @@ local function is_macos()
 	return vim.uv.os_uname().sysname == "Darwin"
 end
 
+--------------------------------
+-- functions for UI
+
 -- Checks if mouse is enabled
 local function is_mouse_enabled()
 	return vim.o.mouse == "nvi"
@@ -133,15 +199,23 @@ local function toggle_mouse()
 	else
 		vim.opt.mouse = "nvi"
 	end
-	vim.notify("Toggled mouse " .. (is_mouse_enabled() and "on" or "off"))
+	i("Toggled mouse " .. (is_mouse_enabled() and "on" or "off"))
 end
 
+-- export things
 local Tools = {
+	-- functions for debugging
+	d = d,
+	e = e,
+	i = i,
+
 	-- functions for managing file system
 	fs = {
 		executable = is_executable,
 		exists = file_exists,
 		copy_if_needed = copy_if_needed,
+		read_file = read_file,
+		read_json_key = read_json_key,
 	},
 
 	-- functions for managing the machine
@@ -164,18 +238,4 @@ local Tools = {
 	},
 }
 
--- functions for debugging
-function Tools.d(something)
-	vim.notify(vim.inspect(something), vim.log.levels.DEBUG)
-end
-
-function Tools.e(something)
-	vim.notify(vim.inspect(something), vim.log.levels.ERROR)
-end
-
-function Tools.i(something)
-	vim.notify(vim.inspect(something), vim.log.levels.INFO)
-end
-
--- export things
 return Tools

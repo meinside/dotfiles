@@ -8,10 +8,10 @@
 --
 -- and edit it)
 --
--- last update: 2025.03.12.
+-- last update: 2025.08.22.
 
 return {
 	codeium = false, -- NOTE: codeium's language server crashes on some machines (eg. Raspberry Pi 4)
 	linter = false,
-	code_assistance = false, -- eg. avante.nvim
+	code_assistance = false, -- eg. codecompanion.nvim
 }
