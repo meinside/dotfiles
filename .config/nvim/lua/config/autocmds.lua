@@ -1,6 +1,6 @@
 -- .config/nvim/lua/config/autocmds.lua
 --
--- last update: 2025.04.15.
+-- last update: 2025.08.22.
 
 -- Autocmds are automatically loaded on the VeryLazy event
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
@@ -109,6 +109,45 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 			bg = "#000000",
 			fg = "#ff0000",
 			bold = true, -- Optionally add styles
+		})
+	end,
+})
+
+-- for codecompanion.nvim
+--
+-- (referenced: https://github.com/olimorris/codecompanion.nvim/discussions/813)
+local spinner = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
+local group = vim.api.nvim_create_augroup("CodeCompanionFidgetHooks", { clear = true })
+vim.api.nvim_create_autocmd({ "User" }, {
+	pattern = "CodeCompanion*",
+	group = group,
+	callback = function(request)
+		if request.match == "CodeCompanionChatSubmitted" or request.match == "CodeCompanionContextChanged" then
+			return
+		end
+
+		local msg
+		msg = "[CodeCompanion] " .. request.match:gsub("CodeCompanion", "")
+
+		vim.notify(msg, "info", {
+			timeout = 1000,
+			keep = function()
+				return not vim.iter({ "Finished", "Opened", "Hidden", "Closed", "Cleared", "Created" })
+					:fold(false, function(acc, cond)
+						return acc or vim.endswith(request.match, cond)
+					end)
+			end,
+			id = "code_companion_status",
+			title = "Code Companion Status",
+			opts = function(notif)
+				notif.icon = ""
+				if vim.endswith(request.match, "Started") then
+					---@diagnostic disable-next-line: undefined-field
+					notif.icon = spinner[math.floor(vim.uv.hrtime() / (1e6 * 80)) % #spinner + 1]
+				elseif vim.endswith(request.match, "Finished") then
+					notif.icon = " "
+				end
+			end,
 		})
 	end,
 })

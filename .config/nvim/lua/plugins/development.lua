@@ -157,17 +157,34 @@ return {
 							},
 						})
 					end,
+					opts = {
+						show_defaults = false,
+						show_model_choices = false,
+					},
 				},
 				strategies = {
 					chat = {
 						adapter = "gemini",
 						model = "gemini-2.5-pro",
 						think = true,
+						---Decorate the user message before it's sent to the LLM
+						---@param message string
+						---@param adapter CodeCompanion.Adapter
+						---@param context table
+						---@return string
+						prompt_decorator = function(message, adapter, context)
+							return string.format([[<prompt>%s</prompt>]], message)
+						end,
 					},
 					inline = {
 						adapter = "gemini",
 						model = "gemini-2.5-flash",
 						think = true,
+					},
+				},
+				display = {
+					chat = {
+						start_in_insert_mode = true,
 					},
 				},
 			})
