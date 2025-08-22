@@ -6,7 +6,7 @@
 -- return {
 --    "some/lua-plugin/that-needs-monkey-patch.nvim",
 --    init = function()
--- do some monkey-patching here
+--      -- TODO: do some monkey-patching here
 --    end,
 -- }
 -- ```
