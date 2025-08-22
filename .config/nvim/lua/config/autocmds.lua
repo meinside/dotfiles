@@ -1,5 +1,7 @@
 -- .config/nvim/lua/config/autocmds.lua
 --
+-- File for autocmds
+--
 -- last update: 2025.08.22.
 
 -- Autocmds are automatically loaded on the VeryLazy event

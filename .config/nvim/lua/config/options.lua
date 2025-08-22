@@ -1,8 +1,10 @@
 -- .config/nvim/lua/config/options.lua
 --
+-- File for options
+--
 -- default: https://www.lazyvim.org/configuration/general#options
 --
--- last update: 2025.08.13.
+-- last update: 2025.08.22.
 
 vim.g.mapleader = "\\"
 

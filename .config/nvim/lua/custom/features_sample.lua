@@ -1,6 +1,6 @@
 -- .config/nvim/lua/custom/features_sample.lua
 --
--- sample features list
+-- File for customized features (sample)
 --
 -- (duplicate this file to:
 --
@@ -11,7 +11,6 @@
 -- last update: 2025.08.22.
 
 return {
-	codeium = false, -- NOTE: codeium's language server crashes on some machines (eg. Raspberry Pi 4)
 	linter = false,
-	code_assistance = false, -- eg. codecompanion.nvim
+	code_assistance = false, -- eg. codeium, codecompanion.nvim, etc.
 }

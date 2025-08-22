@@ -1,8 +1,8 @@
 -- .config/nvim/lua/custom/init.lua
 --
--- My custom functions and variable/constants.
+-- File for custom functions and variable/constants.
 --
--- last update: 2024.12.24.
+-- last update: 2025.08.22.
 
 local function lua_filepath(path)
 	local config_dir = os.getenv("XDG_CONFIG_HOME")

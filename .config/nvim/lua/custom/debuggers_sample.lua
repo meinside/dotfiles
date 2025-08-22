@@ -1,6 +1,6 @@
 -- .config/nvim/lua/custom/debuggers_sample.lua
 --
--- sample debugger list
+-- File for debuggers (sample)
 --
 -- (duplicate this file to:
 --
@@ -8,7 +8,7 @@
 --
 -- and edit it)
 --
--- last update: 2025.03.12.
+-- last update: 2025.08.22.
 
 -- following DAP debuggers will be installed automatically.
 --

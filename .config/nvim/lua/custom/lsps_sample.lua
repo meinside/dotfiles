@@ -1,6 +1,6 @@
 -- .config/nvim/lua/custom/lsps_sample.lua
 --
--- sample LSP list
+-- File for customized LSPs (sample)
 --
 -- (duplicate this file to:
 --
@@ -8,7 +8,7 @@
 --
 -- and edit it)
 --
--- last update: 2025.03.12.
+-- last update: 2025.08.22.
 
 -- following lsps will be configured automatically or manually.
 --

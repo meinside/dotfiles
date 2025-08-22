@@ -1,8 +1,12 @@
 -- .config/nvim/lua/extras.lua
 --
+-- File for extra plugins of lazyvim
+--
+-- :LazyExtras
+--
 -- lazyvim.plugins.extras
 --
--- last update: 2025.02.14.
+-- last update: 2025.08.22.
 
 return {
 	--------

@@ -1,6 +1,6 @@
 -- .config/nvim/lua/tools.lua
 --
--- My neovim utility functions
+-- File for neovim utility functions
 --
 -- last update: 2025.08.22.
 

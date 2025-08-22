@@ -1,5 +1,7 @@
 -- .config/nvim/lua/config/lazy.lua
 --
+-- LazyVim starter
+--
 -- from: https://github.com/LazyVim/starter/blob/main/lua/config/lazy.lua
 --
 -- last update: 2025.08.22.
@@ -30,6 +32,7 @@ require("lazy").setup({
 
 		-- NOTE: (customized) will import/override plugins here: ~/.config/nvim/lua/plugins/
 		{ import = "plugins" },
+		{ import = "plugins/monkeypatched" },
 	},
 	defaults = {
 		-- By default, only LazyVim plugins will be lazy-loaded. Your custom plugins will load during startup.

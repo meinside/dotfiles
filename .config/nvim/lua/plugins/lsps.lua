@@ -1,6 +1,8 @@
 -- .config/nvim/lua/plugins/lsps.lua
 --
--- last update: 2025.05.09.
+-- File for LSPs
+--
+-- last update: 2025.08.22.
 
 local custom = require("custom") -- ~/.config/nvim/lua/custom/init.lua
 

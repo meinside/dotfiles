@@ -1,8 +1,10 @@
 -- .config/nvim/lua/config/keymaps.lua
 --
+-- File for keymaps
+--
 -- https://www.lazyvim.org/keymaps
 --
--- last update: 2025.04.22.
+-- last update: 2025.08.22.
 
 -- copy, paste below, and comment the current line
 vim.keymap.set("n", "ycc", "yygccp", {
@@ -97,13 +99,13 @@ vim.keymap.set({ "v", "n" }, "ca", require("actions-preview").code_actions, { de
 --
 -- alt-e: cycle through suggestions
 vim.keymap.set("i", "<A-e>", function()
-	if require("custom").features().codeium then
+	if require("custom").features().code_assistance then
 		require("neocodeium").cycle_or_complete()
 	end
 end, { desc = "Neocodeium: Cycle through suggestions" })
 -- alt-f: accept
 vim.keymap.set("i", "<A-f>", function()
-	if require("custom").features().codeium then
+	if require("custom").features().code_assistance then
 		require("neocodeium").accept()
 	end
 end, { desc = "Neocodeium: Accept suggestion" })
