@@ -5,7 +5,7 @@
 # $ brew tap Homebrew/bundle
 # $ brew bundle --file=$XDG_CONFIG_HOME/homebrew/Brewfile
 # 
-# last update: 2025.08.21.
+# last update: 2025.08.25.
 
 cask_args appdir: '/Applications'
 
@@ -59,6 +59,7 @@ cask 'firefox'
 cask 'input-source-pro'
 cask 'kitty'
 #cask 'netnewswire'
+cask 'stability-matrix'
 cask 'tor-browser'
 #cask 'visual-studio-code'
 #cask 'zed'
