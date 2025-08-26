@@ -5,7 +5,7 @@
 # $ brew tap Homebrew/bundle
 # $ brew bundle --file=$XDG_CONFIG_HOME/homebrew/Brewfile
 # 
-# last update: 2025.08.25.
+# last update: 2025.08.27.
 
 cask_args appdir: '/Applications'
 
@@ -53,6 +53,7 @@ brew 'mkcert'
 ######## casks
 
 # utilities
+cask 'android-platform-tools'
 cask 'applite'
 cask 'dropbox'
 cask 'firefox'
