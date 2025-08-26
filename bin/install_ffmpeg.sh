@@ -6,7 +6,7 @@
 #
 # (pass '--do-not-clean' argument for preserving files after install)
 #
-# last update: 2025.04.03.
+# last update: 2025.08.26.
 
 # NOTE: see configure options at: https://github.com/FFmpeg/FFmpeg/blob/master/configure
 
@@ -15,7 +15,7 @@
 # frequently updated values
 
 # https://github.com/FFmpeg/FFmpeg/tags
-FFMPEG_VERSION="n7.1.1" # XXX - edit for newer ffmpeg version
+FFMPEG_VERSION="n8.0" # XXX - edit for newer ffmpeg version
 
 ################################
 #
