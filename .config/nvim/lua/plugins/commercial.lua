@@ -4,7 +4,7 @@
 --
 -- NOTE: plugins for paid services/applications will be placed here
 --
--- last update: 2025.08.22.
+-- last update: 2025.08.28.
 
 ------------------------------------------------
 -- imports
@@ -109,17 +109,32 @@ return {
 			"nvim-treesitter/nvim-treesitter",
 		},
 		config = function()
-			local api_key = tools.fs.read_json_key(vim.fn.expand(gmnConfigFilepath), "api_key")
+			local gemini_api_key = tools.fs.read_json_key(vim.fn.expand(gmnConfigFilepath), "api_key")
 
 			require("codecompanion").setup({
+				-- https://codecompanion.olimorris.dev/configuration/adapters.html#configuring-adapter-settings
 				adapters = {
 					gemini = function()
 						return require("codecompanion.adapters").extend("gemini", {
 							env = {
-								api_key = api_key,
+								api_key = gemini_api_key,
 							},
 						})
 					end,
+					acp = {
+						gemini_cli = function()
+							return require("codecompanion.adapters").extend("gemini_cli", {
+								defaults = {
+									auth_method = "gemini-api-key",
+									mcpServers = {},
+									timeout = 20000, -- 20 seconds
+								},
+								env = {
+									GEMINI_API_KEY = gemini_api_key,
+								},
+							})
+						end,
+					},
 					opts = {
 						show_defaults = false,
 						show_model_choices = false,
@@ -127,7 +142,7 @@ return {
 				},
 				strategies = {
 					chat = {
-						adapter = "gemini",
+						adapter = "gemini_cli",
 						model = "gemini-2.5-pro",
 						think = true,
 						---Decorate the user message before it's sent to the LLM
