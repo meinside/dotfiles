@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2025.05.22.
+# updated on 2025.08.29.
 #
 # $ chsh -s `which zsh`
 #
@@ -173,9 +173,10 @@ unsetopt nomatch
 # NOTE: in termux, $PREFIX = '/data/data/com.termux/files/usr'
 
 # for go
-export GOPATH=$HOME/srcs/go
-if [ -d "$GOPATH/bin" ]; then
-    export PATH="$PATH:$GOPATH/bin"
+export GOPATH="$HOME/srcs/go"
+export GOBIN="$GOPATH/bin" # override $GOBIN of `asdf`
+if [ -d "$GOBIN" ]; then
+    export PATH="$GOBIN:$PATH"
 fi
 
 # for lein (clojure)

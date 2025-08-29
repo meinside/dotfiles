@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2025.05.22.
+# updated on 2025.08.29.
 #
 # $ chsh -s `which zsh`
 #
@@ -94,8 +94,9 @@ fi
 
 # for go
 export GOPATH="$HOME/srcs/go"
-if [ -d "$GOPATH/bin" ]; then
-    export PATH="$PATH:$GOPATH/bin"
+export GOBIN="$GOPATH/bin" # override $GOBIN of `asdf`
+if [ -d "$GOBIN" ]; then
+    export PATH="$GOBIN:$PATH"
 fi
 
 # for lein (clojure)
