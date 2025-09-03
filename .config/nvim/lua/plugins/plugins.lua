@@ -2,7 +2,7 @@
 --
 -- File for plugins
 --
--- last update: 2025.08.22.
+-- last update: 2025.09.03.
 
 ------------------------------------------------
 -- imports
@@ -119,11 +119,12 @@ return {
 	--
 	-- NOTE: if it complains about any language, try :TSInstall [xxx]
 	{
-		--'nvim-treesitter/nvim-treesitter', build = ':TSUpdate', config = function()
 		"nvim-treesitter/nvim-treesitter",
 		opts = function(_, opts)
 			return {
+				-- https://github.com/nvim-treesitter/nvim-treesitter?tab=readme-ov-file#supported-languages
 				ensure_installed = {
+					"asm",
 					"bash",
 					"c",
 					"clojure",
@@ -131,27 +132,38 @@ return {
 					"comment",
 					"cpp",
 					"css",
+					"csv",
 					"dart",
 					"diff",
 					"dockerfile",
 					"eex",
 					"elixir",
+					"erlang",
 					"fennel",
+					"fish",
+					"git_config",
+					"git_rebase",
+					"gitattributes",
+					"gitcommit",
+					"gitignore",
 					"go",
 					"gomod",
+					"gosum",
 					"gowork",
-					"gitignore",
+					"gpg",
 					"heex",
 					"html",
 					"http",
+					"ini",
+					"janet_simple",
 					"java",
+					"javadoc",
 					"javascript",
 					"jq",
 					"jsdoc",
 					"json",
 					"json5",
 					"jsonc",
-					"julia",
 					"kotlin",
 					"latex",
 					"llvm",
@@ -160,8 +172,13 @@ return {
 					"markdown",
 					"markdown_inline",
 					"mermaid",
+					"meson",
+					"nasm",
+					"nginx",
+					"nim",
 					"perl",
 					"php",
+					"printf",
 					"python",
 					"query",
 					"regex",
@@ -169,9 +186,13 @@ return {
 					"rust",
 					"scss",
 					"sql",
+					"ssh_config",
+					"strace",
 					"swift",
+					"tmux",
 					"toml",
 					"typescript",
+					"xml",
 					"yaml",
 					"zig",
 				},
