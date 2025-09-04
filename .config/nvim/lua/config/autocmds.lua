@@ -2,7 +2,7 @@
 --
 -- File for autocmds
 --
--- last update: 2025.08.22.
+-- last update: 2025.09.04.
 
 -- Autocmds are automatically loaded on the VeryLazy event
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
@@ -132,12 +132,20 @@ vim.api.nvim_create_autocmd({ "User" }, {
 		msg = "[CodeCompanion] " .. request.match:gsub("CodeCompanion", "")
 
 		vim.notify(msg, "info", {
-			timeout = 1000,
+			timeout = 1500,
 			keep = function()
-				return not vim.iter({ "Finished", "Opened", "Hidden", "Closed", "Cleared", "Created" })
-					:fold(false, function(acc, cond)
-						return acc or vim.endswith(request.match, cond)
-					end)
+				return not vim.iter({
+					"Finished",
+					"Opened",
+					"Hidden",
+					"Closed",
+					"Cleared",
+					"Created",
+					"Attached",
+					"Detached",
+				}):fold(false, function(acc, cond)
+					return acc or vim.endswith(request.match, cond)
+				end)
 			end,
 			id = "code_companion_status",
 			title = "Code Companion Status",

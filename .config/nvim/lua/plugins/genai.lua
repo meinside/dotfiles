@@ -126,7 +126,6 @@ return {
 							return require("codecompanion.adapters").extend("gemini_cli", {
 								defaults = {
 									auth_method = "gemini-api-key",
-									mcpServers = {},
 									timeout = 20000, -- 20 seconds
 								},
 								env = {
@@ -137,7 +136,7 @@ return {
 					},
 					opts = {
 						show_defaults = false,
-						show_model_choices = false,
+						show_model_choices = true,
 					},
 				},
 				strategies = {
