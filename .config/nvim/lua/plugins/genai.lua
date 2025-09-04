@@ -1,10 +1,10 @@
--- .config/nvim/lua/plugins/commercial.lua
+-- .config/nvim/lua/plugins/genai.lua
 --
--- File for commercial plugins
+-- File for genai plugins
 --
--- NOTE: plugins for paid services/applications will be placed here
+-- NOTE: plugins for GenAI services/applications will be placed here
 --
--- last update: 2025.08.28.
+-- last update: 2025.09.04.
 
 ------------------------------------------------
 -- imports
