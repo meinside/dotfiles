@@ -42,9 +42,9 @@ return {
 				mocha = function(C)
 					return {
 						CmpBorder = { fg = C.surface2 },
+						CursorColumn = { bg = C.surface0 },
 						CursorLine = { bg = C.surface0 },
 						CursorLineNr = { fg = C.yellow, bold = true },
-						CursorColumn = { bg = C.surface0 },
 						Pmenu = { bg = C.none },
 						TelescopeBorder = { link = "FloatBorder" },
 					}
