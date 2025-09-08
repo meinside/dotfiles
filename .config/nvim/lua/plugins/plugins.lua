@@ -2,7 +2,7 @@
 --
 -- File for plugins
 --
--- last update: 2025.09.03.
+-- last update: 2025.09.08.
 
 ------------------------------------------------
 -- imports
@@ -42,8 +42,9 @@ return {
 				mocha = function(C)
 					return {
 						CmpBorder = { fg = C.surface2 },
-						CursorLine = { bg = "#303060" },
-						CursorColumn = { bg = "#303060" },
+						CursorLine = { bg = C.surface0 },
+						CursorLineNr = { fg = C.yellow, bold = true },
+						CursorColumn = { bg = C.surface0 },
 						Pmenu = { bg = C.none },
 						TelescopeBorder = { link = "FloatBorder" },
 					}
