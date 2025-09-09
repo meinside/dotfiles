@@ -3,13 +3,13 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.09.04.
+# last update: 2025.09.09.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
 #
 # https://github.com/babashka/babashka/releases
-babashka 1.12.207
+babashka 1.12.208
 
 # For bash-language-server,
 #   :MasonInstall bash-language-server
@@ -79,7 +79,7 @@ janet 1.39.1
 # $ asdf install java
 #
 # https://github.com/halcyon/asdf-java/tree/master/data
-java openjdk-23.0.2
+java openjdk-24.0.2
 
 # $ asdf plugin add leiningen
 # $ asdf install leiningen
