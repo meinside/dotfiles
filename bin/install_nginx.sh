@@ -161,7 +161,6 @@ function build {
 		--with-http_ssl_module \
 		--with-http_sub_module \
 		--with-http_v2_module \
-		--with-http_v3_module \
 		--with-stream \
 		--with-stream_ssl_module \
 		--with-openssl="${OPENSSL_SRC_DIR}" \
