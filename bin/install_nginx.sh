@@ -41,7 +41,7 @@
 #   0 5 1 */1 * sudo tailscale cert --cert-file /path/to/cert.crt --key-file /path/to/cert.key "subdomain.my-tailnet-name.ts.net"
 #
 # created on : 2017.08.16.
-# last update: 2025.09.09.
+# last update: 2025.09.10.
 
 ################################
 #
@@ -161,6 +161,7 @@ function build {
 		--with-http_ssl_module \
 		--with-http_sub_module \
 		--with-http_v2_module \
+		--with-http_v3_module \
 		--with-stream \
 		--with-stream_ssl_module \
 		--with-openssl="${OPENSSL_SRC_DIR}" \
