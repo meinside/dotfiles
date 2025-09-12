@@ -2,7 +2,7 @@
 #
 # (copy as `~/.config/git/config` and customize it)
 #
-# last update: 2025.02.26.
+# last update: 2025.09.12.
 
 [alias]
   # commands
@@ -68,10 +68,11 @@
 [core]
   editor = vim
 #  editor = nvim
-#  pager = delta  # $ sudo apt install git-delta
-  fsmonitor = true
-  untrackedCache = true
   excludesfile = ~/.gitignore
+  fsmonitor = true
+  ignorecase = false
+#  pager = delta  # $ sudo apt install git-delta
+  untrackedCache = true
 
 [delta]
   diff-so-fancy = true
