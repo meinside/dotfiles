@@ -6,7 +6,7 @@
 # https://github.com/nvim-neorocks/lux
 #
 # created on : 2025.04.16.
-# last update: 2025.07.18.
+# last update: 2025.09.15.
 
 ################################
 #
@@ -56,20 +56,20 @@ function install_macos {
 
 function install_linux {
 	# install dependencies
-	sudo apt install -y libgpg-error-dev libgpgme-dev libluajit-5.1-dev
+	sudo apt install -y \
+		libgpg-error-dev \
+		libgpgme-dev \
+		libluajit-5.1-dev
 
 	install_cargo_things
 }
 
 # FIXME: TODO: when this project releases stable releases, download and use them
 function install_cargo_things {
-	## install rust toolchain
-	#cargo install cargo-binstall
-	#
-	## install lux
-	#cargo binstall lux-cli --locked
-
-	cargo install lux-cli --locked
+	cargo install lux-cli \
+		--locked \
+		--profile release \
+		--features vendored
 }
 
 case "$OSTYPE" in
