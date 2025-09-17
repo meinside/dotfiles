@@ -5,7 +5,7 @@
 # $ brew tap Homebrew/bundle
 # $ brew bundle --file=$XDG_CONFIG_HOME/homebrew/Brewfile
 # 
-# last update: 2025.08.27.
+# last update: 2025.09.17.
 
 cask_args appdir: '/Applications'
 
@@ -18,6 +18,7 @@ tap 'homebrew/cask-fonts'
 brew 'coreutils'
 
 # utilities
+brew 'asciinema'
 brew 'd2'
 brew 'ffmpeg'
 #brew 'fish' # for oh-my-fish: $ curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
@@ -29,7 +30,7 @@ brew 'lnav'
 brew 'mas'	# for Mac App Store
 brew 'mosh', args: ['HEAD']
 brew 'ngrep'
-brew 'neovim', args: ['HEAD']
+brew 'neovim'
 brew 'pstree'
 brew 'reattach-to-user-namespace'	# for using `pbcopy`, `pbpaste`, or `mas` in tmux
 brew 'starship'
