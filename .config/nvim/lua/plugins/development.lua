@@ -2,7 +2,7 @@
 --
 -- File for plugins for development
 --
--- last update: 2025.08.22.
+-- last update: 2025.09.18.
 
 ------------------------------------------------
 -- imports
@@ -47,7 +47,7 @@ return {
 	--
 	-- (mini.pairs)
 	{
-		"echasnovski/mini.pairs",
+		"nvim-mini/mini.pairs",
 		opts = {
 			-- not to close pairs in command, search mode
 			modes = { insert = true, command = false, terminal = false },

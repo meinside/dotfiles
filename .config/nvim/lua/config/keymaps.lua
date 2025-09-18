@@ -85,7 +85,7 @@ end, { desc = "lsp: Toggle inlay hint" })
 --
 -- for toggling minimap: `\tm`
 vim.keymap.set("n", "<leader>tm", function()
-	require("codewindow").toggle_minimap()
+	require("mini.map").toggle()
 
 	vim.notify("Toggled minimap.")
 end, { desc = "minimap: Toggle" })

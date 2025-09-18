@@ -2,7 +2,7 @@
 --
 -- File for plugins
 --
--- last update: 2025.09.08.
+-- last update: 2025.09.18.
 
 ------------------------------------------------
 -- imports
@@ -266,10 +266,10 @@ return {
 
 	-- minimap
 	{
-		"gorbit99/codewindow.nvim",
+		"nvim-mini/mini.map",
+		version = "*",
 		config = function()
-			local codewindow = require("codewindow")
-			codewindow.setup({})
+			require("mini.map").setup()
 		end,
 	},
 

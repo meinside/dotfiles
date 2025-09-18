@@ -52,7 +52,7 @@ opt.fillchars = {
 	eob = " ",
 }
 opt.foldcolumn = "0"
-opt.foldexpr = "v:lua.require'lazyvim.util'.ui.foldexpr()"
+opt.foldexpr = "v:lua.require'lazyvim.util'.treesitter.foldexpr()"
 opt.foldlevel = 99
 opt.foldlevelstart = 99
 opt.foldmethod = "expr"
