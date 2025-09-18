@@ -4,7 +4,7 @@
 --
 -- https://www.lazyvim.org/keymaps
 --
--- last update: 2025.08.22.
+-- last update: 2025.09.18.
 
 -- copy, paste below, and comment the current line
 vim.keymap.set("n", "ycc", "yygccp", {
@@ -54,21 +54,20 @@ vim.keymap.set("n", "<leader>mf", function()
 	MiniFiles.open()
 end, { desc = "mini-files: Open" })
 
--- (telescope)
+-- (fzf-lua)
 --
--- https://github.com/nvim-telescope/telescope.nvim#pickers
-local builtin = require("telescope.builtin")
-vim.keymap.set("n", "<leader>tt", builtin.builtin, {
-	desc = "telescope: List builtin pickers",
+-- https://github.com/ibhagwan/fzf-lua#commands
+vim.keymap.set("n", "<leader>tt", ":FzfLua builtin<CR>", {
+	desc = "fzf-lua: List builtin commands",
 })
-vim.keymap.set("n", "<leader>ff", builtin.find_files, {
-	desc = "telescope: Find files",
+vim.keymap.set("n", "<leader>ff", ":FzfLua files<CR>", {
+	desc = "fzf-lua: Find files",
 })
-vim.keymap.set("n", "<leader>gc", builtin.git_commits, {
-	desc = "telescope: Git commits",
+vim.keymap.set("n", "<leader>gc", ":FzfLua git_commits<CR>", {
+	desc = "fzf-lua: Git commits",
 })
-vim.keymap.set("n", "<leader>qf", builtin.quickfix, {
-	desc = "telescope: Quickfix",
+vim.keymap.set("n", "<leader>qf", ":FzfLua quickfix<CR>", {
+	desc = "fzf-lua: Quickfix",
 })
 
 -- (lsp)

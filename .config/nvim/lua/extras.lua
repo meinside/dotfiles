@@ -6,7 +6,7 @@
 --
 -- lazyvim.plugins.extras
 --
--- last update: 2025.08.22.
+-- last update: 2025.09.18.
 
 return {
 	--------
@@ -22,8 +22,9 @@ return {
 	--------
 	-- lazyvim.plugins.extras.editor.*
 	--
+	{ import = "lazyvim.plugins.extras.editor.fzf" },
 	{ import = "lazyvim.plugins.extras.editor.mini-files" },
-	{ import = "lazyvim.plugins.extras.editor.telescope" },
+	--{ import = "lazyvim.plugins.extras.editor.snacks_picker" },
 
 	--------
 	-- lazyvim.plugins.extras.lang.*
@@ -46,7 +47,7 @@ return {
 	--------
 	-- lazyvim.plugins.extras.ui.*
 	--
-	{ import = "lazyvim.plugins.extras.ui.indent-blankline" },
+	{ import = "lazyvim.plugins.extras.ui.mini-indentscope" },
 	{ import = "lazyvim.plugins.extras.ui.mini-starter" },
 	{ import = "lazyvim.plugins.extras.ui.treesitter-context" },
 

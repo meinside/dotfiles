@@ -107,7 +107,7 @@ return {
 					algorithm = "patience",
 					ignore_whitespace = true,
 				},
-				telescope = require("telescope.themes").get_dropdown({ winblend = 10 }),
+				backend = { "nui", "snacks" },
 			})
 		end,
 	},
@@ -215,14 +215,14 @@ return {
 	-- cse(, cse), cseb : surround an element with parenthesis
 	-- cse[, cse] : surround an element with brackets
 	-- cse{, cse} : surround an element with braces
-	{
-		"guns/vim-sexp",
-		ft = lisps,
-	},
-	{
-		"tpope/vim-sexp-mappings-for-regular-people",
-		ft = lisps,
-	},
+	--{
+	--	"guns/vim-sexp",
+	--	ft = lisps,
+	--},
+	--{
+	--	"tpope/vim-sexp-mappings-for-regular-people",
+	--	ft = lisps,
+	--},
 	{
 		"gpanders/nvim-parinfer",
 		ft = lisps,

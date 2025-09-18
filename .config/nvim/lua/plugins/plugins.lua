@@ -46,7 +46,6 @@ return {
 						CursorLine = { bg = C.surface0 },
 						CursorLineNr = { fg = C.yellow, bold = true },
 						Pmenu = { bg = C.none },
-						TelescopeBorder = { link = "FloatBorder" },
 					}
 				end,
 			},
@@ -60,18 +59,11 @@ return {
 					color_mode = true,
 				},
 				gitsigns = true,
-				indent_blankline = {
-					enabled = true,
-					colored_indent_levels = true,
-				},
 				lsp_trouble = true,
 				mason = true,
 				neogit = true,
 				notify = true,
 				rainbow_delimiters = true,
-				telescope = {
-					enabled = true,
-				},
 				treesitter = true,
 				treesitter_context = true,
 				which_key = true,
@@ -100,30 +92,20 @@ return {
 		},
 	},
 
-	-- override nvim-cmp and add cmp-emoji
-	{
-		"hrsh7th/nvim-cmp",
-		dependencies = { "hrsh7th/cmp-emoji" },
-		---@param opts cmp.ConfigSchema
-		opts = function(_, opts)
-			table.insert(opts.sources, { name = "emoji" })
-		end,
-	},
-
 	-- syntax highlighting
 	--
 	-- $ npm -g install tree-sitter-cli
 	-- or
 	-- $ cargo install tree-sitter-cli
 	-- or
-	-- $ brew install tree-sitter
+	-- $ brew install tree-sitter-cli
 	--
 	-- NOTE: if it complains about any language, try :TSInstall [xxx]
 	{
 		"nvim-treesitter/nvim-treesitter",
 		opts = function(_, opts)
 			return {
-				-- https://github.com/nvim-treesitter/nvim-treesitter?tab=readme-ov-file#supported-languages
+				-- https://github.com/nvim-treesitter/nvim-treesitter#supported-languages
 				ensure_installed = {
 					"asm",
 					"bash",
@@ -231,7 +213,6 @@ return {
 				"mason",
 				"noice",
 				"NvimTree",
-				"TelescopePrompt",
 				"Trouble",
 			},
 			scope = "line",
@@ -303,27 +284,6 @@ return {
 			require("nvim-surround").setup({})
 		end,
 	},
-	{
-		"lukas-reineke/indent-blankline.nvim",
-		main = "ibl",
-		---@module "ibl"
-		---@type ibl.config
-		opts = {
-			indent = { char = "│", tab_char = "│" },
-			scope = {
-				-- NOTE: integration with rainbow-delimiters
-				highlight = {
-					"RainbowRed",
-					"RainbowYellow",
-					"RainbowBlue",
-					"RainbowOrange",
-					"RainbowGreen",
-					"RainbowViolet",
-					"RainbowCyan",
-				},
-			},
-		},
-	},
 	{ "tpope/vim-ragtag" }, -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
 	{ "tpope/vim-sleuth" },
 	{
@@ -356,44 +316,9 @@ return {
 	{ "mtth/locate.vim" }, -- :L [query], :lclose, gl
 	{ "johngrib/vim-f-hangul" }, -- can use f/t/;/, on Hangul characters
 	{
-		"nvim-telescope/telescope.nvim",
-		config = function()
-			local telescope = require("telescope")
-			telescope.setup({
-				extensions = {
-					fzf = {
-						fuzzy = true, -- false will only do exact matching
-						override_generic_sorter = true, -- override the generic sorter
-						override_file_sorter = true, -- override the file sorter
-						case_mode = "smart_case", -- or "ignore_case" or "respect_case"
-					},
-				},
-			})
-			local _, _ = pcall(function()
-				telescope.load_extension("fzf")
-			end)
-		end,
-		dependencies = {
-			{ "nvim-lua/popup.nvim" },
-			{ "nvim-lua/plenary.nvim" },
-			{ "nvim-telescope/telescope-fzf-native.nvim" },
-		},
-	},
-	{
 		"nvim-telescope/telescope-fzf-native.nvim",
 		build = "make",
 		cond = tools.system.not_termux(), -- do not load in termux
-	},
-	{
-		"nvim-telescope/telescope-frecency.nvim", -- :Telescope frecency
-		config = function()
-			require("telescope").load_extension("frecency")
-		end,
-	},
-	{
-		-- :Telescope lazy
-		"nvim-telescope/telescope.nvim",
-		dependencies = "tsakirist/telescope-lazy.nvim",
 	},
 
 	-- git
@@ -464,7 +389,7 @@ return {
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"sindrets/diffview.nvim",
-			"nvim-telescope/telescope.nvim",
+			"folke/snacks.nvim",
 		},
 		config = true,
 		opts = { graph_style = "kitty" }, -- NOTE: kitty or wezterm + flog symbols font is needed
