@@ -4,7 +4,7 @@
 --
 -- NOTE: plugins for GenAI services/applications will be placed here
 --
--- last update: 2025.09.04.
+-- last update: 2025.09.18.
 
 ------------------------------------------------
 -- imports
@@ -99,6 +99,7 @@ return {
 		end,
 		cond = custom.features().code_assistance, -- ~/.config/nvim/lua/custom/init.lua
 	},
+
 	--------------------------------
 	-- (codecompanion)
 	{
@@ -174,6 +175,7 @@ return {
 		ft = { "codecompanion" },
 		cond = custom.features().code_assistance, -- ~/.config/nvim/lua/custom/init.lua
 	},
+
 	--------------------------------
 	-- (gmn.nvim)
 	{

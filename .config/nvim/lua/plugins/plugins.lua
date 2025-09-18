@@ -207,7 +207,7 @@ return {
 			}
 		end,
 	},
-	-- :TSContextToggle for toggling
+	-- `:TSContext toggle` for toggling
 	{ "nvim-treesitter/nvim-treesitter-context" },
 
 	-- color column
@@ -229,6 +229,7 @@ return {
 				-- plugins
 				"lazy",
 				"mason",
+				"noice",
 				"NvimTree",
 				"TelescopePrompt",
 				"Trouble",
@@ -304,23 +305,24 @@ return {
 	},
 	{
 		"lukas-reineke/indent-blankline.nvim",
-		opts = function()
-			return {
-				indent = { char = "│", tab_char = "│" },
-				scope = {
-					-- NOTE: integration with rainbow-delimiters
-					highlight = {
-						"RainbowRed",
-						"RainbowYellow",
-						"RainbowBlue",
-						"RainbowOrange",
-						"RainbowGreen",
-						"RainbowViolet",
-						"RainbowCyan",
-					},
+		main = "ibl",
+		---@module "ibl"
+		---@type ibl.config
+		opts = {
+			indent = { char = "│", tab_char = "│" },
+			scope = {
+				-- NOTE: integration with rainbow-delimiters
+				highlight = {
+					"RainbowRed",
+					"RainbowYellow",
+					"RainbowBlue",
+					"RainbowOrange",
+					"RainbowGreen",
+					"RainbowViolet",
+					"RainbowCyan",
 				},
-			}
-		end,
+			},
+		},
 	},
 	{ "tpope/vim-ragtag" }, -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
 	{ "tpope/vim-sleuth" },
@@ -341,9 +343,10 @@ return {
 	-- marks
 	{
 		"chentoast/marks.nvim",
-		config = function()
-			require("marks").setup({ force_write_shada = true })
-		end,
+		event = "VeryLazy",
+		opts = {
+			force_write_shada = true,
+		},
 	},
 
 	-- annotation
