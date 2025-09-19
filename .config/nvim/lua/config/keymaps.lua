@@ -4,7 +4,7 @@
 --
 -- https://www.lazyvim.org/keymaps
 --
--- last update: 2025.09.18.
+-- last update: 2025.09.19.
 
 -- copy, paste below, and comment the current line
 vim.keymap.set("n", "ycc", "yygccp", {
@@ -57,18 +57,20 @@ end, { desc = "mini-files: Open" })
 -- (fzf-lua)
 --
 -- https://github.com/ibhagwan/fzf-lua#commands
-vim.keymap.set("n", "<leader>tt", ":FzfLua builtin<CR>", {
-	desc = "fzf-lua: List builtin commands",
+vim.keymap.set("n", "<leader>sB", ":FzfLua builtin<CR>", {
+	desc = "List builtin commands",
 })
-vim.keymap.set("n", "<leader>ff", ":FzfLua files<CR>", {
-	desc = "fzf-lua: Find files",
-})
+-- `\ff` for finding files (cwd)
+-- `\fF` for finding files (root)
+-- `\fg` for finding files (git)
 vim.keymap.set("n", "<leader>gc", ":FzfLua git_commits<CR>", {
-	desc = "fzf-lua: Git commits",
+	desc = "Git Commits",
 })
-vim.keymap.set("n", "<leader>qf", ":FzfLua quickfix<CR>", {
-	desc = "fzf-lua: Quickfix",
-})
+-- `\gd` for git diff (hunks)
+-- `\gs` for git status
+-- `\gS` for git stash
+-- `\sd` for diagnostics
+-- `\sq` for quickfix list
 
 -- (lsp)
 --
@@ -92,7 +94,6 @@ end, { desc = "minimap: Toggle" })
 -- (code actions)
 --
 -- `\ca` for showing code action previews
-vim.keymap.set({ "v", "n" }, "ca", require("actions-preview").code_actions, { desc = "actions-preview: Code actions" })
 
 -- (codeium)
 --
