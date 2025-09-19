@@ -110,6 +110,20 @@ vim.keymap.set("i", "<A-f>", function()
 	end
 end, { desc = "Neocodeium: Accept suggestion" })
 
+-- (snacks.nvim)
+--
+-- `\ti` for toggling indent colors
+vim.keymap.set("n", "<leader>ti", function()
+	local indent = require("snacks").indent
+	if indent.enabled then
+		indent.disable()
+	else
+		indent.enable()
+	end
+
+	vim.notify("Toggled indent colors.")
+end, { desc = "Snacks: Toggle indent colors" })
+
 -- NOTE: override/delete unwanted default keymaps
 vim.keymap.del("n", "<S-h>")
 vim.keymap.del("n", "<S-l>")

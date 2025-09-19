@@ -2,7 +2,7 @@
 --
 -- File for plugins
 --
--- last update: 2025.09.18.
+-- last update: 2025.09.19.
 
 ------------------------------------------------
 -- imports
@@ -412,6 +412,34 @@ return {
 			})
 		end,
 		dependencies = { "nvim-tree/nvim-web-devicons" },
+	},
+
+	-- snacks.nvim
+	--
+	-- https://github.com/folke/snacks.nvim#-features
+	{
+		"folke/snacks.nvim",
+		---@type snacks.Config
+		opts = {
+			indent = {
+				indent = {
+					only_scope = true,
+					only_current = false,
+
+					-- indent color cycles
+					hl = {
+						"SnacksIndent1",
+						"SnacksIndent2",
+						"SnacksIndent3",
+						"SnacksIndent4",
+						"SnacksIndent5",
+						"SnacksIndent6",
+						"SnacksIndent7",
+						"SnacksIndent8",
+					},
+				},
+			},
+		},
 	},
 
 	--------------------------------
