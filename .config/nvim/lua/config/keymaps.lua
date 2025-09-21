@@ -4,7 +4,7 @@
 --
 -- https://www.lazyvim.org/keymaps
 --
--- last update: 2025.09.19.
+-- last update: 2025.09.22.
 
 -- copy, paste below, and comment the current line
 vim.keymap.set("n", "ycc", "yygccp", {
@@ -123,6 +123,12 @@ vim.keymap.set("n", "<leader>ti", function()
 
 	vim.notify("Toggled indent colors.")
 end, { desc = "Snacks: Toggle indent colors" })
+
+-- (meow.yarn)
+vim.keymap.set("n", "<leader>yT", "<Cmd>MeowYarn type super<CR>", { desc = "Yarn: Super Types" })
+vim.keymap.set("n", "<leader>yt", "<Cmd>MeowYarn type sub<CR>", { desc = "Yarn: Sub Types" })
+vim.keymap.set("n", "<leader>yC", "<Cmd>MeowYarn call callers<CR>", { desc = "Yarn: Callers" })
+vim.keymap.set("n", "<leader>yc", "<Cmd>MeowYarn call callees<CR>", { desc = "Yarn: Callees" })
 
 -- NOTE: override/delete unwanted default keymaps
 vim.keymap.del("n", "<S-h>")

@@ -183,6 +183,15 @@ return {
 		cond = custom.features().linter, -- .config/nvim/lua/custom/init.lua
 	},
 
+	-- visualize LSP hierarchies
+	{
+		"retran/meow.yarn.nvim",
+		dependencies = { "MunifTanjim/nui.nvim" },
+		config = function()
+			require("meow.yarn").setup({})
+		end,
+	},
+
 	--------------------------------
 	--
 	-- programming languages
