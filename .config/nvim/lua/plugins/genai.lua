@@ -4,7 +4,7 @@
 --
 -- NOTE: plugins for GenAI services/applications will be placed here
 --
--- last update: 2025.09.18.
+-- last update: 2025.09.22.
 
 ------------------------------------------------
 -- imports
@@ -27,7 +27,22 @@ return {
 		config = function()
 			local blink = require("blink.cmp")
 			local neocodeium = require("neocodeium")
+
+			vim.api.nvim_create_autocmd("User", {
+				pattern = "BlinkCmpMenuOpen",
+				callback = function()
+					neocodeium.clear()
+				end,
+			})
+
 			neocodeium.setup({
+				completion = {
+					menu = {
+						auto_show = function(ctx)
+							return ctx.mode ~= "default"
+						end,
+					},
+				},
 				filter = function(bufnr)
 					-- disable codeium for .env files (for security?)
 					if vim.endswith(vim.api.nvim_buf_get_name(bufnr), ".env") then
@@ -59,11 +74,11 @@ return {
 							"zig",
 						}, vim.api.nvim_get_option_value("filetype", { buf = bufnr }))
 					then
-						return true
+						-- show suggestions only when blink.cmp menu is not visible
+						return not blink.is_visible()
 					end
 
-					-- show suggestions only when blink.cmp menu is not visible
-					return not blink.is_visible()
+					return false
 				end,
 				filetypes = {
 					["."] = false,
