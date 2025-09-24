@@ -2,7 +2,7 @@
 --
 -- File for plugins
 --
--- last update: 2025.09.19.
+-- last update: 2025.09.24.
 
 ------------------------------------------------
 -- imports
@@ -89,6 +89,22 @@ return {
 		"folke/noice.nvim",
 		opts = {
 			presets = { lsp_doc_border = true },
+
+			-- FIXME: (https://github.com/folke/noice.nvim/issues/1097) not showing the cmdline result
+			routes = {
+				{
+					filter = {
+						event = "msg_show",
+						kind = { "shell_out", "shell_err" },
+					},
+					view = "popup",
+					opts = {
+						level = "info",
+						skip = false,
+						replace = true,
+					},
+				},
+			},
 		},
 	},
 
