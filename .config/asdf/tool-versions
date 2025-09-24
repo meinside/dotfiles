@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.09.23.
+# last update: 2025.09.25.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -21,7 +21,7 @@ babashka 1.12.208
 #   :MasonInstall clojure-lsp
 #
 # https://clojure.org/releases/tools#_releases
-clojure 1.12.2.1565
+clojure 1.12.2.1571
 
 # $ asdf plugin add elixir
 # $ asdf install elixir
