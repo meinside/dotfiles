@@ -2,7 +2,7 @@
 --
 -- File for neovim utility functions
 --
--- last update: 2025.08.22.
+-- last update: 2025.09.24.
 
 --------------------------------
 -- functions for debugging
@@ -199,7 +199,7 @@ local function toggle_mouse()
 	else
 		vim.opt.mouse = "nvi"
 	end
-	i("Toggled mouse " .. (is_mouse_enabled() and "on" or "off"))
+	vim.notify("Toggled mouse " .. (is_mouse_enabled() and "on" or "off"), vim.log.levels.INFO)
 end
 
 -- export things

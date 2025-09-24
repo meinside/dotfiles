@@ -232,7 +232,6 @@ return {
 	-- breadcrumbs
 	{
 		"Bekaboo/dropbar.nvim",
-		dependencies = { "nvim-telescope/telescope-fzf-native.nvim" },
 	},
 
 	-- split/join blocks of code (<space>m - toggle, <space>j - join, <space>s - split)
@@ -315,11 +314,6 @@ return {
 	-- finder / locator
 	{ "mtth/locate.vim" }, -- :L [query], :lclose, gl
 	{ "johngrib/vim-f-hangul" }, -- can use f/t/;/, on Hangul characters
-	{
-		"nvim-telescope/telescope-fzf-native.nvim",
-		build = "make",
-		cond = tools.system.not_termux(), -- do not load in termux
-	},
 
 	-- git
 	{

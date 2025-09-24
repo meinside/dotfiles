@@ -4,7 +4,7 @@
 --
 -- https://www.lazyvim.org/keymaps
 --
--- last update: 2025.09.22.
+-- last update: 2025.09.24.
 
 -- copy, paste below, and comment the current line
 vim.keymap.set("n", "ycc", "yygccp", {
@@ -27,8 +27,8 @@ vim.keymap.set("n", "<C-l>", ":tabnext<CR>", {
 	desc = "Next tab",
 }) -- <ctrl-l> for next tab
 
--- for toggling mouse: `\mm`
-vim.keymap.set("n", "<leader>mm", function()
+-- for toggling mouse: `\tM`
+vim.keymap.set("n", "<leader>tM", function()
 	require("tools").ui.toggle_mouse() -- ~/.config/nvim/lua/tools.lua
 end, { desc = "mouse: Toggle" })
 
@@ -45,14 +45,6 @@ end, { desc = "diagnostics: Toggle" })
 -- <Left> for folding, <Right> for unfolding
 vim.keymap.set("n", "<Left>", require("origami").h)
 vim.keymap.set("n", "<Right>", require("origami").l)
-
--- (minifiles)
---
--- for toggling minifiles: `\mf`
-vim.keymap.set("n", "<leader>mf", function()
-	require("mini.files").setup({})
-	MiniFiles.open()
-end, { desc = "mini-files: Open" })
 
 -- (fzf-lua)
 --
@@ -130,6 +122,6 @@ vim.keymap.set("n", "<leader>yt", "<Cmd>MeowYarn type sub<CR>", { desc = "Yarn: 
 vim.keymap.set("n", "<leader>yC", "<Cmd>MeowYarn call callers<CR>", { desc = "Yarn: Callers" })
 vim.keymap.set("n", "<leader>yc", "<Cmd>MeowYarn call callees<CR>", { desc = "Yarn: Callees" })
 
--- NOTE: override/delete unwanted default keymaps
+-- NOTE: override/delete unwanted default keymaps here
 vim.keymap.del("n", "<S-h>")
 vim.keymap.del("n", "<S-l>")

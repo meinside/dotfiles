@@ -6,7 +6,7 @@
 --
 -- lazyvim.plugins.extras
 --
--- last update: 2025.09.18.
+-- last update: 2025.09.24.
 
 return {
 	--------
@@ -23,7 +23,6 @@ return {
 	-- lazyvim.plugins.extras.editor.*
 	--
 	{ import = "lazyvim.plugins.extras.editor.fzf" },
-	{ import = "lazyvim.plugins.extras.editor.mini-files" },
 	--{ import = "lazyvim.plugins.extras.editor.snacks_picker" },
 
 	--------
