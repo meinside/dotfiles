@@ -2,7 +2,7 @@
 --
 -- File for plugins for development
 --
--- last update: 2025.09.19.
+-- last update: 2025.09.29.
 
 ------------------------------------------------
 -- imports
@@ -17,7 +17,6 @@ local tools = require("tools") -- ~/.config/nvim/lua/tools.lua
 local lisps = { "clojure", "fennel", "janet", "lisp", "scheme" }
 -- (for conjure)
 vim.g["conjure#filetypes"] = lisps
-vim.g["conjure#filetype#fennel"] = "conjure.client.fennel.stdio" -- for fennel
 -- (for nvim-parinfer)
 vim.g["parinfer_filetypes"] = lisps
 -- (for guns/vim-sexp)
@@ -213,7 +212,6 @@ return {
 	--
 	-- for auto completion: <C-x><C-o>
 	-- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
-	-- for reloading everything: \rr
 	-- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
 	{ "Olical/conjure" },
 	-- >f, <f : move a form
@@ -238,7 +236,16 @@ return {
 	},
 	-- (fennel)
 	{
-		"bakpakin/fennel.vim",
+		"atweiden/vim-fennel",
+		config = function()
+			vim.g["fennel_highlight_compiler"] = 1
+			vim.g["fennel_highlight_aniseed"] = 1
+			vim.g["fennel_highlight_lume"] = 1
+		end,
+		ft = { "fennel" },
+	},
+	{
+		"Olical/nfnl", -- for `.nfnl.fnl`: https://github.com/Olical/nfnl#configuration
 		ft = { "fennel" },
 	},
 	-- (janet)
