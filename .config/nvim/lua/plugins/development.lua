@@ -2,7 +2,7 @@
 --
 -- File for plugins for development
 --
--- last update: 2025.09.29.
+-- last update: 2025.09.30.
 
 ------------------------------------------------
 -- imports
@@ -249,9 +249,11 @@ return {
 		ft = { "fennel" },
 	},
 	-- (janet)
-	-- run janet LSP with: $ janet -e '(import spork/netrepl) (netrepl/server)'
 	{
 		"janet-lang/janet.vim",
+		config = function()
+			vim.g["conjure#filetype#janet"] = "conjure.client.janet.stdio"
+		end,
 		ft = { "janet" },
 	},
 
