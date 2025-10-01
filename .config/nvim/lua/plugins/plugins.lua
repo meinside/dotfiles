@@ -108,111 +108,6 @@ return {
 		},
 	},
 
-	-- syntax highlighting
-	--
-	-- $ npm -g install tree-sitter-cli
-	-- or
-	-- $ cargo install tree-sitter-cli
-	-- or
-	-- $ brew install tree-sitter-cli
-	--
-	-- NOTE: if it complains about any language, try :TSInstall [xxx]
-	{
-		"nvim-treesitter/nvim-treesitter",
-		opts = function(_, opts)
-			return {
-				-- https://github.com/nvim-treesitter/nvim-treesitter#supported-languages
-				ensure_installed = {
-					"asm",
-					"bash",
-					"c",
-					"clojure",
-					"cmake",
-					"comment",
-					"cpp",
-					"css",
-					"csv",
-					"dart",
-					"diff",
-					"dockerfile",
-					"eex",
-					"elixir",
-					"erlang",
-					"fennel",
-					"fish",
-					"git_config",
-					"git_rebase",
-					"gitattributes",
-					"gitcommit",
-					"gitignore",
-					"go",
-					"gomod",
-					"gosum",
-					"gowork",
-					"gpg",
-					"heex",
-					"html",
-					"http",
-					"ini",
-					"janet_simple",
-					"java",
-					"javadoc",
-					"javascript",
-					"jq",
-					"jsdoc",
-					"json",
-					"json5",
-					"jsonc",
-					"kotlin",
-					"latex",
-					"llvm",
-					"lua",
-					"luadoc",
-					"luap",
-					"make",
-					"markdown",
-					"markdown_inline",
-					"mermaid",
-					"meson",
-					"nasm",
-					"nginx",
-					"nim",
-					"perl",
-					"php",
-					"printf",
-					"python",
-					"query",
-					"regex",
-					"ruby",
-					"rust",
-					"scss",
-					"sql",
-					"ssh_config",
-					"strace",
-					"swift",
-					"tmux",
-					"toml",
-					"tsx",
-					"typescript",
-					"vim",
-					"vimdoc",
-					"xml",
-					"yaml",
-					"zig",
-				},
-				sync_install = tools.system.low_perf(), -- NOTE: asynchronous install generates too much load on tiny machines
-				highlight = { enable = true },
-				rainbow = {
-					enable = true,
-					query = "rainbow-parens",
-					strategy = require("rainbow-delimiters").strategy.global,
-				},
-			}
-		end,
-	},
-	-- `:TSContext toggle` for toggling
-	{ "nvim-treesitter/nvim-treesitter-context" },
-
 	-- color column
 	{
 		"m4xshen/smartcolumn.nvim",
@@ -250,22 +145,6 @@ return {
 		end,
 	},
 
-	-- breadcrumbs
-	{
-		"Bekaboo/dropbar.nvim",
-	},
-
-	-- split/join blocks of code (<space>m - toggle, <space>j - join, <space>s - split)
-	{
-		"Wansmer/treesj",
-		config = function()
-			require("treesj").setup({
-				max_join_length = 240,
-			})
-		end,
-		dependencies = { "nvim-treesitter" },
-	},
-
 	-- minimap
 	{
 		"nvim-mini/mini.map",
@@ -295,31 +174,6 @@ return {
 		},
 	},
 
-	-- formatting
-	{
-		-- cs'" => change ' to " / ds" => remove " / ysiw" => wrap text object with " / yss" => wrap line with "
-		"kylechui/nvim-surround",
-		event = "VeryLazy",
-		config = function()
-			require("nvim-surround").setup({})
-		end,
-	},
-	{ "tpope/vim-ragtag" }, -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
-	{ "tpope/vim-sleuth" },
-	{
-		"HiPhish/rainbow-delimiters.nvim",
-		config = function()
-			require("rainbow-delimiters.setup").setup({
-				strategy = {
-					[""] = require("rainbow-delimiters").strategy["global"],
-				},
-				query = {
-					[""] = "rainbow-delimiters",
-				},
-			})
-		end,
-	},
-
 	-- marks
 	{
 		"chentoast/marks.nvim",
@@ -328,9 +182,6 @@ return {
 			force_write_shada = true,
 		},
 	},
-
-	-- annotation
-	-- NOTE: enable 'coding.neogen' with :LazyExtras
 
 	-- finder / locator
 	{ "mtth/locate.vim" }, -- :L [query], :lclose, gl
@@ -456,10 +307,4 @@ return {
 			},
 		},
 	},
-
-	--------------------------------
-	--
-	-- my neovim lua plugins for testing & development
-	--
-	-- (will be placed here)
 }
