@@ -2,7 +2,7 @@
 --
 -- File for plugins
 --
--- last update: 2025.09.24.
+-- last update: 2025.10.01.
 
 ------------------------------------------------
 -- imports
@@ -167,6 +167,8 @@ return {
 					"latex",
 					"llvm",
 					"lua",
+					"luadoc",
+					"luap",
 					"make",
 					"markdown",
 					"markdown_inline",
@@ -190,7 +192,10 @@ return {
 					"swift",
 					"tmux",
 					"toml",
+					"tsx",
 					"typescript",
+					"vim",
+					"vimdoc",
 					"xml",
 					"yaml",
 					"zig",
