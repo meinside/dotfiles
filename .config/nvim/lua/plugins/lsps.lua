@@ -2,7 +2,7 @@
 --
 -- File for LSPs
 --
--- last update: 2025.08.22.
+-- last update: 2025.10.02.
 
 local custom = require("custom") -- ~/.config/nvim/lua/custom/init.lua
 
@@ -81,6 +81,22 @@ return {
 				disable = {},
 			})
 		end,
-		ft = { "c", "clojure", "cpp", "elixir", "fennel", "go", "janet", "lua", "nim", "ruby", "rust", "sh", "zig" },
+		ft = {
+			"c",
+			"clojure",
+			"cpp",
+			"elixir",
+			"erlang",
+			"fennel",
+			"gleam",
+			"go",
+			"janet",
+			"lua",
+			"nim",
+			"ruby",
+			"rust",
+			"sh",
+			"zig",
+		},
 	},
 }

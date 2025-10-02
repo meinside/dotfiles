@@ -2,7 +2,7 @@
 --
 -- File for plugins for development
 --
--- last update: 2025.10.01.
+-- last update: 2025.10.02.
 
 ------------------------------------------------
 -- imports
@@ -66,6 +66,7 @@ return {
 					"gitattributes",
 					"gitcommit",
 					"gitignore",
+					"gleam",
 					"go",
 					"gomod",
 					"gosum",
@@ -353,6 +354,9 @@ return {
 
 	-- clojure
 	-- NOTE: enable 'lang.clojure' with :LazyExtras
+
+	-- gleam
+	-- NOTE: enable 'lang.gleam' with :LazyExtras
 
 	-- golang
 	-- NOTE: enable 'lang.go' with :LazyExtras
