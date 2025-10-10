@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.10.02.
+# last update: 2025.10.10.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -52,7 +52,7 @@ gleam 1.12.0
 #   $ cp `asdf which XXXX` $GOPATH/bin/
 #
 # https://go.dev/doc/devel/release
-golang 1.25.1
+golang 1.25.2
 
 # $ asdf plugin add janet
 # $ asdf install janet
@@ -144,7 +144,7 @@ nodejs 24.9.0
 #   :MasonInstall python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.13.7
+python 3.14.0
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
