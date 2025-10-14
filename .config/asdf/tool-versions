@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.10.13.
+# last update: 2025.10.15.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -52,7 +52,7 @@ gleam 1.12.0
 #   $ cp `asdf which XXXX` $GOPATH/bin/
 #
 # https://go.dev/doc/devel/release
-golang 1.25.2
+golang 1.25.3
 
 # $ asdf plugin add janet
 # $ asdf install janet
@@ -183,5 +183,5 @@ tinygo 0.39.0
 #   :MasonInstall zls
 #
 # https://github.com/ziglang/zig/releases
-zig 0.15.1
+zig 0.15.2
 
