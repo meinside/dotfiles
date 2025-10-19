@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.10.17.
+# last update: 2025.10.20.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -40,7 +40,7 @@ erlang 28.1
 # $ asdf plugin add gleam
 #
 # https://github.com/gleam-lang/gleam/releases
-gleam 1.12.0
+gleam 1.13.0
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -135,7 +135,7 @@ ninja 1.13.1
 # $ asdf install nodejs
 #
 # https://nodejs.org/en/about/releases/
-nodejs 25.10.0
+nodejs 24.10.0
 
 # $ asdf plugin add python
 # $ asdf install python
