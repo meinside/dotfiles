@@ -76,6 +76,15 @@ smart = 300
 [buffer.server_messages.topic]
 smart = 900
 
+[buffer.server_messages.change_host]
+enabled = false
+
+[buffer.server_messages.change_mode]
+smart = 900
+
+[buffer.server_messages.change_topic]
+smart = 900
+
 [notifications.direct_message]
 sound = "ring"
 show_toast = true
