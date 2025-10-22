@@ -1,0 +1,104 @@
+# ~/.config/halloy/config.toml.sample
+#
+# A sample Halloy config file.
+#
+# For a complete list of available options,
+# please visit https://halloy.chat/configuration/
+#
+# last update: 2025.10.22.
+
+theme = "catppuccin-mocha" # ~/.config/halloy/themes/catppuccin-mocha.toml
+
+[servers.liberachat]
+nickname = "<<<nickname-here>>>" # TODO: set your nickname here
+nick_password_file = "~/.config/halloy/password" # TODO: place your nickserve password filepath here
+server = "irc.libera.chat"
+channels = [ # TODO: put your channels here
+  "#clojure",
+  "#fennel",
+  "#ffmpeg",
+  "#firefox",
+  "#gamingonlinux",
+  "#go-nuts",
+  "#halloy",
+  "#janet",
+  "#libera",
+  "#linux",
+  "#lua",
+  "#neovim",
+  "#nginx",
+  "##programming",
+  "#raspberrypi",
+  "#ruby",
+  "##rust",
+  "#ubuntu",
+  "#zig",
+  "#zsh",
+]
+
+[actions.sidebar]
+buffer = "replace-pane"
+
+[buffer.buffer_separator]
+hide_when_all_read = true
+
+[buffer.date_separators]
+format = "%Y/%0m/%0d (%A)"
+
+[buffer.internal_messages.success]
+smart = 180
+
+[buffer.nickname]
+brackets = { left = "<", right = ">" }
+truncate = 16
+
+[buffer.status_message_prefix]
+brackets = { left = "<", right = ">" }
+
+[buffer.text_input]
+auto_format = "markdown"
+
+[buffer.timestamp]
+format = "%T"
+
+[buffer.url]
+prompt_before_open = true
+
+[buffer.server_messages.join]
+smart = 300
+
+[buffer.server_messages.part]
+smart = 300
+
+[buffer.server_messages.quit]
+smart = 300
+
+[buffer.server_messages.topic]
+smart = 900
+
+[notifications.direct_message]
+sound = "ring"
+show_toast = true
+show_content = false
+
+[notification.file_transfer_request]
+sound = "ring"
+show_toast = true
+show_content = false
+
+[notifications.highlight]
+sound = "bonk"
+show_toast = true
+show_content = false
+
+[notifications.monitored_online]
+sound = "dong"
+show_toast = true
+
+[notifications.monitored_offline]
+sound = "peck"
+show_toast = true
+
+[sidebar.unread_indicator]
+title = true
+icon = "dot"
