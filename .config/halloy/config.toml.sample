@@ -5,19 +5,38 @@
 # For a complete list of available options,
 # please visit https://halloy.chat/configuration/
 #
-# last update: 2025.10.22.
+# last update: 2025.10.23.
 
 theme = "catppuccin-mocha" # ~/.config/halloy/themes/catppuccin-mocha.toml
 
+# Libera Chat
 [servers.liberachat]
-nickname = "<<<nickname-here>>>" # TODO: set your nickname here
-nick_password_file = "~/.config/halloy/password" # TODO: place your nickserve password filepath here
+nickname = "<<<nickname-here>>>" # TODO: put your nickname here
+nick_password_file = "~/.config/halloy/nick_password" # TODO: put your nickserve password filepath here
 server = "irc.libera.chat"
-channels = [ # TODO: put your channels here
+channels = [ # TODO: put your favorite channels here
+  "#bnc4free",
+  "#halloy",
+  "#libera",
+]
+
+# Libera Chat with IRC Bouncer
+[servers.liberachat_bounced]
+nickname = "nickname" # TODO: put your nickname
+nick_password_file = "~/.config/halloy/nick_password" # TODO: put your nickname password filepath
+server = "XXX.bnc4free.com" # TODO: put your bouncer server address
+port = 1339 # TODO: put your bouncer server port
+use_tls = true
+username = "username" # TODO: put your bouncer username
+password_file = "~/.config/halloy/bnc_password" # TODO: put your bouncer password filepath
+channels = [ # TODO: put your favorite channels here
   "#clojure",
+  "#debian",
+  "##electronics",
   "#fennel",
   "#ffmpeg",
   "#firefox",
+  "#gamedev",
   "#gamingonlinux",
   "#go-nuts",
   "#halloy",
@@ -26,11 +45,15 @@ channels = [ # TODO: put your channels here
   "#linux",
   "#lua",
   "#neovim",
+  "##news",
   "#nginx",
   "##programming",
   "#raspberrypi",
   "#ruby",
   "##rust",
+  "##science",
+  "#security",
+  "##space",
   "#ubuntu",
   "#zig",
   "#zsh",
