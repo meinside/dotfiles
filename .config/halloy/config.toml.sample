@@ -70,6 +70,9 @@ message_user = "new-window"
 [actions.sidebar]
 buffer = "replace-pane"
 
+[buffer.channel.topic]
+max_lines = 5
+
 [buffer.buffer_separator]
 hide_when_all_read = true
 
@@ -106,7 +109,7 @@ smart = 300
 smart = 300
 
 [buffer.server_messages.topic]
-smart = 900
+enabled = false
 
 [buffer.server_messages.change_host]
 enabled = false
