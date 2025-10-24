@@ -59,6 +59,14 @@ channels = [ # TODO: put your favorite channels
   "#zsh",
 ]
 
+[actions.buffer]
+click_channel_name = "new-pane"
+click_highlight = "new-pane"
+click_username = "new-pane"
+local = "new-pane"
+message_channel = "new-window"
+message_user = "new-window"
+
 [actions.sidebar]
 buffer = "replace-pane"
 
@@ -83,6 +91,7 @@ auto_format = "markdown"
 
 [buffer.timestamp]
 format = "%T"
+brackets = { left = "[", right = "]" }
 
 [buffer.url]
 prompt_before_open = true
@@ -104,6 +113,9 @@ enabled = false
 
 [buffer.server_messages.change_mode]
 smart = 900
+
+[buffer.server_messages.change_nick]
+smart = 3600
 
 [buffer.server_messages.change_topic]
 smart = 900
