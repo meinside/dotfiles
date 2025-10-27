@@ -5,7 +5,7 @@
 # For a complete list of available options,
 # please visit https://halloy.chat/configuration/
 #
-# last update: 2025.10.23.
+# last update: 2025.10.27.
 
 theme = "catppuccin-mocha" # ~/.config/halloy/themes/catppuccin-mocha.toml
 
@@ -19,6 +19,10 @@ channels = [ # TODO: put your favorite channels
   "#halloy",
   "#libera",
 ]
+
+################################################################
+#
+#
 
 # Libera Chat with IRC Bouncer
 [servers.liberachat_bounced]
@@ -58,6 +62,11 @@ channels = [ # TODO: put your favorite channels
   "#zig",
   "#zsh",
 ]
+
+#
+#
+################################################################
+
 
 [actions.buffer]
 click_channel_name = "new-pane"
