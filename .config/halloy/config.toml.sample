@@ -80,6 +80,7 @@ message_user = "new-window"
 buffer = "replace-pane"
 
 [buffer.channel.topic]
+enabled = true
 max_lines = 5
 
 [buffer.buffer_separator]
