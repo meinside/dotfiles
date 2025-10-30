@@ -131,6 +131,7 @@ message_user = "new-window"
 
 [actions.sidebar]
 buffer = "replace-pane"
+focused_buffer = "close-pane"
 
 [buffer.buffer_separator]
 hide_when_all_read = true
@@ -147,6 +148,10 @@ smart = 180
 
 [buffer.internal_messages.error]
 smart = 3600
+
+[buffer.mark_as_read]
+on_buffer_close = true # mark as read when buffer closed
+#on_buffer_close = "scrolled-to-bottom" # mark as read when scrolled to bottom
 
 [buffer.nickname]
 brackets = { left = "<", right = ">" }
