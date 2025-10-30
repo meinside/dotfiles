@@ -194,6 +194,10 @@ brackets = { left = "[", right = "]" }
 [buffer.url]
 prompt_before_open = true
 
+[font]
+family = "Iosevka Term"
+#family = "JetBrainsMono Nerd Font Mono"
+
 [notifications.direct_message]
 sound = "ring"
 show_toast = true
