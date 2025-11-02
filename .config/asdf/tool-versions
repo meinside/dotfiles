@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.10.30.
+# last update: 2025.11.03.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -123,7 +123,7 @@ meson 1.9.1
 #   :MasonInstall nimlsp
 #
 # https://nim-lang.org/install.html
-nim 2.2.4
+nim 2.2.6
 
 # $ asdf plugin add ninja
 # $ asdf install ninja
@@ -168,7 +168,7 @@ ruby 3.4.7
 #   :MasonInstall rust-analyzer
 #
 # https://github.com/rust-lang/rust/releases
-rust 1.90.0
+rust 1.91.0
 
 # $ asdf plugin add tinygo https://github.com/troyjfarrell/asdf-tinygo
 # $ asdf install tinygo
