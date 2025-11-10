@@ -8,7 +8,7 @@
 --
 -- and edit it)
 --
--- last update: 2025.08.22.
+-- last update: 2025.11.10.
 
 -- following lsps will be configured automatically or manually.
 --
@@ -31,7 +31,7 @@ return {
 	--elixirls = true,
 
 	-- fennel
-	--fennel_language_server = true,
+	--fennel_ls = true,
 
 	-- go
 	--gopls = true,
