@@ -468,6 +468,10 @@ vm.vfs_cache_pressure = 300
 vm.min_free_kbytes=32768
 ```
 
+#### b. NVMe SSD freezes occasionally
+
+Try appending `nvme_core.default_ps_max_latency_us=0 pcie_aspm=off` to `/boot/firmware/cmdline.txt` file.
+
 ---
 
 ## 3. For Linux
