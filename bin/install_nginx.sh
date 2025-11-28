@@ -40,8 +40,13 @@
 #   # will renew tailscale certificates on the 1st day of every month
 #   0 5 1 */1 * sudo tailscale cert --cert-file /path/to/cert.crt --key-file /path/to/cert.key "subdomain.my-tailnet-name.ts.net"
 #
+# * for saving logs on tmpfs, make sure to create logs directory by
+#   uncommenting following line in the `nginx.service` file:
+#
+#   #ExecStartPre=/bin/mkdir -p /var/log/nginx
+#
 # created on : 2017.08.16.
-# last update: 2025.11.24.
+# last update: 2025.11.28.
 
 ################################
 #
