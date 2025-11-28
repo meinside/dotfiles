@@ -472,6 +472,14 @@ vm.min_free_kbytes=32768
 
 Try appending `nvme_core.default_ps_max_latency_us=0 pcie_aspm=off` to `/boot/firmware/cmdline.txt` file.
 
+#### c. collect2: fatal error: cannot find ‘ld’
+
+Install `binutils-gold`:
+
+```bash
+$ sudo apt install binutils-gold
+```
+
 ---
 
 ## 3. For Linux
