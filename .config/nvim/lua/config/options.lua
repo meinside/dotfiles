@@ -4,10 +4,10 @@
 --
 -- default: https://www.lazyvim.org/configuration/general#options
 --
--- last update: 2025.09.18.
+-- last update: 2025.12.01.
 
 vim.g.mapleader = "\\"
---vim.g.lazyvim_picker = "snacks"
+vim.g.lazyvim_picker = "fzf" -- FIXME: `snacks` causes weird errors on nvim startup
 
 local opt = vim.opt
 opt.autoindent = true
