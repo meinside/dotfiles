@@ -2,7 +2,7 @@
 --
 -- File for plugins
 --
--- last update: 2025.10.01.
+-- last update: 2025.12.01.
 
 ------------------------------------------------
 -- imports
@@ -88,7 +88,9 @@ return {
 	{
 		"folke/noice.nvim",
 		opts = {
-			presets = { lsp_doc_border = true },
+			presets = {
+				lsp_doc_border = true,
+			},
 
 			-- FIXME: (https://github.com/folke/noice.nvim/issues/1097) not showing the cmdline result
 			routes = {
@@ -306,5 +308,7 @@ return {
 				},
 			},
 		},
+
+		--cond = false, -- FIXME: for disabling Snacks temporarily (eg. :NeoCodeium auth)
 	},
 }
