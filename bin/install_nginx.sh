@@ -46,7 +46,7 @@
 #   #ExecStartPre=/bin/mkdir -p /var/log/nginx
 #
 # created on : 2017.08.16.
-# last update: 2025.11.28.
+# last update: 2025.12.03.
 
 ################################
 #
@@ -227,7 +227,7 @@ server {
     # HSTS (ngx_http_headers_module is required) (63072000 seconds)
     add_header Strict-Transport-Security "max-age=63072000" always;
 
-    # OCSP stapling
+    # OCSP stapling (not needed for Let's Encrypt certificates)
     ssl_stapling on;
     ssl_stapling_verify on;
 
