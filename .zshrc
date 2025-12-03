@@ -189,7 +189,7 @@ export LEIN_HOME="$XDG_DATA_HOME/lein"
 export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
 export NODE_REPL_HISTORY="$XDG_STATE_HOME/node_repl_history"
 if [ -d "$HOME/.local/share/npm/bin" ]; then
-    export PATH="$PATH:$HOME/.local/share/npm/bin"
+    export PATH="$HOME/.local/share/npm/bin:$PATH"
 fi
 
 # for ruby
@@ -200,7 +200,7 @@ export SOLARGRAPH_CACHE="$XDG_CACHE_HOME/solargraph"
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 if [ -d "$CARGO_HOME/bin" ]; then
-    export PATH="$PATH:$CARGO_HOME/bin"
+    export PATH="$CARGO_HOME/bin:$PATH"
 fi
 for r in $ASDF_DATA_DIR/installs/rust/*; do
     if [ -d $r ]; then
