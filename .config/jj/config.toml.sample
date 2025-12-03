@@ -1,0 +1,32 @@
+# ~/.config/jj/config.toml.sample
+#
+# created on  2025.12.03.
+# last update 2025.12.03.
+
+[colors]
+commit_id = { fg = "white", bg = "default", bold = false, underline = false }
+"working_copy commit_id" = { fg = "green", bold = true }
+
+[merge-tools]
+vimdiff.program = "vim"
+vimdiff.merge-tool-edits-conflict-markers = true
+
+[template-aliases]
+"format_short_id(id)" = "id.shortest(12)"
+"format_short_signature(signature)" = "signature"
+"format_time_range(time_range)" = "time_range.start() ++ ' - ' ++ time_range.end()"
+"format_timestamp(timestamp)" = "timestamp"
+
+[ui]
+color = "auto"
+default-command = "log"
+diff-editor = ":builtin"
+diff-formatter = ":git"
+editor = "nvim"
+graph.style = "square"
+log-word-wrap = true
+paginate = "auto"
+
+[user]
+name = "Sungjin Han"
+email = "meinside@duck.com"
