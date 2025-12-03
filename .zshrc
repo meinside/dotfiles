@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2025.08.29.
+# updated on 2025.12.03.
 #
 # $ chsh -s `which zsh`
 #
@@ -88,6 +88,7 @@ plugins=(
     golang
     history
     history-substring-search
+    jj # $ cargo install --locked --bin jj jj-cli
     macos
     mosh
     nmap
