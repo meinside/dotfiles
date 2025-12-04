@@ -2,7 +2,7 @@
 --
 -- File for plugins
 --
--- last update: 2025.12.01.
+-- last update: 2025.12.04.
 
 ------------------------------------------------
 -- imports
@@ -307,8 +307,12 @@ return {
 					},
 				},
 			},
+			notifier = {
+				-- FIXME: for disabling Snacks notifier temporarily
+				-- (eg. for not truncating url from :NeoCodeium auth)
+				--enabled = false,
+				enabled = true,
+			},
 		},
-
-		--cond = false, -- FIXME: for disabling Snacks temporarily (eg. :NeoCodeium auth)
 	},
 }
