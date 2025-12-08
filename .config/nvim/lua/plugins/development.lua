@@ -2,7 +2,7 @@
 --
 -- File for plugins for development
 --
--- last update: 2025.10.02.
+-- last update: 2025.12.08.
 
 ------------------------------------------------
 -- imports
@@ -84,7 +84,6 @@ return {
 					"jsdoc",
 					"json",
 					"json5",
-					"jsonc",
 					"kotlin",
 					"latex",
 					"llvm",
