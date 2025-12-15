@@ -4,7 +4,7 @@
 --
 -- NOTE: plugins for GenAI services/applications will be placed here
 --
--- last update: 2025.09.22.
+-- last update: 2025.12.15.
 
 ------------------------------------------------
 -- imports
@@ -130,13 +130,15 @@ return {
 			require("codecompanion").setup({
 				-- https://codecompanion.olimorris.dev/configuration/adapters.html#configuring-adapter-settings
 				adapters = {
-					gemini = function()
-						return require("codecompanion.adapters").extend("gemini", {
-							env = {
-								api_key = gemini_api_key,
-							},
-						})
-					end,
+					http = {
+						gemini = function()
+							return require("codecompanion.adapters").extend("gemini", {
+								env = {
+									api_key = gemini_api_key,
+								},
+							})
+						end,
+					},
 					acp = {
 						gemini_cli = function()
 							return require("codecompanion.adapters").extend("gemini_cli", {
@@ -158,7 +160,7 @@ return {
 				strategies = {
 					chat = {
 						adapter = "gemini_cli",
-						model = "gemini-2.5-pro",
+						model = "gemini-2.5-flash",
 						think = true,
 						---Decorate the user message before it's sent to the LLM
 						---@param message string
