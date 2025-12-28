@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.12.22.
+# last update: 2025.12.29.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -40,7 +40,7 @@ erlang 28.3
 # $ asdf plugin add gleam
 #
 # https://github.com/gleam-lang/gleam/releases
-gleam 1.13.0
+gleam 1.14.0
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -108,7 +108,7 @@ leiningen 2.12.0
 # and put `luarocks path` result to .custom_env file
 #
 # https://www.lua.org/versions.html
-lua 5.1.5 5.4.8
+lua 5.1.5 5.5.0
 
 # $ asdf plugin add meson
 # $ asdf install meson
@@ -159,7 +159,7 @@ python 3.14.2
 #   :MasonInstall solargraph
 #
 # https://www.ruby-lang.org/en/downloads/releases/
-ruby 3.4.8
+ruby 4.0.0
 
 # $ asdf plugin add rust
 # $ asdf install rust
@@ -174,7 +174,7 @@ rust 1.92.0
 # $ asdf install tinygo
 #
 # https://github.com/tinygo-org/tinygo/releases/
-tinygo 0.39.0
+tinygo 0.40.1
 
 # $ asdf plugin add zig
 # $ asdf install zig
