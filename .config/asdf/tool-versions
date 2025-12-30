@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.12.29.
+# last update: 2025.12.30.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -94,6 +94,9 @@ leiningen 2.12.0
 
 # $ asdf plugin add lua
 # $ asdf install lua
+#
+# On Linux, for compiling with readline:
+# $ ASDF_LUA_LINUX_READLINE=1 asdf install lua
 #
 # For language server,
 #   :MasonInstall lua-language-server
