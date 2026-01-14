@@ -3,13 +3,13 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2025.12.30.
+# last update: 2026.01.14.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
 #
 # https://github.com/babashka/babashka/releases
-babashka 1.12.213
+babashka 1.12.214
 
 # For bash-language-server,
 #   :MasonInstall bash-language-server
@@ -29,7 +29,7 @@ clojure 1.12.4.1582
 # * NOTE: `erlang` needs to be installed.
 #
 # https://github.com/elixir-lang/elixir/releases
-elixir 1.19.4
+elixir 1.19.5
 
 # $ asdf plugin add erlang
 # $ KERL_BUILD_DOCS=yes asdf install erlang
