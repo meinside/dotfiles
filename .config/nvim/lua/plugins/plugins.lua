@@ -2,7 +2,7 @@
 --
 -- File for plugins
 --
--- last update: 2025.12.04.
+-- last update: 2026.01.19.
 
 ------------------------------------------------
 -- imports
@@ -314,5 +314,12 @@ return {
 				enabled = true,
 			},
 		},
+	},
+
+	-- undo tree (:Atone)
+	{
+		"XXiaoA/atone.nvim",
+		cmd = "Atone",
+		opts = {},
 	},
 }
