@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2026.01.16.
+# last update: 2026.01.20.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -117,7 +117,7 @@ lua 5.1.5 5.5.0
 # $ asdf install meson
 #
 # https://github.com/mesonbuild/meson/releases
-meson 1.10.0
+meson 1.10.1
 
 # $ asdf plugin add nim
 # $ asdf install nim
@@ -138,7 +138,7 @@ ninja 1.13.2
 # $ asdf install nodejs
 #
 # https://nodejs.org/en/about/releases/
-nodejs 25.3.0
+nodejs 25.4.0
 
 # $ asdf plugin add python
 # $ asdf install python
