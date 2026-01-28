@@ -2,7 +2,7 @@
 --
 -- File for autocmds
 --
--- last update: 2025.09.04.
+-- last update: 2026.01.28.
 
 -- Autocmds are automatically loaded on the VeryLazy event
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
@@ -159,5 +159,43 @@ vim.api.nvim_create_autocmd({ "User" }, {
 				end
 			end,
 		})
+	end,
+})
+
+-- FIXME: background transparency not working since NVIM v0.12.0-dev-2131+g027b7d6bbb
+vim.api.nvim_create_autocmd("ColorScheme", {
+	pattern = "*",
+	callback = function()
+		local hl_groups = {
+			"Normal",
+			"NormalNC",
+			--"NormalFloat",
+			--"FloatBorder",
+			"StatusLine",
+			"StatusLineNC",
+			"SignColumn",
+			"WinSeparator",
+			"EndOfBuffer",
+			"MsgArea",
+			"Pmenu",
+			"PmenuSel",
+			"PmenuSbar",
+			"PmenuThumb",
+			--"LineNr",
+			--"CursorLineNr",
+			"Folded",
+			"CursorLine",
+			"CursorColumn",
+			"NvimTreeNormal",
+			"NeoTreeNormal",
+			"NeoTreeNormalNC",
+			"WinBar",
+			"WinBarNC",
+			"Question",
+			"WildMenu",
+		}
+		for _, grp in ipairs(hl_groups) do
+			vim.api.nvim_set_hl(0, grp, { bg = "none", ctermbg = "none" })
+		end
 	end,
 })

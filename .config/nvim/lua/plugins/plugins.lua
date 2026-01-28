@@ -2,7 +2,7 @@
 --
 -- File for plugins
 --
--- last update: 2026.01.19.
+-- last update: 2026.01.28.
 
 ------------------------------------------------
 -- imports
@@ -15,9 +15,19 @@ return {
 		"catppuccin/nvim",
 		name = "catppuccin",
 		opts = {
-			transparent_background = true,
 			flavour = "mocha",
+			transparent_background = true,
+			float = {
+				transparent = true,
+				solid = true,
+			},
+			show_end_of_buffer = true,
 			term_colors = true,
+			dim_inactive = {
+				enabled = true,
+				shade = "dark",
+				percentage = 0.15,
+			},
 			styles = {
 				comments = { "italic" },
 				conditionals = { "italic" },
@@ -30,6 +40,26 @@ return {
 				booleans = {},
 				properties = {},
 				types = {},
+				operators = {},
+			},
+			lsp_styles = {
+				virtual_text = {
+					errors = { "italic" },
+					hints = { "italic" },
+					warnings = { "italic" },
+					information = { "italic" },
+					ok = { "italic" },
+				},
+				underlines = {
+					errors = { "underline" },
+					hints = { "underline" },
+					warnings = { "underline" },
+					information = { "underline" },
+					ok = { "underline" },
+				},
+				inlay_hints = {
+					background = true,
+				},
 			},
 			color_overrides = {
 				mocha = {
@@ -49,6 +79,7 @@ return {
 					}
 				end,
 			},
+			auto_integrations = true,
 			integrations = {
 				beacon = true,
 				cmp = true,
@@ -64,6 +95,8 @@ return {
 				neogit = true,
 				notify = true,
 				rainbow_delimiters = true,
+				snacks = true,
+				telescope = { enabled = true },
 				treesitter = true,
 				treesitter_context = true,
 				which_key = true,
