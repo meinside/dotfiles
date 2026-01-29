@@ -84,7 +84,7 @@ janet 1.40.1
 # $ asdf install java
 #
 # https://github.com/halcyon/asdf-java/tree/master/data
-java openjdk-24.0.2
+java openjdk-25.0.2
 
 # $ asdf plugin add leiningen
 # $ asdf install leiningen
