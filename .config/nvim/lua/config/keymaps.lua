@@ -4,7 +4,7 @@
 --
 -- https://www.lazyvim.org/keymaps
 --
--- last update: 2025.09.24.
+-- last update: 2026.01.29.
 
 -- copy, paste below, and comment the current line
 vim.keymap.set("n", "ycc", "yygccp", {
@@ -121,6 +121,11 @@ vim.keymap.set("n", "<leader>yT", "<Cmd>MeowYarn type super<CR>", { desc = "Yarn
 vim.keymap.set("n", "<leader>yt", "<Cmd>MeowYarn type sub<CR>", { desc = "Yarn: Sub Types" })
 vim.keymap.set("n", "<leader>yC", "<Cmd>MeowYarn call callers<CR>", { desc = "Yarn: Callers" })
 vim.keymap.set("n", "<leader>yc", "<Cmd>MeowYarn call callees<CR>", { desc = "Yarn: Callees" })
+
+-- alt + L-mouse for displaying hls
+vim.keymap.set("n", "<A-LeftMouse>", function()
+	require("tools").ui.print_hls_under_mouse() -- ~/.config/nvim/lua/tools.lua
+end, { desc = "Print HL groups under mouse click" })
 
 -- NOTE: override/delete unwanted default keymaps here
 vim.keymap.del("n", "<S-h>")

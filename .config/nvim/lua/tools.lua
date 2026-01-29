@@ -2,7 +2,7 @@
 --
 -- File for neovim utility functions
 --
--- last update: 2025.09.24.
+-- last update: 2026.01.29.
 
 --------------------------------
 -- functions for debugging
@@ -202,6 +202,31 @@ local function toggle_mouse()
 	vim.notify("Toggled mouse " .. (is_mouse_enabled() and "on" or "off"), vim.log.levels.INFO)
 end
 
+-- Prints highlight groups under mouse
+-- (only works when mouse is enabled)
+local function print_hls_under_mouse()
+	local pos = vim.fn.getmousepos()
+	local row, col = pos.screenrow, pos.screencol
+
+	local attr_id = vim.fn.screenattr(row, col)
+	local hl_name = vim.fn.synIDattr(attr_id, "name")
+
+	local msg
+	if hl_name ~= "" then
+		msg = string.format("Pos: [%d, %d], HL Group: %s", row, col, hl_name)
+
+		local trans_id = vim.fn.synIDtrans(attr_id)
+		local trans_name = vim.fn.synIDattr(trans_id, "name")
+		if hl_name ~= trans_name then
+			msg = msg .. string.format(" (%s)", trans_name)
+		end
+	else
+		msg = string.format("Pos: [%d, %d], HL Group: None", row, col)
+	end
+
+	vim.notify(msg, vim.log.levels.INFO)
+end
+
 -- export things
 local Tools = {
 	-- functions for debugging
@@ -235,6 +260,7 @@ local Tools = {
 	ui = {
 		is_mouse_enabled = is_mouse_enabled,
 		toggle_mouse = toggle_mouse,
+		print_hls_under_mouse = print_hls_under_mouse,
 	},
 }
 
