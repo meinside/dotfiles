@@ -9,7 +9,7 @@
 # $ asdf install babashka
 #
 # https://github.com/babashka/babashka/releases
-babashka 1.12.214
+babashka 1.12.215
 
 # For bash-language-server,
 #   :MasonInstall bash-language-server
@@ -147,7 +147,7 @@ nodejs 25.6.1
 #   :MasonInstall python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.14.2
+python 3.14.3
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
