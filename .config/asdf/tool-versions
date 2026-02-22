@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2026.02.19.
+# last update: 2026.02.23.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -35,7 +35,7 @@ elixir 1.19.5
 # $ KERL_BUILD_DOCS=yes asdf install erlang
 #
 # https://github.com/erlang/otp/releases
-erlang 28.3.1
+erlang 28.3.2
 
 # $ asdf plugin add gleam
 #
@@ -185,6 +185,6 @@ tinygo 0.40.1
 # For language server,
 #   :MasonInstall zls
 #
-# https://github.com/ziglang/zig/releases
+# https://codeberg.org/ziglang/zig/tags
 zig 0.15.2
 
