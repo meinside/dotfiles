@@ -4,7 +4,7 @@
 --
 -- default: https://www.lazyvim.org/configuration/general#options
 --
--- last update: 2025.12.01.
+-- last update: 2026.02.27.
 
 vim.g.mapleader = "\\"
 vim.g.lazyvim_picker = "fzf" -- FIXME: `snacks` causes weird errors on nvim startup
@@ -12,6 +12,7 @@ vim.g.lazyvim_picker = "fzf" -- FIXME: `snacks` causes weird errors on nvim star
 local opt = vim.opt
 opt.autoindent = true
 opt.autowrite = true -- Enable auto write
+opt.background = "dark"
 opt.backspace = { "indent", "eol", "start" } -- allow backspacing over everything in insert mode
 opt.breakat = " "
 opt.breakindent = true

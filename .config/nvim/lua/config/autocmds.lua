@@ -2,7 +2,7 @@
 --
 -- File for autocmds
 --
--- last update: 2026.01.28.
+-- last update: 2026.02.27.
 
 -- Autocmds are automatically loaded on the VeryLazy event
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
@@ -178,9 +178,9 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 			"EndOfBuffer",
 			"MsgArea",
 			"Pmenu",
-			"PmenuSel",
-			"PmenuSbar",
-			"PmenuThumb",
+			--"PmenuSel",
+			--"PmenuSbar",
+			--"PmenuThumb",
 			--"LineNr",
 			--"CursorLineNr",
 			"Folded",
@@ -193,6 +193,9 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 			"WinBarNC",
 			"Question",
 			"WildMenu",
+			"TabLine",
+			"TabLineSel",
+			"TabLineFill",
 		}
 		for _, grp in ipairs(hl_groups) do
 			vim.api.nvim_set_hl(0, grp, { bg = "none", ctermbg = "none" })

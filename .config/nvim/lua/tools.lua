@@ -2,7 +2,7 @@
 --
 -- File for neovim utility functions
 --
--- last update: 2026.01.29.
+-- last update: 2026.02.27.
 
 --------------------------------
 -- functions for debugging
@@ -202,29 +202,69 @@ local function toggle_mouse()
 	vim.notify("Toggled mouse " .. (is_mouse_enabled() and "on" or "off"), vim.log.levels.INFO)
 end
 
--- Prints highlight groups under mouse
+-- Resolves highlight group
+local function resolve_hl(group)
+	-- 1. follow the link chain first,
+	local resolved = group
+	for _ = 1, 10 do
+		local info = vim.api.nvim_get_hl(0, { name = resolved, link = true })
+		if info.link then
+			resolved = info.link
+		else
+			break
+		end
+	end
+
+	-- 2. if the result is still empty, fallback to the treesitter capture
+	-- by reducing like: "@property.go" -> "@property" -> "@variable"
+	local info = vim.api.nvim_get_hl(0, { name = resolved })
+	local is_empty = next(info) == nil
+
+	if is_empty and resolved:sub(1, 1) == "@" then
+		local parts = vim.split(resolved, ".", { plain = true })
+		-- remove the language suffix: "@property.go" -> "@property"
+		-- and search further by removing each point
+		for n = #parts - 1, 1, -1 do
+			local shorter = table.concat(vim.list_slice(parts, 1, n), ".")
+			local shorter_info = vim.api.nvim_get_hl(0, { name = shorter, link = true })
+			if next(shorter_info) ~= nil then
+				return resolve_hl(shorter) -- 재귀로 link까지 추적
+			end
+		end
+	end
+
+	return resolved
+end
+
+-- Prints highlight groups under mouse in text-editable areas
+--
 -- (only works when mouse is enabled)
 local function print_hls_under_mouse()
 	local pos = vim.fn.getmousepos()
-	local row, col = pos.screenrow, pos.screencol
+	local row, col = pos.line - 1, pos.column - 1 -- 0-indexed
 
-	local attr_id = vim.fn.screenattr(row, col)
-	local hl_name = vim.fn.synIDattr(attr_id, "name")
+	local bufnr = vim.fn.winbufnr(pos.winid)
+	local result = vim.inspect_pos(bufnr, row, col)
 
-	local msg
-	if hl_name ~= "" then
-		msg = string.format("Pos: [%d, %d], HL Group: %s", row, col, hl_name)
-
-		local trans_id = vim.fn.synIDtrans(attr_id)
-		local trans_name = vim.fn.synIDattr(trans_id, "name")
-		if hl_name ~= trans_name then
-			msg = msg .. string.format(" (%s)", trans_name)
-		end
-	else
-		msg = string.format("Pos: [%d, %d], HL Group: None", row, col)
+	local groups = {}
+	for _, hl in ipairs(result.syntax) do
+		table.insert(groups, hl.hl_group)
+	end
+	for _, hl in ipairs(result.treesitter) do
+		table.insert(groups, string.format("%s (-> %s)", hl.hl_group, resolve_hl(hl.hl_group)))
+	end
+	for _, hl in ipairs(result.semantic_tokens or {}) do
+		table.insert(groups, hl.hl_group)
 	end
 
-	vim.notify(msg, vim.log.levels.INFO)
+	if #groups > 0 then
+		vim.notify(string.format("Pos: [%d, %d], HL Groups:", pos.line, pos.column), vim.log.levels.INFO)
+		for _, g in ipairs(groups) do
+			vim.notify(string.format(g, pos.line, pos.column), vim.log.levels.INFO)
+		end
+	else
+		vim.notify(string.format("Pos: [%d, %d], HL Group: Unknown", pos.line, pos.column), vim.log.levels.INFO)
+	end
 end
 
 -- export things
