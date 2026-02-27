@@ -2,7 +2,7 @@
 --
 -- File for initializing neovim
 --
--- last update: 2025.09.04.
+-- last update: 2026.02.27.
 
 -- bootstrap lazy.nvim, LazyVim and your plugins
 --
@@ -45,7 +45,7 @@ require("config.lazy")
 -- (for lsps)
 -- ~/.config/nvim/lua/plugins/lsps.lua
 --
--- (for monkeypatching erroneous plugins/features)
+-- (for monkey-patching erroneous plugins/features)
 -- ~/.config/nvim/lua/plugins/monkeypatched/
 
 --------------------------------
@@ -64,10 +64,6 @@ require("config.lazy")
 -- (for linters)
 -- ~/.config/nvim/lua/custom/linters_sample.lua
 -- ~/.config/nvim/lua/custom/linters.lua
---
--- (for lsps)
--- ~/.config/nvim/lua/custom/lsps_sample.lua
--- ~/.config/nvim/lua/custom/lsps.lua
 
 --------------------------------
 -- my tools

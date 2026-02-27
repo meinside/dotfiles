@@ -2,7 +2,7 @@
 --
 -- File for LSPs
 --
--- last update: 2025.10.02.
+-- last update: 2026.02.27.
 
 local custom = require("custom") -- ~/.config/nvim/lua/custom/init.lua
 
@@ -53,7 +53,6 @@ return {
 		"mason-org/mason-lspconfig.nvim",
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = custom.installable_lsp_names(), -- NOTE: ~/.config/nvim/lua/custom/lsps_sample.lua
 				automatic_enable = true,
 			})
 		end,
@@ -93,6 +92,7 @@ return {
 			"janet",
 			"lua",
 			"nim",
+			"python",
 			"ruby",
 			"rust",
 			"sh",

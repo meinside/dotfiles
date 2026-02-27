@@ -2,7 +2,7 @@
 --
 -- File for plugins for development
 --
--- last update: 2025.12.08.
+-- last update: 2026.02.27.
 
 ------------------------------------------------
 -- imports
@@ -409,21 +409,24 @@ return {
 		ft = { "janet" },
 	},
 
-	-- nim
+	-- (nim)
 	{
 		"alaviss/nim.nvim",
 		ft = { "nim" },
 	},
 
-	-- python
+	-- (python)
 	-- NOTE: enable 'lang.python' with :LazyExtras
 
-	-- ruby
+	-- (ruby)
 	-- NOTE: enable 'lang.ruby' with :LazyExtras
 
-	-- rust
+	-- (rust)
 	-- NOTE: enable 'lang.rust' with :LazyExtras
 
-	-- zig
+	-- (sql)
+	-- NOTE: enable 'lang.sql' with :LazyExtras
+
+	-- (zig)
 	-- NOTE: enable 'lang.zig' with :LazyExtras
 }

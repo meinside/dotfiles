@@ -17,42 +17,6 @@ local tools = require("tools")
 
 local Custom = {}
 
--- Loads and returns LSP names if possible
-local function load_lsps(filter)
-	-- NOTE: will try loading: ~/.config/nvim/lua/custom/lsps.lua
-	-- sample file here: ~/.config/nvim/lua/custom/lsps_sample.lua
-	local ok, lsps = pcall(require, "custom/lsps")
-	if ok then
-		local names = {}
-		for name, b in pairs(lsps) do
-			if not filter or b then
-				table.insert(names, name)
-			end
-		end
-		return names
-	else
-		-- NOTE: default: ~/.config/nvim/lua/custom/lsps_sample.lua
-		return require("custom/lsps_sample")
-	end
-end
-
--- Returns LSP names for configuration
-local lsp_names = function(filter)
-	tools.fs.copy_if_needed(lua_filepath("custom/lsps_sample.lua"), lua_filepath("custom/lsps.lua"))
-
-	return load_lsps(filter)
-end
-
--- Returns LSP names that are installable
-function Custom.installable_lsp_names()
-	return lsp_names(false)
-end
-
--- Returns LSP names that are autoconfigurable
-function Custom.autoconfigurable_lsp_names()
-	return lsp_names(true)
-end
-
 -- Loads and returns debugger names if possible
 local function load_debuggers()
 	-- NOTE: will try loading: ~/.config/nvim/lua/custom/debuggers.lua
@@ -68,7 +32,7 @@ local function load_debuggers()
 		return names
 	else
 		-- NOTE: default: ~/.config/nvim/lua/custom/debuggers_sample.lua
-		return require("custom/lsps_sample")
+		return require("custom/debuggers_sample")
 	end
 end
 
