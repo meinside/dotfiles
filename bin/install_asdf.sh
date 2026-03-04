@@ -5,7 +5,7 @@
 # Install asdf
 #
 # created on : 2022.04.14.
-# last update: 2025.06.09.
+# last update: 2026.03.04.
 
 ASDF_INSTALL_DIR="$HOME/.local/share/asdf/bin"
 
@@ -14,7 +14,7 @@ ASDF_INSTALL_DIR="$HOME/.local/share/asdf/bin"
 # frequently updated values
 
 # https://github.com/asdf-vm/asdf/releases
-VERSION="0.18.0"
+VERSION="0.18.1"
 
 ################################
 #
