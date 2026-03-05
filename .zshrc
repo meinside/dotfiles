@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2025.12.03.
+# updated on 2026.03.05.
 #
 # $ chsh -s `which zsh`
 #
@@ -211,8 +211,12 @@ done
 # for sqlite3
 export SQLITE_HISTORY="$XDG_CACHE_HOME/sqlite_history"
 
-# additional paths
-export PATH="$HOME/bin:$HOME/.local/bin:$PATH"
+# additional paths:
+#
+# ~/bin
+# ~/.local/bin
+# ~/.local/share/nvim/mason/bin
+export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.local/share/nvim/mason/bin:$PATH"
 
 # for asdf settings (handled by omz's 'asdf' plugin)
 #if [ -d $ASDF_DATA_DIR ]; then
