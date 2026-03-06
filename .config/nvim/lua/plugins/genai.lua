@@ -209,7 +209,6 @@ return {
 				verbose = false, -- for debugging
 			})
 		end,
-		dependencies = { { "nvim-lua/plenary.nvim" } },
 
 		-- for testing local changes
 		--dir = "~/srcs/lua/gmn.nvim/",
