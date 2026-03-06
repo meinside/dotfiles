@@ -52,7 +52,7 @@ gleam 1.14.0
 #   $ cp `asdf which XXXX` $GOPATH/bin/
 #
 # https://go.dev/doc/devel/release
-golang 1.26.0
+golang 1.26.1
 
 # $ asdf plugin add janet
 # $ asdf install janet
