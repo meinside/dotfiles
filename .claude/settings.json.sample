@@ -4,7 +4,11 @@
     "deny": [
       "Read(./.env)",
       "Read(./.env.*)",
-      "Read(./config.*)",
+      "Read(./config.json)",
+      "Read(./config.toml)",
+      "Read(./config.xml)",
+      "Read(./config.yaml)",
+      "Read(./config.yml)",
       "Read(./secrets/**)"
     ]
   },
