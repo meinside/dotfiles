@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2026.03.03.
+# last update: 2026.03.17.
 
 # unnecessary binary files
 *.a
@@ -64,7 +64,7 @@ Network Trash Folder/
 Pictures/
 Public/
 Sites/
-Templates/
+#Templates/
 Temporary Items/
 Videos/
 
