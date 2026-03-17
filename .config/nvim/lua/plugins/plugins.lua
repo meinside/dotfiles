@@ -2,12 +2,7 @@
 --
 -- File for plugins
 --
--- last update: 2026.01.28.
-
-------------------------------------------------
--- imports
---
-local tools = require("tools") -- ~/.config/nvim/lua/tools.lua
+-- last update: 2026.03.17.
 
 return {
 	-- colorschemes
@@ -17,10 +12,6 @@ return {
 		opts = {
 			flavour = "mocha",
 			transparent_background = true,
-			float = {
-				transparent = true,
-				solid = true,
-			},
 			show_end_of_buffer = true,
 			term_colors = true,
 			dim_inactive = {
@@ -42,25 +33,6 @@ return {
 				types = {},
 				operators = {},
 			},
-			lsp_styles = {
-				virtual_text = {
-					errors = { "italic" },
-					hints = { "italic" },
-					warnings = { "italic" },
-					information = { "italic" },
-					ok = { "italic" },
-				},
-				underlines = {
-					errors = { "underline" },
-					hints = { "underline" },
-					warnings = { "underline" },
-					information = { "underline" },
-					ok = { "underline" },
-				},
-				inlay_hints = {
-					background = true,
-				},
-			},
 			color_overrides = {
 				mocha = {
 					base = "#000000",
@@ -71,7 +43,6 @@ return {
 			highlight_overrides = {
 				mocha = function(C)
 					return {
-						CmpBorder = { fg = C.surface2 },
 						CursorColumn = { bg = C.surface0 },
 						CursorLine = { bg = C.surface0 },
 						CursorLineNr = { fg = C.yellow, bold = true },
@@ -82,7 +53,6 @@ return {
 			auto_integrations = true,
 			integrations = {
 				beacon = true,
-				cmp = true,
 				dap = true,
 				dap_ui = true,
 				dropbar = {
@@ -96,7 +66,6 @@ return {
 				notify = true,
 				rainbow_delimiters = true,
 				snacks = true,
-				telescope = { enabled = true },
 				treesitter = true,
 				treesitter_context = true,
 				which_key = true,

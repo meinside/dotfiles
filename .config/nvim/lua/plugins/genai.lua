@@ -4,7 +4,7 @@
 --
 -- NOTE: plugins for GenAI services/applications will be placed here
 --
--- last update: 2025.12.15.
+-- last update: 2026.03.17.
 
 ------------------------------------------------
 -- imports
@@ -27,13 +27,6 @@ return {
 		config = function()
 			local blink = require("blink.cmp")
 			local neocodeium = require("neocodeium")
-
-			vim.api.nvim_create_autocmd("User", {
-				pattern = "BlinkCmpMenuOpen",
-				callback = function()
-					neocodeium.clear()
-				end,
-			})
 
 			neocodeium.setup({
 				completion = {
@@ -72,7 +65,7 @@ return {
 							"rust",
 							"sh",
 							"zig",
-						}, vim.api.nvim_get_option_value("filetype", { buf = bufnr }))
+						}, vim.bo[bufnr].filetype)
 					then
 						-- show suggestions only when blink.cmp menu is not visible
 						return not blink.is_visible()

@@ -2,7 +2,7 @@
 --
 -- File for autocmds
 --
--- last update: 2026.02.27.
+-- last update: 2026.03.17.
 
 -- Autocmds are automatically loaded on the VeryLazy event
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
@@ -26,7 +26,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	group = "etc",
 	pattern = "*",
 	callback = function()
-		vim.highlight.on_yank({ on_visual = false })
+		vim.hl.on_yank({ on_visual = false })
 	end,
 })
 
@@ -69,7 +69,7 @@ vim.api.nvim_create_autocmd({ "CursorMoved", "DiagnosticChanged" }, {
 
 		local lnum = vim.api.nvim_win_get_cursor(0)[1] - 1
 
-		if vim.tbl_isempty(vim.diagnostic.get(0, { lnum = lnum })) then
+		if #vim.diagnostic.get(0, { lnum = lnum }) == 0 then
 			vim.diagnostic.config({ virtual_text = og_virt_text })
 		else
 			vim.diagnostic.config({ virtual_text = false })
