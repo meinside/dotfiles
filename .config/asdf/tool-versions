@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2026.03.17.
+# last update: 2026.03.18.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -40,7 +40,7 @@ erlang 28.4.1
 # $ asdf plugin add gleam
 #
 # https://github.com/gleam-lang/gleam/releases
-gleam 1.15.0
+gleam 1.15.1
 
 # $ asdf plugin add golang
 # $ asdf install golang
