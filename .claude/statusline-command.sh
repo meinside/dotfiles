@@ -9,7 +9,6 @@ input=$(cat)
 
 cwd=$(echo "$input" | jq -r '.workspace.current_dir')
 session_name=$(echo "$input" | jq -r '.session_name // empty')
-
 user=$(whoami)
 host=$(hostname -s)
 
@@ -30,10 +29,14 @@ if git -C "$cwd" rev-parse --git-dir >/dev/null 2>&1; then
     fi
 fi
 
+# Session info
 session_info=""
 if [ -n "$session_name" ]; then
     session_info=" [${session_name}]"
 fi
+
+# Cost for this session
+total_cost=$(printf '💰%.2f' "$(echo "$input" | jq -r '.cost.total_cost_usd // 0')")
 
 # Model info (dimmed)
 model=$(echo "$input" | jq -r '.model.display_name // .model.id // empty')
@@ -56,6 +59,8 @@ if [ -n "$context_remaining" ]; then
     fi
 fi
 
+# Output
+#
 # username=blue, hostname=bright-red, directory=dimmed green (matching starship)
-printf "\033[34m%s\033[0m@\033[91m%s\033[0m \033[2;32m%s\033[0m%b%s%b%b" \
-    "$user" "$host" "$dir" "$git_info" "$session_info" "$ctx_info" "$model_info"
+printf "\033[34m%s\033[0m@\033[91m%s\033[0m \033[2;32m%s\033[0m%b\n%s%b%b%s" \
+    "$user" "$host" "$dir" "$git_info" "$session_info" "$model_info" "$ctx_info" "$total_cost"

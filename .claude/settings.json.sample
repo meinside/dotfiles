@@ -20,6 +20,6 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "$HOME/.claude/statusline-command.sh"
+    "command": "~/.claude/statusline-command.sh"
   }
 }
