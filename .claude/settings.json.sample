@@ -17,5 +17,9 @@
     "CLAUDE_CODE_USE_BEDROCK": "1",
 
     "ENABLE_LSP_TOOL": "1"
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "$HOME/.claude/statusline-command.sh"
   }
 }
