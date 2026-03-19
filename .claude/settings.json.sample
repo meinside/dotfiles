@@ -7,6 +7,13 @@
     "ENABLE_LSP_TOOL": "1"
   },
   "permissions": {
+    "allow": [
+      "Bash(* --version)",
+      "Bash(* --help *)",
+      "Bash(git diff *)",
+      "Bash(git log *)",
+      "Bash(git status)"
+    ],
     "deny": [
       "Read(./.env)",
       "Read(./.env.*)",
