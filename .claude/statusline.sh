@@ -34,7 +34,7 @@ if git -C "$cwd" rev-parse --git-dir >/dev/null 2>&1; then
     else
         git_info="\033[36m${branch}\033[0m"
     fi
-    git_info=" 𖦥${git_info}"
+    git_info=" ${git_info}"
 fi
 
 # Model info (dimmed)
