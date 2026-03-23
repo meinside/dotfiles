@@ -2,7 +2,7 @@
 #
 # ~/.claude/statusline.sh
 #
-# last update: 2026.03.19.
+# last update: 2026.03.23.
 
 # Read JSON input from stdin
 input=$(cat)
@@ -46,15 +46,27 @@ fi
 
 # Remaining context (green >50%, yellow 20-50%, red <20%)
 context_remaining=$(echo "$input" | jq -r '.context_window.remaining_percentage // empty')
+context_total=$(echo "$input" | jq -r '.context_window.context_window_size // empty')
 ctx_info=""
 if [ -n "$context_remaining" ]; then
     context_int=${context_remaining%.*}
+    # Format max context size (e.g. 200000 -> 200K, 1000000 -> 1M)
+    ctx_max=""
+    if [ -n "$context_total" ]; then
+        if [ "$context_total" -ge 1000000 ]; then
+            ctx_max="/$(echo "$context_total" | awk '{printf "%.0fM", $1/1000000}')"
+        elif [ "$context_total" -ge 1000 ]; then
+            ctx_max="/$(echo "$context_total" | awk '{printf "%.0fK", $1/1000}')"
+        else
+            ctx_max="/${context_total}"
+        fi
+    fi
     if [ "$context_int" -lt 20 ]; then
-        ctx_info=" \033[31m[ctx:${context_remaining}%]\033[0m"
+        ctx_info=" \033[31m[${context_remaining}%${ctx_max}]\033[0m"
     elif [ "$context_int" -lt 50 ]; then
-        ctx_info=" \033[33m[ctx:${context_remaining}%]\033[0m"
+        ctx_info=" \033[33m[${context_remaining}%${ctx_max}]\033[0m"
     else
-        ctx_info=" \033[32m[ctx:${context_remaining}%]\033[0m"
+        ctx_info=" \033[32m[${context_remaining}%${ctx_max}]\033[0m"
     fi
 fi
 
