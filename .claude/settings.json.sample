@@ -3,9 +3,9 @@
   "env": {
     "AWS_BEARER_TOKEN_BEDROCK": "xxxx-yyyy-zzzz-0123",
     "CLAUDE_CODE_USE_BEDROCK": "1",
-
     "ENABLE_LSP_TOOL": "1"
   },
+  "model": "global.anthropic.claude-opus-4-6-v1[1m]",
   "permissions": {
     "allow": [
       "Bash(* --version)",

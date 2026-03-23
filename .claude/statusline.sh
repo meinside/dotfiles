@@ -38,10 +38,13 @@ if git -C "$cwd" rev-parse --git-dir >/dev/null 2>&1; then
 fi
 
 # Model info (dimmed)
-# - mask ARN values to avoid exposing sensitive info
+# - if model is ARN, try to use model name from settings.json instead
 model=$(echo "$input" | jq -r '.model.display_name // .model.id // empty')
 if [[ "$model" == arn:aws:bedrock:* ]]; then
-    model="arn:aws:bedrock:<redacted>"
+    _settings_model=$(jq -r '.model // empty' ~/.claude/settings.json 2>/dev/null)
+    if [ -n "$_settings_model" ]; then
+        model="$_settings_model"
+    fi
 fi
 model_info=""
 if [ -n "$model" ]; then
