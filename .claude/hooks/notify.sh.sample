@@ -21,7 +21,7 @@
 #   - title: optional notification title
 #   - notification_type: one of the supported types above
 #
-# last update: 2026.03.24.
+# last update: 2026.03.25.
 
 set -euo pipefail
 
@@ -32,17 +32,13 @@ input=$(cat)
 session_id=$(echo "$input" | jq -r '.session_id // empty')
 cwd=$(echo "$input" | jq -r '.cwd // empty')
 notification_type=$(echo "$input" | jq -r '.notification_type // empty')
-title=$(echo "$input" | jq -r '.title // empty')
 message=$(echo "$input" | jq -r '.message // empty')
 
-# Fallback title if not provided
-if [ -z "$title" ]; then
-    case "$notification_type" in
-    permission_prompt) title="Permission Needed" ;;
-    idle_prompt) title="Claude is Idle" ;;
-    elicitation_dialog) title="Input Requested" ;;
-    *) title="Claude Code" ;;
-    esac
+# Project name from cwd
+project=""
+if [ -n "$cwd" ]; then
+    project=$(basename "$cwd")
+    [ "$cwd" = "$HOME" ] && project="~"
 fi
 
 # Fallback message if not provided
@@ -57,17 +53,18 @@ fi
 
 send_notification() {
     local title="$1"
-    local message="$2"
-    local type="$3"
+    local subtitle="$2"
+    local message="$3"
+    local type="$4"
 
     # --- macOS native notification (osascript) ---
     # if command -v osascript &>/dev/null; then
-    #     osascript -e "display notification \"$message\" with title \"$title\""
+    #    osascript -e "display notification \"$message\" with title \"$title\" subtitle \"$subtitle\""
     # fi
 
     # --- terminal-notifier (brew install terminal-notifier) ---
     # if command -v terminal-notifier &>/dev/null; then
-    #     terminal-notifier -title "$title" -message "$message" -group "claude-code"
+    #     terminal-notifier -title "$title" -subtitle "$subtitle" -message "$message"
     # fi
 
     # --- Slack webhook ---
@@ -75,7 +72,7 @@ send_notification() {
     # if [ -n "$SLACK_WEBHOOK_URL" ]; then
     #     curl -s -X POST "$SLACK_WEBHOOK_URL" \
     #         -H 'Content-Type: application/json' \
-    #         -d "{\"text\": \"*[$type] $title*\n$message\"}" \
+    #         -d "{\"text\": \"*[$type] $title ($subtitle)*\n$message\"}" \
     #         >/dev/null 2>&1
     # fi
 
@@ -85,37 +82,18 @@ send_notification() {
     # if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
     #     curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
     #         -d chat_id="$TELEGRAM_CHAT_ID" \
-    #         -d text="[$type] $title: $message" \
+    #         -d text="[$type] $title ($subtitle): $message" \
     #         >/dev/null 2>&1
     # fi
 
     # --- System sound (macOS) ---
-    # afplay /System/Library/Sounds/Glass.aiff &
+    # afplay /System/Library/Sounds/Glass.aiff &>/dev/null &
 
     # --- Log to file ---
-    # echo "$(date '+%Y-%m-%d %H:%M:%S') [$type] $title: $message" \
+    # echo "$(date '+%Y-%m-%d %H:%M:%S') [$type] $title ($subtitle): $message" \
     #     >> ~/.claude/hooks/notify.log
-
-    : # no-op placeholder
 }
 
-########################################
-# Route by notification type
-########################################
-case "$notification_type" in
-permission_prompt)
-    send_notification "$title" "$message" "permission_prompt"
-    ;;
-idle_prompt)
-    send_notification "$title" "$message" "idle_prompt"
-    ;;
-elicitation_dialog)
-    send_notification "$title" "$message" "elicitation_dialog"
-    ;;
-*)
-    # Unknown type - still notify
-    send_notification "$title" "$message" "$notification_type"
-    ;;
-esac
+send_notification "Claude Code" "$project" "$message" "$notification_type"
 
 exit 0
