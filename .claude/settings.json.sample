@@ -1,5 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "attribution": {
+    "commit": "Co-Authored-By: Claude Code <noreply@anthropic.com>",
+    "pr": "\n\n🤖 Generated with [Claude Code](https://claude.ai/code)"
+  },
   "env": {
     "AWS_BEARER_TOKEN_BEDROCK": "xxxx-yyyy-zzzz-0123",
     "CLAUDE_CODE_USE_BEDROCK": "1",
@@ -58,6 +62,24 @@
       "Read(./config.yml)",
       "Read(./secrets/**)"
     ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "autoAllowBashIfSandboxed": true,
+    "network": {
+      "allowedDomains": [
+        "*.amazonaws.com",
+        "index.crates.io",
+        "static.crates.io",
+        "*.github.com",
+        "*.githubusercontent.com",
+        "proxy.golang.org",
+        "sum.golang.org",
+        "*.googleapis.com",
+        "luarocks.org",
+        "registry.npmjs.org"
+      ]
+    }
   },
   "statusLine": {
     "type": "command",
