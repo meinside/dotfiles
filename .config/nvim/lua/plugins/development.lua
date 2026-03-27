@@ -2,7 +2,7 @@
 --
 -- File for plugins for development
 --
--- last update: 2026.03.17.
+-- last update: 2026.03.27.
 
 ------------------------------------------------
 -- imports
@@ -408,6 +408,20 @@ return {
 	{
 		"alaviss/nim.nvim",
 		ft = { "nim" },
+	},
+
+	-- (openscad)
+	{
+		"salkin-mada/openscad.nvim",
+		config = function()
+			vim.g.openscad_load_snippets = true
+			vim.g.openscad_cheatsheet_toggle_key = "<Enter>" -- enter: cheatsheet
+			vim.g.openscad_exec_openscad_trig_key = "<A-o>" -- alt+o: open in OpenSCAD
+
+			require("openscad")
+		end,
+		dependencies = { "L3MON4D3/LuaSnip", "folke/snacks.nvim" },
+		cond = tools.system.is_macos(),
 	},
 
 	-- (python)
