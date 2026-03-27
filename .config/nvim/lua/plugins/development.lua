@@ -263,25 +263,18 @@ return {
 		"mfussenegger/nvim-dap",
 		lazy = true,
 		config = function()
-			-- dap sign icons and colors
-			vim.fn.sign_define("DapBreakpoint", {
-				text = "•",
-				texthl = "LspDiagnosticsSignError",
-				linehl = "",
-				numhl = "",
-			})
-			vim.fn.sign_define("DapStopped", {
-				text = "",
-				texthl = "LspDiagnosticsSignInformation",
-				linehl = "DiagnosticUnderlineInfo",
-				numhl = "LspDiagnosticsSignInformation",
-			})
-			vim.fn.sign_define("DapBreakpointRejected", {
-				text = "",
-				texthl = "LspDiagnosticsSignHint",
-				linehl = "",
-				numhl = "",
-			})
+			-- dap sign icons and colors (using extmark signs instead of deprecated vim.fn.sign_define)
+			local dap = require("dap")
+			dap.defaults.fallback.sign = {
+				breakpoint = { text = "•", texthl = "DiagnosticError" },
+				stopped = {
+					text = "",
+					texthl = "DiagnosticInfo",
+					linehl = "DiagnosticUnderlineInfo",
+					numhl = "DiagnosticInfo",
+				},
+				breakpoint_rejected = { text = "", texthl = "DiagnosticHint" },
+			}
 		end,
 	},
 	{

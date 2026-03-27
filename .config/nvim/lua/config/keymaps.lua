@@ -4,7 +4,7 @@
 --
 -- https://www.lazyvim.org/keymaps
 --
--- last update: 2026.01.29.
+-- last update: 2026.03.27.
 
 -- copy, paste below, and comment the current line
 vim.keymap.set("n", "ycc", "yygccp", {
@@ -34,11 +34,7 @@ end, { desc = "mouse: Toggle" })
 
 -- for toggling diagnostics: `\tD`
 vim.keymap.set("n", "<leader>tD", function()
-	if vim.diagnostic.is_enabled() then
-		vim.diagnostic.enable(false)
-	else
-		vim.diagnostic.enable(true)
-	end
+	vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 	vim.notify("Toggled diagnostics " .. (vim.diagnostic.is_enabled() and "on" or "off"))
 end, { desc = "diagnostics: Toggle" })
 

@@ -4,7 +4,7 @@
 --
 -- default: https://www.lazyvim.org/configuration/general#options
 --
--- last update: 2026.03.17.
+-- last update: 2026.03.27.
 
 vim.g.mapleader = "\\"
 vim.g.lazyvim_picker = "fzf" -- FIXME: `snacks` causes weird errors on nvim startup
@@ -14,7 +14,7 @@ local opt = vim.opt
 -- options different from LazyVim/Neovim defaults
 opt.breakat = " "
 opt.cindent = true
-opt.clipboard = opt.clipboard + "unnamedplus"
+opt.clipboard:append("unnamedplus")
 -- for copying to clipboard remotely
 if vim.env.SSH_TTY then
 	-- NOTE: not working in local macOS tmux

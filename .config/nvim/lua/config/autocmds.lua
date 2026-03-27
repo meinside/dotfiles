@@ -2,7 +2,7 @@
 --
 -- File for autocmds
 --
--- last update: 2026.03.17.
+-- last update: 2026.03.27.
 
 -- Autocmds are automatically loaded on the VeryLazy event
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
@@ -20,7 +20,8 @@ vim.api.nvim_create_autocmd({ "VimLeave" }, {
 	end,
 }) -- NOTE: for fixing cursor in tmux
 
--- highlight on yank
+-- highlight on yank (override LazyVim default to disable on visual yank)
+vim.api.nvim_del_augroup_by_name("lazyvim_highlight_yank")
 vim.api.nvim_create_augroup("etc", { clear = true })
 vim.api.nvim_create_autocmd("TextYankPost", {
 	group = "etc",

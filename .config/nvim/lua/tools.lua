@@ -2,7 +2,7 @@
 --
 -- File for neovim utility functions
 --
--- last update: 2026.02.27.
+-- last update: 2026.03.27.
 
 --------------------------------
 -- functions for debugging
@@ -37,44 +37,16 @@ end
 
 -- Checks if given `path` exists or not
 local function file_exists(path)
-	local f = io.open(path, "r")
-	return f ~= nil and io.close(f)
+	return vim.uv.fs_stat(path) ~= nil
 end
 
 -- Copies file at `from` to `to` and returns the result as true/false
 local function copy_file(from, to)
-	local result = false
-
-	local source_handle = io.open(from, "rb")
-	if not source_handle then
-		w("Failed to copy file from: " .. from)
+	local ok, err = vim.uv.fs_copyfile(from, to)
+	if not ok then
+		w("Failed to copy file: " .. (err or "unknown error"))
 	end
-
-	local target_handle = io.open(to, "wb")
-	if not target_handle then
-		w("Failed to copy file to: " .. to)
-	end
-
-	-- copy bytes
-	if source_handle and target_handle then
-		while true do
-			local chunk = source_handle:read("*a")
-			if not chunk or chunk == "" then
-				break
-			end
-			target_handle:write(chunk)
-		end
-		result = true
-	end
-
-	if source_handle then
-		source_handle:close()
-	end
-	if target_handle then
-		target_handle:close()
-	end
-
-	return result
+	return ok ~= nil
 end
 
 -- Copies file `from` to `to` if it doesn't exist
@@ -87,19 +59,12 @@ end
 
 -- Reads file content at `path`, returns nil if failed.
 local function read_file(path)
-	local file = io.open(path, "r")
-	if not file then
-		w(string.format("Failed to open file: %s", path))
-	else
-		local content = file:read("*all")
-		file:close()
-		if not content then
-			w(string.format("Failed to read file: %s", path))
-		else
-			return content
-		end
+	local ok, lines = pcall(vim.fn.readfile, path)
+	if not ok then
+		w(string.format("Failed to read file: %s", path))
+		return nil
 	end
-	return nil
+	return table.concat(lines, "\n")
 end
 
 -- Reads JSON file at `path` and returns the value of `key`.
@@ -122,14 +87,10 @@ end
 --------------------------------
 -- functions for shell
 
--- Runs given `command` and returns the result
+-- Runs given `command` synchronously and returns stdout
 local function shell_execute(command)
-	local handle = io.popen(command)
-	---@diagnostic disable-next-line: need-check-nil
-	local result = handle:read("*a")
-	---@diagnostic disable-next-line: need-check-nil
-	handle:close()
-	return result
+	local result = vim.system({ "sh", "-c", command }):wait()
+	return result.stdout or ""
 end
 
 --------------------------------
