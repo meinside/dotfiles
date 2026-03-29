@@ -2,7 +2,7 @@
 --
 -- File for plugins for development
 --
--- last update: 2026.03.27.
+-- last update: 2026.03.30.
 
 ------------------------------------------------
 -- imports
@@ -162,7 +162,6 @@ return {
 	-- code generation & completion
 	--
 	-- NOTE: 'monkoose/neocodeium' is enabled in ./genai.lua
-	-- NOTE: 'olimorris/codecompanion.nvim' is enabled in ./genai.lua
 
 	-- screenshot codeblocks
 	{

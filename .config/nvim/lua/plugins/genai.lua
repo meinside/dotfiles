@@ -4,7 +4,7 @@
 --
 -- NOTE: plugins for GenAI services/applications will be placed here
 --
--- last update: 2026.03.17.
+-- last update: 2026.03.30.
 
 ------------------------------------------------
 -- imports
@@ -105,84 +105,6 @@ return {
 				end,
 			})
 		end,
-		cond = custom.features().code_assistance, -- ~/.config/nvim/lua/custom/init.lua
-	},
-
-	--------------------------------
-	-- (codecompanion)
-	{
-		"olimorris/codecompanion.nvim",
-		opts = {},
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"nvim-treesitter/nvim-treesitter",
-		},
-		config = function()
-			local gemini_api_key = tools.fs.read_json_key(vim.fn.expand(gmnConfigFilepath), "api_key")
-
-			require("codecompanion").setup({
-				-- https://codecompanion.olimorris.dev/configuration/adapters.html#configuring-adapter-settings
-				adapters = {
-					http = {
-						gemini = function()
-							return require("codecompanion.adapters").extend("gemini", {
-								env = {
-									api_key = gemini_api_key,
-								},
-							})
-						end,
-					},
-					acp = {
-						gemini_cli = function()
-							return require("codecompanion.adapters").extend("gemini_cli", {
-								defaults = {
-									auth_method = "gemini-api-key",
-									timeout = 20000, -- 20 seconds
-								},
-								env = {
-									GEMINI_API_KEY = gemini_api_key,
-								},
-							})
-						end,
-					},
-					opts = {
-						show_defaults = false,
-						show_model_choices = true,
-					},
-				},
-				strategies = {
-					chat = {
-						adapter = "gemini_cli",
-						model = "gemini-2.5-flash",
-						think = true,
-						---Decorate the user message before it's sent to the LLM
-						---@param message string
-						---@param adapter CodeCompanion.Adapter
-						---@param context table
-						---@return string
-						prompt_decorator = function(message, adapter, context)
-							return string.format([[<prompt>%s</prompt>]], message)
-						end,
-					},
-					inline = {
-						adapter = "gemini",
-						model = "gemini-2.5-flash",
-						think = true,
-					},
-				},
-				display = {
-					chat = {
-						start_in_insert_mode = true,
-					},
-				},
-			})
-		end,
-		cond = custom.features().code_assistance, -- ~/.config/nvim/lua/custom/init.lua
-	},
-	{
-		-- for rendering in codecompanion's chat buffer
-		"MeanderingProgrammer/render-markdown.nvim",
-		ft = { "codecompanion" },
 		cond = custom.features().code_assistance, -- ~/.config/nvim/lua/custom/init.lua
 	},
 
