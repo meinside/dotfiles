@@ -4,7 +4,7 @@
 --
 -- from: https://github.com/LazyVim/starter/blob/main/lua/config/lazy.lua
 --
--- last update: 2025.09.18.
+-- last update: 2026.04.01.
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -43,6 +43,8 @@ require("lazy").setup({
 		version = false, -- always use the latest git commit
 		-- version = "*", -- try installing the latest stable version for plugins that support semver
 	},
+	-- NOTE: (customized) show rounded borders for floating windows
+	ui = { border = "rounded" },
 	install = { colorscheme = { "catppuccin" } }, -- NOTE: (customized) using catppuccin
 	checker = {
 		enabled = true, -- check for plugin updates periodically
