@@ -4,13 +4,12 @@
 --
 -- NOTE: plugins for GenAI services/applications will be placed here
 --
--- last update: 2026.03.30.
+-- last update: 2026.04.01.
 
 ------------------------------------------------
 -- imports
 --
 local custom = require("custom") -- ~/.config/nvim/lua/custom/init.lua
-local tools = require("tools") -- ~/.config/nvim/lua/tools.lua
 
 ------------------------------------------------
 -- constants
@@ -38,7 +37,7 @@ return {
 				},
 				filter = function(bufnr)
 					-- disable codeium for .env files (for security?)
-					if vim.endswith(vim.api.nvim_buf_get_name(bufnr), ".env") then
+					if vim.api.nvim_buf_get_name(bufnr):sub(-4) == ".env" then
 						return false
 					end
 

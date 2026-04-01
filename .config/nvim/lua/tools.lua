@@ -2,7 +2,7 @@
 --
 -- File for neovim utility functions
 --
--- last update: 2026.03.27.
+-- last update: 2026.04.01.
 
 --------------------------------
 -- functions for debugging
@@ -186,7 +186,7 @@ local function resolve_hl(group)
 		-- remove the language suffix: "@property.go" -> "@property"
 		-- and search further by removing each point
 		for n = #parts - 1, 1, -1 do
-			local shorter = table.concat(vim.list_slice(parts, 1, n), ".")
+			local shorter = table.concat({ unpack(parts, 1, n) }, ".")
 			local shorter_info = vim.api.nvim_get_hl(0, { name = shorter, link = true })
 			if next(shorter_info) ~= nil then
 				return resolve_hl(shorter) -- 재귀로 link까지 추적

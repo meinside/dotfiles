@@ -8,9 +8,9 @@
 --
 -- and edit it)
 --
--- last update: 2025.08.22.
+-- last update: 2026.04.01.
 
 return {
 	linter = false,
-	code_assistance = false, -- eg. codeium, codecompanion.nvim, etc.
+	code_assistance = false, -- eg. codeium, or etc.
 }
