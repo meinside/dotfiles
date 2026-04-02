@@ -16,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/notify.sh",
+            "command": "~/.config/claude/hooks/notify.sh",
             "async": true
           }
         ]
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/notify.sh",
+            "command": "~/.config/claude/hooks/notify.sh",
             "async": true
           }
         ]
@@ -36,7 +36,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "~/.claude/hooks/notify.sh",
+            "command": "~/.config/claude/hooks/notify.sh",
             "async": true
           }
         ]
@@ -83,6 +83,6 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "~/.claude/statusline.sh"
+    "command": "~/.config/claude/statusline.sh"
   }
 }

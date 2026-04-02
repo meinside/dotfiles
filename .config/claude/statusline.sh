@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
-# ~/.claude/statusline.sh
+# ~/.config/claude/statusline.sh
 #
-# last update: 2026.03.23.
+# last update: 2026.04.02.
 
 # Read JSON input from stdin
 input=$(cat)
@@ -41,7 +41,7 @@ fi
 # - if model is ARN, try to use model name from settings.json instead
 model=$(echo "$input" | jq -r '.model.display_name // .model.id // empty')
 if [[ "$model" == arn:aws:bedrock:* ]]; then
-    _settings_model=$(jq -r '.model // empty' ~/.claude/settings.json 2>/dev/null)
+    _settings_model=$(jq -r '.model // empty' ~/.config/claude/settings.json 2>/dev/null)
     if [ -n "$_settings_model" ]; then
         model="$_settings_model"
     fi

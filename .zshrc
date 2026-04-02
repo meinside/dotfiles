@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2026.03.05.
+# updated on 2026.04.02.
 #
 # $ chsh -s `which zsh`
 #
@@ -228,6 +228,17 @@ export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.local/share/nvim/mason/bin:$PATH"
 ######################
 
 
+######################
+#
+#  custom config directories
+#
+
+export CLAUDE_CONFIG_DIR="$XDG_CONFIG_HOME/claude"
+
+#
+######################
+
+
 # aliases
 . $XDG_CONFIG_HOME/aliases
 
@@ -244,7 +255,7 @@ fi
 typeset -aU path
 
 
-# run starship (not in containers)
+# run starship (when not in containers)
 #
 # $ cargo install starship --locked
 if [ -z $CONTAINER_ID ]; then

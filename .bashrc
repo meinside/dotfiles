@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2026.03.06.
+# updated on 2026.04.02.
 #
 # $ chsh -s `which zsh`
 #
@@ -146,6 +146,16 @@ if [ -d "$XDG_DATA_HOME/asdf" ]; then
 
     . <(asdf completion bash)
 fi
+
+#
+######################
+
+######################
+#
+#  custom config directories
+#
+
+export CLAUDE_CONFIG_DIR="$XDG_CONFIG_HOME/claude"
 
 #
 ######################

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# ~/.claude/hooks/notify.sh.sample
+# ~/.config/claude/hooks/notify.sh.sample
 #
 # (Sample)
 #
@@ -21,7 +21,7 @@
 #   - title: optional notification title
 #   - notification_type: one of the supported types above
 #
-# last update: 2026.03.25.
+# last update: 2026.04.02.
 
 set -euo pipefail
 
