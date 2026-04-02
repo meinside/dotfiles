@@ -34,10 +34,10 @@ return {
 	-- NOTE: if needed, install `tree-sitter-cli` with :Mason.
 	{
 		"nvim-treesitter/nvim-treesitter",
-		-- NOTE: limit concurrent treesitter compilations on low-spec machines
-		-- by wrapping TS.install to inject max_jobs=1
-		-- (https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/treesitter.lua)
-		init = function()
+		opts = function(_, opts)
+			-- limit concurrent treesitter compilations on low-spec machines
+			-- by wrapping TS.install to inject max_jobs=1
+			-- (https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/treesitter.lua)
 			if tools.system.low_perf() then
 				local TS = require("nvim-treesitter")
 				local orig_install = TS.install
@@ -47,8 +47,6 @@ return {
 					return orig_install(langs, install_opts)
 				end
 			end
-		end,
-		opts = function(_, opts)
 			-- https://github.com/nvim-treesitter/nvim-treesitter#supported-languages
 			vim.list_extend(opts.ensure_installed or {}, {
 				"asm",
