@@ -34,6 +34,20 @@ return {
 	-- NOTE: if needed, install `tree-sitter-cli` with :Mason.
 	{
 		"nvim-treesitter/nvim-treesitter",
+		-- NOTE: limit concurrent treesitter compilations on low-spec machines
+		-- by wrapping TS.install to inject max_jobs=1
+		-- (https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/treesitter.lua)
+		init = function()
+			if tools.system.low_perf() then
+				local TS = require("nvim-treesitter")
+				local orig_install = TS.install
+				TS.install = function(langs, install_opts)
+					install_opts = install_opts or {}
+					install_opts.max_jobs = install_opts.max_jobs or 1
+					return orig_install(langs, install_opts)
+				end
+			end
+		end,
 		opts = function(_, opts)
 			-- https://github.com/nvim-treesitter/nvim-treesitter#supported-languages
 			vim.list_extend(opts.ensure_installed or {}, {
@@ -120,64 +134,6 @@ return {
 				query = "rainbow-parens",
 				strategy = require("rainbow-delimiters").strategy.global,
 			}
-		end,
-		-- NOTE: this `config` overrides LazyVim's default treesitter config function:
-		--   ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/plugins/treesitter.lua
-		--   https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/treesitter.lua
-		-- Reason: LazyVim calls TS.install() without max_jobs, defaulting to 100 concurrent
-		-- compilations (nvim-treesitter/install.lua MAX_JOBS=100), which overwhelms low-spec machines.
-		-- FIXME: remove this override if LazyVim adds native max_jobs support.
-		config = function(_, opts)
-			local TS = require("nvim-treesitter")
-			if not TS.get_installed then
-				return LazyVim.error("Please use `:Lazy` and update `nvim-treesitter`")
-			elseif type(opts.ensure_installed) ~= "table" then
-				return LazyVim.error("`nvim-treesitter` opts.ensure_installed must be a table")
-			end
-
-			TS.setup(opts)
-			LazyVim.treesitter.get_installed(true)
-
-			-- install missing parsers
-			local install = vim.tbl_filter(function(lang)
-				return not LazyVim.treesitter.have(lang)
-			end, opts.ensure_installed or {})
-			if #install > 0 then
-				local max_jobs = tools.system.low_perf() and 1 or nil
-				LazyVim.treesitter.build(function()
-					TS.install(install, { summary = true, max_jobs = max_jobs }):await(function()
-						LazyVim.treesitter.get_installed(true)
-					end)
-				end)
-			end
-
-			-- (below is copied from LazyVim's treesitter.lua)
-			vim.api.nvim_create_autocmd("FileType", {
-				group = vim.api.nvim_create_augroup("lazyvim_treesitter", { clear = true }),
-				callback = function(ev)
-					local ft, lang = ev.match, vim.treesitter.language.get_lang(ev.match)
-					if not LazyVim.treesitter.have(ft) then
-						return
-					end
-					local function enabled(feat, query)
-						local f = opts[feat] or {}
-						return f.enable ~= false
-							and not (type(f.disable) == "table" and vim.tbl_contains(f.disable, lang))
-							and LazyVim.treesitter.have(ft, query)
-					end
-					if enabled("highlight", "highlights") then
-						pcall(vim.treesitter.start, ev.buf)
-					end
-					if enabled("indent", "indents") then
-						LazyVim.set_default("indentexpr", "v:lua.LazyVim.treesitter.indentexpr()")
-					end
-					if enabled("folds", "folds") then
-						if LazyVim.set_default("foldmethod", "expr") then
-							LazyVim.set_default("foldexpr", "v:lua.LazyVim.treesitter.foldexpr()")
-						end
-					end
-				end,
-			})
 		end,
 	},
 	-- `:TSContext toggle` for toggling
