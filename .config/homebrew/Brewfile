@@ -1,11 +1,11 @@
 # .config/homebrew/Brewfile
 #
-# Usage: 
+# Usage:
 #
 # $ brew tap Homebrew/bundle
 # $ brew bundle --file=$XDG_CONFIG_HOME/homebrew/Brewfile
-# 
-# last update: 2026.02.25.
+#
+# last update: 2026.04.08.
 
 cask_args appdir: '/Applications'
 
@@ -21,12 +21,12 @@ brew 'coreutils'
 brew 'asciinema'
 brew 'd2'
 brew 'ffmpeg'
-#brew 'fish' # for oh-my-fish: $ curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
-#brew 'fisher'
+# brew 'fish' # for oh-my-fish: $ curl https://raw.githubusercontent.com/oh-my-fish/oh-my-fish/master/bin/install | fish
+# brew 'fisher'
 brew 'gnu-sed'
 brew 'htop'
 brew 'lnav'
-#brew 'm-cli'
+# brew 'm-cli'
 brew 'mas'	# for Mac App Store
 brew 'mosh', args: ['HEAD']
 brew 'ngrep'
@@ -48,29 +48,26 @@ brew 'gnupg'
 brew 'jq'
 brew 'lazygit'
 brew 'mkcert'
-#brew 'wireshark'
+# brew 'wireshark'
 brew 'witr'
-#brew 'wrk'
+# brew 'wrk'
 
 # tools for cleaning
 brew 'mole'
 
-
 ######## casks
 #
 # utilities
-cask 'android-platform-tools'
+# cask 'android-commandlinetools'
+# cask 'android-platform-tools'
 cask 'applite'
 cask 'dropbox'
 cask 'firefox'
-#cask 'ghostty'
-#cask 'halloy'
+# cask 'ghostty'
+# cask 'halloy'
 cask 'input-source-pro'
 cask 'kitty'
-#cask 'minizincide'
-#cask 'netnewswire'
+# cask 'minizincide'
+cask 'netnewswire'
 cask 'stability-matrix'
 cask 'tor-browser'
-#cask 'visual-studio-code'
-#cask 'zed'
-
