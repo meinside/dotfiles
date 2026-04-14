@@ -5,7 +5,7 @@
 # For a complete list of available options,
 # please visit https://halloy.chat/configuration/
 #
-# last update: 2025.10.28.
+# last update: 2026.04.14.
 
 theme = "catppuccin-mocha" # ~/.config/halloy/themes/catppuccin-mocha.toml
 
@@ -95,6 +95,7 @@ channels = [ # TODO: put your favorite channels
   "##news",
   "#nginx",
   "#nim",
+  "#openscad",
   "##physics",
   "##posix",
   "#proglangdesign",
