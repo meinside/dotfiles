@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2026.04.03.
+# last update: 2026.04.15.
 
 # unnecessary binary files
 *.a
@@ -181,6 +181,7 @@ xcuserdata
 .gemini/
 .Genymobile/
 .ghidra/
+.happy/
 .hex/
 .htoprc
 .httpie/
