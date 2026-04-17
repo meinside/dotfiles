@@ -46,7 +46,7 @@
 #   #ExecStartPre=/bin/mkdir -p /var/log/nginx
 #
 # created on : 2017.08.16.
-# last update: 2026.04.14.
+# last update: 2026.04.17.
 
 ################################
 #
@@ -54,7 +54,7 @@
 
 # nginx/library versions
 NGINX_VERSION="1.29.8"  # https://nginx.org/en/download.html
-OPENSSL_VERSION="3.6.2" # https://github.com/openssl/openssl/tags
+OPENSSL_VERSION="4.0.0" # https://github.com/openssl/openssl/tags
 ZLIB_VERSION="1.3.2"    # https://github.com/madler/zlib/tags
 PCRE_VERSION="10.47"    # https://github.com/PCRE2Project/pcre2/releases
 
