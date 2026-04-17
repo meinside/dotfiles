@@ -5,8 +5,9 @@
 # Manually build mosh from `master` branch. (1.3.2 doesn't support 24-bit colors yet)
 #
 # created on : 2021.08.11.
-# last update: 2024.04.24.
+# last update: 2026.04.17.
 
+set -euo pipefail
 
 ################################
 #
@@ -47,9 +48,17 @@ function warn {
 #
 ################################
 
+readonly MOSH_REPO="https://github.com/mobile-shell/mosh"
+readonly TMP_DIR="/tmp"
+readonly BUILD_DIR="$TMP_DIR/mosh"
 
-MOSH_REPO="https://github.com/mobile-shell/mosh"
-TMP_DIR="/tmp"
+# cleanup build directory on exit (success or failure)
+function cleanup_build_dir {
+	if [ -d "$BUILD_DIR" ]; then
+		rm -rf "$BUILD_DIR" &&
+			info ">>> removed temporary directory."
+	fi
+}
 
 # for macOS
 function install_macos {
@@ -59,38 +68,41 @@ function install_macos {
 
 # for linux
 function install_linux {
-	if [ -z "$TERMUX_VERSION" ]; then
+	if [ -x /usr/bin/apt-get ]; then
+		trap cleanup_build_dir EXIT
 
-		if [ -x /usr/bin/apt-get ]; then
-			sudo apt-get -y purge mosh
+		# remove stale build directory if present
+		cleanup_build_dir
 
-			info ">>> installing essential packages..." && \
-				sudo apt-get -y install build-essential pkg-config autoconf protobuf-compiler libncurses5-dev zlib1g-dev libssl-dev libprotobuf-dev && \
-				info ">>> cloning: $MOSH_REPO" && \
-				cd $TMP_DIR && \
-				git clone $MOSH_REPO && \
-				info ">>> building..." && \
-				cd mosh && \
-				./autogen.sh && \
-				./configure && \
-				make && \
-				sudo make install && \
-				info ">>> installed mosh from the master branch!"
-		else
-			error "* distro not supported"
-		fi
+		sudo apt-get -y purge mosh
 
-		cd $TMP_DIR && \
-			rm -rf mosh && \
-			error ">>> removed temporary directory."
-	else  # termux
-		# NOTE: termux's latest mosh doesn't support 24-bit colors yet.
-		pkg install mosh
+		info ">>> installing essential packages..."
+		sudo apt-get -y install build-essential pkg-config autoconf protobuf-compiler libncurses5-dev zlib1g-dev libssl-dev libprotobuf-dev
+		info ">>> cloning: $MOSH_REPO"
+		cd "$TMP_DIR"
+		git clone "$MOSH_REPO"
+		info ">>> building..."
+		cd "$BUILD_DIR"
+		./autogen.sh
+		./configure
+		make
+		sudo make install
+		info ">>> installed mosh from the master branch!"
+	else
+		error "* distro not supported"
+		return 1
 	fi
 }
 
+# for termux
+function install_termux {
+	# NOTE: termux's latest mosh doesn't support 24-bit colors yet.
+	pkg install mosh
+}
+
 case "$OSTYPE" in
-	darwin*) install_macos ;;
-	linux*) install_linux ;;
-	*) error "* not supported yet: $OSTYPE" ;;
+darwin*) install_macos ;;
+linux-android) install_termux ;;
+linux*) install_linux ;;
+*) error "* not supported yet: $OSTYPE" ;;
 esac

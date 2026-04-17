@@ -48,15 +48,17 @@
 # created on : 2017.08.16.
 # last update: 2026.04.17.
 
+set -euo pipefail
+
 ################################
 #
 # frequently updated values
 
 # nginx/library versions
-NGINX_VERSION="1.29.8"  # https://nginx.org/en/download.html
-OPENSSL_VERSION="4.0.0" # https://github.com/openssl/openssl/tags
-ZLIB_VERSION="1.3.2"    # https://github.com/madler/zlib/tags
-PCRE_VERSION="10.47"    # https://github.com/PCRE2Project/pcre2/releases
+readonly NGINX_VERSION="1.29.8"  # https://nginx.org/en/download.html
+readonly OPENSSL_VERSION="4.0.0" # https://github.com/openssl/openssl/tags
+readonly ZLIB_VERSION="1.3.2"    # https://github.com/madler/zlib/tags
+readonly PCRE_VERSION="10.47"    # https://github.com/PCRE2Project/pcre2/releases
 
 ################################
 #
@@ -98,60 +100,72 @@ function warn {
 ################################
 
 # temporary directory
-TEMP_DIR="/tmp"
+readonly TEMP_DIR="/tmp"
 
 # source files
-NGINX_SRC_URL="https://github.com/nginx/nginx/archive/release-${NGINX_VERSION}.tar.gz"
-OPENSSL_SRC_URL="https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz"
-ZLIB_SRC_URL="http://www.zlib.net/zlib-${ZLIB_VERSION}.tar.gz"
-PCRE_SRC_URL="https://github.com/PCRE2Project/pcre2/releases/download/pcre2-${PCRE_VERSION}/pcre2-${PCRE_VERSION}.tar.gz"
+readonly NGINX_SRC_URL="https://github.com/nginx/nginx/archive/release-${NGINX_VERSION}.tar.gz"
+readonly OPENSSL_SRC_URL="https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz"
+readonly ZLIB_SRC_URL="http://www.zlib.net/zlib-${ZLIB_VERSION}.tar.gz"
+readonly PCRE_SRC_URL="https://github.com/PCRE2Project/pcre2/releases/download/pcre2-${PCRE_VERSION}/pcre2-${PCRE_VERSION}.tar.gz"
 
 # extracted dirs
-NGINX_SRC_DIR="${TEMP_DIR}/nginx-release-${NGINX_VERSION}"
-OPENSSL_SRC_DIR="${TEMP_DIR}/openssl-${OPENSSL_VERSION}"
-ZLIB_SRC_DIR="${TEMP_DIR}/zlib-${ZLIB_VERSION}"
-PCRE_SRC_DIR="${TEMP_DIR}/pcre2-${PCRE_VERSION}"
+readonly NGINX_SRC_DIR="${TEMP_DIR}/nginx-release-${NGINX_VERSION}"
+readonly OPENSSL_SRC_DIR="${TEMP_DIR}/openssl-${OPENSSL_VERSION}"
+readonly ZLIB_SRC_DIR="${TEMP_DIR}/zlib-${ZLIB_VERSION}"
+readonly PCRE_SRC_DIR="${TEMP_DIR}/pcre2-${PCRE_VERSION}"
 
 # XXX - built nginx binary will be placed as:
-NGINX_BIN="/usr/local/sbin/nginx"
+readonly NGINX_BIN="/usr/local/sbin/nginx"
 
-NGINX_CONF_FILE="/etc/nginx/conf/nginx.conf"
-NGINX_SITES_DIR="/etc/nginx/sites-enabled"
-NGINX_SERVICE_FILE="/lib/systemd/system/nginx.service"
-NGINX_LOGS_DIR="/var/log/nginx"
+readonly NGINX_CONF_FILE="/etc/nginx/conf/nginx.conf"
+readonly NGINX_SITES_DIR="/etc/nginx/sites-enabled"
+readonly NGINX_SERVICE_FILE="/lib/systemd/system/nginx.service"
+readonly NGINX_LOGS_DIR="/var/log/nginx"
+
+function download_and_extract {
+	local url="$1"
+	cd "$TEMP_DIR"
+	wget "$url"
+	tar -xzvf "$(basename "$url")"
+}
+
+# detect whether the compiler supports __int128 (for OpenSSL EC optimization).
+#
+# origin: MatthewVance/nginx-build - enables `enable-ec_nistp_64_gcc_128`
+# only when the compiler defines __SIZEOF_INT128__ (typically on 64-bit
+# targets with GCC/Clang). When supported, OpenSSL uses optimized
+# NIST P-224/P-256/P-521 implementations for faster ECDHE.
+function detect_ec_flag {
+	if gcc -dM -E - </dev/null 2>/dev/null | grep -q __SIZEOF_INT128__; then
+		echo "enable-ec_nistp_64_gcc_128"
+	else
+		echo ""
+	fi
+}
 
 function prep {
 	warn ">>> preparing for essential libraries..."
 
 	# openssl: download and unzip
 	warn ">>> downloading OpenSSL..."
-	url=$OPENSSL_SRC_URL
-	cd $TEMP_DIR &&
-		wget $url &&
-		tar -xzvf "$(basename $url)"
+	download_and_extract "$OPENSSL_SRC_URL"
 
 	# zlib: download and unzip
 	warn ">>> downloading Zlib..."
-	url=$ZLIB_SRC_URL
-	cd $TEMP_DIR &&
-		wget $url &&
-		tar -xzvf "$(basename $url)"
+	download_and_extract "$ZLIB_SRC_URL"
 
 	# pcre: download and unzip
 	warn ">>> downloading PCRE..."
-	url=$PCRE_SRC_URL
-	cd $TEMP_DIR &&
-		wget $url &&
-		tar -xzvf "$(basename $url)"
+	download_and_extract "$PCRE_SRC_URL"
 }
 
 function build {
+	local ecflag
+	ecflag="$(detect_ec_flag)"
+
 	# download, unzip,
-	url=$NGINX_SRC_URL
-	cd $TEMP_DIR &&
-		wget $url &&
-		tar -xzvf "$(basename $url)" &&
-		cd $NGINX_SRC_DIR
+	download_and_extract "$NGINX_SRC_URL"
+	cd "$NGINX_SRC_DIR"
 
 	# configure,
 	warn ">>> configuring nginx..."
@@ -169,7 +183,7 @@ function build {
 		--with-stream \
 		--with-stream_ssl_module \
 		--with-openssl="${OPENSSL_SRC_DIR}" \
-		--with-openssl-opt="enable-ec_nistp_64_gcc_128 no-nextprotoneg no-weak-ssl-ciphers no-ssl3 no-ssl3-method no-shared $ECFLAG -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
+		--with-openssl-opt="no-nextprotoneg no-weak-ssl-ciphers no-ssl3 no-ssl3-method no-shared ${ecflag} -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
 		--with-pcre="${PCRE_SRC_DIR}" \
 		--with-zlib="${ZLIB_SRC_DIR}" \
 		--with-http_v3_module
@@ -189,10 +203,12 @@ function configure {
 	sudo mkdir -p "$NGINX_LOGS_DIR"
 
 	# check if there are files in $NGINX_SITES_DIR, if empty:
-	if [ -z "$(ls -A "$NGINX_SITES_DIR")" ]; then
+	if [ -z "$(sudo ls -A "$NGINX_SITES_DIR")" ]; then
 		warn ">>> creating sample site files in $NGINX_SITES_DIR/ ..."
 
-		sudo bash -c "cat > $NGINX_SITES_DIR/example.com" <<EOF
+		# NOTE: quoted heredoc ('EOF') prevents shell from expanding nginx
+		# runtime variables like $server_name, $request_uri.
+		sudo tee "$NGINX_SITES_DIR/example.com" >/dev/null <<'EOF'
 # An example for a reverse-proxy (http://localhost:8080 => https://example.com:443)
 #
 # (https://ssl-config.mozilla.org/#server=nginx&version=1.18.0&config=intermediate&openssl=1.1.1g&guideline=5.4)
@@ -248,11 +264,11 @@ EOF
 	fi
 
 	# check if $NGINX_CONF_FILE is already modified, if not:
-	if grep -q "/etc/nginx/sites-enabled/*.*" "$NGINX_CONF_FILE"; then
+	if grep -q "/etc/nginx/sites-enabled/*.*" "$NGINX_CONF_FILE" 2>/dev/null; then
 		warn ">>> $NGINX_CONF_FILE is already modified..."
 	else
 		# edit default conf to include enabled sites and limit requests
-		sudo sed -i 's|\(\(\s*\)include\(\s\+\)mime.types;\)|\1\n\2include\3/etc/nginx/sites-enabled/*.*;\n\2limit_req_zone $binary_remote_addr zone=lr_zone:10m rate=100r/s;|' $NGINX_CONF_FILE
+		sudo sed -i 's|\(\(\s*\)include\(\s\+\)mime.types;\)|\1\n\2include\3/etc/nginx/sites-enabled/*.*;\n\2limit_req_zone $binary_remote_addr zone=lr_zone:10m rate=100r/s;|' "$NGINX_CONF_FILE"
 
 		warn ">>> added enabled sites and limit requests in $NGINX_CONF_FILE..."
 	fi
@@ -260,10 +276,11 @@ EOF
 	# create systemd service file
 	#
 	# https://www.nginx.com/resources/wiki/start/topics/examples/systemd/
-	if [ ! -e $NGINX_SERVICE_FILE ]; then
+	if [ ! -e "$NGINX_SERVICE_FILE" ]; then
 		warn ">>> creating systemd service file: ${NGINX_SERVICE_FILE}..."
 
-		sudo bash -c "cat > $NGINX_SERVICE_FILE" <<EOF
+		# NOTE: quoted heredoc so $MAINPID is passed through literally to systemd.
+		sudo tee "$NGINX_SERVICE_FILE" >/dev/null <<'EOF'
 [Unit]
 Description=NGINX Service
 After=syslog.target network.target remote-fs.target nss-lookup.target
@@ -275,7 +292,7 @@ PIDFile=/run/nginx.pid
 ExecStartPre=/usr/local/sbin/nginx -t
 ExecStart=/usr/local/sbin/nginx
 ExecReload=/usr/local/sbin/nginx -s reload
-ExecStop=/bin/kill -s QUIT \$MAINPID
+ExecStop=/bin/kill -s QUIT $MAINPID
 PrivateTmp=true
 
 [Install]
@@ -288,23 +305,32 @@ function clean {
 	warn ">>> cleaning..."
 
 	# delete files
-	cd $TEMP_DIR
-	sudo rm -rf "$(basename $NGINX_SRC_URL)" "$(basename $OPENSSL_SRC_URL)" "$(basename $ZLIB_SRC_URL)" "$(basename $PCRE_SRC_URL)"
+	cd "$TEMP_DIR"
+	sudo rm -rf \
+		"$(basename "$NGINX_SRC_URL")" \
+		"$(basename "$OPENSSL_SRC_URL")" \
+		"$(basename "$ZLIB_SRC_URL")" \
+		"$(basename "$PCRE_SRC_URL")"
 
 	# and directories
-	sudo rm -rf $NGINX_SRC_DIR $OPENSSL_SRC_DIR $ZLIB_SRC_DIR $PCRE_SRC_DIR
+	sudo rm -rf "$NGINX_SRC_DIR" "$OPENSSL_SRC_DIR" "$ZLIB_SRC_DIR" "$PCRE_SRC_DIR"
 }
 
 # linux
 function install_linux {
-	if [ -z "$TERMUX_VERSION" ]; then
-		prep && build && configure && clean
-	else # termux
-		pkg install nginx
-	fi
+	prep
+	build
+	configure
+	clean
+}
+
+# termux
+function install_termux {
+	pkg install nginx
 }
 
 case "$OSTYPE" in
+linux-android) install_termux ;;
 linux*) install_linux ;;
 *) error "* not supported yet: $OSTYPE" ;;
 esac

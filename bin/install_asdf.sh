@@ -5,16 +5,16 @@
 # Install asdf
 #
 # created on : 2022.04.14.
-# last update: 2026.03.04.
+# last update: 2026.04.17.
 
-ASDF_INSTALL_DIR="$HOME/.local/share/asdf/bin"
+set -euo pipefail
 
 ################################
 #
 # frequently updated values
 
 # https://github.com/asdf-vm/asdf/releases
-VERSION="0.18.1"
+readonly VERSION="0.18.1"
 
 ################################
 #
@@ -55,23 +55,27 @@ function warn {
 #
 ################################
 
+readonly ASDF_INSTALL_DIR="$HOME/.local/share/asdf/bin"
+
 function install_macos {
 	brew install asdf
 }
 
 function install_termux {
 	error "* termux is not supported yet"
+	return 1
 }
 
 function install_linux {
+	local arch
 	case "$(uname -m)" in
-	aarch64) ARCH="arm64" ;;
-	*) ARCH="amd64" ;;
+	aarch64) arch="arm64" ;;
+	*) arch="amd64" ;;
 	esac
-	rm -rf "$ASDF_INSTALL_DIR/asdf" &&
-		mkdir -p "$ASDF_INSTALL_DIR" &&
-		wget -qO- "https://github.com/asdf-vm/asdf/releases/download/v$VERSION/asdf-v$VERSION-linux-$ARCH.tar.gz" | gunzip | tar xf - -C "$ASDF_INSTALL_DIR" &&
-		info "> installed $("$ASDF_INSTALL_DIR/asdf" --version)"
+	rm -rf "$ASDF_INSTALL_DIR/asdf"
+	mkdir -p "$ASDF_INSTALL_DIR"
+	wget -qO- "https://github.com/asdf-vm/asdf/releases/download/v$VERSION/asdf-v$VERSION-linux-$arch.tar.gz" | gunzip | tar xf - -C "$ASDF_INSTALL_DIR"
+	info "> installed $("$ASDF_INSTALL_DIR/asdf" --version)"
 }
 
 case "$OSTYPE" in

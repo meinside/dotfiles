@@ -5,8 +5,9 @@
 # Build and install the latest version of tmux.
 #
 # created on : 2023.08.03.
-# last update: 2024.10.14.
+# last update: 2026.04.17.
 
+set -euo pipefail
 
 ################################
 #
@@ -47,12 +48,22 @@ function warn {
 #
 ################################
 
-
 # https://github.com/tmux/tmux/releases
-TMUX_VERSION="3.5a" # NOTE: target version
-TMUX_SRC_FILENAME="tmux-${TMUX_VERSION}.tar.gz"
-TMUX_SRC_URL="https://github.com/tmux/tmux/releases/download/${TMUX_VERSION}/${TMUX_SRC_FILENAME}"
-TMP_DIR="/tmp"
+readonly TMUX_VERSION="3.5a" # NOTE: target version
+readonly TMUX_SRC_FILENAME="tmux-${TMUX_VERSION}.tar.gz"
+readonly TMUX_SRC_URL="https://github.com/tmux/tmux/releases/download/${TMUX_VERSION}/${TMUX_SRC_FILENAME}"
+readonly TMP_DIR="/tmp"
+readonly TMUX_SRC_DIR="$TMP_DIR/tmux-${TMUX_VERSION}"
+readonly TMUX_SRC_TARBALL="$TMP_DIR/${TMUX_SRC_FILENAME}"
+
+# cleanup tarball and extracted directory (on success or failure)
+function cleanup_tmux_build {
+	if [ -f "$TMUX_SRC_TARBALL" ] || [ -d "$TMUX_SRC_DIR" ]; then
+		rm -f "$TMUX_SRC_TARBALL"
+		rm -rf "$TMUX_SRC_DIR"
+		info ">>> removed temporary directory and files."
+	fi
+}
 
 # for macOS
 function install_macos {
@@ -61,37 +72,40 @@ function install_macos {
 
 # for linux
 function install_linux {
-	if [ -z "$TERMUX_VERSION" ]; then
-		if [ -x /usr/bin/apt-get ]; then
-			sudo apt-get -y purge tmux
+	if [ -x /usr/bin/apt-get ]; then
+		trap cleanup_tmux_build EXIT
 
-			info ">>> installing essential packages..." && \
-				sudo apt-get -y install libevent-dev ncurses-dev build-essential bison pkg-config && \
-				info ">>> downloading: $TMUX_SRC_URL" && \
-				cd $TMP_DIR && \
-				wget $TMUX_SRC_URL && \
-				tar xzf "${TMUX_SRC_FILENAME}"
-				info ">>> building..." && \
-				cd "tmux-${TMUX_VERSION}" && \
-				./configure && \
-				make && \
-				sudo make install && \
-				info ">>> installed tmux-${TMUX_VERSION}!"
-		else
-			error "* distro not supported"
-		fi
+		# remove stale artifacts if present
+		cleanup_tmux_build
 
-		cd $TMP_DIR && \
-			rm -f "${TMUX_SRC_FILENAME}"
-			rm -rf "tmux-${TMUX_VERSION}" && \
-			error ">>> removed temporary directory and files."
-	else  # termux
-		pkg install tmux
+		sudo apt-get -y purge tmux
+
+		info ">>> installing essential packages..."
+		sudo apt-get -y install libevent-dev ncurses-dev build-essential bison pkg-config
+		info ">>> downloading: $TMUX_SRC_URL"
+		cd "$TMP_DIR"
+		wget "$TMUX_SRC_URL"
+		tar xzf "$TMUX_SRC_FILENAME"
+		info ">>> building..."
+		cd "$TMUX_SRC_DIR"
+		./configure
+		make
+		sudo make install
+		info ">>> installed tmux-${TMUX_VERSION}!"
+	else
+		error "* distro not supported"
+		return 1
 	fi
 }
 
+# for termux
+function install_termux {
+	pkg install tmux
+}
+
 case "$OSTYPE" in
-	darwin*) install_macos ;;
-	linux*) install_linux ;;
-	*) error "* not supported yet: $OSTYPE" ;;
+darwin*) install_macos ;;
+linux-android) install_termux ;;
+linux*) install_linux ;;
+*) error "* not supported yet: $OSTYPE" ;;
 esac

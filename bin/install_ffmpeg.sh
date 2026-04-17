@@ -2,11 +2,14 @@
 
 # bin/install_ffmpeg.sh
 #
-# for building ffmpeg from source code
+# for building ffmpeg from source code.
 #
-# (pass '--do-not-clean' argument for preserving files after install)
+# NOTE: on failure, build artifacts under $TMP_DIR are preserved for
+# debugging (thanks to `set -e`); on success they are cleaned up.
 #
-# last update: 2026.03.18.
+# last update: 2026.04.17.
+
+set -euo pipefail
 
 # NOTE: see configure options at: https://github.com/FFmpeg/FFmpeg/blob/master/configure
 
@@ -15,7 +18,7 @@
 # frequently updated values
 
 # https://github.com/FFmpeg/FFmpeg/tags
-FFMPEG_VERSION="n8.1" # XXX - edit for newer ffmpeg version
+readonly FFMPEG_VERSION="n8.1" # XXX - edit for newer ffmpeg version
 
 ################################
 #
@@ -56,7 +59,7 @@ function warn {
 #
 ################################
 
-TMP_DIR=/tmp/ffmpeg
+readonly TMP_DIR=/tmp/ffmpeg
 
 function prep {
 	# install needed packages
@@ -75,54 +78,52 @@ function prep {
 			libxvidcore-dev
 	else
 		error "* distro not supported"
+		return 1
 	fi
 
 	clean
 }
 
 function clean {
-	rm -rf $TMP_DIR
+	rm -rf "$TMP_DIR"
 }
 
 function install {
-	PLATFORM=$(uname -m)
-	case "$PLATFORM" in
-	arm64) ARCH="aarch64" ;;
-	arm*) ARCH="armel" ;;
-	*) ARCH=$PLATFORM ;;
+	local platform arch
+	platform=$(uname -m)
+	case "$platform" in
+	arm64) arch="aarch64" ;;
+	arm*) arch="armel" ;;
+	*) arch="$platform" ;;
 	esac
 
 	# clone source code, configure, make, and install
-	git clone --depth=1 -b $FFMPEG_VERSION https://github.com/FFmpeg/FFmpeg.git $TMP_DIR &&
-		cd $TMP_DIR &&
-		./configure --arch="$ARCH" --target-os=linux --enable-gpl --enable-nonfree \
-			--enable-libdav1d \
-			--enable-libfdk-aac \
-			--enable-libmp3lame \
-			--enable-libopus \
-			--enable-libvorbis \
-			--enable-libvpx \
-			--enable-libwebp \
-			--enable-libx264 \
-			--enable-libx265 \
-			--enable-libxvid &&
-		make -j$(nproc) &&
-		sudo make install
+	git clone --depth=1 -b "$FFMPEG_VERSION" https://github.com/FFmpeg/FFmpeg.git "$TMP_DIR"
+	cd "$TMP_DIR"
+	./configure --arch="$arch" --target-os=linux --enable-gpl --enable-nonfree \
+		--enable-libdav1d \
+		--enable-libfdk-aac \
+		--enable-libmp3lame \
+		--enable-libopus \
+		--enable-libvorbis \
+		--enable-libvpx \
+		--enable-libwebp \
+		--enable-libx264 \
+		--enable-libx265 \
+		--enable-libxvid
+	make -j"$(nproc)"
+	sudo make install
 }
 
 function install_linux {
-	if [ -z "$TERMUX_VERSION" ]; then
-		prep && install
+	prep
+	install
+	clean
+}
 
-		# check if '--do-not-clean' argument was given
-		if [[ $1 != '--do-not-clean' ]]; then
-			clean
-		else
-			warn ">>> ffmpeg files remain in $TMP_DIR"
-		fi
-	else # termux
-		error "* termux not supported yet."
-	fi
+function install_termux {
+	error "* termux not supported yet."
+	return 1
 }
 
 function install_macos {
@@ -130,7 +131,8 @@ function install_macos {
 }
 
 case "$OSTYPE" in
-darwin*) install_macos "$@" ;;
-linux*) install_linux "$@" ;;
+darwin*) install_macos ;;
+linux-android) install_termux ;;
+linux*) install_linux ;;
 *) error "* not supported yet: $OSTYPE" ;;
 esac

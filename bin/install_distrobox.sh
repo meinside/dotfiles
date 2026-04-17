@@ -18,8 +18,9 @@
 #	$ wget -O - "https://raw.githubusercontent.com/meinside/dotfiles/master/bin/prep.sh" | bash
 #
 # created on : 2023.12.11.
-# last update: 2024.10.14.
+# last update: 2026.04.17.
 
+set -euo pipefail
 
 ################################
 #
@@ -60,26 +61,25 @@ function warn {
 #
 ################################
 
-
-DISTROBOX_PREFIX="$HOME/.local"
+readonly DISTROBOX_PREFIX="$HOME/.local"
 
 function install_termux {
 	error "* in termux: use proot-distro instead"
+	return 1
 }
 
 function install_linux {
-	if [[ $1 == "--uninstall" ]]; then
+	if [[ "${1:-}" == "--uninstall" ]]; then
 		# uninstall
-		curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/uninstall | sh -s -- --prefix "$DISTROBOX_PREFIX"
+		curl -sSf https://raw.githubusercontent.com/89luca89/distrobox/main/uninstall | sh -s -- --prefix "$DISTROBOX_PREFIX"
 	else
 		# install
-		curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --prefix "$DISTROBOX_PREFIX"
+		curl -sSf https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --prefix "$DISTROBOX_PREFIX"
 	fi
 }
 
 case "$OSTYPE" in
-	linux-android) install_termux ;;
-	linux*) install_linux "$1" ;;
-	*) error "* not supported yet: $OSTYPE" ;;
+linux-android) install_termux ;;
+linux*) install_linux "${1:-}" ;;
+*) error "* not supported yet: $OSTYPE" ;;
 esac
-
