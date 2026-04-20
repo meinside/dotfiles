@@ -6,13 +6,13 @@
 --
 -- lazyvim.plugins.extras
 --
--- last update: 2025.09.24.
+-- last update: 2026.04.20.
 
 return {
 	--------
 	-- lazyvim.plugins.extras.coding.*
 	--
-	{ import = "lazyvim.plugins.extras.coding.luasnip" },
+	{ import = "lazyvim.plugins.extras.coding.luasnip" }, -- NOTE: blink.cmp has built-in snippets; this adds LuaSnip engine
 
 	--------
 	-- lazyvim.plugins.extras.dap.*
@@ -49,7 +49,7 @@ return {
 	--------
 	-- lazyvim.plugins.extras.ui.*
 	--
-	{ import = "lazyvim.plugins.extras.ui.mini-indentscope" },
+	{ import = "lazyvim.plugins.extras.ui.mini-indentscope" }, -- NOTE: optional in v15 (snacks.scope is core default)
 	{ import = "lazyvim.plugins.extras.ui.mini-starter" },
 	{ import = "lazyvim.plugins.extras.ui.treesitter-context" },
 

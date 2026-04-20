@@ -2,7 +2,7 @@
 --
 -- File for plugins
 --
--- last update: 2026.03.17.
+-- last update: 2026.04.20.
 
 return {
 	-- colorschemes
@@ -319,6 +319,7 @@ return {
 	},
 
 	-- undo tree (:Atone)
+	-- NOTE: nvim 0.12+ has built-in :Undotree (:packadd nvim.undotree)
 	{
 		"XXiaoA/atone.nvim",
 		cmd = "Atone",

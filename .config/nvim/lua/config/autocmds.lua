@@ -2,7 +2,7 @@
 --
 -- File for autocmds
 --
--- last update: 2026.04.01.
+-- last update: 2026.04.20.
 
 -- Autocmds are automatically loaded on the VeryLazy event
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
@@ -38,11 +38,6 @@ vim.api.nvim_create_autocmd("VimResized", {
 	desc = "Keep windows equally resized",
 	command = "tabdo wincmd =",
 })
-vim.api.nvim_create_autocmd("TermOpen", {
-	group = "Random",
-	command = "setlocal nonumber norelativenumber signcolumn=no",
-})
-
 -- diagnostics: show only virtual lines, not virtual text on the current line
 --
 -- * referenced: https://www.reddit.com/r/neovim/comments/1jpbc7s/disable_virtual_text_if_there_is_diagnostic_in/
@@ -116,7 +111,7 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 	end,
 })
 
--- FIXME: background transparency not working since NVIM v0.12.0-dev-2131+g027b7d6bbb
+-- FIXME: background transparency not working since NVIM v0.12.0-dev+
 vim.api.nvim_create_autocmd("ColorScheme", {
 	pattern = "*",
 	callback = function()
