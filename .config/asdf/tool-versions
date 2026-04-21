@@ -3,13 +3,13 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2026.04.17.
+# last update: 2026.04.22.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
 #
 # https://github.com/babashka/babashka/releases
-babashka 1.12.217
+babashka 1.12.218
 
 # For bash-language-server,
 #   :MasonInstall bash-language-server
@@ -35,7 +35,7 @@ elixir 1.19.5
 # $ KERL_BUILD_DOCS=yes asdf install erlang
 #
 # https://github.com/erlang/otp/releases
-erlang 28.4.2
+erlang 28.4.3
 
 # $ asdf plugin add gleam
 #
@@ -117,7 +117,7 @@ lua 5.1.5 5.5.0
 # $ asdf install meson
 #
 # https://github.com/mesonbuild/meson/releases
-meson 1.11.0
+meson 1.11.1
 
 # $ asdf plugin add nim
 # $ asdf install nim
@@ -177,7 +177,7 @@ rust 1.95.0
 # $ asdf install tinygo
 #
 # https://github.com/tinygo-org/tinygo/releases/
-tinygo 0.40.1
+tinygo 0.41.0
 
 # $ asdf plugin add zig
 # $ asdf install zig
