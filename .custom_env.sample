@@ -30,6 +30,9 @@ alias httpserver="ruby -run -e httpd . -p 8888"
 # for janet
 alias janetnrepl="janet -e \"(import spork/netrepl) (netrepl/server)\""
 
+# do not track
+export DO_NOT_TRACK=true
+
 # print go version of a compiled binary
 gobuildversion() {
     if [ -e "$1" ]; then
