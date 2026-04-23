@@ -1,6 +1,6 @@
 # .custom_env.sample
 #
-# last update: 2024.11.19.
+# last update: 2026.04.23.
 
 # for macOS only
 if [[ $OSTYPE == darwin* ]]; then
@@ -60,4 +60,7 @@ export TERMUX_HOME="/data/data/com.termux/files/home"
 
 # Raspberry Pi Pico SDK
 export PICO_SDK_PATH=/home/ubuntu/srcs/pico/pico-sdk
+
+# disable github telemetry
+export GH_TELEMETRY=false
 
