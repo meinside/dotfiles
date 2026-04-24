@@ -162,7 +162,7 @@ python 3.14.3
 #   :MasonInstall solargraph
 #
 # https://www.ruby-lang.org/en/downloads/releases/
-ruby 4.0.2
+ruby 4.0.3
 
 # $ asdf plugin add rust
 # $ asdf install rust
