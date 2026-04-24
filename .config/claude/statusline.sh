@@ -2,7 +2,7 @@
 #
 # ~/.config/claude/statusline.sh
 #
-# last update: 2026.04.02.
+# last update: 2026.04.24.
 
 # Read JSON input from stdin
 input=$(cat)
@@ -35,6 +35,14 @@ if git -C "$cwd" rev-parse --git-dir >/dev/null 2>&1; then
         git_info="\033[36m${branch}\033[0m"
     fi
     git_info=" ${git_info}"
+fi
+
+# Lines added/removed this session (added=green, removed=red)
+lines_added=$(echo "$input" | jq -r '.cost.total_lines_added // 0')
+lines_removed=$(echo "$input" | jq -r '.cost.total_lines_removed // 0')
+lines_info=""
+if [ "$lines_added" -gt 0 ] || [ "$lines_removed" -gt 0 ]; then
+    lines_info=" (\033[32m+${lines_added}\033[0m/\033[31m-${lines_removed}\033[0m)"
 fi
 
 # Model info (dimmed)
@@ -80,9 +88,31 @@ fi
 # Cost for this session
 cost_info=$(printf '💰%.2f' "$(echo "$input" | jq -r '.cost.total_cost_usd // 0')")
 
+# Duration for this session (dimmed): api/wall-clock
+# - api = time model was actually running
+# - wall = elapsed time since session started
+fmt_duration() {
+    local secs=$1
+    if [ "$secs" -ge 3600 ]; then
+        printf '%dh%02dm' $((secs / 3600)) $(((secs % 3600) / 60))
+    elif [ "$secs" -ge 60 ]; then
+        printf '%dm%02ds' $((secs / 60)) $((secs % 60))
+    else
+        printf '%ds' "$secs"
+    fi
+}
+api_duration_ms=$(echo "$input" | jq -r '.cost.total_api_duration_ms // 0')
+wall_duration_ms=$(echo "$input" | jq -r '.cost.total_duration_ms // 0')
+duration_info=""
+if [ "$api_duration_ms" -gt 0 ] || [ "$wall_duration_ms" -gt 0 ]; then
+    api_fmt=$(fmt_duration $((api_duration_ms / 1000)))
+    wall_fmt=$(fmt_duration $((wall_duration_ms / 1000)))
+    duration_info=" \033[2m⏱${api_fmt}/${wall_fmt}\033[0m"
+fi
+
 # Resulting statusline
 #
 # username=blue, hostname=bright-red, directory=dimmed-green
-printf "%s\033[34m%s\033[0m@\033[91m%s\033[0m \033[2;32m%s\033[0m%b\n%b%b%s" \
-    "$session_info" "$user" "$host" "$dir" "$git_info" \
-    "$model_info" "$ctx_info" "$cost_info"
+printf "%s\033[34m%s\033[0m@\033[91m%s\033[0m \033[2;32m%s\033[0m%b%b\n%b%b%s%b" \
+    "$session_info" "$user" "$host" "$dir" "$git_info" "$lines_info" \
+    "$model_info" "$ctx_info" "$cost_info" "$duration_info"
