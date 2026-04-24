@@ -5,7 +5,7 @@
 # Install asdf
 #
 # created on : 2022.04.14.
-# last update: 2026.04.17.
+# last update: 2026.04.24.
 
 set -euo pipefail
 
@@ -14,7 +14,7 @@ set -euo pipefail
 # frequently updated values
 
 # https://github.com/asdf-vm/asdf/releases
-readonly VERSION="0.18.1"
+readonly VERSION="0.19.0"
 
 ################################
 #
