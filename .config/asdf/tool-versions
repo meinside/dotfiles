@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2026.04.24.
+# last update: 2026.04.27.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -40,7 +40,7 @@ erlang 28.5
 # $ asdf plugin add gleam
 #
 # https://github.com/gleam-lang/gleam/releases
-gleam 1.15.4
+gleam 1.16.0
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -126,7 +126,7 @@ meson 1.11.1
 #   :MasonInstall nimlsp
 #
 # https://nim-lang.org/install.html
-nim 2.2.8
+nim 2.2.10
 
 # $ asdf plugin add ninja
 # $ asdf install ninja
