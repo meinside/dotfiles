@@ -1,6 +1,6 @@
 # .custom_env.sample
 #
-# last update: 2026.04.23.
+# last update: 2026.04.27.
 
 # for macOS only
 if [[ $OSTYPE == darwin* ]]; then
@@ -66,4 +66,7 @@ export PICO_SDK_PATH=/home/ubuntu/srcs/pico/pico-sdk
 
 # disable github telemetry
 export GH_TELEMETRY=false
+
+# use ~/tmp as a TMPDIR for `update-all`
+alias update-all="TMPDIR=$HOME/tmp update-all"
 
