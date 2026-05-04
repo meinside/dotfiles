@@ -1,24 +1,46 @@
 # .config/ghostty/config
 #
 # created on : 2025.01.02.
-# last update: 2025.01.02.
+# last update: 2026.05.04.
 
+# font
+#
 # NOTE: `ghostty +list-fonts` for listing fonts
 #
-# JetBrainsMono NF Mono (3.2.1)
+# $ brew install font-jetbrains-mono-nerd-font
 font-family = "JetBrainsMono Nerd Font Mono"
+# $ brew install font-noto-sans-mono-cjk-kr
+font-family = "Noto Sans Mono CJK KR"
+# $ brew install font-symbols-only-nerd-font
+font-codepoint-map = U+23FB-U+23FE,U+2665,U+26A1,U+2B58,U+E000-U+E00A,U+E0A0-U+E0A3,U+E0B0-U+E0D4,U+E200-U+E2A9,U+E300-U+E3E3,U+E5FA-U+E6AA,U+E700-U+E7C5,U+EA60-U+EBEB,U+F000-U+F2E0,U+F300-U+F32F,U+F400-U+F4A9,U+F500-U+F8FF,U+F0001-U+F1AF0="Symbols Nerd Font Mono"
 font-size = 12.0
+font-synthetic-style = "bold-italic"
 
+# theme / colors
+#
 # NOTE: `ghostty +list-themes` for listing themes
 theme = "Tomorrow Night Bright"
-foreground = ffffff
-background = 000000
-background-opacity = 0.80
+foreground = "#ffffff"
+background = "#000000"
+background-opacity = 0.95
+background-image = ?"background.dat"
+background-image-opacity = 0.35
+background-image-position = "center"
+background-image-fit = "contain"
+minimum-contrast = 1.1
+cursor-opacity = 0.7
 
+# window
 macos-titlebar-style = "tabs"
+window-padding-x = 12
+window-padding-y = 3,1
 window-width = 160
 window-height = 50
 
+# cursor trail
+custom-shader = "shaders/boo-cursor.glsl"
+
+# others
 quit-after-last-window-closed = true
 macos-auto-secure-input = true
 
