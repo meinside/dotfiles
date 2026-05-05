@@ -1,7 +1,7 @@
 # .config/ghostty/config
 #
 # created on : 2025.01.02.
-# last update: 2026.05.04.
+# last update: 2026.05.06.
 
 # font
 #
@@ -40,6 +40,9 @@ window-height = 50
 
 # cursor trail
 custom-shader = "shaders/boo-cursor.glsl"
+
+# shell integration
+shell-integration-features = "ssh-env,ssh-terminfo"
 
 # others
 quit-after-last-window-closed = true
