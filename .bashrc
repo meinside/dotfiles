@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2026.04.02.
+# updated on 2026.05.06.
 #
 # $ chsh -s `which zsh`
 #
@@ -31,7 +31,7 @@ export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 export CLICOLOR=true
 if [ -z "$TMUX" ]; then
-    if [[ $TERM != "xterm-kitty" ]]; then
+    if [[ $TERM != "xterm-ghostty" ]]; then
         export TERM="xterm-256color"
     fi
 fi
