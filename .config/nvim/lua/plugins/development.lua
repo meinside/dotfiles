@@ -2,7 +2,7 @@
 --
 -- File for plugins for development
 --
--- last update: 2026.04.02.
+-- last update: 2026.05.07.
 
 ------------------------------------------------
 -- imports
@@ -33,105 +33,94 @@ return {
 	--
 	-- NOTE: if needed, install `tree-sitter-cli` with :Mason.
 	{
-		"nvim-treesitter/nvim-treesitter",
-		opts = function(_, opts)
-			-- limit concurrent treesitter compilations on low-spec machines
-			-- by wrapping TS.install to inject max_jobs=1
-			-- (https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/treesitter.lua)
-			if tools.system.low_perf() then
-				local TS = require("nvim-treesitter")
-				local orig_install = TS.install
-				TS.install = function(langs, install_opts)
-					install_opts = install_opts or {}
-					install_opts.max_jobs = install_opts.max_jobs or 1
-					return orig_install(langs, install_opts)
-				end
-			end
-			-- https://github.com/nvim-treesitter/nvim-treesitter#supported-languages
-			vim.list_extend(opts.ensure_installed or {}, {
-				"asm",
-				"bash",
-				"c",
-				"clojure",
-				"cmake",
-				"comment",
-				"cpp",
-				"css",
-				"csv",
-				"dart",
-				"diff",
-				"dockerfile",
-				"eex",
-				"elixir",
-				"erlang",
-				"fennel",
-				"fish",
-				"git_config",
-				"git_rebase",
-				"gitattributes",
-				"gitcommit",
-				"gitignore",
-				"gleam",
-				"go",
-				"gomod",
-				"gosum",
-				"gowork",
-				"gpg",
-				"heex",
-				"html",
-				"http",
-				"ini",
-				"janet_simple",
-				"java",
-				"javadoc",
-				"javascript",
-				"jq",
-				"jsdoc",
-				"json",
-				"json5",
-				"kotlin",
-				"latex",
-				"llvm",
-				"lua",
-				"luadoc",
-				"luap",
-				"make",
-				"markdown",
-				"markdown_inline",
-				"mermaid",
-				"meson",
-				"nasm",
-				"nginx",
-				"nim",
-				"perl",
-				"php",
-				"printf",
-				"python",
-				"query",
-				"regex",
-				"ruby",
-				"rust",
-				"scss",
-				"sql",
-				"ssh_config",
-				"strace",
-				"swift",
-				"tmux",
-				"toml",
-				"tsx",
-				"typescript",
-				"vim",
-				"vimdoc",
-				"xml",
-				"yaml",
-				"zig",
+		"romus204/tree-sitter-manager.nvim",
+		dependencies = {}, -- tree-sitter CLI must be installed system-wide
+		config = function()
+			require("tree-sitter-manager").setup({
+				ensure_installed = tools.system.low_perf() and {
+					"bash",
+					"go",
+					"lua",
+				} or {
+					"asm",
+					"bash",
+					"c",
+					"clojure",
+					"cmake",
+					"comment",
+					"cpp",
+					"css",
+					"csv",
+					"dart",
+					"diff",
+					"dockerfile",
+					"eex",
+					"elixir",
+					"erlang",
+					"fennel",
+					"fish",
+					"git_config",
+					"git_rebase",
+					"gitattributes",
+					"gitcommit",
+					"gitignore",
+					"gleam",
+					"go",
+					"gomod",
+					"gosum",
+					"gowork",
+					"gpg",
+					"heex",
+					"html",
+					"http",
+					"ini",
+					"janet_simple",
+					"java",
+					"javadoc",
+					"javascript",
+					"jq",
+					"jsdoc",
+					"json",
+					"json5",
+					"kotlin",
+					"latex",
+					"llvm",
+					"lua",
+					"luadoc",
+					"luap",
+					"make",
+					"markdown",
+					"markdown_inline",
+					"mermaid",
+					"meson",
+					"nasm",
+					"nginx",
+					"nim",
+					"perl",
+					"php",
+					"printf",
+					"python",
+					"query",
+					"regex",
+					"ruby",
+					"rust",
+					"scss",
+					"sql",
+					"ssh_config",
+					"strace",
+					"swift",
+					"tmux",
+					"toml",
+					"tsx",
+					"typescript",
+					"vim",
+					"vimdoc",
+					"xml",
+					"yaml",
+					"zig",
+				},
+				-- auto_install = false, -- if enabled, install missing parsers when editing a new file
 			})
-			opts.highlight = { enable = true }
-			opts.rainbow = {
-				enable = true,
-				query = "rainbow-parens",
-				strategy = require("rainbow-delimiters").strategy.global,
-			}
 		end,
 	},
 	-- `:TSContext toggle` for toggling
@@ -220,7 +209,10 @@ return {
 				max_join_length = 240,
 			})
 		end,
-		dependencies = { "nvim-treesitter" },
+		dependencies = {
+			--"nvim-treesitter",
+			"romus204/tree-sitter-manager.nvim",
+		},
 	},
 
 	-- formatting
