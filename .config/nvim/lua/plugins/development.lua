@@ -2,7 +2,7 @@
 --
 -- File for plugins for development
 --
--- last update: 2026.04.02.
+-- last update: 2026.05.08.
 
 ------------------------------------------------
 -- imports
@@ -408,12 +408,13 @@ return {
 	},
 
 	-- (openscad)
+	--
+	-- :OpenscadExecFile, :OpenscadJustfile, ...
 	{
 		"salkin-mada/openscad.nvim",
 		config = function()
 			vim.g.openscad_load_snippets = true
 			vim.g.openscad_cheatsheet_toggle_key = "<Enter>" -- enter: cheatsheet
-			vim.g.openscad_exec_openscad_trig_key = "<A-o>" -- alt+o: open in OpenSCAD
 
 			require("openscad")
 		end,
