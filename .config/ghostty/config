@@ -1,7 +1,7 @@
 # .config/ghostty/config
 #
 # created on : 2025.01.02.
-# last update: 2026.05.07.
+# last update: 2026.05.11.
 
 # font
 #
@@ -41,6 +41,12 @@ window-new-tab-position = "end"
 # cursor
 cursor-opacity = 0.5
 custom-shader = "shaders/boo-cursor.glsl"
+
+# key binds
+#
+# NOTE: override 'super+f'
+keybind = super+f=unbind
+keybind = super+shift+f=start_search
 
 # mouse
 mouse-hide-while-typing = true
