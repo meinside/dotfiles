@@ -42,12 +42,6 @@ window-new-tab-position = "end"
 cursor-opacity = 0.5
 custom-shader = "shaders/boo-cursor.glsl"
 
-# key binds
-#
-# NOTE: override 'super+f'
-keybind = super+f=unbind
-keybind = super+shift+f=start_search
-
 # mouse
 mouse-hide-while-typing = true
 
