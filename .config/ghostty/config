@@ -55,4 +55,5 @@ shell-integration-features = "cursor,sudo,title,ssh-env,ssh-terminfo,path"
 quit-after-last-window-closed = true
 macos-auto-secure-input = true
 macos-icon = "retro"
+macos-option-as-alt = "left"
 
