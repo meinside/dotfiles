@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2026.05.08.
+# last update: 2026.05.13.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -21,7 +21,7 @@ babashka 1.12.218
 #   :MasonInstall clojure-lsp
 #
 # https://clojure.org/releases/tools#_releases
-clojure 1.12.4.1629
+clojure 1.12.5.1638
 
 # $ asdf plugin add elixir
 # $ asdf install elixir
@@ -138,7 +138,7 @@ ninja 1.13.2
 # $ asdf install nodejs
 #
 # https://nodejs.org/en/about/releases/
-nodejs 25.9.0
+nodejs 26.1.0
 
 # $ asdf plugin add python
 # $ asdf install python
@@ -162,7 +162,7 @@ python 3.14.3
 #   :MasonInstall solargraph
 #
 # https://www.ruby-lang.org/en/downloads/releases/
-ruby 4.0.3
+ruby 4.0.4
 
 # $ asdf plugin add rust
 # $ asdf install rust
