@@ -99,8 +99,12 @@ function warn {
 #
 ################################
 
-# isolated temporary working directory (auto-removed on exit)
-TEMP_DIR="$(mktemp -d -t nginx-build.XXXXXX)"
+# isolated temporary working directory (auto-removed on exit).
+#
+# Default to /var/tmp because /tmp is often a small tmpfs (e.g. <=512MB) and
+# OpenSSL + nginx builds need ~1GB. Override with BUILD_DIR=... or TMPDIR=...
+readonly BUILD_DIR_PARENT="${BUILD_DIR:-${TMPDIR:-/var/tmp}}"
+TEMP_DIR="$(mktemp -d -p "$BUILD_DIR_PARENT" nginx-build.XXXXXX)"
 readonly TEMP_DIR
 trap 'sudo rm -rf -- "$TEMP_DIR"' EXIT
 
@@ -179,6 +183,15 @@ function preflight {
 	fi
 	if ! getent group www-data >/dev/null; then
 		error "* group 'www-data' does not exist; create it before running this script"
+		exit 1
+	fi
+
+	# need ~1GB free in the build parent for OpenSSL + nginx artifacts
+	local free_kb
+	free_kb="$(df -Pk "$BUILD_DIR_PARENT" | awk 'NR==2 {print $4}')"
+	if [ -z "$free_kb" ] || [ "$free_kb" -lt 1048576 ]; then
+		error "* less than 1GB free in ${BUILD_DIR_PARENT} (need ~1GB to build)"
+		error "* set BUILD_DIR=/path/with/space when running this script, or free space"
 		exit 1
 	fi
 }
