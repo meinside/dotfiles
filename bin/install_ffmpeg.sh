@@ -7,7 +7,7 @@
 # NOTE: on failure, build artifacts under $TMP_DIR are preserved for
 # debugging (thanks to `set -e`); on success they are cleaned up.
 #
-# last update: 2026.04.17.
+# last update: 2026.05.14.
 
 set -euo pipefail
 
@@ -18,7 +18,7 @@ set -euo pipefail
 # frequently updated values
 
 # https://github.com/FFmpeg/FFmpeg/tags
-readonly FFMPEG_VERSION="n8.1" # XXX - edit for newer ffmpeg version
+readonly FFMPEG_VERSION="n8.1.1" # XXX - edit for newer ffmpeg version
 
 ################################
 #
