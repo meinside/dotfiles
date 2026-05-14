@@ -46,7 +46,7 @@
 #   #ExecStartPre=/bin/mkdir -p /var/log/nginx
 #
 # created on : 2017.08.16.
-# last update: 2026.04.17.
+# last update: 2026.05.14.
 
 set -euo pipefail
 
@@ -55,7 +55,7 @@ set -euo pipefail
 # frequently updated values
 
 # nginx/library versions
-readonly NGINX_VERSION="1.29.8"  # https://nginx.org/en/download.html
+readonly NGINX_VERSION="1.31.0"  # https://nginx.org/en/download.html
 readonly OPENSSL_VERSION="4.0.0" # https://github.com/openssl/openssl/tags
 readonly ZLIB_VERSION="1.3.2"    # https://github.com/madler/zlib/tags
 readonly PCRE_VERSION="10.47"    # https://github.com/PCRE2Project/pcre2/releases
@@ -99,13 +99,15 @@ function warn {
 #
 ################################
 
-# temporary directory
-readonly TEMP_DIR="/tmp"
+# isolated temporary working directory (auto-removed on exit)
+TEMP_DIR="$(mktemp -d -t nginx-build.XXXXXX)"
+readonly TEMP_DIR
+trap 'sudo rm -rf -- "$TEMP_DIR"' EXIT
 
 # source files
 readonly NGINX_SRC_URL="https://github.com/nginx/nginx/archive/release-${NGINX_VERSION}.tar.gz"
 readonly OPENSSL_SRC_URL="https://github.com/openssl/openssl/releases/download/openssl-${OPENSSL_VERSION}/openssl-${OPENSSL_VERSION}.tar.gz"
-readonly ZLIB_SRC_URL="http://www.zlib.net/zlib-${ZLIB_VERSION}.tar.gz"
+readonly ZLIB_SRC_URL="https://zlib.net/zlib-${ZLIB_VERSION}.tar.gz"
 readonly PCRE_SRC_URL="https://github.com/PCRE2Project/pcre2/releases/download/pcre2-${PCRE_VERSION}/pcre2-${PCRE_VERSION}.tar.gz"
 
 # extracted dirs
@@ -124,9 +126,14 @@ readonly NGINX_LOGS_DIR="/var/log/nginx"
 
 function download_and_extract {
 	local url="$1"
-	cd "$TEMP_DIR"
-	wget "$url"
-	tar -xzvf "$(basename "$url")"
+	local file
+	file="$(basename "$url")"
+
+	(
+		cd "$TEMP_DIR"
+		curl --proto '=https' --tlsv1.2 -fsSL --retry 3 -o "$file" "$url"
+		tar -xzf "$file"
+	)
 }
 
 # detect whether the compiler supports __int128 (for OpenSSL EC optimization).
@@ -136,10 +143,43 @@ function download_and_extract {
 # targets with GCC/Clang). When supported, OpenSSL uses optimized
 # NIST P-224/P-256/P-521 implementations for faster ECDHE.
 function detect_ec_flag {
-	if gcc -dM -E - </dev/null 2>/dev/null | grep -q __SIZEOF_INT128__; then
+	local cc="${CC:-cc}"
+	if "$cc" -dM -E - </dev/null 2>/dev/null | grep -q __SIZEOF_INT128__; then
 		echo "enable-ec_nistp_64_gcc_128"
 	else
 		echo ""
+	fi
+}
+
+function preflight {
+	warn ">>> running preflight checks..."
+
+	local missing=()
+	local cmd
+	for cmd in curl tar make sudo; do
+		if ! command -v "$cmd" >/dev/null 2>&1; then
+			missing+=("$cmd")
+		fi
+	done
+
+	# need a working C compiler — prefer $CC, otherwise gcc or cc
+	if ! command -v "${CC:-cc}" >/dev/null 2>&1 && ! command -v gcc >/dev/null 2>&1; then
+		missing+=("gcc/cc")
+	fi
+
+	if ((${#missing[@]} > 0)); then
+		error "* missing required commands: ${missing[*]}"
+		error "* install them first (e.g.: sudo apt-get install build-essential curl)"
+		exit 1
+	fi
+
+	if ! getent passwd www-data >/dev/null; then
+		error "* user 'www-data' does not exist; create it before running this script"
+		exit 1
+	fi
+	if ! getent group www-data >/dev/null; then
+		error "* group 'www-data' does not exist; create it before running this script"
+		exit 1
 	fi
 }
 
@@ -183,14 +223,19 @@ function build {
 		--with-stream \
 		--with-stream_ssl_module \
 		--with-openssl="${OPENSSL_SRC_DIR}" \
-		--with-openssl-opt="no-nextprotoneg no-weak-ssl-ciphers no-ssl3 no-ssl3-method no-shared ${ecflag} -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
+		--with-openssl-opt="no-nextprotoneg no-weak-ssl-ciphers no-ssl3 no-ssl3-method no-tls1 no-tls1_1 no-comp no-idea no-mdc2 no-rc2 no-rc4 no-rc5 no-deprecated no-shared ${ecflag} -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
 		--with-pcre="${PCRE_SRC_DIR}" \
 		--with-zlib="${ZLIB_SRC_DIR}" \
-		--with-http_v3_module
+		--with-http_v3_module \
+		--without-http_autoindex_module \
+		--without-http_ssi_module \
+		--without-http_userid_module \
+		--with-cc-opt='-O2 -D_FORTIFY_SOURCE=2 -fstack-protector-strong -fPIC -Wformat -Werror=format-security' \
+		--with-ld-opt='-Wl,-z,relro -Wl,-z,now -pie'
 
 	# make
 	warn ">>> building nginx..."
-	make
+	make -j"$(nproc)"
 
 	# make install
 	warn ">>> installing..."
@@ -201,6 +246,7 @@ function configure {
 	# create directories
 	sudo mkdir -p "$NGINX_SITES_DIR"
 	sudo mkdir -p "$NGINX_LOGS_DIR"
+	sudo mkdir -p /var/cache/nginx
 
 	# check if there are files in $NGINX_SITES_DIR, if empty:
 	if [ -z "$(sudo ls -A "$NGINX_SITES_DIR")" ]; then
@@ -243,7 +289,15 @@ server {
     # HSTS (ngx_http_headers_module is required) (63072000 seconds)
     add_header Strict-Transport-Security "max-age=63072000" always;
 
-    # OCSP stapling (not needed for Let's Encrypt certificates)
+    # security headers
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+    # OCSP stapling
+    # NOTE: Let's Encrypt is phasing out OCSP responder support (announced 2024,
+    # rollout through 2025). Stapling has no effect once OCSP URLs are removed
+    # from issued certs — leave it on; nginx will simply skip stapling then.
     ssl_stapling on;
     ssl_stapling_verify on;
 
@@ -268,7 +322,7 @@ EOF
 		warn ">>> $NGINX_CONF_FILE is already modified..."
 	else
 		# edit default conf to include enabled sites and limit requests
-		sudo sed -i 's|\(\(\s*\)include\(\s\+\)mime.types;\)|\1\n\2include\3/etc/nginx/sites-enabled/*.*;\n\2limit_req_zone $binary_remote_addr zone=lr_zone:10m rate=100r/s;|' "$NGINX_CONF_FILE"
+		sudo sed -i 's|\(\(\s*\)include\(\s\+\)mime.types;\)|\1\n\2include\3/etc/nginx/sites-enabled/*.*;\n\2server_tokens off;\n\2limit_req_zone $binary_remote_addr zone=lr_zone:10m rate=100r/s;|' "$NGINX_CONF_FILE"
 
 		warn ">>> added enabled sites and limit requests in $NGINX_CONF_FILE..."
 	fi
@@ -293,7 +347,21 @@ ExecStartPre=/usr/local/sbin/nginx -t
 ExecStart=/usr/local/sbin/nginx
 ExecReload=/usr/local/sbin/nginx -s reload
 ExecStop=/bin/kill -s QUIT $MAINPID
+
+# --- security hardening ---
 PrivateTmp=true
+NoNewPrivileges=true
+ProtectSystem=full
+#ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+LockPersonality=true
+LimitNOFILE=65535
+ReadWritePaths=/var/log/nginx /var/cache/nginx /run
 
 [Install]
 WantedBy=multi-user.target
@@ -301,27 +369,12 @@ EOF
 	fi
 }
 
-function clean {
-	warn ">>> cleaning..."
-
-	# delete files
-	cd "$TEMP_DIR"
-	sudo rm -rf \
-		"$(basename "$NGINX_SRC_URL")" \
-		"$(basename "$OPENSSL_SRC_URL")" \
-		"$(basename "$ZLIB_SRC_URL")" \
-		"$(basename "$PCRE_SRC_URL")"
-
-	# and directories
-	sudo rm -rf "$NGINX_SRC_DIR" "$OPENSSL_SRC_DIR" "$ZLIB_SRC_DIR" "$PCRE_SRC_DIR"
-}
-
 # linux
 function install_linux {
+	preflight
 	prep
 	build
 	configure
-	clean
 }
 
 # termux
@@ -329,8 +382,15 @@ function install_termux {
 	pkg install nginx
 }
 
-case "$OSTYPE" in
-linux-android) install_termux ;;
-linux*) install_linux ;;
-*) error "* not supported yet: $OSTYPE" ;;
-esac
+function main {
+	case "$OSTYPE" in
+	linux-android) install_termux ;;
+	linux*) install_linux ;;
+	*)
+		error "* not supported yet: $OSTYPE"
+		exit 1
+		;;
+	esac
+}
+
+main "$@"
