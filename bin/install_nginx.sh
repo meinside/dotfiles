@@ -46,7 +46,7 @@
 #   #ExecStartPre=/bin/mkdir -p /var/log/nginx
 #
 # created on : 2017.08.16.
-# last update: 2026.05.14.
+# last update: 2026.05.15.
 
 set -euo pipefail
 
@@ -243,6 +243,11 @@ function build {
 		--without-http_autoindex_module \
 		--without-http_ssi_module \
 		--without-http_userid_module \
+		--http-client-body-temp-path=/var/cache/nginx/client_body_temp \
+		--http-proxy-temp-path=/var/cache/nginx/proxy_temp \
+		--http-fastcgi-temp-path=/var/cache/nginx/fastcgi_temp \
+		--http-uwsgi-temp-path=/var/cache/nginx/uwsgi_temp \
+		--http-scgi-temp-path=/var/cache/nginx/scgi_temp \
 		--with-cc-opt='-O2 -D_FORTIFY_SOURCE=2 -fstack-protector-strong -fPIC -Wformat -Werror=format-security' \
 		--with-ld-opt='-Wl,-z,relro -Wl,-z,now -pie'
 
@@ -259,7 +264,13 @@ function configure {
 	# create directories
 	sudo mkdir -p "$NGINX_SITES_DIR"
 	sudo mkdir -p "$NGINX_LOGS_DIR"
-	sudo mkdir -p /var/cache/nginx
+	sudo mkdir -p \
+		/var/cache/nginx/client_body_temp \
+		/var/cache/nginx/proxy_temp \
+		/var/cache/nginx/fastcgi_temp \
+		/var/cache/nginx/uwsgi_temp \
+		/var/cache/nginx/scgi_temp
+	sudo chown -R www-data:www-data /var/cache/nginx
 
 	# check if there are files in $NGINX_SITES_DIR, if empty:
 	if [ -z "$(sudo ls -A "$NGINX_SITES_DIR")" ]; then
