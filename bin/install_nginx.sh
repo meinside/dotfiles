@@ -46,7 +46,7 @@
 #   #ExecStartPre=/bin/mkdir -p /var/log/nginx
 #
 # created on : 2017.08.16.
-# last update: 2026.05.15.
+# last update: 2026.05.18.
 
 set -euo pipefail
 
@@ -371,6 +371,14 @@ ExecStartPre=/usr/local/sbin/nginx -t
 ExecStart=/usr/local/sbin/nginx
 ExecReload=/usr/local/sbin/nginx -s reload
 ExecStop=/bin/kill -s QUIT $MAINPID
+
+# NOTE:
+#   if `/var/log/nginx/` and/or `/var/cache/nginx/` should be created on reboot,
+#   do not use `ExecStartPre=/bin/mkdir -p /var/log/nginx`;
+#   create `/etc/tmpfiles.d/nginx.conf` file with the following lines:
+#
+# d /var/log/nginx 0750 www-data adm -
+# d /var/cache/nginx 0700 www-data www-data -
 
 # --- security hardening ---
 PrivateTmp=true
