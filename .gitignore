@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2026.04.22.
+# last update: 2026.05.22.
 
 # unnecessary binary files
 *.a
@@ -155,6 +155,7 @@ xcuserdata
 
 # other applications' files & dirs
 .android/
+.antigravitycli/
 .ape-*
 .aptitude/
 .asdf/
