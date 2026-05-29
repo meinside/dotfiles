@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2026.05.28.
+# last update: 2026.05.29.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -21,7 +21,7 @@ babashka 1.12.218
 #   :MasonInstall clojure-lsp
 #
 # https://clojure.org/releases/tools#_releases
-clojure 1.12.5.1645
+clojure 1.12.5.1654
 
 # $ asdf plugin add elixir
 # $ asdf install elixir
@@ -171,7 +171,7 @@ ruby 4.0.5
 #   :MasonInstall rust-analyzer
 #
 # https://github.com/rust-lang/rust/releases
-rust 1.95.0
+rust 1.96.0
 
 # $ asdf plugin add tinygo https://github.com/troyjfarrell/asdf-tinygo
 # $ asdf install tinygo
