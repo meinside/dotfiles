@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2026.05.29.
+# last update: 2026.06.04.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -40,7 +40,7 @@ erlang 29.0.1
 # $ asdf plugin add gleam
 #
 # https://github.com/gleam-lang/gleam/releases
-gleam 1.16.0
+gleam 1.17.0
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -52,7 +52,7 @@ gleam 1.16.0
 #   $ cp `asdf which XXXX` $GOPATH/bin/
 #
 # https://go.dev/doc/devel/release
-golang 1.26.3
+golang 1.26.4
 
 # $ asdf plugin add janet
 # $ asdf install janet
