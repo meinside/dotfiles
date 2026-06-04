@@ -29,7 +29,7 @@ clojure 1.12.5.1654
 # * NOTE: `erlang` needs to be installed.
 #
 # https://github.com/elixir-lang/elixir/releases
-elixir 1.19.5
+elixir 1.20.0
 
 # $ asdf plugin add erlang
 # $ KERL_BUILD_DOCS=yes asdf install erlang
@@ -147,7 +147,7 @@ nodejs 26.2.0
 #   :MasonInstall python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.14.3
+python 3.14.5t
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
@@ -177,7 +177,7 @@ rust 1.96.0
 # $ asdf install tinygo
 #
 # https://github.com/tinygo-org/tinygo/releases/
-tinygo 0.41.0
+tinygo 0.41.1
 
 # $ asdf plugin add zig
 # $ asdf install zig
