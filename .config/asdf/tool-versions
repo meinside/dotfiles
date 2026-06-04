@@ -111,7 +111,7 @@ leiningen 2.12.0
 # and put `luarocks path` result to .custom_env file
 #
 # https://www.lua.org/versions.html
-lua 5.1.5 5.5.0
+lua 5.5.0
 
 # $ asdf plugin add meson
 # $ asdf install meson
