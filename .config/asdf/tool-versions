@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2026.06.04.
+# last update: 2026.06.11.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -35,7 +35,7 @@ elixir 1.20.0
 # $ KERL_BUILD_DOCS=yes asdf install erlang
 #
 # https://github.com/erlang/otp/releases
-erlang 29.0.1
+erlang 29.0.2
 
 # $ asdf plugin add gleam
 #
@@ -138,7 +138,7 @@ ninja 1.13.2
 # $ asdf install nodejs
 #
 # https://nodejs.org/en/about/releases/
-nodejs 26.2.0
+nodejs 26.3.0
 
 # $ asdf plugin add python
 # $ asdf install python
@@ -147,7 +147,7 @@ nodejs 26.2.0
 #   :MasonInstall python-lsp-server
 #
 # https://www.python.org/downloads/
-python 3.14.5t
+python 3.14.6t
 
 # $ asdf plugin add ruby
 # $ asdf install ruby
