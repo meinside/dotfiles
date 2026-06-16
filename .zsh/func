@@ -3,7 +3,7 @@
 # my zsh functions
 #
 # created on 2014.10.06.
-# updated on 2025.02.12.
+# updated on 2026.06.16.
 
 # list files changed in given days
 # (referenced: http://gotofritz.net/blog/howto/finding-recently-changed-files-osx-terminal/)
@@ -35,7 +35,7 @@ update-macos () {
 		echo
 		echo "> updating brew..."
 		brew update
-		brew upgrade
+		brew upgrade -y
 
 		echo
 		echo "> cleaning brew..."
