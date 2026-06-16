@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2026.06.11.
+# last update: 2026.06.16.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -90,7 +90,7 @@ java openjdk-25.0.2
 # $ asdf install leiningen
 #
 # https://github.com/technomancy/leiningen/releases
-leiningen 2.12.0
+leiningen 2.13.0
 
 # $ asdf plugin add lua
 # $ asdf install lua
