@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2026.05.22.
+# last update: 2026.06.16.
 
 # unnecessary binary files
 *.a
@@ -217,6 +217,7 @@ xcuserdata
 .srcclr/
 .ssh/
 .swiftpm/
+.terminfo/
 .termux/
 .tooling/
 .vnc/
