@@ -46,7 +46,7 @@
 #   #ExecStartPre=/bin/mkdir -p /var/log/nginx
 #
 # created on : 2017.08.16.
-# last update: 2026.05.27.
+# last update: 2026.06.19.
 
 set -euo pipefail
 
@@ -55,8 +55,8 @@ set -euo pipefail
 # frequently updated values
 
 # nginx/library versions
-readonly NGINX_VERSION="1.31.1"  # https://nginx.org/en/download.html
-readonly OPENSSL_VERSION="4.0.0" # https://github.com/openssl/openssl/tags
+readonly NGINX_VERSION="1.31.2"  # https://nginx.org/en/download.html
+readonly OPENSSL_VERSION="4.0.1" # https://github.com/openssl/openssl/tags
 readonly ZLIB_VERSION="1.3.2"    # https://github.com/madler/zlib/tags
 readonly PCRE_VERSION="10.47"    # https://github.com/PCRE2Project/pcre2/releases
 
