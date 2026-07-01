@@ -1,6 +1,6 @@
 -- ~/.config/hammerspoon/display.lua
 --
--- last update: 2026.06.29.
+-- last update: 2026.07.01.
 
 -- Dim the inactive displays so the active display stands out.
 --
@@ -9,7 +9,7 @@
 -- to look. With a single display nothing is dimmed.
 
 -- configuration
-local DIM_ALPHA = 0.40 -- darkness of inactive displays (0..1)
+local DIM_ALPHA = 0.50 -- darkness of inactive displays (0..1)
 local POLL_INTERVAL = 0.3 -- seconds between focus checks
 
 -- persistent dim overlays, keyed by screen id
