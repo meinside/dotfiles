@@ -4,7 +4,7 @@
 --
 -- NOTE: plugins for GenAI services/applications will be placed here
 --
--- last update: 2026.04.01.
+-- last update: 2026.07.02.
 
 ------------------------------------------------
 -- imports
@@ -115,7 +115,7 @@ return {
 			require("gmn").setup({
 				configFilepath = gmnConfigFilepath,
 				timeout = 30 * 1000,
-				model = "gemini-2.5-flash",
+				model = "gemini-3.5-flash",
 				safetyThreshold = "BLOCK_ONLY_HIGH",
 				stripOutermostCodeblock = function()
 					return vim.bo.filetype ~= "markdown"
