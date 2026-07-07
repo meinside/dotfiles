@@ -1,12 +1,14 @@
 # .config/ghostty/config
 #
 # created on : 2025.01.02.
-# last update: 2026.05.12.
+# last update: 2026.07.07.
 
 # font
 #
 # NOTE: `ghostty +list-fonts` for listing fonts
 #
+# https://github.com/kuskhan/jetendard
+font-family = "Jetendard"
 # $ brew install font-jetbrains-mono-nerd-font
 font-family = "JetBrainsMono Nerd Font Mono"
 # $ brew install font-noto-sans-mono-cjk-kr
