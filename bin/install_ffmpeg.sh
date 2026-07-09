@@ -4,10 +4,7 @@
 #
 # for building ffmpeg from source code.
 #
-# NOTE: on failure, build artifacts under $TMP_DIR are preserved for
-# debugging (thanks to `set -e`); on success they are cleaned up.
-#
-# last update: 2026.06.29.
+# last update: 2026.07.09.
 
 set -euo pipefail
 
@@ -59,7 +56,8 @@ function warn {
 #
 ################################
 
-readonly TMP_DIR=/tmp/ffmpeg
+# base directory for the build; override with TMPDIR=... (defaults to /tmp)
+readonly TMP_DIR="${TMPDIR:-/tmp}/ffmpeg"
 
 function prep {
 	# install needed packages
@@ -116,9 +114,11 @@ function install {
 }
 
 function install_linux {
+	# cleanup tmp directory on exit (success or failure)
+	trap clean EXIT
+
 	prep
 	install
-	clean
 }
 
 function install_termux {

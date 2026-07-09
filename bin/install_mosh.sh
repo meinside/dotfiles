@@ -5,7 +5,7 @@
 # Manually build mosh from `master` branch. (1.3.2 doesn't support 24-bit colors yet)
 #
 # created on : 2021.08.11.
-# last update: 2026.04.17.
+# last update: 2026.07.09.
 
 set -euo pipefail
 
@@ -49,7 +49,8 @@ function warn {
 ################################
 
 readonly MOSH_REPO="https://github.com/mobile-shell/mosh"
-readonly TMP_DIR="/tmp"
+# base directory for the build; override with TMPDIR=... (defaults to /tmp)
+readonly TMP_DIR="${TMPDIR:-/tmp}"
 readonly BUILD_DIR="$TMP_DIR/mosh"
 
 # cleanup build directory on exit (success or failure)

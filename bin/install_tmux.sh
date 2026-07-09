@@ -5,7 +5,7 @@
 # Build and install the latest version of tmux.
 #
 # created on : 2023.08.03.
-# last update: 2026.07.02.
+# last update: 2026.07.09.
 
 set -euo pipefail
 
@@ -52,7 +52,8 @@ function warn {
 readonly TMUX_VERSION="3.7b" # NOTE: target version
 readonly TMUX_SRC_FILENAME="tmux-${TMUX_VERSION}.tar.gz"
 readonly TMUX_SRC_URL="https://github.com/tmux/tmux/releases/download/${TMUX_VERSION}/${TMUX_SRC_FILENAME}"
-readonly TMP_DIR="/tmp"
+# base directory for the build; override with TMPDIR=... (defaults to /tmp)
+readonly TMP_DIR="${TMPDIR:-/tmp}"
 readonly TMUX_SRC_DIR="$TMP_DIR/tmux-${TMUX_VERSION}"
 readonly TMUX_SRC_TARBALL="$TMP_DIR/${TMUX_SRC_FILENAME}"
 

@@ -5,7 +5,7 @@
 # For building neovim from source code.
 # (https://github.com/neovim/neovim/wiki/Installing-Neovim#install-from-source)
 #
-# last update: 2026.07.06.
+# last update: 2026.07.09.
 
 set -euo pipefail
 
@@ -82,7 +82,8 @@ function warn {
 ################################
 
 readonly LOCAL_INSTALL_DIR="$HOME/.local/nvim"
-readonly TMP_DIR="/tmp/nvim"
+# base directory for the build; override with TMPDIR=... (defaults to /tmp)
+readonly TMP_DIR="${TMPDIR:-/tmp}/nvim"
 
 # check arguments
 nightly=false
@@ -166,9 +167,11 @@ function install_macos {
 
 # install for linux
 function install_linux {
+	# cleanup tmp directory on exit (success or failure)
+	trap clean EXIT
+
 	prep
 	install
-	clean
 	update_alternatives
 }
 
