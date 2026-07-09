@@ -15,28 +15,6 @@ local function enabled_unless_low_perf()
 	return not tools.system.low_perf()
 end
 
--- minimal treesitter parser set for low-performance machines
--- (compiling ~80 parsers is a big bottleneck on low-spec machines)
-local ts_minimal = {
-	"bash",
-	"comment",
-	"diff",
-	"git_config",
-	"git_rebase",
-	"gitcommit",
-	"gitignore",
-	"json",
-	"lua",
-	"luadoc",
-	"markdown",
-	"markdown_inline",
-	"query",
-	"toml",
-	"vim",
-	"vimdoc",
-	"yaml",
-}
-
 ------------------------------------------------
 -- global variables
 --
@@ -62,21 +40,16 @@ return {
 	{
 		"nvim-treesitter/nvim-treesitter",
 		opts = function(_, opts)
-			-- limit concurrent treesitter compilations on low-spec machines
-			-- by wrapping TS.install to inject max_jobs=1
-			-- (https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/plugins/treesitter.lua)
+			-- On low-spec machines, `nvim-treesitter` (main branch) compiles every
+			-- parser in `ensure_installed` from C source at startup — each spawns a
+			-- `cc1` process that eats CPU/memory. So we install nothing and rely only
+			-- on the parsers Neovim already ships prebuilt (c/lua/vim/markdown/...).
+			-- Filetypes without a prebuilt parser fall back to regex syntax.
 			if tools.system.low_perf() then
-				local TS = require("nvim-treesitter")
-				local orig_install = TS.install
-				TS.install = function(langs, install_opts)
-					install_opts = install_opts or {}
-					install_opts.max_jobs = install_opts.max_jobs or 1
-					return orig_install(langs, install_opts)
-				end
-
-				-- install only a minimal set of parsers on low-spec machines
-				opts.ensure_installed = vim.list_extend(opts.ensure_installed or {}, ts_minimal)
+				opts.ensure_installed = {}
 				opts.highlight = { enable = true }
+				opts.indent = { enable = false }
+				opts.folds = { enable = false }
 				return
 			end
 			-- https://github.com/nvim-treesitter/nvim-treesitter#supported-languages
