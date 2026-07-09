@@ -2,7 +2,7 @@
 --
 -- File for neovim utility functions
 --
--- last update: 2026.04.01.
+-- last update: 2026.07.09.
 
 --------------------------------
 -- functions for debugging
@@ -121,17 +121,38 @@ local function total_memory()
 	return -1 -- when it has no proper `/proc/meminfo` file (eg. macOS machine)
 end
 
--- Checks if this machine will work with low performance
--- (if it is not macOS and has < 4GB memory)
+-- Checks if this machine will work with low performance.
+--
+-- The result is cached after the first call (so it is safe to use this in many
+-- plugins' `enabled`/`cond` without spawning a shell process every time).
+--
+-- The decision is made by `features().low_perf`:
+--   * `true`   => forced on
+--   * `false`  => forced off
+--   * "auto" (or anything else) => auto-detect
+--     (auto-detect returns true if it is not macOS and has < 4GB memory)
+local low_perf_cache = nil
 local function low_performance()
-	local memory = total_memory()
-	if memory < 0 or memory >= 4 * 1024 * 1024 then
-		return false
+	if low_perf_cache ~= nil then
+		return low_perf_cache
 	end
 
-	w("Running on a machine with low performance.")
+	-- NOTE: require lazily here to avoid a circular require with `custom`
+	-- (custom/init.lua requires this `tools` module)
+	local override = require("custom").features().low_perf
 
-	return true
+	if override == true or override == false then
+		low_perf_cache = override
+	else -- "auto" or nil
+		local memory = total_memory()
+		low_perf_cache = memory >= 0 and memory < 4 * 1024 * 1024
+	end
+
+	if low_perf_cache then
+		w("Running on a machine with low performance.")
+	end
+
+	return low_perf_cache
 end
 
 -- Checks if it is not in termux

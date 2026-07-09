@@ -2,13 +2,40 @@
 --
 -- File for plugins for development
 --
--- last update: 2026.05.08.
+-- last update: 2026.07.09.
 
 ------------------------------------------------
 -- imports
 --
 local custom = require("custom") -- ~/.config/nvim/lua/custom/init.lua
 local tools = require("tools") -- ~/.config/nvim/lua/tools.lua
+
+-- returns `false` on low-performance machines (used for `enabled`)
+local function enabled_unless_low_perf()
+	return not tools.system.low_perf()
+end
+
+-- minimal treesitter parser set for low-performance machines
+-- (compiling ~80 parsers is a big bottleneck on low-spec machines)
+local ts_minimal = {
+	"bash",
+	"comment",
+	"diff",
+	"git_config",
+	"git_rebase",
+	"gitcommit",
+	"gitignore",
+	"json",
+	"lua",
+	"luadoc",
+	"markdown",
+	"markdown_inline",
+	"query",
+	"toml",
+	"vim",
+	"vimdoc",
+	"yaml",
+}
 
 ------------------------------------------------
 -- global variables
@@ -46,6 +73,11 @@ return {
 					install_opts.max_jobs = install_opts.max_jobs or 1
 					return orig_install(langs, install_opts)
 				end
+
+				-- install only a minimal set of parsers on low-spec machines
+				opts.ensure_installed = vim.list_extend(opts.ensure_installed or {}, ts_minimal)
+				opts.highlight = { enable = true }
+				return
 			end
 			-- https://github.com/nvim-treesitter/nvim-treesitter#supported-languages
 			vim.list_extend(opts.ensure_installed or {}, {
@@ -135,7 +167,7 @@ return {
 		end,
 	},
 	-- `:TSContext toggle` for toggling
-	{ "nvim-treesitter/nvim-treesitter-context" },
+	{ "nvim-treesitter/nvim-treesitter-context", enabled = enabled_unless_low_perf },
 
 	-- auto completion
 	--
@@ -195,9 +227,10 @@ return {
 		end,
 	},
 
-	-- symbol outlines
+	-- symbol outlines (needs LSP)
 	{
 		"hedyhli/outline.nvim",
+		enabled = enabled_unless_low_perf,
 		lazy = true,
 		cmd = { "Outline", "OutlineOpen" },
 		keys = { { "<leader>to", "<cmd>Outline<CR>", desc = "symbols outline: Toggle" } },
@@ -215,6 +248,7 @@ return {
 	-- split/join blocks of code (<space>m - toggle, <space>j - join, <space>s - split)
 	{
 		"Wansmer/treesj",
+		enabled = enabled_unless_low_perf,
 		config = function()
 			require("treesj").setup({
 				max_join_length = 240,
@@ -236,6 +270,7 @@ return {
 	{ "tpope/vim-sleuth" },
 	{
 		"HiPhish/rainbow-delimiters.nvim",
+		enabled = enabled_unless_low_perf,
 		config = function()
 			require("rainbow-delimiters.setup").setup({
 				strategy = {
@@ -248,9 +283,10 @@ return {
 		end,
 	},
 
-	-- code actions
+	-- code actions (needs LSP)
 	{
 		"aznhe21/actions-preview.nvim",
+		enabled = enabled_unless_low_perf,
 		config = function()
 			require("actions-preview").setup({
 				diff = {
@@ -265,6 +301,7 @@ return {
 	-- debug adapter
 	{
 		"mfussenegger/nvim-dap",
+		enabled = enabled_unless_low_perf,
 		lazy = true,
 		config = function()
 			-- dap sign icons and colors (using extmark signs instead of deprecated vim.fn.sign_define)
@@ -283,6 +320,7 @@ return {
 	},
 	{
 		"jay-babu/mason-nvim-dap.nvim",
+		enabled = enabled_unless_low_perf,
 		config = function()
 			require("mason-nvim-dap").setup({
 				ensure_installed = custom.installable_debugger_names(), -- NOTE: .config/nvim/lua/custom/debuggers_sample.lua
@@ -292,6 +330,7 @@ return {
 	},
 	{
 		"rcarriga/nvim-dap-ui",
+		enabled = enabled_unless_low_perf,
 		config = function()
 			local dap, dapui = require("dap"), require("dapui")
 			dapui.setup({})
@@ -310,6 +349,7 @@ return {
 	},
 	{
 		"theHamsta/nvim-dap-virtual-text",
+		enabled = enabled_unless_low_perf,
 		config = function()
 			require("nvim-dap-virtual-text").setup({ commented = true })
 		end,
@@ -323,12 +363,14 @@ return {
 			events = { "BufWritePost", "BufReadPost", "InsertLeave" },
 			linters_by_ft = custom.linters(), -- .config/nvim/lua/custom/linters_sample.lua
 		},
-		cond = custom.features().linter, -- .config/nvim/lua/custom/init.lua
+		-- loaded only when the `linter` feature is on, and not on low-perf machines
+		cond = custom.features().linter and not tools.system.low_perf(),
 	},
 
-	-- visualize LSP hierarchies
+	-- visualize LSP hierarchies (needs LSP)
 	{
 		"retran/meow.yarn.nvim",
+		enabled = enabled_unless_low_perf,
 		dependencies = { "MunifTanjim/nui.nvim" },
 		config = function()
 			require("meow.yarn").setup({})

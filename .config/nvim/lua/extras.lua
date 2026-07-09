@@ -6,18 +6,16 @@
 --
 -- lazyvim.plugins.extras
 --
--- last update: 2026.04.20.
+-- last update: 2026.07.09.
 
-return {
+local tools = require("tools") -- ~/.config/nvim/lua/tools.lua
+local low_perf = tools.system.low_perf()
+
+local spec = {
 	--------
 	-- lazyvim.plugins.extras.coding.*
 	--
 	{ import = "lazyvim.plugins.extras.coding.luasnip" }, -- NOTE: blink.cmp has built-in snippets; this adds LuaSnip engine
-
-	--------
-	-- lazyvim.plugins.extras.dap.*
-	--
-	{ import = "lazyvim.plugins.extras.dap.core" },
 
 	--------
 	-- lazyvim.plugins.extras.editor.*
@@ -51,10 +49,21 @@ return {
 	--
 	{ import = "lazyvim.plugins.extras.ui.mini-indentscope" }, -- NOTE: optional in v15 (snacks.scope is core default)
 	{ import = "lazyvim.plugins.extras.ui.mini-starter" },
-	{ import = "lazyvim.plugins.extras.ui.treesitter-context" },
 
 	--------
 	-- lazyvim.plugins.extras.util.*
 	--
 	--{ import = "lazyvim.plugins.extras.util.startuptime" },
 }
+
+-- extras that are too heavy for low-performance machines
+if not low_perf then
+	vim.list_extend(spec, {
+		-- lazyvim.plugins.extras.dap.*
+		{ import = "lazyvim.plugins.extras.dap.core" },
+		-- lazyvim.plugins.extras.ui.*
+		{ import = "lazyvim.plugins.extras.ui.treesitter-context" },
+	})
+end
+
+return spec
