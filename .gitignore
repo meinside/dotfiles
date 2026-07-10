@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2026.06.22.
+# last update: 2026.07.10.
 
 # unnecessary binary files
 *.a
@@ -163,6 +163,7 @@ xcuserdata
 .AndroidStudio*/
 .cagent/
 .claude/
+.claude.json
 .codeium/
 .conda/
 .cortex-debug
