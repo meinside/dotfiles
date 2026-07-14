@@ -1,13 +1,13 @@
 # partial tmux.conf for macOS
 #
-# last update: 2025.06.05.
+# last update: 2026.07.14.
 
 # https://www.ditig.com/256-colors-cheat-sheet
 # color121 = light green
 # color153 = light sky blue
 # color226 = yellow
 
-set -g default-terminal xterm-256color
+# NOTE: default-terminal is set to 'tmux-256color' in tmux.conf; do not override it here.
 
 set -g message-command-style fg=color255,bg=default
 set -g message-style fg=color255,bg=default
