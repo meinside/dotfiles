@@ -2,7 +2,7 @@
 --
 -- File for autocmds
 --
--- last update: 2026.04.20.
+-- last update: 2026.07.14.
 
 -- Autocmds are automatically loaded on the VeryLazy event
 -- Default autocmds that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/autocmds.lua
@@ -12,6 +12,13 @@
 --
 -- Or remove existing autocmds by their group name (which is prefixed with `lazyvim_` for the defaults)
 -- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
+
+-- activate built-in undotree plugin (nvim 0.12+): enables `:Undotree`
+vim.api.nvim_create_autocmd("VimEnter", {
+	callback = function()
+		pcall(vim.cmd, "packadd nvim.undotree")
+	end,
+})
 
 -- FIXME: not working in mosh (https://github.com/mobile-shell/mosh/issues/352)
 vim.api.nvim_create_autocmd({ "VimLeave" }, {

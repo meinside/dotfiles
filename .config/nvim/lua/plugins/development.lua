@@ -2,7 +2,7 @@
 --
 -- File for plugins for development
 --
--- last update: 2026.07.09.
+-- last update: 2026.07.14.
 
 ------------------------------------------------
 -- imports
@@ -24,9 +24,6 @@ local lisps = { "clojure", "fennel", "janet", "lisp", "scheme" }
 vim.g["conjure#filetypes"] = lisps
 -- (for nvim-parinfer)
 vim.g["parinfer_filetypes"] = lisps
--- (for guns/vim-sexp)
-vim.g["sexp_enable_insert_mode_mappings"] = 0 -- '"' key works weirdly in insert mode
-vim.g["sexp_filetypes"] = table.concat(lisps, ",")
 
 return {
 	--------------------------------
@@ -240,7 +237,12 @@ return {
 		end,
 	},
 	{ "tpope/vim-ragtag" }, -- TAG + <ctrl-x> + @, !, #, $, /, <space>, <cr>, ...
-	{ "tpope/vim-sleuth" },
+	-- auto-detect indentation (Lua replacement for tpope/vim-sleuth)
+	{
+		"NMAC427/guess-indent.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		opts = {},
+	},
 	{
 		"HiPhish/rainbow-delimiters.nvim",
 		enabled = enabled_unless_low_perf,
@@ -373,21 +375,22 @@ return {
 	-- for evaluating: \ee (current form / selection), \er (root form), \eb (current buffer), ...
 	-- for controlling log buffer: \ls (horizontal), \lv (vertical), \lt (new tab), \lq (close all tabs), ...
 	{ "Olical/conjure" },
-	-- >f, <f : move a form
-	-- >e, <e : move an element
-	-- >), <), >(, <( : move a parenthesis
-	-- <I, >I : insert at the beginning or end of a form
-	-- dsf : remove surroundings
-	-- cse(, cse), cseb : surround an element with parenthesis
-	-- cse[, cse] : surround an element with brackets
-	-- cse{, cse} : surround an element with braces
+	-- structural editing for lisps (Treesitter-based, Lua)
+	--
+	-- W/B/E/gE : move by element
+	-- (, ) : jump to parent form head/tail; T : top-level form head
+	-- >), <) : slurp/barf forwards
+	-- <(, >( : slurp/barf backwards
+	-- see :h nvim-paredit for the full keymap set
 	{
-		"guns/vim-sexp",
+		"julienvincent/nvim-paredit",
 		ft = lisps,
-	},
-	{
-		"tpope/vim-sexp-mappings-for-regular-people",
-		ft = lisps,
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		config = function()
+			require("nvim-paredit").setup({
+				filetypes = lisps,
+			})
+		end,
 	},
 	{
 		"gpanders/nvim-parinfer",
