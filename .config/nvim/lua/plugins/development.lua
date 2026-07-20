@@ -2,7 +2,7 @@
 --
 -- File for plugins for development
 --
--- last update: 2026.07.14.
+-- last update: 2026.07.20.
 
 ------------------------------------------------
 -- imports
@@ -49,7 +49,7 @@ return {
 				opts.folds = { enable = false }
 				return
 			end
-			-- https://github.com/nvim-treesitter/nvim-treesitter#supported-languages
+			-- https://github.com/nvim-treesitter/nvim-treesitter/blob/main/SUPPORTED_LANGUAGES.md
 			vim.list_extend(opts.ensure_installed or {}, {
 				"asm",
 				"bash",
@@ -77,6 +77,7 @@ return {
 				"go",
 				"gomod",
 				"gosum",
+				"gotmpl",
 				"gowork",
 				"gpg",
 				"heex",
@@ -105,6 +106,8 @@ return {
 				"nasm",
 				"nginx",
 				"nim",
+				"nim_format_string",
+				"nix",
 				"perl",
 				"php",
 				"printf",
@@ -118,8 +121,8 @@ return {
 				"ssh_config",
 				"strace",
 				"swift",
-				"tmux",
 				"toml",
+				"tsv",
 				"tsx",
 				"typescript",
 				"vim",
@@ -127,6 +130,7 @@ return {
 				"xml",
 				"yaml",
 				"zig",
+				"zsh",
 			})
 			opts.highlight = { enable = true }
 			opts.rainbow = {
