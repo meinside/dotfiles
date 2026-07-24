@@ -2,7 +2,7 @@
 --
 -- File for plugins for development
 --
--- last update: 2026.07.20.
+-- last update: 2026.07.24.
 
 ------------------------------------------------
 -- imports
@@ -111,6 +111,7 @@ return {
 				"perl",
 				"php",
 				"printf",
+				"proto",
 				"python",
 				"query",
 				"regex",
