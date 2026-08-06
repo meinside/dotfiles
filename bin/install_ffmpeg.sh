@@ -4,7 +4,7 @@
 #
 # for building ffmpeg from source code.
 #
-# last update: 2026.07.09.
+# last update: 2026.08.06.
 
 set -euo pipefail
 
@@ -15,7 +15,7 @@ set -euo pipefail
 # frequently updated values
 
 # https://github.com/FFmpeg/FFmpeg/tags
-readonly FFMPEG_VERSION="n8.1.2" # XXX - edit for newer ffmpeg version
+readonly FFMPEG_VERSION="n9.0" # XXX - edit for newer ffmpeg version
 
 ################################
 #
@@ -62,12 +62,25 @@ readonly TMP_DIR="${TMPDIR:-/tmp}/ffmpeg"
 function prep {
 	# install needed packages
 	if [ -x /usr/bin/apt-get ]; then
+		sudo apt-get update
 		sudo apt-get install -y build-essential \
+			git \
+			nasm \
+			pkg-config \
+			libaom-dev \
+			libass-dev \
 			libdav1d-dev \
 			libfdk-aac-dev \
+			libfontconfig-dev \
+			libfreetype-dev \
+			libfribidi-dev \
+			libharfbuzz-dev \
 			libmp3lame-dev \
 			libnuma-dev \
+			libopenh264-dev \
 			libopus-dev \
+			libssl-dev \
+			libsvtav1enc-dev \
 			libvorbis-dev \
 			libvpx-dev \
 			libwebp-dev \
@@ -87,22 +100,25 @@ function clean {
 }
 
 function install {
-	local platform arch
-	platform=$(uname -m)
-	case "$platform" in
-	arm64) arch="aarch64" ;;
-	arm*) arch="armel" ;;
-	*) arch="$platform" ;;
-	esac
-
 	# clone source code, configure, make, and install
+	#
+	# NOTE: --arch is intentionally omitted; configure detects it from the host.
 	git clone --depth=1 -b "$FFMPEG_VERSION" https://github.com/FFmpeg/FFmpeg.git "$TMP_DIR"
 	cd "$TMP_DIR"
-	./configure --arch="$arch" --target-os=linux --enable-gpl --enable-nonfree \
+	./configure --target-os=linux --enable-gpl --enable-nonfree \
+		--enable-openssl \
+		--enable-libaom \
+		--enable-libass \
 		--enable-libdav1d \
 		--enable-libfdk-aac \
+		--enable-libfontconfig \
+		--enable-libfreetype \
+		--enable-libfribidi \
+		--enable-libharfbuzz \
 		--enable-libmp3lame \
+		--enable-libopenh264 \
 		--enable-libopus \
+		--enable-libsvtav1 \
 		--enable-libvorbis \
 		--enable-libvpx \
 		--enable-libwebp \
@@ -111,6 +127,10 @@ function install {
 		--enable-libxvid
 	make -j"$(nproc)"
 	sudo make install
+	sudo ldconfig
+
+	# smoke test the freshly installed binary
+	info "* installed: $(ffmpeg -version | head -1)"
 }
 
 function install_linux {
