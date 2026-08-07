@@ -137,7 +137,7 @@ tokens embedded in the `name` of a `models.json` entry:
 | `tier:fast` | Cheap, mechanical lookup and recon | `claude-haiku-4-5` |
 | `tier:mid` | Default implementation model | `claude-sonnet-5` |
 | `tier:strong` | Architecture, review, adversarial verification | `claude-opus-5` |
-| `tier:mythos` | Experimental top-end model, no agent uses it | `claude-fable-5` |
+| `tier:fable` | Experimental top-end model, no agent uses it | `claude-fable-5` |
 | `tier:local` | Local Ollama model, zero cost | `gemma4-e4b` |
 
 Only `models.json` knows which provider and model a tier resolves to, so a
@@ -180,7 +180,7 @@ the first two:
 - **Never a thinking level.** A trailing `:<suffix>` is read as a thinking level
   when it is one of `off`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`, so
   `tier:high` would mean "model `tier`, thinking high". `fast` / `mid` / `strong`
-  / `mythos` / `local` are safe.
+  / `fable` / `local` are safe.
 - The colon itself is fine. Full-pattern matching happens before the colon split,
   which is also why Ollama ids such as `gemma4:e4b` work.
 

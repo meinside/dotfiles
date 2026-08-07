@@ -5,7 +5,7 @@
     "tier:strong",
     "tier:mid",
     "tier:fast",
-    "tier:mythos",
+    "tier:fable",
     "tier:local",
     "google-vertex/gemini-3*"
   ],

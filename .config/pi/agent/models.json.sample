@@ -33,7 +33,7 @@
       "models": [
         {
           "id": "<<<bedrock-application-inference-profile-id-for-fable-5>>>",
-          "name": "tier:mythos (claude-fable-5)",
+          "name": "tier:fable (claude-fable-5)",
           "api": "bedrock-converse-stream",
           "reasoning": true,
           "input": [
