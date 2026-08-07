@@ -1,7 +1,7 @@
 # .zshrc
 #
 # created on 2014.06.30.
-# updated on 2026.05.06.
+# updated on 2026.08.07.
 #
 # $ chsh -s `which zsh`
 #
@@ -233,7 +233,12 @@ export PATH="$HOME/bin:$HOME/.local/bin:$HOME/.local/share/nvim/mason/bin:$PATH"
 #  custom config directories
 #
 
+# claude code
 export CLAUDE_CONFIG_DIR="$XDG_CONFIG_HOME/claude"
+
+# pi agent
+export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
+export PI_CODING_AGENT_SESSION_DIR="$XDG_STATE_HOME/pi/sessions"
 
 #
 ######################

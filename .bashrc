@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2026.05.06.
+# updated on 2026.08.07.
 #
 # $ chsh -s `which zsh`
 #
@@ -155,7 +155,12 @@ fi
 #  custom config directories
 #
 
+# claude code
 export CLAUDE_CONFIG_DIR="$XDG_CONFIG_HOME/claude"
+
+# pi agent
+export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
+export PI_CODING_AGENT_SESSION_DIR="$XDG_STATE_HOME/pi/sessions"
 
 #
 ######################
