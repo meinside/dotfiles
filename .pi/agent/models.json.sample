@@ -1,0 +1,105 @@
+{
+  "providers": {
+    "amazon-bedrock": {
+      "models": [
+        {
+          "id": "<<<bedrock-application-inference-profile-id-for-fable-5>>>",
+          "name": "bedrock-claude-fable-5",
+          "api": "bedrock-converse-stream",
+          "reasoning": true,
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 1000000,
+          "maxTokens": 128000,
+          "cost": {
+            "input": 10,
+            "output": 50,
+            "cacheRead": 1,
+            "cacheWrite": 12.5
+          },
+          "thinkingLevelMap": {
+            "off": null,
+            "xhigh": "xhigh",
+            "max": "max"
+          },
+          "compat": {
+            "supportsStrictMode": true
+          }
+        },
+        {
+          "id": "<<<bedrock-application-inference-profile-id-for-opus-5>>>",
+          "name": "bedrock-claude-opus-5",
+          "api": "bedrock-converse-stream",
+          "reasoning": true,
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 1000000,
+          "maxTokens": 128000,
+          "cost": {
+            "input": 5,
+            "output": 25,
+            "cacheRead": 0.5,
+            "cacheWrite": 6.25
+          },
+          "thinkingLevelMap": {
+            "xhigh": "xhigh",
+            "max": "max"
+          },
+          "compat": {
+            "supportsStrictMode": true
+          }
+        },
+        {
+          "id": "<<<bedrock-application-inference-profile-id-for-sonnet-5>>>",
+          "name": "bedrock-claude-sonnet-5",
+          "api": "bedrock-converse-stream",
+          "reasoning": true,
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 1000000,
+          "maxTokens": 128000,
+          "cost": {
+            "input": 2,
+            "output": 10,
+            "cacheRead": 0.2,
+            "cacheWrite": 2.5
+          },
+          "thinkingLevelMap": {
+            "xhigh": "xhigh",
+            "max": "max"
+          },
+          "compat": {
+            "supportsStrictMode": true
+          }
+        },
+        {
+          "id": "<<<bedrock-application-inference-profile-id-for-haiku-4.5>>>",
+          "name": "bedrock-claude-haiku-4-5",
+          "api": "bedrock-converse-stream",
+          "reasoning": true,
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 200000,
+          "maxTokens": 64000,
+          "cost": {
+            "input": 1,
+            "output": 5,
+            "cacheRead": 0.1,
+            "cacheWrite": 1.25
+          },
+          "compat": {
+            "supportsStrictMode": true
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "amazon-bedrock": {
+    "type": "api_key",
+    "key": "<<<bedrock-long-term-api-key-here>>>",
+    "env": {
+      "AWS_REGION": "<<<aws-region-here>>>",
+      "AWS_BEDROCK_FORCE_CACHE": "1"
+    }
+  },
+  "google": {
+    "type": "api_key",
+    "key": "<<<gemini-api-key-here>>>"
+  },
+  "google-vertex": {
+    "type": "api_key",
+    "env": {
+      "GOOGLE_APPLICATION_CREDENTIALS": "<<<google-cloud-credentials-filepath-here>>>",
+      "GOOGLE_CLOUD_PROJECT": "<<<google-cloud-project-id-here>>>",
+      "GOOGLE_CLOUD_LOCATION": "<<<google-cloud-location-here>>>"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "lastChangelogVersion": "0.83.0",
+  "theme": "dark",
+  "defaultProvider": "amazon-bedrock",
+  "defaultModel": "<<<model-id>>>",
+  "enabledModels": [
+    "<<<bedrock-model-name>>>",
+    "bedrock-claude-opus-5",
+    "bedrock-claude-sonnet-5",
+    "bedrock-claude-fable-5",
+    "bedrock-claude-haiku-4-5",
+    "<<<provider/model-id>>>",
+    "<<<or-just-model-id>>>"
+  ]
+}
