@@ -1,15 +1,13 @@
 {
-  "lastChangelogVersion": "0.83.0",
   "theme": "dark",
-  "defaultProvider": "amazon-bedrock",
-  "defaultModel": "<<<model-id>>>",
+  "defaultModel": "tier:strong",
   "enabledModels": [
-    "<<<bedrock-model-name>>>",
-    "bedrock-claude-opus-5",
-    "bedrock-claude-sonnet-5",
-    "bedrock-claude-fable-5",
-    "bedrock-claude-haiku-4-5",
-    "<<<provider/model-id>>>",
-    "<<<or-just-model-id>>>"
-  ]
+    "tier:strong",
+    "tier:mid",
+    "tier:fast",
+    "tier:mythos",
+    "tier:local",
+    "google-vertex/gemini-3*"
+  ],
+  "defaultThinkingLevel": "high"
 }

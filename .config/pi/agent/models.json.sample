@@ -1,10 +1,39 @@
 {
   "providers": {
+    "ollama": {
+      "baseUrl": "http://localhost:11434/v1",
+      "api": "openai-completions",
+      "apiKey": "ollama",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": true,
+        "maxTokensField": "max_tokens"
+      },
+      "models": [
+        {
+          "id": "gemma4:e4b",
+          "name": "tier:local (gemma4-e4b)",
+          "reasoning": true,
+          "input": [
+            "text",
+            "image"
+          ],
+          "contextWindow": 131072,
+          "maxTokens": 32000,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          }
+        }
+      ]
+    },
     "amazon-bedrock": {
       "models": [
         {
           "id": "<<<bedrock-application-inference-profile-id-for-fable-5>>>",
-          "name": "bedrock-claude-fable-5",
+          "name": "tier:mythos (claude-fable-5)",
           "api": "bedrock-converse-stream",
           "reasoning": true,
           "input": [
@@ -30,7 +59,7 @@
         },
         {
           "id": "<<<bedrock-application-inference-profile-id-for-opus-5>>>",
-          "name": "bedrock-claude-opus-5",
+          "name": "tier:strong (claude-opus-5)",
           "api": "bedrock-converse-stream",
           "reasoning": true,
           "input": [
@@ -55,7 +84,7 @@
         },
         {
           "id": "<<<bedrock-application-inference-profile-id-for-sonnet-5>>>",
-          "name": "bedrock-claude-sonnet-5",
+          "name": "tier:mid (claude-sonnet-5)",
           "api": "bedrock-converse-stream",
           "reasoning": true,
           "input": [
@@ -79,8 +108,8 @@
           }
         },
         {
-          "id": "<<<bedrock-application-inference-profile-id-for-haiku-4.5>>>",
-          "name": "bedrock-claude-haiku-4-5",
+          "id": "<<<bedrock-application-inference-profile-id-for-haiku-4-5>>>",
+          "name": "tier:fast (claude-haiku-4-5)",
           "api": "bedrock-converse-stream",
           "reasoning": true,
           "input": [
