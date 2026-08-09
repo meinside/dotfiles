@@ -17,7 +17,7 @@ Without that variable pi ignores everything here. Upstream docs say
 
 | Path | Tracked in dotfiles | Purpose |
 |------|---------------------|---------|
-| `settings.json` | `.sample` mirror | Theme, default model, `enabledModels` for `Ctrl+P` cycling. Holds no secrets since it references tiers instead of ARNs, so the sample is an exact copy |
+| `settings.json` | `.sample` mirror | Theme, default model, `enabledModels` for `Ctrl+P` cycling. Holds no secrets since it references tiers instead of ARNs |
 | `models.json` | `.sample` only | Providers, models and the tier aliases. Holds the AWS account ID inside Bedrock inference profile ARNs, hence the `.sample` indirection |
 | `auth.json` | `.sample` template | Credentials. Never commit the real file. The sample is a **template**, not a mirror: it documents providers (such as `google`) that may not be configured here |
 | `models-store.json` | no | Generated model catalog cache. Do not edit or commit |
@@ -201,18 +201,21 @@ patterns on startup.
 ## Sample files
 
 The real `settings.json` / `models.json` / `auth.json` are untracked; a fresh
-clone starts from the committed `.sample` files. Two things can go wrong: a sample
-drifts, so a new machine cannot resolve the tiers, or a sample leaks a secret,
-which is unrecoverable once pushed. `check.sh` guards both — it checks
-that the samples parse, that they contain no ARN, AWS account id or value taken
-from the real `auth.json`, and that `models.json.sample` / `settings.json.sample`
-still mirror their real counterparts.
+clone starts from the committed `.sample` files. What `check.sh` enforces is that
+the samples parse, that a fresh machine can bootstrap (every tier an agent asks
+for resolves exactly once in `models.json.sample`), and that no sample carries an
+ARN, an AWS account id or a value taken from the real `auth.json`.
+
+Samples are **not** required to mirror the real config. Which providers and models
+a machine has is machine specific, so an entry present on only one side is
+reported as a note, not a failure — the same for a differing `settings.json` key.
+Treat those notes as a reminder to sync when the difference was not intentional.
 
 - `models.json.sample` is generated from the real file by replacing each Bedrock
   ARN with its `<<<...>>>` placeholder, keyed on the tier name. Regenerate it
   whenever a model is added or a tier is renamed.
-- `settings.json.sample` is a byte copy minus the two keys pi rewrites at runtime:
-  `lastChangelogVersion` (on upgrade) and `defaultThinkingLevel` (on the
+- `settings.json.sample` tracks `settings.json` minus the two keys pi rewrites at
+  runtime: `lastChangelogVersion` (on upgrade) and `defaultThinkingLevel` (on the
   in-session toggle). The sample holds the intended starting level, not whatever
   the last session was left on.
 - `auth.json.sample` is maintained by hand as a template.

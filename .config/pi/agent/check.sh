@@ -6,8 +6,9 @@
 #      line in agents/*.md is the only local edit, so it is excluded from the
 #      comparison and there are no diff counts to maintain.
 #   2. Each agent references a tier token that models.json defines exactly once.
-#   3. The committed *.sample files neither drift from the real config nor leak a
-#      secret.
+#   3. The committed *.sample files let a fresh machine bootstrap (every agent
+#      tier resolves) and leak no secret. They are not required to mirror the
+#      real config: which models a machine has is machine specific.
 #   4. Every server in pi-lsp.json that is installed actually execs. The file is
 #      a superset of what any single machine has, so a server missing from PATH
 #      is only reported, not a failure. A server that is present but cannot run
@@ -115,6 +116,7 @@ echo
 echo "Sample files:"
 python3 - "$C" <<'PY' || fail=1
 import json, re, sys
+from glob import glob
 
 cfg = sys.argv[1]
 fails, notes = [], []
@@ -166,35 +168,64 @@ for name in samples:
     for a in sorted(a for a in accounts if a in raw):
         fails.append(f"{name}.sample contains account id {a}")
 
-# models.json.sample mirrors models.json with placeholdered ARNs
-if real_models and "models.json" in samples:
-    real, sample = entries(real_models), entries(samples["models.json"])
-    problems = len(fails)
-    for missing in sorted(str(k[1]) for k in real.keys() - sample.keys()):
-        fails.append(f"models.json.sample missing {missing!r} (regenerate it)")
-    for stale in sorted(str(k[1]) for k in sample.keys() - real.keys()):
-        fails.append(f"models.json.sample has stale entry {stale!r}")
-    for key, rid in real.items():
-        if rid.startswith("arn:") and not PLACEHOLDER.match(sample.get(key, "")):
-            fails.append(f"models.json.sample: {key[1]!r} id is not a <<<placeholder>>>")
-    if len(fails) == problems:
-        notes.append(f"models.json.sample mirrors {len(real)} models")
+# models.json.sample is what a fresh machine starts from, so it must define every
+# tier the agents ask for and must placeholder its ARNs. It is not required to
+# match models.json entry for entry: which providers and models a machine has is
+# machine specific, so entries on one side only are reported, not failed.
+if "models.json" in samples:
+    sample = entries(samples["models.json"])
+    for key, sid in sample.items():
+        if isinstance(sid, str) and sid.startswith("arn:"):
+            fails.append(f"models.json.sample: {key[1]!r} id is a literal ARN")
 
-# settings.json.sample is a byte copy minus pi's runtime state. pi rewrites
-# lastChangelogVersion on upgrade and defaultThinkingLevel on the in-session
-# toggle, so both are excluded to keep the sample from churning.
+    sample_names = [str(k[1]) for k in sample if k[1]]
+    tokens = set()
+    for agent in sorted(glob(f"{cfg}/agents/*.md")):
+        for line in open(agent):
+            if line.startswith("model:"):
+                tokens.add(line.split(":", 1)[1].strip())
+                break
+    for token in sorted(t for t in tokens if t):
+        hits = [n for n in sample_names if token.lower() in n.lower()]
+        if len(hits) != 1:
+            fails.append(
+                f"models.json.sample defines {token!r} {len(hits)} times; agents cannot bootstrap"
+            )
+    if real_models:
+        real = entries(real_models)
+        only_real = sorted(str(k[1]) for k in real.keys() - sample.keys())
+        only_sample = sorted(str(k[1]) for k in sample.keys() - real.keys())
+        for name in only_real:
+            notes.append(f"models.json.sample has no {name!r} (fine if machine specific)")
+        for name in only_sample:
+            notes.append(f"models.json has no {name!r} (fine if machine specific)")
+        for key, rid in real.items():
+            sid = sample.get(key)
+            if not rid.startswith("arn:") or sid is None or sid.startswith("arn:"):
+                continue  # absent, or already reported as a literal ARN
+            if not PLACEHOLDER.match(sid):
+                fails.append(f"models.json.sample: {key[1]!r} id is not a <<<placeholder>>>")
+    notes.append(f"models.json.sample resolves {len(tokens)} agent tier(s)")
+
+# settings.json.sample tracks settings.json closely, but a difference is a
+# reminder rather than an error: pi rewrites lastChangelogVersion on upgrade and
+# defaultThinkingLevel on the in-session toggle (both excluded outright), and the
+# rest may legitimately differ per machine.
 RUNTIME_KEYS = ("lastChangelogVersion", "defaultThinkingLevel")
 real_settings = load("settings.json")
-if real_settings and "settings.json" in samples:
-    strip = lambda d: {k: v for k, v in d.items() if k not in RUNTIME_KEYS}
-    a, b = strip(real_settings), strip(samples["settings.json"])
-    if a != b:
-        keys = sorted(set(a) ^ set(b)) or sorted(k for k in a if a[k] != b.get(k))
-        fails.append("settings.json.sample differs from settings.json: " + ", ".join(keys))
-    elif "lastChangelogVersion" in samples["settings.json"]:
+if "settings.json" in samples:
+    if "lastChangelogVersion" in samples["settings.json"]:
         fails.append("settings.json.sample should not carry lastChangelogVersion")
-    else:
-        notes.append("settings.json.sample matches settings.json")
+    if real_settings:
+        strip = lambda d: {k: v for k, v in d.items() if k not in RUNTIME_KEYS}
+        a, b = strip(real_settings), strip(samples["settings.json"])
+        diff = sorted(set(a) ^ set(b)) + sorted(k for k in a if k in b and a[k] != b[k])
+        if diff:
+            notes.append(
+                "settings.json.sample differs on " + ", ".join(diff) + " (sync if not machine specific)"
+            )
+        else:
+            notes.append("settings.json.sample matches settings.json")
 
 # auth.json.sample is a hand written template; it must hold no real values
 if "auth.json" in samples:
@@ -290,8 +321,8 @@ PY
 
 echo
 if [ "$fail" -ne 0 ]; then
-    echo "Problems found. Run with -v for diffs; see README.md for the update and"
-    echo "sample-regeneration procedures."
+    echo "Problems found. See README.md for the update and sample-regeneration"
+    echo "procedures. -v adds diffs for drifting vendored files."
     exit 1
 fi
 echo "All checks passed."
