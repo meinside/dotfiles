@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Verify this config directory. Four checks, all documented in README.md:
+# Verify this config directory. Five checks, all documented in README.md:
 #
 #   1. Vendored files match the pi-coding-agent bundled examples. The `model:`
 #      line in agents/*.md is the only local edit, so it is excluded from the
@@ -9,7 +9,10 @@
 #   3. The committed *.sample files let a fresh machine bootstrap (every agent
 #      tier resolves) and leak no secret. They are not required to mirror the
 #      real config: which models a machine has is machine specific.
-#   4. Every server in pi-lsp.json that is installed actually execs. The file is
+#   4. models.json prices match pi's model catalog for us-east-1. Advisory only:
+#      the catalog can lag a price change, and a machine may deliberately price a
+#      tier from another region.
+#   5. Every server in pi-lsp.json that is installed actually execs. The file is
 #      a superset of what any single machine has, so a server missing from PATH
 #      is only reported, not a failure. A server that is present but cannot run
 #      is: mason wrappers hardcode the asdf interpreter present at install time,
@@ -247,7 +250,71 @@ for line in fails:
 raise SystemExit(1 if fails else 0)
 PY
 
-# --- 4. lsp servers ---------------------------------------------------------
+# --- 4. model pricing --------------------------------------------------------
+# Prices are USD per 1M tokens, us-east-1 on-demand (see README). Application
+# inference profile ARNs hide the model, so the tier's parenthesised slug is
+# matched against pi's catalog instead. Differences are notes, never failures.
+echo
+echo "Model pricing (us-east-1):"
+python3 - "$C" <<'PRICES'
+import json, re, sys
+
+cfg = sys.argv[1]
+OK = "  \033[32m\u2713\033[0m %s"
+TODO = "  \033[2m\u00b7\033[0m %s"
+FIELDS = ("input", "output", "cacheRead", "cacheWrite")
+PREFIXES = ("anthropic.", "us.anthropic.", "global.anthropic.")
+
+
+def load(name):
+    try:
+        return json.load(open(f"{cfg}/{name}"))
+    except Exception:
+        return None
+
+
+catalog, real = load("models-store.json"), load("models.json")
+if not catalog or not real:
+    print(TODO % "models-store.json or models.json unreadable; skipping price check")
+    raise SystemExit(0)
+
+costs = {}
+
+
+def walk(node):
+    if isinstance(node, dict):
+        if isinstance(node.get("cost"), dict) and node.get("id"):
+            costs.setdefault(str(node["id"]), node["cost"])
+        for value in node.values():
+            walk(value)
+    elif isinstance(node, list):
+        for value in node:
+            walk(value)
+
+
+walk(catalog)
+models = ((real.get("providers") or {}).get("amazon-bedrock") or {}).get("models") or []
+for model in models:
+    found = re.search(r"\(([^)]+)\)", model.get("name") or "")
+    mine = model.get("cost")
+    if not found or not isinstance(mine, dict):
+        continue
+    slug = found.group(1)
+    # us-east-1 is served by the bare and us./global. prefixed catalog ids
+    hits = sorted(k for k in costs if any(k.startswith(p + slug) for p in PREFIXES))
+    if not hits:
+        print(TODO % f"{slug}: not in pi's catalog; verify against the AWS pricing page")
+        continue
+    theirs = costs[hits[0]]
+    off = [f for f in FIELDS if abs(float(mine.get(f, 0)) - float(theirs.get(f, 0))) > 1e-9]
+    if off:
+        detail = ", ".join(f"{f} {mine.get(f)} vs {theirs.get(f)}" for f in off)
+        print(TODO % f"{slug}: differs from catalog on {detail}")
+    else:
+        print(OK % f"{slug} {mine['input']}/{mine['output']}/{mine['cacheRead']}/{mine['cacheWrite']} per 1M")
+PRICES
+
+# --- 5. lsp servers ---------------------------------------------------------
 # pi-lsp never downloads a server, and a custom pi-lsp.json replaces the built-in
 # catalog, so an explicitly configured command that cannot start fails the whole
 # lsp_diagnostics call instead of being skipped.

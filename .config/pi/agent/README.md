@@ -20,7 +20,7 @@ Without that variable pi ignores everything here. Upstream docs say
 | `settings.json` | `.sample` mirror | Theme, default model, `enabledModels` for `Ctrl+P` cycling. Holds no secrets since it references tiers instead of ARNs |
 | `models.json` | `.sample` only | Providers, models and the tier aliases. Holds the AWS account ID inside Bedrock inference profile ARNs, hence the `.sample` indirection |
 | `auth.json` | `.sample` template | Credentials. Never commit the real file. The sample is a **template**, not a mirror: it documents providers (such as `google`) that may not be configured here |
-| `models-store.json` | no | Generated model catalog cache. Do not edit or commit |
+| `models-store.json` | no | Generated model catalog cache. Do not edit or commit. `check.sh` reads it to cross-check prices |
 | `pi-lsp.json` | yes | Language server routes for the `@narumitw/pi-lsp` extension. No secrets or machine-specific paths, so it is committed as-is |
 | `npm/` | no | `pi install` target. Ships its own `.gitignore` containing `*` |
 | `extensions/subagent/` | yes | Vendored subagent extension |
@@ -169,6 +169,27 @@ Local-only machine:
 { "id": "qwen3-coder:30b", "name": "tier:strong (qwen3-coder-30b)" }
 { "id": "gemma4:e4b",      "name": "tier:mid (gemma4-e4b)" }
 ```
+
+### Pricing
+
+`cost` is **USD per 1M tokens**, and the reference is always the
+[AWS Bedrock pricing page](https://aws.amazon.com/bedrock/pricing/) for
+**us-east-1, on-demand**. `cacheWrite` is the 5-minute cache write price,
+`cacheRead` the cache hit price. Update these whenever a tier points at a new
+model; they only drive the footer's cost readout, so a stale value is silently
+wrong rather than broken.
+
+Why us-east-1 specifically: an application inference profile hides which model and
+region it resolves to, so the numbers need one fixed basis. Bedrock prices the
+`us.` and `global.` cross-region profiles the same as us-east-1, while `eu.` and
+`au.` run about 10% higher — do not chase those, keep the file on the us-east-1
+basis.
+
+AWS's Price List API (`pricing.us-east-1.amazonaws.com/.../AmazonBedrock/...`) is
+not a usable source here: it still only carries Claude 2 and Claude 3 era models,
+so the pricing page is authoritative. `check.sh` cross-checks the values against
+pi's own catalog (`models-store.json`, which covers current models) and reports
+differences as notes.
 
 ### Rules the tokens must obey
 

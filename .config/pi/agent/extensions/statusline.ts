@@ -4,12 +4,12 @@
  * Ports the layout/colors of ~/.config/claude/statusline.sh to pi's footer:
  *
  *   [session] user@host 📂dir (branch*) (+12/-3)
- *   model • thinking • ↑14 ↓2.5k CR43k CW12k CH99.3% (auto) [1.3%/1.0M] 💰0.158 ⏱1m02s/12m30s
+ *   model • thinking • [1.3%/1.0M] (auto) 💰0.158 • ↑14 ↓2.5k CR43k CW12k CH99.3% • ⏱1m02s/12m30s
  *
  * Line 1 - who/where: session name, user@host, cwd, git branch (+ dirty marker),
  *          lines added/removed by the edit/write tools.
- * Line 2 - what/how much: model (+ thinking level), token usage, cache stats,
- *          auto-compaction flag, context usage, session cost, api/wall durations.
+ * Line 2 - what/how much: model (+ thinking level), context usage, auto-compaction
+ *          flag, session cost, token/cache stats, api/wall durations.
  * Line 3 - status texts published by other extensions via ctx.ui.setStatus().
  *
  * Command: /statusline    toggles between the built-in footer and this one.
@@ -419,14 +419,31 @@ interface StatsLine {
 	duration: string;
 }
 
-/** `model • thinking • ↑14 ↓2.5k CR43k CW12k CH99.3% (auto) [1.3%/1.0M] 💰0.158 ⏱1m02s/12m30s` */
+/** `model • thinking • [1.3%/1.0M] (auto) 💰0.158 • ↑14 ↓2.5k CR43k CW12k CH99.3% • ⏱1m02s/12m30s` */
 function buildStatsLine(data: StatsLine): string {
-	const parts: string[] = [];
+	/** Space-joined segments, themselves joined by ` • ` below. */
+	const groups: string[] = [];
 	const { totals } = data;
 
 	// model, plus thinking level when the model supports reasoning
-	const thinking = data.model?.reasoning ? ` • ${data.thinkingLevel || "off"} •` : "";
-	parts.push(dim(formatModel(data.model) + thinking));
+	const thinking = data.model?.reasoning ? ` • ${data.thinkingLevel || "off"}` : "";
+	groups.push(dim(formatModel(data.model) + thinking));
+
+	// context usage, auto-compaction indicator and session cost
+	const usage: string[] = [];
+
+	// `?` while unknown (right after compaction, before the next response)
+	const window = data.context?.contextWindow ?? data.model?.contextWindow ?? 0;
+	if (window > 0) {
+		const used = data.context?.percent ?? null;
+		const body = `[${used === null ? "?" : `${used.toFixed(1)}%`}/${formatTokens(window)}]`;
+		const level = used ?? 0;
+		const paint = level > CONFIG.contextErrorPercent ? red : level > CONFIG.contextWarnPercent ? yellow : green;
+		usage.push(paint(body));
+	}
+	if (CONFIG.showAutoCompact && data.autoCompact) usage.push(dim("(auto)"));
+	if (totals.cost > 0) usage.push(`${CONFIG.icons.cost}${totals.cost.toFixed(3)}`);
+	if (usage.length > 0) groups.push(usage.join(" "));
 
 	// token and cache usage
 	if (CONFIG.showTokens) {
@@ -437,29 +454,13 @@ function buildStatsLine(data: StatsLine): string {
 		if (totals.cacheWrite) stats.push(`CW${formatTokens(totals.cacheWrite)}`);
 		const cached = totals.cacheRead || totals.cacheWrite;
 		if (cached && totals.cacheHitRate !== undefined) stats.push(`CH${totals.cacheHitRate.toFixed(1)}%`);
-		if (stats.length > 0) parts.push(dim(stats.join(" ")));
+		if (stats.length > 0) groups.push(dim(stats.join(" ")));
 	}
-
-	// auto-compaction indicator
-	if (CONFIG.showAutoCompact && data.autoCompact) parts.push(dim("(auto)"));
-
-	// context usage: `?` while unknown (right after compaction, before the next response)
-	const window = data.context?.contextWindow ?? data.model?.contextWindow ?? 0;
-	if (window > 0) {
-		const used = data.context?.percent ?? null;
-		const body = `[${used === null ? "?" : `${used.toFixed(1)}%`}/${formatTokens(window)}]`;
-		const level = used ?? 0;
-		const paint = level > CONFIG.contextErrorPercent ? red : level > CONFIG.contextWarnPercent ? yellow : green;
-		parts.push(paint(body));
-	}
-
-	// session cost
-	if (totals.cost > 0) parts.push(`${CONFIG.icons.cost}${totals.cost.toFixed(3)}`);
 
 	// api/wall durations
-	if (CONFIG.showDuration) parts.push(dim(`${CONFIG.icons.time}${data.duration}`));
+	if (CONFIG.showDuration) groups.push(dim(`${CONFIG.icons.time}${data.duration}`));
 
-	return parts.join(" ");
+	return groups.join(dim(" • "));
 }
 
 /** Statuses other extensions published via ctx.ui.setStatus(), sorted by key. */
