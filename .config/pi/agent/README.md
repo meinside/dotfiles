@@ -21,10 +21,12 @@ Without that variable pi ignores everything here. Upstream docs say
 | `models.json` | `.sample` only | Providers, models and the tier aliases. Holds the AWS account ID inside Bedrock inference profile ARNs, hence the `.sample` indirection |
 | `auth.json` | `.sample` template | Credentials. Never commit the real file. The sample is a **template**, not a mirror: it documents providers (such as `google`) that may not be configured here |
 | `models-store.json` | no | Generated model catalog cache. Do not edit or commit |
+| `pi-lsp.json` | yes | Language server routes for the `@narumitw/pi-lsp` extension. No secrets or machine-specific paths, so it is committed as-is |
+| `npm/` | no | `pi install` target. Ships its own `.gitignore` containing `*` |
 | `extensions/subagent/` | yes | Vendored subagent extension |
 | `agents/*.md` | yes | Subagent definitions, read by the subagent extension |
 | `prompts/*.md` | yes | Prompt templates, invoked as `/name` in the editor |
-| `check.sh` | yes | Verifies the vendored files, the agent tiers and the samples |
+| `check.sh` | yes | Verifies the vendored files, the agent tiers, the samples and the LSP servers |
 
 `~/.gitignore` ignores `.config/` wholesale, so tracked files here were added with
 `git add -f`. Files holding secrets or machine-specific values are committed as
@@ -209,11 +211,47 @@ still mirror their real counterparts.
 - `models.json.sample` is generated from the real file by replacing each Bedrock
   ARN with its `<<<...>>>` placeholder, keyed on the tier name. Regenerate it
   whenever a model is added or a tier is renamed.
-- `settings.json.sample` is a byte copy minus `lastChangelogVersion`. That key is
-  runtime state pi rewrites on every upgrade
-  (`dist/core/settings-manager.js`), so keeping it out of the sample avoids
-  pointless churn.
+- `settings.json.sample` is a byte copy minus the two keys pi rewrites at runtime:
+  `lastChangelogVersion` (on upgrade) and `defaultThinkingLevel` (on the
+  in-session toggle). The sample holds the intended starting level, not whatever
+  the last session was left on.
 - `auth.json.sample` is maintained by hand as a template.
+
+## Language servers (pi-lsp)
+
+`settings.json` lists `npm:@narumitw/pi-lsp` under `packages`, and pi installs
+missing packages into `npm/` on first launch (unless `PI_OFFLINE` is set), so a
+fresh machine needs no manual step. It adds `lsp_diagnostics`, `lsp_fix` and
+`/lsp`.
+
+`pi-lsp.json` **replaces** pi-lsp's built-in catalog, and it is deliberately a
+superset of what any single machine has installed: the file stays identical
+everywhere, servers come from mason so the binary is shared with neovim, and
+`check.sh` reports what is missing here. That is safe because an entry whose
+command is absent stays inert until a call includes a file matching its
+extensions — the catch is that it then aborts that whole call, losing the other
+servers' results too, since the "skipped unavailable server" pre-check only
+applies to catalog defaults. So the risk is not an unused language, it is a
+language used here whose server was never installed.
+
+- **`check.sh` separates the two states.** A server missing from `PATH` is a
+  note, not a failure, since the file is machine independent. A server that is
+  on `PATH` but cannot exec *is* a failure: mason wrappers hardcode the asdf
+  interpreter present at install time (`ruby-lsp`, `fennel-ls`), so an asdf
+  upgrade leaves them installed but dead with exit 126, in neovim too. Reinstall
+  the server through mason.
+- **`pushDiagnosticsGraceMs`** on the push-only servers stops a clean file from
+  waiting out the full `timeout`.
+- **Ruby needs both servers**: `ruby-lsp` gives parse errors only, `rubocop --lsp`
+  the style layer. `clojure-lsp` embeds clj-kondo and needs no companion.
+- **biome lints but does not typecheck**, so `.ts` type errors are uncovered; add
+  `vtsls` if that ever matters. Its extension list omits `.json` on purpose, to
+  leave JSON a single route through `vscode-json-language-server`. Python is
+  split the same way as Ruby: `ruff` for lint, `ty` for types.
+- **`lsp_fix` only really works for gopls** (`source.organizeImports`). rubocop
+  exposes autocorrect as per-diagnostic quickfixes and biome marks most fixes
+  *unsafe*, both of which `source.fixAll` skips: use `rubocop -a` and
+  `biome check --write`.
 
 ## Ollama provider
 
@@ -258,7 +296,9 @@ the model's `input` only after confirming it at runtime.
    `models.json` must define `tier:fast`, `tier:mid` and `tier:strong`, otherwise
    the agents cannot resolve a model. See [Model tiers](#model-tiers).
 5. Local model: `ollama pull gemma4:e4b`
-6. Verify: `pi --list-models` and `./check.sh`
+6. Language servers: install through mason so neovim and pi share one binary.
+   `./check.sh` lists what `pi-lsp.json` expects and whether it runs.
+7. Verify: `pi --list-models` and `./check.sh`
 
 ## Security note
 

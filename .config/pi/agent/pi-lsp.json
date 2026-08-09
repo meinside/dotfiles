@@ -1,0 +1,96 @@
+{
+  "timeout": 30000,
+  "servers": {
+    "gopls": {
+      "command": ["gopls"],
+      "extensions": [".go"]
+    },
+    "lua-language-server": {
+      "command": ["lua-language-server"],
+      "extensions": [".lua"],
+      "pushDiagnosticsGraceMs": 3000
+    },
+    "fennel-ls": {
+      "command": ["fennel-ls"],
+      "extensions": [".fnl"],
+      "pushDiagnosticsGraceMs": 3000
+    },
+    "ruby-lsp": {
+      "command": ["ruby-lsp"],
+      "extensions": [".rb", ".rake", ".gemspec", ".ru"],
+      "pushDiagnosticsGraceMs": 3000
+    },
+    "rubocop": {
+      "command": ["rubocop", "--lsp"],
+      "extensions": [".rb", ".rake", ".gemspec", ".ru"]
+    },
+    "clojure-lsp": {
+      "command": ["clojure-lsp", "listen"],
+      "extensions": [".clj", ".cljs", ".cljc", ".edn", ".bb"],
+      "pushDiagnosticsGraceMs": 3000
+    },
+    "biome": {
+      "command": ["biome", "lsp-proxy"],
+      "extensions": [
+        ".js",
+        ".jsx",
+        ".mjs",
+        ".cjs",
+        ".ts",
+        ".tsx",
+        ".mts",
+        ".cts",
+        ".css",
+        ".graphql",
+        ".gql",
+        ".vue",
+        ".svelte",
+        ".astro"
+      ]
+    },
+    "ruff": {
+      "command": ["ruff", "server"],
+      "extensions": [".py", ".pyi"]
+    },
+    "ty": {
+      "command": ["ty", "server"],
+      "extensions": [".py", ".pyi"]
+    },
+    "bash-language-server": {
+      "command": ["bash-language-server", "start"],
+      "extensions": [".sh", ".bash"]
+    },
+    "clangd": {
+      "command": ["clangd", "--background-index", "--clang-tidy"],
+      "extensions": [".c", ".h", ".cc", ".cpp", ".cxx", ".hpp", ".hh", ".hxx", ".m"]
+    },
+    "jdtls": {
+      "command": ["jdtls"],
+      "extensions": [".java"]
+    },
+    "zls": {
+      "command": ["zls"],
+      "extensions": [".zig", ".zon"]
+    },
+    "yaml-language-server": {
+      "command": ["yaml-language-server", "--stdio"],
+      "extensions": [".yaml", ".yml"],
+      "pushDiagnosticsGraceMs": 2000
+    },
+    "vscode-json-language-server": {
+      "command": ["vscode-json-language-server", "--stdio"],
+      "extensions": [".json", ".jsonc"],
+      "pushDiagnosticsGraceMs": 2000
+    },
+    "taplo": {
+      "command": ["taplo", "lsp", "stdio"],
+      "extensions": [".toml"],
+      "pushDiagnosticsGraceMs": 2000
+    },
+    "marksman": {
+      "command": ["marksman", "server"],
+      "extensions": [".md", ".markdown"],
+      "pushDiagnosticsGraceMs": 2000
+    }
+  }
+}
