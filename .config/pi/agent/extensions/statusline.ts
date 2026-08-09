@@ -5,18 +5,13 @@
  *
  *   [session] user@host 📂dir (branch*) (+12/-3)
  *   model • thinking • [1.3%/1.0M] (auto) 💰0.158 • ↑14 ↓2.5k CR43k CW12k CH99.3% • ⏱1m02s/12m30s
+ *   <status texts published by other extensions via ctx.ui.setStatus()>
  *
- * Line 1 - who/where: session name, user@host, cwd, git branch (+ dirty marker),
- *          lines added/removed by the edit/write tools.
- * Line 2 - what/how much: model (+ thinking level), context usage, auto-compaction
- *          flag, session cost, token/cache stats, api/wall durations.
- * Line 3 - status texts published by other extensions via ctx.ui.setStatus().
+ * Colors are the claude ones: user=blue, host=bright red, dir=dim green,
+ * branch=cyan, dirty=red, +added/-removed=green/red, stats=dim,
+ * context=green/yellow/red by usage.
  *
  * Command: /statusline    toggles between the built-in footer and this one.
- *
- * Colors (same as claude statusline.sh):
- *   user=blue, host=bright red, dir=dim green, branch=cyan, dirty marker=red,
- *   +added=green / -removed=red, model+stats=dim, context=green/yellow/red.
  */
 
 import { execFile } from "node:child_process";

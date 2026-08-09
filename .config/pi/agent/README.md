@@ -24,6 +24,9 @@ Without that variable pi ignores everything here. Upstream docs say
 | `pi-lsp.json` | yes | Language server routes for the `@narumitw/pi-lsp` extension. No secrets or machine-specific paths, so it is committed as-is |
 | `npm/` | no | `pi install` target. Ships its own `.gitignore` containing `*` |
 | `extensions/subagent/` | yes | Vendored subagent extension |
+| `extensions/guard.ts` | yes | Blocks writes to credential files, confirms package installs and irreversible commands |
+| `extensions/git-checkpoint.ts` | yes | Vendored upstream example: per-turn git stash checkpoints for `/fork` |
+| `extensions/statusline.ts` | yes | Claude Code style footer |
 | `agents/*.md` | yes | Subagent definitions, read by the subagent extension |
 | `prompts/*.md` | yes | Prompt templates, invoked as `/name` in the editor |
 | `check.sh` | yes | Verifies the vendored files, the agent tiers, the samples and the LSP servers |
@@ -107,15 +110,16 @@ pi-coding-agent`, and before committing a change to this directory.
 When it reports drift:
 
 ```bash
-U="$(brew --prefix pi-coding-agent)"/libexec/lib/node_modules/@earendil-works/pi-coding-agent/examples/extensions/subagent
+U="$(brew --prefix pi-coding-agent)"/libexec/lib/node_modules/@earendil-works/pi-coding-agent/examples/extensions
 C=~/.config/pi/agent
 
-diff -u $C/extensions/subagent/index.ts $U/index.ts   # inspect first
+diff -u $C/extensions/subagent/index.ts $U/subagent/index.ts   # inspect first
 
-cp $U/index.ts $U/agents.ts $C/extensions/subagent/
-cp $U/prompts/*.md $C/prompts/
-cp $U/agents/*.md $C/agents/                          # then re-apply the tiers
-                                                      # from the Agents table
+cp $U/subagent/index.ts $U/subagent/agents.ts $C/extensions/subagent/
+cp $U/git-checkpoint.ts $C/extensions/
+cp $U/subagent/prompts/*.md $C/prompts/
+cp $U/subagent/agents/*.md $C/agents/     # then re-apply the tiers from the
+                                          # Agents table
 ~/.config/pi/agent/check.sh
 ```
 
@@ -128,6 +132,30 @@ Cellar directory the running process started from stays in place:
 HOMEBREW_NO_INSTALL_CLEANUP=1 brew upgrade pi-coding-agent
 brew cleanup pi-coding-agent    # after the session ends
 ```
+
+## Guard extension
+
+pi has no tool permission system, on purpose: built-in tools run with the
+permissions of the pi process, and pi's `docs/security.md` points at containers or
+micro-VMs rather than per-call prompts. That is no use here, since this config
+edits the home directory itself. `extensions/guard.ts` is the narrow middle
+ground — the patterns live in the file, the decisions are:
+
+- Credential files (`~/.ssh`, `~/.gnupg`, `~/.aws`, `~/.netrc`, `~/.npmrc`,
+  `auth.json`) are **blocked, not confirmed**. There is no case where the agent
+  should rewrite them, so a prompt would only be a chance to say yes by mistake.
+- Package managers and irreversible git/filesystem operations **ask once**.
+  Read-only and reversible forms are excluded deliberately: a gate that fires on
+  every `ls` gets removed, and a noisy one trains blind acceptance.
+- With no UI to ask (`-p`, `--mode json`) a match is **blocked**, so headless runs
+  fail loudly instead of installing something.
+- `!` commands go through `user_bash`, which only enforces that same no-UI rule.
+  They were already an explicit user action.
+
+`extensions/git-checkpoint.ts` is the other half: an unmodified copy of pi's
+example that stashes a checkpoint each turn so `/fork` can restore code state.
+Keeping it a separate file lets `check.sh` diff it against upstream and lets
+`pi config` disable it on its own.
 
 ## Model tiers
 

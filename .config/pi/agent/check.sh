@@ -1,26 +1,15 @@
 #!/usr/bin/env bash
 #
-# Verify this config directory. Five checks, all documented in README.md:
+# Verify this config directory, as documented in README.md. Each check explains
+# itself where it is implemented below:
 #
-#   1. Vendored files match the pi-coding-agent bundled examples. The `model:`
-#      line in agents/*.md is the only local edit, so it is excluded from the
-#      comparison and there are no diff counts to maintain.
-#   2. Each agent references a tier token that models.json defines exactly once.
-#   3. The committed *.sample files let a fresh machine bootstrap (every agent
-#      tier resolves) and leak no secret. They are not required to mirror the
-#      real config: which models a machine has is machine specific.
-#   4. models.json prices match pi's model catalog for us-east-1. Advisory only:
-#      the catalog can lag a price change, and a machine may deliberately price a
-#      tier from another region.
-#   5. Every server in pi-lsp.json that is installed actually execs. The file is
-#      a superset of what any single machine has, so a server missing from PATH
-#      is only reported, not a failure. A server that is present but cannot run
-#      is: mason wrappers hardcode the asdf interpreter present at install time,
-#      so they stay on PATH but die with exit 126 once that version is gone.
+#   1. vendored files  2. agent tiers  3. sample files  4. model pricing  5. lsp
 #
-# Deliberately does not reimplement pi's model resolution (globs, provider/id,
-# thinking-level suffixes): that logic lives in dist/core/model-resolver.js and a
-# copy here would rot silently. pi already warns about unmatched scope patterns.
+# Machine-specific differences (which models, which language servers) are reported
+# as notes; only drift, an unresolvable tier, a leak or a broken server fails.
+#
+# Does not reimplement pi's model resolution (globs, provider/id, thinking-level
+# suffixes): that lives in dist/core/model-resolver.js and a copy here would rot.
 #
 # Usage: ./check.sh [-v]     # -v prints diffs for drifting files
 #
@@ -31,8 +20,8 @@ VERBOSE=0
 
 C="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PREFIX="$(brew --prefix pi-coding-agent 2>/dev/null)" || true
-U="$PREFIX/libexec/lib/node_modules/@earendil-works/pi-coding-agent/examples/extensions/subagent"
-if [ -z "$PREFIX" ] || [ ! -d "$U" ]; then
+U="$PREFIX/libexec/lib/node_modules/@earendil-works/pi-coding-agent/examples/extensions"
+if [ -z "$PREFIX" ] || [ ! -d "$U/subagent" ]; then
     echo "error: upstream examples not found (looked in ${U:-brew --prefix pi-coding-agent})" >&2
     exit 2
 fi
@@ -46,10 +35,21 @@ fail=0
 # --- 1. vendored files ------------------------------------------------------
 echo
 echo "Vendored files:"
-for rel in extensions/subagent/index.ts extensions/subagent/agents.ts \
-    prompts/implement.md prompts/scout-and-plan.md prompts/implement-and-review.md \
-    agents/scout.md agents/planner.md agents/reviewer.md agents/worker.md; do
-    up="$U/${rel#extensions/subagent/}"
+# local path : path under examples/extensions (the subagent files keep their own
+# directory upstream, the standalone extensions sit at the top level)
+for pair in \
+    extensions/subagent/index.ts:subagent/index.ts \
+    extensions/subagent/agents.ts:subagent/agents.ts \
+    extensions/git-checkpoint.ts:git-checkpoint.ts \
+    prompts/implement.md:subagent/prompts/implement.md \
+    prompts/scout-and-plan.md:subagent/prompts/scout-and-plan.md \
+    prompts/implement-and-review.md:subagent/prompts/implement-and-review.md \
+    agents/scout.md:subagent/agents/scout.md \
+    agents/planner.md:subagent/agents/planner.md \
+    agents/reviewer.md:subagent/agents/reviewer.md \
+    agents/worker.md:subagent/agents/worker.md; do
+    rel="${pair%%:*}"
+    up="$U/${pair#*:}"
     [ -f "$C/$rel" ] || {
         bad "$rel missing locally"
         fail=1
@@ -113,8 +113,8 @@ else
 fi
 
 # --- 3. sample files --------------------------------------------------------
-# A fresh clone starts from the *.sample files, so drift means a new machine
-# cannot resolve the tiers, and a leak is unrecoverable once pushed.
+# A fresh clone starts from the *.sample files: an unresolvable tier stops a new
+# machine from working, and a leak is unrecoverable once pushed.
 echo
 echo "Sample files:"
 python3 - "$C" <<'PY' || fail=1
@@ -315,9 +315,10 @@ for model in models:
 PRICES
 
 # --- 5. lsp servers ---------------------------------------------------------
-# pi-lsp never downloads a server, and a custom pi-lsp.json replaces the built-in
-# catalog, so an explicitly configured command that cannot start fails the whole
-# lsp_diagnostics call instead of being skipped.
+# pi-lsp.json replaces pi-lsp's built-in catalog, so a configured command that
+# cannot start fails a whole lsp_diagnostics call instead of being skipped. mason
+# wrappers hardcode the asdf interpreter present at install time, which is why
+# each command is executed and not just looked up on PATH.
 echo
 echo "LSP servers:"
 python3 - "$C" <<'PY' || fail=1
