@@ -24,6 +24,7 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 | `pi-lsp.json` | yes | Language server routes for the `@narumitw/pi-lsp` extension. No secrets or machine-specific paths, so it is committed as-is |
 | `magpi.json` | yes | MagPi's config: the 100 MB cache budget and a pinned `allowPrivateNetwork: false`. Written only by an explicit `/magpi` config command, which merges the file with the changed key rather than expanding it, so there is no runtime churn to keep out of git |
 | `magpi-cache/` | no | MagPi's fetch cache (24 h TTL, capped at 100 MB, LRU eviction) |
+| `cost-tracker/` | no | `@ctogg/pi-cost-counter`'s append-only cost ledger, one JSONL file per day under `YYYY/MM/`. Contains the Bedrock inference profile ARNs, hence never committed |
 | `npm/` | no | `pi install` target. Ships its own `.gitignore` containing `*` |
 | `extensions/subagent/` | yes | Vendored subagent extension |
 | `extensions/guard.ts` | yes | Blocks writes to credential files, confirms package installs and irreversible commands |
@@ -360,6 +361,7 @@ dependency-free, auditable code.
 
 | Package | Why |
 |---------|-----|
+| `@ctogg/pi-cost-counter` | Appends every assistant message's `usage` to `~/.pi/cost-tracker/YYYY/MM/DD.jsonl` and adds `/cost [Nd]` for daily and per-model totals. The statusline below shows the *current session*; this is the only cross-session ledger. 284 lines, no dependencies, no network access, append-only writes |
 | `@narumitw/pi-lsp` | Language server tools, see [Language servers](#language-servers-pi-lsp) |
 | `@narumitw/pi-retry` | Marks empty-detail and stalled provider streams as retryable and hands them to pi's own backoff rather than looping itself. 325 lines, no dependencies, no network or filesystem access |
 | `pi-ask-user` | An `ask_user` tool with a structured form, so the model asks instead of guessing. Also ships an `ask-user` skill. Needs a UI: it degrades where `ctx.hasUI` is false, so subagents do not get it |
@@ -368,12 +370,21 @@ dependency-free, auditable code.
 Measured: `npm/` holds 19 MB, all pure JavaScript with no native binaries, and
 startup goes from 0.67 s to 1.03 s — paid again by every subagent process. Nearly
 all of both numbers is MagPi's HTML and PDF conversion dependencies; retry and
-ask-user together cost 160 KB and nothing measurable.
+ask-user together cost 160 KB and nothing measurable, and cost-counter 28 KB.
+
+Cost-counter records `message.model`, which under `amazon-bedrock` is the full
+inference profile ARN, so **`/cost` prints the AWS account ID** and its "by model"
+column (padded to 45 characters) wraps. The ledger under `cost-tracker/` holds the
+same ARNs; `~/.gitignore` covers `.config/` wholesale, so it is only reachable by
+an explicit `git add -f` like the tracked files here. Accuracy rides on the `cost`
+blocks in `models.json` — `tests/pricing.test.ts` is what keeps those honest, and
+ollama is priced at 0 so local runs record zero rather than nothing.
 
 MagPi builds its paths from `homedir()` plus pi's `CONFIG_DIR_NAME` instead of
 calling `getAgentDir()`, so its config and cache would sit in `~/.pi/agent/`. The
 `~/.pi -> .config/pi` symlink above resolves that to this directory, which is why
-`magpi.json` and `magpi-cache/` appear in the table. `magpi.json` sets two of
+`magpi.json` and `magpi-cache/` appear in the table. Cost-counter is the same
+case, one level up: `homedir()` plus a hardcoded `.pi/cost-tracker`. `magpi.json` sets two of
 MagPi's four keys: a 100 MB cache budget with LRU eviction (its default is
 unlimited), and `allowPrivateNetwork: false`, which is already the default but is
 pinned because it is the SSRF guard that keeps a model-supplied URL away from AWS

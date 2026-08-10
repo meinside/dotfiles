@@ -10,6 +10,7 @@
   ],
   "defaultThinkingLevel": "medium",
   "packages": [
+    "npm:@ctogg/pi-cost-counter",
     "npm:@narumitw/pi-lsp",
     "npm:@narumitw/pi-retry",
     "npm:pi-ask-user",
