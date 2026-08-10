@@ -73,7 +73,10 @@ done
 # --- 2. agent tier tokens ---------------------------------------------------
 # pi matches --model as a case-insensitive substring and resolves an ambiguous
 # match silently to the highest-sorting id, so uniqueness matters. A trailing
-# `:<thinking level>` would be parsed as a thinking level, not as the model.
+# `:<thinking level>` is consumed as the thinking level before that lookup, so it
+# is stripped here too: `tier:fast:low` must check `tier:fast`. That also keeps
+# the old trap caught -- `tier:high` leaves the pattern `tier`, which matches
+# every entry and so fails as ambiguous.
 echo
 echo "Agent tiers:"
 names="$(python3 -c 'import json,sys
@@ -88,26 +91,27 @@ else
     for f in "$C"/agents/*.md; do
         agent="$(basename "$f")"
         token="$(sed -n 's/^model: *//p' "$f" | head -1)"
-        hits="$(printf '%s\n' "$names" | grep -icF -- "${token:-__none__}")"
+        pattern="$token"
+        level=""
         case "${token##*:}" in
-        off | minimal | low | medium | high | xhigh | max) clash=1 ;;
-        *) clash=0 ;;
+        off | minimal | low | medium | high | xhigh | max)
+            level="${token##*:}"
+            pattern="${token%:*}"
+            ;;
         esac
+        hits="$(printf '%s\n' "$names" | grep -icF -- "${pattern:-__none__}")"
 
         if [ -z "$token" ]; then
             bad "$agent has no model: line (would fall back to defaultModel)"
             fail=1
         elif [ "$hits" -eq 0 ]; then
-            bad "$agent -> $token not defined in models.json"
+            bad "$agent -> $pattern not defined in models.json"
             fail=1
         elif [ "$hits" -gt 1 ]; then
-            bad "$agent -> $token matches $hits models (ambiguous)"
-            fail=1
-        elif [ "$clash" = 1 ]; then
-            bad "$agent -> $token suffix is a thinking level"
+            bad "$agent -> $pattern matches $hits models (ambiguous)"
             fail=1
         else
-            ok "$agent -> $token"
+            ok "$agent -> $pattern${level:+ (thinking $level)}"
         fi
     done
 fi
@@ -183,10 +187,16 @@ if "models.json" in samples:
 
     sample_names = [str(k[1]) for k in sample if k[1]]
     tokens = set()
+    LEVELS = ("off", "minimal", "low", "medium", "high", "xhigh", "max")
     for agent in sorted(glob(f"{cfg}/agents/*.md")):
         for line in open(agent):
             if line.startswith("model:"):
-                tokens.add(line.split(":", 1)[1].strip())
+                token = line.split(":", 1)[1].strip()
+                # a trailing thinking level is consumed before the model lookup,
+                # so bootstrap only needs the pattern to resolve
+                if token.rsplit(":", 1)[-1] in LEVELS:
+                    token = token.rsplit(":", 1)[0]
+                tokens.add(token)
                 break
     for token in sorted(t for t in tokens if t):
         hits = [n for n in sample_names if token.lower() in n.lower()]

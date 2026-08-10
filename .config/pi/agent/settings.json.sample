@@ -5,11 +5,10 @@
     "tier:strong",
     "tier:mid",
     "tier:fast",
-    "tier:fable",
     "tier:local",
     "google-vertex/gemini-3*"
   ],
-  "defaultThinkingLevel": "high",
+  "defaultThinkingLevel": "medium",
   "packages": [
     "npm:@narumitw/pi-lsp"
   ]

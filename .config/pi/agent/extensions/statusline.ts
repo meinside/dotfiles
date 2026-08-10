@@ -29,7 +29,7 @@ const CONFIG = {
 	/** Install the custom statusline automatically on session start. */
 	enabledByDefault: true,
 	/** Icons - set any of them to "" if the terminal font lacks the glyph. */
-	icons: { dir: "📂", cost: "💰", time: "⏱", branch: "" },
+	icons: { dir: "📂", cost: "💰", time: "⏱️", branch: "" },
 	/** Interval between `git status --porcelain` checks, in ms. 0 disables the check. */
 	gitDirtyIntervalMs: 5000,
 	/**

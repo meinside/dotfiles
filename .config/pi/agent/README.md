@@ -3,15 +3,13 @@
 Config directory for [pi](https://github.com/earendil-works/pi-mono) (`pi-coding-agent`).
 
 **pi does not support XDG paths.** `getAgentDir()` (`dist/config.js`) returns
-`$PI_CODING_AGENT_DIR` if set, otherwise `~/.pi/agent`. This directory is used
-only because `~/.zshrc` exports it:
+`$PI_CODING_AGENT_DIR` if set, otherwise `~/.pi/agent`, and this directory works
+only because `~/.zshrc` exports it. Without that variable pi ignores everything
+here. Read `~/.pi/agent` in upstream docs as "this directory".
 
 ```bash
 export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 ```
-
-Without that variable pi ignores everything here. Upstream docs say
-`~/.pi/agent`; read that as "this directory".
 
 ## Files
 
@@ -27,59 +25,93 @@ Without that variable pi ignores everything here. Upstream docs say
 | `extensions/guard.ts` | yes | Blocks writes to credential files, confirms package installs and irreversible commands |
 | `extensions/git-checkpoint.ts` | yes | Vendored upstream example: per-turn git stash checkpoints for `/fork` |
 | `extensions/statusline.ts` | yes | Claude Code style footer |
+| `AGENTS.md` | yes | [Global instructions](#global-instructions-agentsmd) for every session and subagent, general rules only |
 | `agents/*.md` | yes | Subagent definitions, read by the subagent extension |
 | `prompts/*.md` | yes | Prompt templates, invoked as `/name` in the editor |
 | `check.sh` | yes | Verifies the vendored files, the agent tiers, the samples and the LSP servers |
 
 `~/.gitignore` ignores `.config/` wholesale, so tracked files here were added with
 `git add -f`. Files holding secrets or machine-specific values are committed as
-`<name>.sample` with `<<<placeholder>>>` markers, matching the convention already
-used for `.config/claude`, `.config/git`, etc.
+`<name>.sample` with `<<<placeholder>>>` markers, the convention already used for
+`.config/claude`, `.config/git`, etc.
+
+## Global instructions (AGENTS.md)
+
+`AGENTS.md` here is pi's *global* context file: `loadProjectContextFiles`
+(`dist/core/resource-loader.js`) reads the agent directory first, then `AGENTS.md`
+/ `CLAUDE.md` from cwd and every ancestor. It reaches the subagents below too,
+since `index.ts` spawns `pi` without `--no-context-files`.
+
+Its subject is verification — find a project's quality gates before editing, run
+them as the work proceeds, never silence one for a green run — because nothing
+else here can carry that policy: `buildSystemPrompt`
+(`dist/core/system-prompt.js`) ships three guidelines, none about correctness, and
+`agents/*.md` must stay byte-identical to upstream.
+
+Hence its two constraints. **General rules only:** per-project rules belong in
+that project's own `AGENTS.md` and notes about this directory in this README, so
+the file says "read the project's `README.md` first" rather than naming
+`./check.sh`. **Short and publishable:** it is billed on every turn of every
+session and subagent, in a public repo.
+
+It offers `lsp_diagnostics` / `lsp_fix` only as a fallback and only "if they are
+among your tools": they come from `@narumitw/pi-lsp`, and `--tools` is an
+allowlist over extension tools too, so `scout`, `planner` and `reviewer` lack them
+while `worker` has them. That wording also survives dropping the package.
+
+Keep the file in this directory. The ancestor walk has no repository boundary — it
+stops at the filesystem root — so an `AGENTS.md` at `~`, the dotfiles repo root,
+would load into every session under the home directory.
 
 ## Vendored subagent extension
 
 pi intentionally ships **no built-in sub-agents** (`docs/usage.md`, "Design
-Principles"). Tiered model usage — cheap model for recon, strong model for
-planning and review — comes from the upstream `subagent` example extension,
-vendored here.
+Principles"), so tiered model usage comes from the upstream `subagent` example
+extension, vendored here.
 
 - **Upstream repo:** <https://github.com/earendil-works/pi-mono>
 - **Upstream path:** `packages/coding-agent/examples/extensions/subagent/`
 - **Local copy of upstream:** `$(brew --prefix pi-coding-agent)/libexec/lib/node_modules/@earendil-works/pi-coding-agent/examples/extensions/subagent/` (`brew --prefix` resolves to a version-independent symlink, so this path survives pi upgrades)
 - **Vendored from:** pi 0.83.0
 
-The extension registers a `subagent` tool that spawns a **separate `pi` process**
-per delegation (`index.ts`: `args.push("--model", agent.model)`), giving each
-agent an isolated context window. Agents are discovered from `agents/*.md` by
-`agents.ts`.
+It registers a `subagent` tool that spawns a **separate `pi` process** per
+delegation (`index.ts`: `args.push("--model", agent.model)`), giving each agent an
+isolated context window. Agents are discovered from `agents/*.md` by `agents.ts`.
 
 ### Agents
 
-| Agent | Tier | Upstream model | Tools | Role |
-|-------|------|----------------|-------|------|
-| `scout` | `tier:fast` | `claude-haiku-4-5` | read, grep, find, ls, bash | Fast recon, returns compressed context |
-| `planner` | `tier:strong` | `claude-sonnet-4-5` | read, grep, find, ls | Produces an implementation plan, makes no changes |
-| `reviewer` | `tier:strong` | `claude-sonnet-4-5` | read, grep, find, ls, bash | Code review, read-only bash |
-| `worker` | `tier:mid` | `claude-sonnet-4-5` | all | Performs the actual implementation |
+| Agent | `model:` | Upstream model | Tools | Role |
+|-------|----------|----------------|-------|------|
+| `scout` | `tier:fast:low` | `claude-haiku-4-5` | read, grep, find, ls, bash | Fast recon, returns compressed context |
+| `planner` | `tier:strong:high` | `claude-sonnet-4-5` | read, grep, find, ls | Produces an implementation plan, makes no changes |
+| `reviewer` | `tier:strong:high` | `claude-sonnet-4-5` | read, grep, find, ls, bash | Code review, read-only bash |
+| `worker` | `tier:mid:medium` | `claude-sonnet-4-5` | all | Performs the actual implementation |
 
-The `Upstream model` column is what the example ships; it is the only local edit
-in these files and is what to re-apply after an upstream update.
+The `model:` line is the only local edit in these files, and the `Upstream model`
+column is what the example pins there; both are what to re-apply after an upstream
+update.
 
-The tiering follows the convention visible across large public subagent
-collections (wshobson/agents, VoltAgent/awesome-claude-code-subagents,
-@vigolium/piolium): cheap model for lookup and recon, mid model for
-implementation, top model for architecture, review and adversarial verification.
-The economics agree — reviewers and planners read a lot and write little, so an
+Each pin carries a thinking level, because `settings.json`
+`defaultThinkingLevel` reaches every spawned child otherwise: `index.ts` passes
+`--model` but never `--thinking`, and `sdk.js` then falls back to that setting, so
+`scout` would do "fast recon" at whatever level the interactive session happened to
+be on. `resolveCliModel` consumes a trailing `:<level>` before the model lookup,
+so `tier:fast:low` still resolves the pattern `tier:fast` — see [Rules the tokens
+must obey](#rules-the-tokens-must-obey).
+
+The split follows the convention visible across large public subagent collections
+(wshobson/agents, VoltAgent/awesome-claude-code-subagents, @vigolium/piolium), and
+the economics agree: planners and reviewers read a lot and write little, so an
 expensive model costs little there, while an implementer emits many output tokens,
-where the same model costs the most. Do not "upgrade" `worker` to the top model;
+where the same model costs the most. Do not "upgrade" `worker` to the top tier;
 upgrade `planner` instead so `worker` needs less rework.
 
 An agent without a `model:` line does **not** track the parent session's current
-model. `index.ts` only appends `--model` when the agent declares one, and the
-child `pi` then resolves its own default from `settings.json` `defaultModel`.
-`PI_MODEL` / `PI_PROVIDER` are exported to bash-tool commands only and are never
-read back as input, so switching models with `/model` in the parent has no effect
-on such an agent. Every agent here therefore pins a tier explicitly.
+model. `index.ts` appends `--model` only for an agent that declares one, and the
+child `pi` then resolves its own default from `settings.json` `defaultModel`;
+`PI_MODEL` / `PI_PROVIDER` are exported to bash-tool commands only and never read
+back as input, so `/model` in the parent has no effect. Every agent here therefore
+pins a tier explicitly.
 
 ### Workflow prompt templates
 
@@ -95,17 +127,15 @@ output and per-step cost).
 
 ### Updating the vendored files
 
-The vendored files are byte-identical to upstream except the `model:` lines. That
-is deliberate: a clean `diff` is the update-detection mechanism, which is why no
-provenance comments or extra frontmatter keys are added to them.
+The vendored files are byte-identical to upstream except the `model:` lines, which
+the comparison ignores — so the tier pins are expected and no diff counts need
+keeping in sync. That clean `diff` is the update-detection mechanism, which is why
+these files carry no provenance comments or extra frontmatter keys. Run it after
+every `brew upgrade pi-coding-agent`, and before committing a change here:
 
 ```bash
 ~/.config/pi/agent/check.sh      # -v to print the diffs
 ```
-
-The comparison ignores `model:` lines, so the tier pins are expected and there are
-no diff counts to keep in sync. Run it after every `brew upgrade
-pi-coding-agent`, and before committing a change to this directory.
 
 When it reports drift:
 
@@ -137,9 +167,9 @@ brew cleanup pi-coding-agent    # after the session ends
 
 pi has no tool permission system, on purpose: built-in tools run with the
 permissions of the pi process, and pi's `docs/security.md` points at containers or
-micro-VMs rather than per-call prompts. That is no use here, since this config
-edits the home directory itself. `extensions/guard.ts` is the narrow middle
-ground — the patterns live in the file, the decisions are:
+micro-VMs rather than per-call prompts. That is no use for a config that edits the
+home directory itself. `extensions/guard.ts` is the narrow middle ground — the
+patterns live in the file, the decisions are:
 
 - Credential files (`~/.ssh`, `~/.gnupg`, `~/.aws`, `~/.netrc`, `~/.npmrc`,
   `auth.json`) are **blocked, not confirmed**. There is no case where the agent
@@ -167,7 +197,7 @@ tokens embedded in the `name` of a `models.json` entry:
 | `tier:fast` | Cheap, mechanical lookup and recon | `claude-haiku-4-5` |
 | `tier:mid` | Default implementation model | `claude-sonnet-5` |
 | `tier:strong` | Architecture, review, adversarial verification | `claude-opus-5` |
-| `tier:fable` | Experimental top-end model, no agent uses it | `claude-fable-5` |
+| `tier:fable` | Experimental top-end model. No agent uses it, and it is kept out of the `Ctrl+P` cycle | `claude-fable-5` |
 | `tier:local` | Local Ollama model, zero cost | `gemma4-e4b` |
 
 Only `models.json` knows which provider and model a tier resolves to, so a
@@ -200,24 +230,24 @@ Local-only machine:
 
 ### Pricing
 
-`cost` is **USD per 1M tokens**, and the reference is always the
+`cost` is **USD per 1M tokens**, `cacheWrite` the 5-minute cache write price and
+`cacheRead` the cache hit price. The reference is always the
 [AWS Bedrock pricing page](https://aws.amazon.com/bedrock/pricing/) for
-**us-east-1, on-demand**. `cacheWrite` is the 5-minute cache write price,
-`cacheRead` the cache hit price. Update these whenever a tier points at a new
-model; they only drive the footer's cost readout, so a stale value is silently
-wrong rather than broken.
+**us-east-1, on-demand**. Update these whenever a tier points at a new model; they
+only drive the footer's cost readout, so a stale value is silently wrong rather
+than broken.
 
 Why us-east-1 specifically: an application inference profile hides which model and
 region it resolves to, so the numbers need one fixed basis. Bedrock prices the
 `us.` and `global.` cross-region profiles the same as us-east-1, while `eu.` and
-`au.` run about 10% higher — do not chase those, keep the file on the us-east-1
+`au.` run about 10% higher — do not chase those; the file stays on the us-east-1
 basis.
 
 AWS's Price List API (`pricing.us-east-1.amazonaws.com/.../AmazonBedrock/...`) is
-not a usable source here: it still only carries Claude 2 and Claude 3 era models,
-so the pricing page is authoritative. `check.sh` cross-checks the values against
-pi's own catalog (`models-store.json`, which covers current models) and reports
-differences as notes.
+not usable here: it still only carries Claude 2 and Claude 3 era models, so the
+pricing page is authoritative. `check.sh` cross-checks the values against pi's own
+catalog (`models-store.json`, which covers current models) and reports differences
+as notes.
 
 ### Rules the tokens must obey
 
@@ -228,10 +258,14 @@ the first two:
   and name. An ambiguous substring is **not** an error: pi sorts the matches by id
   and silently takes the highest one. `--model bedrock-claude` used to resolve to
   the most expensive model this way.
-- **Never a thinking level.** A trailing `:<suffix>` is read as a thinking level
-  when it is one of `off`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`, so
-  `tier:high` would mean "model `tier`, thinking high". `fast` / `mid` / `strong`
-  / `fable` / `local` are safe.
+- **Never a thinking level.** A trailing `:<suffix>` is consumed as a thinking
+  level when it is one of `off`, `minimal`, `low`, `medium`, `high`, `xhigh`,
+  `max`, and the rest is the pattern. That is what makes the agents'
+  `tier:fast:low` work — and what makes `tier:high` a trap, since the pattern is
+  then `tier`, which matches every entry. Measured against this `models.json`, the
+  silent winner is `tier:local`, so a mistyped tier would quietly run an agent on
+  the local 4B model. `fast` / `mid` / `strong` / `fable` / `local` are safe as
+  tier names precisely because none of them is a level.
 - The colon itself is fine. Full-pattern matching happens before the colon split,
   which is also why Ollama ids such as `gemma4:e4b` work.
 
@@ -249,11 +283,11 @@ patterns on startup.
 
 ## Sample files
 
-The real `settings.json` / `models.json` / `auth.json` are untracked; a fresh
-clone starts from the committed `.sample` files. What `check.sh` enforces is that
-the samples parse, that a fresh machine can bootstrap (every tier an agent asks
-for resolves exactly once in `models.json.sample`), and that no sample carries an
-ARN, an AWS account id or a value taken from the real `auth.json`.
+A fresh clone starts from the committed `.sample` files, since the real
+`settings.json` / `models.json` / `auth.json` are untracked. `check.sh` enforces
+that they parse, that a fresh machine can bootstrap (every tier an agent asks for
+resolves exactly once in `models.json.sample`), and that no sample carries an ARN,
+an AWS account id or a value taken from the real `auth.json`.
 
 Samples are **not** required to mirror the real config. Which providers and models
 a machine has is machine specific, so an entry present on only one side is
@@ -335,7 +369,7 @@ the model's `input` only after confirming it at runtime.
    (already in `~/.zshrc`). Without it pi reads `~/.pi/agent` instead.
 2. `brew install pi-coding-agent`
 3. Clone the dotfiles repo — brings `extensions/`, `agents/`, `prompts/`,
-   `check.sh`, this README and the `.sample` files.
+   `AGENTS.md`, `check.sh`, this README and the `.sample` files.
 4. Create the real config from the samples:
    ```bash
    cd ~/.config/pi/agent
@@ -348,8 +382,9 @@ the model's `input` only after confirming it at runtime.
    `models.json` must define `tier:fast`, `tier:mid` and `tier:strong`, otherwise
    the agents cannot resolve a model. See [Model tiers](#model-tiers).
 5. Local model: `ollama pull gemma4:e4b`
-6. Language servers: install through mason so neovim and pi share one binary.
-   `./check.sh` lists what `pi-lsp.json` expects and whether it runs.
+6. Language servers: install through mason, as
+   [above](#language-servers-pi-lsp). `./check.sh` lists what `pi-lsp.json`
+   expects and whether it runs.
 7. Verify: `pi --list-models` and `./check.sh`
 
 ## Security note
