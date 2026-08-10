@@ -32,7 +32,8 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 | `AGENTS.md` | yes | [Global instructions](#global-instructions-agentsmd) for every session and subagent, general rules only |
 | `agents/*.md` | yes | Subagent definitions, read by the subagent extension |
 | `prompts/*.md` | yes | Prompt templates, invoked as `/name` in the editor |
-| `check.sh` | yes | Verifies the vendored files, the agent tiers, the samples and the LSP servers |
+| `check.sh` | yes | Entry point for the checks: runs `tests/` on node's test runner and reports what this machine has |
+| `tests/*.ts` | yes | The checks themselves. `lib.ts` is shared helpers, the rest are `node:test` files runnable on their own |
 
 `~/.gitignore` ignores `.config/` wholesale, so tracked files here were added with
 `git add -f`. Files holding secrets or machine-specific values are committed as
@@ -141,6 +142,19 @@ every `brew upgrade pi-coding-agent`, and before committing a change here:
 ~/.config/pi/agent/check.sh      # -v to print the diffs
 ```
 
+`check.sh` is a wrapper: it resolves the upstream prefix, then hands over to
+`node --test tests/*.test.ts`. Node runs the TypeScript directly, so there is
+nothing to build and no test dependency to install; a single file also runs on its
+own, for example `node --test tests/samples.test.ts`. The split is deliberate:
+fixed expectations (drift, tier resolution, sample leaks, guard policy) are
+assertions, while machine-specific facts (which models this machine has, which
+language servers are installed) arrive as `node:test` diagnostics and skips — the
+same notes-versus-failures distinction the shell version made by hand.
+`tiers.test.ts` goes further than that version could: it imports pi's own
+`resolveCliModel` and asserts pi picks the model the uniqueness check found, so the
+local matching rule cannot drift away from `dist/core/model-resolver.js` in
+silence.
+
 When it reports drift:
 
 ```bash
@@ -175,9 +189,19 @@ micro-VMs rather than per-call prompts. That is no use for a config that edits t
 home directory itself. `extensions/guard.ts` is the narrow middle ground — the
 patterns live in the file, the decisions are:
 
-- Credential files (`~/.ssh`, `~/.gnupg`, `~/.aws`, `~/.netrc`, `~/.npmrc`,
-  `auth.json`) are **blocked, not confirmed**. There is no case where the agent
-  should rewrite them, so a prompt would only be a chance to say yes by mistake.
+- Credential files are **blocked, not confirmed**: `~/.ssh`, `~/.gnupg`, `~/.aws`,
+  `~/.config/gcloud`, `~/.config/rclone`, `~/.netrc`, `~/.npmrc`,
+  `~/.ollama/id_ed25519`, `auth.json`, and Claude's `settings.json` (whose hooks
+  run commands). There is no case where the agent should rewrite them, so a prompt
+  would only be a chance to say yes by mistake. Directories rather than single
+  files where a vendor keeps adding state: `~/.aws` was two files until
+  `sso/cache` and `cli/cache` turned up holding live tokens.
+- Most of those are also **unreadable** through `read` and `grep`, plus the
+  transcript stores (`sessions/`, `history.jsonl`, shell histories). A secret the
+  agent reads goes to the provider and into `sessions/*.jsonl` in the clear, so
+  reading one is already the damage, before anyone tries to exfiltrate it. The two
+  lists differ on purpose: `~/.aws/config` and Claude's `settings.json` stay
+  readable, and transcripts are read-blocked without being write-blocked.
 - Package managers and irreversible git/filesystem operations **ask once**.
   Read-only and reversible forms are excluded deliberately: a gate that fires on
   every `ls` gets removed, and a noisy one trains blind acceptance.
@@ -190,6 +214,26 @@ patterns live in the file, the decisions are:
 example that stashes a checkpoint each turn so `/fork` can restore code state.
 Keeping it a separate file lets `check.sh` diff it against upstream and lets
 `pi config` disable it on its own.
+
+The read block is a guard against accidents, **not a boundary**. `bash` can still
+`cat` any of those files: gating it on patterns would be trivially bypassable
+(`$HOME`, quoting, `python -c`) and would fire on `check.sh`, which reads the real
+`auth.json` to prove the sample carries no live credentials — exactly the routine
+prompt this file avoids on purpose. Command matching is substring-based over the
+whole command, so it also trips on a pattern quoted inside an unrelated script.
+
+The `tool_call` check asks whether the target sits inside a guarded path, which
+leaves `grep` pointed at an ancestor (`~`, `~/.config`) free to walk into the
+secrets underneath. Blocking every ancestor would block `grep` on this directory,
+so a `tool_result` handler drops the offending lines from the result instead and
+appends a count, since a model reasoning from a silently shortened result is its
+own failure mode. `tests/guard.test.ts` pins both halves.
+
+What actually lowers the risk is credential hygiene, a short-lived AWS session
+rather than a long-lived key, and — now that MagPi pulls untrusted web pages into
+context, where an injected instruction can ask for a file and then post it to a
+public URL — doing that kind of work in an isolated environment, as
+`docs/security.md` recommends.
 
 ## Model tiers
 
@@ -429,7 +473,6 @@ the model's `input` only after confirming it at runtime.
    [above](#language-servers-pi-lsp). `./check.sh` lists what `pi-lsp.json`
    expects and whether it runs.
 7. Verify: `pi --list-models` and `./check.sh`
-
 ## Security note
 
 The subagent extension defaults to `agentScope: "user"`, so only agents in this
