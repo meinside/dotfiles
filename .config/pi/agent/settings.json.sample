@@ -10,6 +10,9 @@
   ],
   "defaultThinkingLevel": "medium",
   "packages": [
-    "npm:@narumitw/pi-lsp"
+    "npm:@narumitw/pi-lsp",
+    "npm:@narumitw/pi-retry",
+    "npm:pi-ask-user",
+    "npm:pi-magpi"
   ]
 }

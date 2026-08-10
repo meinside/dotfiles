@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2026.08.07.
+# last update: 2026.08.10.
 
 # unnecessary binary files
 *.a
@@ -251,6 +251,13 @@ VirtualBox VMs/
 .gnupg/
 .selected_editor
 .zsh-update
+
+# symlinks
+#
+# ~/.pi -> .config/pi is tracked as a symlink, so it needs no rule: a trailing
+# slash never matches a symlink anyway. The rule below hides real .pi directories
+# (pi project-local config, npm/, caches) in every repo.
+.pi/
 
 # personal data
 .emulationstation/

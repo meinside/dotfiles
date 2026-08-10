@@ -3,9 +3,11 @@
 Config directory for [pi](https://github.com/earendil-works/pi-mono) (`pi-coding-agent`).
 
 **pi does not support XDG paths.** `getAgentDir()` (`dist/config.js`) returns
-`$PI_CODING_AGENT_DIR` if set, otherwise `~/.pi/agent`, and this directory works
-only because `~/.zshrc` exports it. Without that variable pi ignores everything
-here. Read `~/.pi/agent` in upstream docs as "this directory".
+`$PI_CODING_AGENT_DIR` if set, otherwise `~/.pi/agent`, and `~/.zshrc` exports it.
+A committed `~/.pi -> .config/pi` symlink makes that fallback land here too, so the
+variable is now a second line of defence rather than the only one — and extensions
+that build their own `~/.pi/agent` paths instead of calling `getAgentDir()` stay
+inside this directory. Read `~/.pi/agent` in upstream docs as "this directory".
 
 ```bash
 export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
@@ -20,6 +22,8 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 | `auth.json` | `.sample` template | Credentials. Never commit the real file. The sample is a **template**, not a mirror: it documents providers (such as `google`) that may not be configured here |
 | `models-store.json` | no | Generated model catalog cache. Do not edit or commit. `check.sh` reads it to cross-check prices |
 | `pi-lsp.json` | yes | Language server routes for the `@narumitw/pi-lsp` extension. No secrets or machine-specific paths, so it is committed as-is |
+| `magpi.json` | yes | MagPi's config: the 100 MB cache budget and a pinned `allowPrivateNetwork: false`. Written only by an explicit `/magpi` config command, which merges the file with the changed key rather than expanding it, so there is no runtime churn to keep out of git |
+| `magpi-cache/` | no | MagPi's fetch cache (24 h TTL, capped at 100 MB, LRU eviction) |
 | `npm/` | no | `pi install` target. Ships its own `.gitignore` containing `*` |
 | `extensions/subagent/` | yes | Vendored subagent extension |
 | `extensions/guard.ts` | yes | Blocks writes to credential files, confirms package installs and irreversible commands |
@@ -303,6 +307,44 @@ Treat those notes as a reminder to sync when the difference was not intentional.
   the last session was left on.
 - `auth.json.sample` is maintained by hand as a template.
 
+## Packages
+
+`settings.json` `packages`, installed into `npm/` on first launch. The list stays
+short on purpose: every entry also loads in each subagent process, and a package
+runs with full system access (`docs/packages.md`), so what earns a place is small,
+dependency-free, auditable code.
+
+| Package | Why |
+|---------|-----|
+| `@narumitw/pi-lsp` | Language server tools, see [Language servers](#language-servers-pi-lsp) |
+| `@narumitw/pi-retry` | Marks empty-detail and stalled provider streams as retryable and hands them to pi's own backoff rather than looping itself. 325 lines, no dependencies, no network or filesystem access |
+| `pi-ask-user` | An `ask_user` tool with a structured form, so the model asks instead of guessing. Also ships an `ask-user` skill. Needs a UI: it degrades where `ctx.hasUI` is false, so subagents do not get it |
+| `pi-magpi` | `magpi_fetch` / `magpi_search` / `magpi_cached`: pages fetched as markdown behind a 24 h cache, with official-API handlers for GitHub, GitLab, npm, PyPI, crates, rubygems, maven, hex, arxiv, Wikipedia, StackExchange and HN. Search scrapes `lite.duckduckgo.com`, the one fragile part. SSRF-guarded: a model-supplied URL cannot reach loopback, link-local (AWS IMDS) or private ranges unless `allowPrivateNetwork` is set |
+
+Measured: `npm/` holds 19 MB, all pure JavaScript with no native binaries, and
+startup goes from 0.67 s to 1.03 s — paid again by every subagent process. Nearly
+all of both numbers is MagPi's HTML and PDF conversion dependencies; retry and
+ask-user together cost 160 KB and nothing measurable.
+
+MagPi builds its paths from `homedir()` plus pi's `CONFIG_DIR_NAME` instead of
+calling `getAgentDir()`, so its config and cache would sit in `~/.pi/agent/`. The
+`~/.pi -> .config/pi` symlink above resolves that to this directory, which is why
+`magpi.json` and `magpi-cache/` appear in the table. `magpi.json` sets two of
+MagPi's four keys: a 100 MB cache budget with LRU eviction (its default is
+unlimited), and `allowPrivateNetwork: false`, which is already the default but is
+pinned because it is the SSRF guard that keeps a model-supplied URL away from AWS
+IMDS on a machine holding Bedrock credentials. `ttlHours` stays at 24: package
+registry metadata is exactly the kind of thing a longer cache would answer
+stalely, and `refresh` on a single call bypasses the cache anyway. `/magpi status`
+reports scope, ttl, budget and what the session saved; `/magpi scope project`
+would move writes to `.pi/magpi-cache` inside the repo, and it records that
+project-locally when the project is trusted.
+
+Rejected on the same criteria: `pi-smart-fetch`, which puts
+`@earendil-works/pi-tui@^0.82.1` in `dependencies` against the host's 0.84.1 —
+core packages must be peer dependencies — and pulls 54 MB of prebuilt Rust
+binaries through `wreq-js`.
+
 ## Language servers (pi-lsp)
 
 `settings.json` lists `npm:@narumitw/pi-lsp` under `packages`, and pi installs
@@ -369,7 +411,8 @@ the model's `input` only after confirming it at runtime.
    (already in `~/.zshrc`). Without it pi reads `~/.pi/agent` instead.
 2. `brew install pi-coding-agent`
 3. Clone the dotfiles repo — brings `extensions/`, `agents/`, `prompts/`,
-   `AGENTS.md`, `check.sh`, this README and the `.sample` files.
+   `AGENTS.md`, `check.sh`, this README, the `.sample` files, and the
+   `~/.pi -> .config/pi` symlink (tracked, so no manual step).
 4. Create the real config from the samples:
    ```bash
    cd ~/.config/pi/agent
