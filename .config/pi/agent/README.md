@@ -114,10 +114,12 @@ upgrade `planner` instead so `worker` needs less rework.
 
 An agent without a `model:` line does **not** track the parent session's current
 model. `index.ts` appends `--model` only for an agent that declares one, and the
-child `pi` then resolves its own default from `settings.json` `defaultModel`;
-`PI_MODEL` / `PI_PROVIDER` are exported to bash-tool commands only and never read
-back as input, so `/model` in the parent has no effect. Every agent here therefore
-pins a tier explicitly.
+child `pi` then starts where a fresh session would — on `enabledModels[0]`, not
+`defaultModel`, since `findInitialModel` returns the first scoped model before it
+consults the saved default. Here that is `tier:strong`, so a model-less agent would
+run on opus. `PI_MODEL` / `PI_PROVIDER` are exported to bash-tool commands only and
+never read back as input, so `/model` in the parent has no effect. Every agent here
+therefore pins a tier explicitly.
 
 ### Workflow prompt templates
 
@@ -324,6 +326,7 @@ A wrong token behaves differently depending on where it is used:
 |------|----------------------|
 | `--model` (agents, CLI) | Hard error, no fallback — strict mode exists precisely to avoid resolving to a different model |
 | `enabledModels` / `--models` | Warns `Invalid thinking level "typo"` at startup, then matches the `tier` prefix and scopes the wrong model |
+| `defaultModel` | Silently ignored: it is looked up as `getModel(defaultProvider, defaultModel)`, an `id === value` match with no name, substring or glob handling, so **a tier name never matches** and pi falls through to `enabledModels[0]`. The value must be a raw id, here a Bedrock ARN |
 
 `settings.json` patterns are intentionally **not** validated by the script: that
 would mean reimplementing globs, `provider/id` handling and thinking-level
@@ -349,7 +352,14 @@ Treat those notes as a reminder to sync when the difference was not intentional.
 - `settings.json.sample` tracks `settings.json` minus the two keys pi rewrites at
   runtime: `lastChangelogVersion` (on upgrade) and `defaultThinkingLevel` (on the
   in-session toggle). The sample holds the intended starting level, not whatever
-  the last session was left on.
+  the last session was left on. `defaultProvider` and `defaultModel` are both
+  placeholders: both are machine specific, and they only work as a pair, so a
+  `<<<...>>>` left in either one makes the default inert
+  ([above](#rules-the-tokens-must-obey)). The model placeholder names
+  `pi --list-models` rather than `models.json`, because the id may belong to a
+  built-in catalog model, and says *not a tier* because that is the one wrong value
+  that looks right. `check.sh` fails a half-filled pair, and a `defaultModel` that is
+  neither a placeholder nor a real id.
 - `auth.json.sample` is maintained by hand as a template.
 
 ## Packages
@@ -471,7 +481,9 @@ the model's `input` only after confirming it at runtime.
 4. Create the real config from the samples:
    ```bash
    cd ~/.config/pi/agent
-   cp settings.json.sample settings.json
+   cp settings.json.sample settings.json  # both <<<...>>> or neither takes effect;
+                                          # the id comes from `pi --list-models`
+                                          # and is never a tier name
    cp models.json.sample models.json   # replace <<<...>>> with real Bedrock ARNs,
                                        # or rewrite it for whatever providers this
                                        # machine has - keep the tier: names

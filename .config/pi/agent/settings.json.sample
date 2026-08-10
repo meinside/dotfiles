@@ -1,6 +1,7 @@
 {
   "theme": "dark",
-  "defaultModel": "tier:strong",
+  "defaultProvider": "<<<provider-id>>>",
+  "defaultModel": "<<<model-id-from-list-models-not-a-tier>>>",
   "enabledModels": [
     "tier:strong",
     "tier:mid",

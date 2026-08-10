@@ -78,6 +78,57 @@ test("models.json.sample resolves every tier an agent asks for", (t) => {
 	t.diagnostic(`models.json.sample resolves ${patterns.length} agent tier(s)`);
 });
 
+test("defaultModel is a model id, not a name or a tier", (t) => {
+	// pi resolves defaultModel through Models.getModel, an `id === value` lookup with
+	// no name, substring or tier handling, unlike enabledModels. A tier there is a
+	// silent no-op: findInitialModel falls through to the next candidate.
+	const sample = readJson<Record<string, unknown>>("settings.json.sample");
+	const sampleModels = readJson<ModelsConfig>("models.json.sample");
+	if (!sample || !sampleModels) return t.skip("settings.json.sample or models.json.sample unreadable");
+
+	const sampleDefault = sample.defaultModel;
+	if (typeof sampleDefault === "string") {
+		const ids = new Set(modelEntries(sampleModels).map((entry) => entry.id));
+		assert.ok(
+			PLACEHOLDER.test(sampleDefault) || ids.has(sampleDefault),
+			`settings.json.sample: defaultModel "${sampleDefault}" is neither a <<<placeholder>>> nor an id in models.json.sample`,
+		);
+	}
+
+	// The lookup is getModel(defaultProvider, defaultModel), so a placeholder left in
+	// either one makes the pair inert. The sample must not invite filling in one half.
+	const sampleProvider = sample.defaultProvider;
+	if (typeof sampleDefault === "string" && typeof sampleProvider === "string") {
+		assert.equal(
+			PLACEHOLDER.test(sampleProvider),
+			PLACEHOLDER.test(sampleDefault),
+			"settings.json.sample: defaultProvider and defaultModel must both be <<<placeholders>>> or both be real",
+		);
+	}
+
+	const real = readJson<Record<string, unknown>>("settings.json");
+	const realModels = readJson<ModelsConfig>("models.json");
+	if (!real || !realModels) return t.diagnostic("settings.json or models.json absent; real default not cross-checked");
+
+	const realDefault = real.defaultModel;
+	if (typeof realDefault !== "string") return t.diagnostic("settings.json has no defaultModel");
+	const provider = real.defaultProvider;
+	assert.ok(
+		typeof provider === "string" && !PLACEHOLDER.test(provider),
+		"settings.json: defaultProvider is missing or still a placeholder, so defaultModel cannot resolve",
+	);
+	const entries = modelEntries(realModels).filter((entry) => entry.provider === provider);
+	if (entries.length === 0) {
+		// A built-in catalog model, which models.json does not describe.
+		return t.diagnostic(`settings.json: defaultProvider "${String(provider)}" is not in models.json`);
+	}
+	assert.ok(
+		entries.some((entry) => entry.id === realDefault),
+		`settings.json: defaultModel "${realDefault}" is not an id of ${String(provider)} in models.json`,
+	);
+	t.diagnostic(`settings.json: defaultModel resolves to ${entries.find((entry) => entry.id === realDefault)?.name}`);
+});
+
 test("settings.json.sample tracks settings.json", (t) => {
 	const sample = readJson<Record<string, unknown>>("settings.json.sample");
 	if (!sample) return t.skip("settings.json.sample unreadable");
