@@ -15,6 +15,7 @@
     "npm:@narumitw/pi-lsp",
     "npm:@narumitw/pi-retry",
     "npm:pi-ask-user",
-    "npm:pi-magpi"
+    "npm:pi-magpi",
+    "npm:pi-mcporter"
   ]
 }

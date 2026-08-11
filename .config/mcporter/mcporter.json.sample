@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "<<<local-stdio-server-name>>>": {
+      "command": "<<</absolute/path/to/executable-or-npx>>>",
+      "args": ["<<<-flag-or-subcommand>>>", "<<<value>>>"],
+      "env": {
+        "<<<ENV_VAR_NAME>>>": "<<<value>>>"
+      }
+    },
+    "<<<hosted-http-server-name>>>": {
+      "baseUrl": "<<<https://mcp.example.com/mcp>>>",
+      "headers": {
+        "Authorization": "Bearer ${<<<API_KEY_ENV_VAR_NAME>>>}"
+      }
+    }
+  }
+}

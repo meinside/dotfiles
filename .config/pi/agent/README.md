@@ -23,6 +23,7 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 | `models-store.json` | no | Generated model catalog cache. Do not edit or commit. `check.sh` reads it to cross-check prices |
 | `pi-lsp.json` | yes | Language server routes for the `@narumitw/pi-lsp` extension. No secrets or machine-specific paths, so it is committed as-is |
 | `magpi.json` | yes | MagPi's config: the 100 MB cache budget and a pinned `allowPrivateNetwork: false`. Written only by an explicit `/magpi` config command, which merges the file with the changed key rather than expanding it, so there is no runtime churn to keep out of git |
+| `mcporter.json` | `.sample` mirror | `pi-mcporter`'s exposure policy (`defaultExposure`, per-server overrides). Not the MCP server definitions themselves — those live in `~/.config/mcporter/mcporter.json` (XDG; falls back to `~/.mcporter/mcporter.json`), a separate file tracked only as `.sample` in `.config/mcporter/`, outside this directory. Missing entirely, this file just falls back to pi-mcporter's own defaults (`defaultExposure: index`) rather than failing pi's startup |
 | `magpi-cache/` | no | MagPi's fetch cache (24 h TTL, capped at 100 MB, LRU eviction) |
 | `cost-tracker/` | no | `@ctogg/pi-cost-counter`'s append-only cost ledger, one JSONL file per day under `YYYY/MM/`. Contains the Bedrock inference profile ARNs, hence never committed |
 | `npm/` | no | `pi install` target. Ships its own `.gitignore` containing `*` |
@@ -376,11 +377,18 @@ dependency-free, auditable code.
 | `@narumitw/pi-retry` | Marks empty-detail and stalled provider streams as retryable and hands them to pi's own backoff rather than looping itself. 325 lines, no dependencies, no network or filesystem access |
 | `pi-ask-user` | An `ask_user` tool with a structured form, so the model asks instead of guessing. Also ships an `ask-user` skill. Needs a UI: it degrades where `ctx.hasUI` is false, so subagents do not get it |
 | `pi-magpi` | `magpi_fetch` / `magpi_search` / `magpi_cached`: pages fetched as markdown behind a 24 h cache, with official-API handlers for GitHub, GitLab, npm, PyPI, crates, rubygems, maven, hex, arxiv, Wikipedia, StackExchange and HN. Search scrapes `lite.duckduckgo.com`, the one fragile part. SSRF-guarded: a model-supplied URL cannot reach loopback, link-local (AWS IMDS) or private ranges unless `allowPrivateNetwork` is set |
+| `pi-mcporter` | Bridges MCP servers into pi through a `mcporter` proxy tool, with per-server exposure levels (`on-demand`/`index`/`match`/`native`, see `mcporter.json` above) that control how much of a server's tool schema lands in context before it is ever called. **Documented exception** to the bar below: it drags in `@modelcontextprotocol/{client,server,core}`, `es-toolkit`, `zod` and `rolldown`, the last shipping a 16 MB prebuilt native binary (`@rolldown/binding-darwin-arm64/*.node`) — precisely what `pi-smart-fetch` was rejected for. Kept anyway: nothing dependency-free does what MCP access does, and the exposure-level design is the point — it is what lets pi see a server's tools on demand instead of native MCP integrations (Claude Code included) dumping every connected server's full schema into every session's context |
 
-Measured: `npm/` holds 19 MB, all pure JavaScript with no native binaries, and
-startup goes from 0.67 s to 1.03 s — paid again by every subagent process. Nearly
-all of both numbers is MagPi's HTML and PDF conversion dependencies; retry and
-ask-user together cost 160 KB and nothing measurable, and cost-counter 28 KB.
+Measured: `npm/` holds 79 MB (19 MB before `pi-mcporter`; its `mcporter`
+dependency chain alone accounts for the other 60 MB, see above), all pure
+JavaScript except the one native binary noted above, and startup goes from
+0.67 s to 1.03 s — paid again by every subagent process. `pi-mcporter` was not
+isolated in that 0.67→1.03 s figure; end-to-end trials with and without it
+(`pi --no-session -p "OK"`, 5 runs each) were noisy (~4.6 s vs ~5.6 s, network
+call time dominating) and not clean enough to state a per-launch cost
+separately. Nearly all of the pre-`pi-mcporter` total is MagPi's HTML and PDF
+conversion dependencies; retry and ask-user together cost 160 KB and nothing
+measurable, and cost-counter 28 KB.
 
 Cost-counter records `message.model`, which under `amazon-bedrock` is the full
 inference profile ARN, so **`/cost` prints the AWS account ID** and its "by model"
@@ -408,7 +416,9 @@ project-locally when the project is trusted.
 Rejected on the same criteria: `pi-smart-fetch`, which puts
 `@earendil-works/pi-tui@^0.82.1` in `dependencies` against the host's 0.84.1 —
 core packages must be peer dependencies — and pulls 54 MB of prebuilt Rust
-binaries through `wreq-js`.
+binaries through `wreq-js`. `pi-mcporter` above trips the same native-binary and
+dependency-weight tripwire and was kept anyway, as a deliberate, single
+exception — not a change to the bar itself.
 
 ## Language servers (pi-lsp)
 

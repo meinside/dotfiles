@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "defaultExposure": "match",
+  "callTimeoutMs": 30000,
+  "discoveryTimeoutMs": 2000,
+  "maxMatchedTools": 8,
+  "servers": {
+    "<<<server-name-no-hint-until-used-on-demand>>>": {
+      "exposure": "on-demand"
+    },
+    "<<<server-name-listed-in-system-prompt>>>": {
+      "exposure": "index"
+    },
+    "<<<server-name-relevant-signatures-per-turn>>>": {
+      "exposure": "match"
+    },
+    "<<<server-name-exposed-as-individual-pi-tools>>>": {
+      "exposure": "native",
+      "includeTools": ["<<<tool-name-or-glob>>>"]
+    }
+  }
+}
