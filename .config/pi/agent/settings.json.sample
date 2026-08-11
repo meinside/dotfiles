@@ -6,7 +6,7 @@
     "tier:strong",
     "tier:mid",
     "tier:fast",
-    "tier:local",
+    "ollama/*",
     "google-vertex/gemini-3*"
   ],
   "defaultThinkingLevel": "medium",

@@ -250,7 +250,7 @@ tokens embedded in the `name` of a `models.json` entry:
 | `tier:mid` | Default implementation model | `claude-sonnet-5` |
 | `tier:strong` | Architecture, review, adversarial verification | `claude-opus-5` |
 | `tier:fable` | Experimental top-end model. No agent uses it, and it is kept out of the `Ctrl+P` cycle | `claude-fable-5` |
-| `tier:local` | Local Ollama model, zero cost | `gemma4-e4b` |
+| `tier:local` | Local Ollama model, zero cost | `gemma4-e4b`, `muse-glimmer` (see [caveat](#rules-the-tokens-must-obey)) |
 
 Only `models.json` knows which provider and model a tier resolves to, so a
 machine with entirely different providers needs no changes anywhere else.
@@ -297,9 +297,9 @@ basis.
 
 AWS's Price List API (`pricing.us-east-1.amazonaws.com/.../AmazonBedrock/...`) is
 not usable here: it still only carries Claude 2 and Claude 3 era models, so the
-pricing page is authoritative. `check.sh` cross-checks the values against pi's own
-catalog (`models-store.json`, which covers current models) and reports differences
-as notes.
+pricing page is authoritative. `check.sh` cross-checks these values against
+`models-store.json` (only differences are reported, never a failure — see the
+[file table](#files)).
 
 ### Rules the tokens must obey
 
@@ -316,8 +316,19 @@ the first two:
   `tier:fast:low` work — and what makes `tier:high` a trap, since the pattern is
   then `tier`, which matches every entry. Measured against this `models.json`, the
   silent winner is `tier:local`, so a mistyped tier would quietly run an agent on
-  the local 4B model. `fast` / `mid` / `strong` / `fable` / `local` are safe as
+  the local Ollama model with the alphabetically highest id — currently
+  `muse-glimmer:30b-mlx`, not `gemma4:e4b`, even though both carry the same
+  `tier:local` name. `fast` / `mid` / `strong` / `fable` / `local` are safe as
   tier names precisely because none of them is a level.
+- **A bare, non-glob pattern only ever resolves to one model — even in
+  `enabledModels`.** `tier:local` is not a glob (no `*`, `?`, `[`), so
+  `enabledModels: ["tier:local"]` does not enable every model whose name starts
+  with `tier:local`; it substring-matches all of them, then applies the same
+  "sort by id, take the highest" rule as `--model`. With two local models sharing
+  that name, only `muse-glimmer:30b-mlx` would show up under the ollama provider
+  in `/model` and `gemma4:e4b` would silently disappear. Use an actual glob such
+  as `"ollama/*"` (matches on `provider/id`) in `enabledModels` whenever a tier
+  name is meant to cover more than one model.
 - The colon itself is fine. Full-pattern matching happens before the colon split,
   which is also why Ollama ids such as `gemma4:e4b` work.
 
@@ -491,16 +502,16 @@ the model's `input` only after confirming it at runtime.
 4. Create the real config from the samples:
    ```bash
    cd ~/.config/pi/agent
-   cp settings.json.sample settings.json  # both <<<...>>> or neither takes effect;
-                                          # the id comes from `pi --list-models`
-                                          # and is never a tier name
+   cp settings.json.sample settings.json  # see Sample files for defaultProvider/
+                                          # defaultModel below
    cp models.json.sample models.json   # replace <<<...>>> with real Bedrock ARNs,
                                        # or rewrite it for whatever providers this
-                                       # machine has - keep the tier: names
+                                       # machine has
    cp auth.json.sample auth.json       # or use /login
    ```
    `models.json` must define `tier:fast`, `tier:mid` and `tier:strong`, otherwise
-   the agents cannot resolve a model. See [Model tiers](#model-tiers).
+   the agents cannot resolve a model. See [Model tiers](#model-tiers) and [Sample
+   files](#sample-files).
 5. Local model: `ollama pull gemma4:e4b`
 6. Language servers: install through mason, as
    [above](#language-servers-pi-lsp). `./check.sh` lists what `pi-lsp.json`
