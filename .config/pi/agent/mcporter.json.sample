@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "defaultExposure": "match",
+  "defaultExposure": "index",
   "callTimeoutMs": 30000,
   "discoveryTimeoutMs": 2000,
   "maxMatchedTools": 8,
