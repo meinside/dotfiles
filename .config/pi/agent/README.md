@@ -337,12 +337,16 @@ fight that instead of catching drift.
 commits `enabled: true` machine-wide, but pi-sandbox needs OS-level helpers
 (`rg` on both platforms; `bwrap`/`socat` on Linux) to actually enforce it, and
 a missing one fails sandbox initialization rather than pi-sandbox itself
-failing loudly at every `bash` call. It also surfaces (as a diagnostic, not a
-failure — an AppArmor profile may already compensate for it)
-`kernel.apparmor_restrict_unprivileged_userns`, which Ubuntu 24.04+ sets to `1`
-by default and which blocks bubblewrap's own unprivileged user namespace when
-nothing else grants it one. Same notes-versus-failures split as `lsp.test.ts`:
-a missing Linux-only dependency on macOS is `t.skip`, not a failure.
+failing loudly at every `bash` call. It also checks user namespace
+availability, on two different sysctls depending on which one the kernel
+carries: `kernel.apparmor_restrict_unprivileged_userns` (Ubuntu 24.04+, `= 1`
+by default) is a diagnostic, not a failure, since an AppArmor profile might
+already compensate for it and this check has no way to see that; the older,
+more universal `kernel.unprivileged_userns_clone` has no such escape hatch, so
+`= 0` there — checked only as a fallback when the AppArmor knob is absent —
+*is* a real failure, with the sysctl fix printed. Same notes-versus-failures
+split as `lsp.test.ts`: a missing Linux-only dependency on macOS is `t.skip`,
+not a failure.
 
 `tests/extensions-deps.test.ts` covers the one binary dependency outside
 pi-sandbox: `extensions/git-checkpoint.ts` and `extensions/statusline.ts` both
