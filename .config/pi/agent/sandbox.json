@@ -52,6 +52,7 @@
       "~/.cache/npm",
       "~/.cache/pip",
       "~/.cache/uv",
+      "~/.config/asdf",
       "~/.config/pi/cost-tracker",
       "~/.gem/cache",
       "~/.gem/specs",
