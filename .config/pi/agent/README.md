@@ -377,7 +377,10 @@ shipped by Canonical since noble) blocks via the `unpriv_bwrap` and
 genuinely unconfined processes, not ones already governed by a loaded
 profile. Confirm with `sudo aa-status` (look for `bwrap`, `unpriv_bwrap`,
 `unprivileged_userns` under enforce mode) and `sudo dmesg | grep -i apparmor`
-(look for `apparmor="DENIED" ... capname="sys_admin"`).
+(look for `apparmor="DENIED" ... capname="sys_admin"`). Confirmed
+unaffected: macOS M1 and Raspberry Pi 5 running Raspberry Pi OS — this is
+specific to Ubuntu 24.04+'s AppArmor policy, not `pi-sandbox` or `bwrap` in
+general.
 
 A scoped AppArmor override that keeps these profiles enforcing was tried at
 length here and didn't work — the blanket `audit deny capability,` in
