@@ -361,6 +361,68 @@ server. All three dependency-presence checks (`lsp.test.ts`,
 `resolveCommand()` in `tests/lib.ts`, rather than each reimplementing
 `command -v` through `spawnSync`.
 
+### Troubleshooting: `apply-seccomp: ... nested userns ... CAP_SYS_ADMIN` on Ubuntu 24.04+
+
+Seen on a stock Ubuntu 24.04+ machine (Oracle Cloud instance, nothing custom
+about the host) where `sandbox-deps.test.ts`'s userns check passed — both
+sysctls read permissive — and a bare `bwrap --unshare-all ... echo ok` outside
+pi worked, yet every `bash` command inside pi failed identically. The
+difference: that bare test only exercises bwrap's *own* first-level userns.
+pi-sandbox's actual bwrap invocation runs `apply-seccomp` (from
+`@carderne/sandbox-runtime`) *inside* that first sandbox to apply its PID and
+mount unshare, which needs a **second, nested** unprivileged userns — and
+Ubuntu's AppArmor-based mitigation for this (upstream project profile
+[`bwrap-userns-restrict`](https://gitlab.com/apparmor/apparmor/-/blob/main/profiles/apparmor/profiles/extras/bwrap-userns-restrict),
+shipped by Canonical since noble) transitions anything `bwrap` execs into a
+`bwrap//&unpriv_bwrap` sub-profile, and unconfined processes elsewhere into a
+generic `unprivileged_userns` profile. Both are **separate from, and enforced
+regardless of,** the `kernel.apparmor_restrict_unprivileged_userns` sysctl —
+disabling that sysctl only changes the *default* for genuinely unconfined
+processes; a process already confined by a loaded profile (`unpriv_bwrap` or
+`unprivileged_userns`) is governed by that profile's own rules instead, so the
+sysctl flip visibly does nothing and looks like it failed silently.
+
+Diagnose with `sudo aa-status`, not the sysctls: look for `bwrap`,
+`unpriv_bwrap`, and `unprivileged_userns` under "profiles are in enforce
+mode". `sandbox-deps.test.ts` can't see any of this from a bare `node --test`
+run, since `aa-status` needs root and the actual failure only shows up inside
+a real sandboxed `bash` call.
+
+Fix it the way OpenAI's own Codex CLI docs recommend for the identical issue
+([developers.openai.com/codex/concepts/sandboxing](https://developers.openai.com/codex/concepts/sandboxing))
+— a scoped local override, not a global sysctl flip, which Ubuntu's own
+security team explicitly advises against for a single tool's convenience
+([Understanding AppArmor user namespace restriction](https://discourse.ubuntu.com/t/understanding-apparmor-user-namespace-restriction/58007)):
+
+```bash
+# 1. Find exactly which capability got denied - unpriv_bwrap does a blanket
+#    "audit deny capability", so this is usually CAP_SYS_ADMIN but confirm:
+sudo dmesg | grep -i apparmor | tail -20
+
+# 2. Grant only that capability, in a local override file Ubuntu's own
+#    packaging convention reserves for this (survives apparmor-profiles
+#    package upgrades, unlike editing /etc/apparmor.d/unpriv_bwrap directly):
+sudo mkdir -p /etc/apparmor.d/local
+echo 'allow capability sys_admin,' | sudo tee -a /etc/apparmor.d/local/unpriv_bwrap
+
+# 3. Reload and put enforcement back:
+sudo apparmor_parser -r /etc/apparmor.d/unpriv_bwrap
+sudo aa-enforce bwrap unpriv_bwrap unprivileged_userns
+
+# 4. Confirm the fix holds with enforcement back on
+bwrap --ro-bind / / --unshare-all --dev /dev echo ok
+```
+
+Then retest inside pi. This grants the one missing capability to everything
+`bwrap` execs (`unpriv_bwrap` covers all of it, not just `apply-seccomp`
+specifically), which is coarser than a profile transition scoped to
+`apply-seccomp`'s own binary path but avoids hardcoding a path through
+`node_modules` that shifts with every reinstall. `sudo aa-complain <name>` is
+still the fastest way to confirm this diagnosis before writing the override;
+flip back to enforce with `aa-enforce` once the override is in place rather
+than leaving profiles in complain mode indefinitely, which quietly drops the
+mitigation for everything else `bwrap` touches on that machine, not just pi.
+
 ## Model tiers
 
 Agents and `settings.json` never name a concrete model. They reference role
