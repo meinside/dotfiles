@@ -6,7 +6,7 @@
  * script exports beyond an optional cache of the resolved package directory.
  */
 
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, realpathSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -66,6 +66,14 @@ export const upstreamExamples = (): string => join(piPackageDir(), "examples/ext
 
 /** pi's own build, imported to reuse its model resolver rather than copy it. */
 export const piDist = (): string => join(piPackageDir(), "dist");
+
+/** Absolute path to `name` on `PATH`, or `undefined` if it isn't there. Shared
+ * by every check that needs to know a binary is installed before probing it
+ * further (lsp.test.ts, sandbox-deps.test.ts, extensions-deps.test.ts). */
+export function resolveCommand(name: string): string | undefined {
+	const found = spawnSync("sh", ["-c", 'command -v "$1"', "_", name], { encoding: "utf8" }).stdout.trim();
+	return found || undefined;
+}
 
 export function readText(name: string): string | undefined {
 	try {

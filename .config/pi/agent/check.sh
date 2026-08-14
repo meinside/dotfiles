@@ -12,6 +12,9 @@
 #   sandbox.test.ts   sandbox.json holds the invariants README.md documents (see
 #                     its header for why pi-sandbox's own matching logic can't be
 #                     borrowed the way guard.ts's is)
+#   sandbox-deps.test.ts  pi-sandbox's OS-level prerequisites (ripgrep, and on
+#                     Linux bubblewrap/socat plus unprivileged userns) are met
+#   extensions-deps.test.ts  git is installed (git-checkpoint.ts, statusline.ts)
 #
 # Machine-specific differences (which models, which language servers) arrive as
 # notes or skips; only drift, an unresolvable tier, a leak, a server that cannot

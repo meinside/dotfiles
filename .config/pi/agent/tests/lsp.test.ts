@@ -12,7 +12,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { readJson } from "./lib.ts";
+import { readJson, resolveCommand } from "./lib.ts";
 
 const EXEC_FAILURE_MARKERS = ["bad interpreter", "cannot execute", "No such file or directory"];
 
@@ -41,8 +41,7 @@ for (const name of Object.keys(servers).sort()) {
 		assert.ok(argv.length > 0, `${name}: no command`);
 		assert.ok(spec.extensions?.length, `${name}: no extensions, so nothing routes to it`);
 
-		const found = spawnSync("sh", ["-c", `command -v "$1"`, "_", argv[0]], { encoding: "utf8" });
-		const path = found.stdout.trim();
+		const path = resolveCommand(argv[0]);
 		if (!path) {
 			// expected: the file is shared across machines
 			return t.skip(`${name}: not installed here; install it or drop the entry`);

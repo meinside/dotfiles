@@ -333,6 +333,30 @@ are left on the weaker per-invariant style on purpose: they are meant to grow
 through ordinary `/sandbox-allow` usage, and a fixed expected set there would
 fight that instead of catching drift.
 
+`tests/sandbox-deps.test.ts` checks a different failure mode: `sandbox.json`
+commits `enabled: true` machine-wide, but pi-sandbox needs OS-level helpers
+(`rg` on both platforms; `bwrap`/`socat` on Linux) to actually enforce it, and
+a missing one fails sandbox initialization rather than pi-sandbox itself
+failing loudly at every `bash` call. It also surfaces (as a diagnostic, not a
+failure — an AppArmor profile may already compensate for it)
+`kernel.apparmor_restrict_unprivileged_userns`, which Ubuntu 24.04+ sets to `1`
+by default and which blocks bubblewrap's own unprivileged user namespace when
+nothing else grants it one. Same notes-versus-failures split as `lsp.test.ts`:
+a missing Linux-only dependency on macOS is `t.skip`, not a failure.
+
+`tests/extensions-deps.test.ts` covers the one binary dependency outside
+pi-sandbox: `extensions/git-checkpoint.ts` and `extensions/statusline.ts` both
+shell out to `git` directly (`pi.exec`/`execFile`), bypassing pi's own tool
+layer entirely, so a machine without `git` on `PATH` gets a silent no-op
+checkpoint and a blank footer status instead of an error at the point of use.
+`pi-magpi`, `pi-mcporter`, `pi-ask-user`, `@ctogg/pi-cost-counter`, and
+`@narumitw/pi-retry` were checked too and spawn nothing external; only
+`@narumitw/pi-lsp` does, and that's what `lsp.test.ts` already covers per
+server. All three dependency-presence checks (`lsp.test.ts`,
+`sandbox-deps.test.ts`, `extensions-deps.test.ts`) share one `PATH` lookup,
+`resolveCommand()` in `tests/lib.ts`, rather than each reimplementing
+`command -v` through `spawnSync`.
+
 ## Model tiers
 
 Agents and `settings.json` never name a concrete model. They reference role
