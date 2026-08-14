@@ -16,6 +16,7 @@
     "npm:@narumitw/pi-retry",
     "npm:pi-ask-user",
     "npm:pi-magpi",
-    "npm:pi-mcporter"
+    "npm:pi-mcporter",
+    "npm:pi-sandbox"
   ]
 }

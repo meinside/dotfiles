@@ -50,6 +50,9 @@ const PROTECTED_PATHS = [
  *   rest of `~/.aws` is not, so this names the secret-bearing subpaths instead.
  * - Transcripts are read-blocked but not write-blocked: a secret read once lives
  *   on in them, which makes an agent's own history a second credential store.
+ *   Sessions are written under XDG state (`PI_CODING_AGENT_SESSION_DIR`,
+ *   `~/.local/state/pi/sessions` by default), not under the agent config dir,
+ *   so both locations are listed.
  * - Claude's `settings.json` is writable-blocked for its hooks, not for secrets,
  *   so it stays readable.
  *
@@ -69,6 +72,7 @@ const SECRET_PATHS = [
 	"~/.config/pi/agent/sessions",
 	"~/.config/rclone",
 	"~/.gnupg",
+	"~/.local/state/pi/sessions",
 	"~/.netrc",
 	"~/.npmrc",
 	"~/.ollama/id_ed25519",

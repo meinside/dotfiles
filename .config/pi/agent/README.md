@@ -24,6 +24,7 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 | `pi-lsp.json` | yes | Language server routes for the `@narumitw/pi-lsp` extension. No secrets or machine-specific paths, so it is committed as-is |
 | `magpi.json` | yes | MagPi's config: the 100 MB cache budget and a pinned `allowPrivateNetwork: false`. Written only by an explicit `/magpi` config command, which merges the file with the changed key rather than expanding it, so there is no runtime churn to keep out of git |
 | `mcporter.json` | `.sample` mirror | `pi-mcporter`'s exposure policy (`defaultExposure`, per-server overrides). Not the MCP server definitions themselves — those live in `~/.config/mcporter/mcporter.json` (XDG; falls back to `~/.mcporter/mcporter.json`), a separate file tracked only as `.sample` in `.config/mcporter/`, outside this directory. Missing entirely, this file just falls back to pi-mcporter's own defaults (`defaultExposure: index`) rather than failing pi's startup |
+| `sandbox.json` | yes | `pi-sandbox`'s OS-level policy (allowed domains, filesystem allow/deny lists). No secrets or account IDs, just paths and hostnames, so it is committed as-is like `pi-lsp.json`. Mutated live by `/sandbox-allow ... for all projects`, so tracking it turns that prompt into an auditable `git diff` instead of a silent policy change |
 | `magpi-cache/` | no | MagPi's fetch cache (24 h TTL, capped at 100 MB, LRU eviction) |
 | `cost-tracker/` | no | `@ctogg/pi-cost-counter`'s append-only cost ledger, one JSONL file per day under `YYYY/MM/`. Contains the Bedrock inference profile ARNs, hence never committed |
 | `npm/` | no | `pi install` target. Ships its own `.gitignore` containing `*` |
@@ -237,7 +238,85 @@ What actually lowers the risk is credential hygiene, a short-lived AWS session
 rather than a long-lived key, and — now that MagPi pulls untrusted web pages into
 context, where an injected instruction can ask for a file and then post it to a
 public URL — doing that kind of work in an isolated environment, as
-`docs/security.md` recommends.
+`docs/security.md` recommends. `extensions/pi-sandbox` (below) is that boundary
+for `bash` specifically; the two extensions are complementary, not redundant.
+
+## Sandbox extension
+
+`extensions/guard.ts` says its own read block is "a guard against accidents, not
+a boundary" because `bash` can `cat` any pattern-matched path — encoding,
+quoting, or `python -c` all bypass a string match trivially. [`pi-sandbox`](https://github.com/carderne/pi-sandbox)
+(npm `pi-sandbox`) closes that gap with an actual OS boundary: `bash` runs under
+a generated Seatbelt profile on macOS or bubblewrap namespaces + seccomp on
+Linux, backed by `@carderne/sandbox-runtime`. Reads outside the allowlist and
+writes outside the workspace fail closed at the kernel, not at a regex.
+
+`read`/`write`/`edit` tool calls get the same filesystem policy applied directly,
+since the OS sandbox cannot cover tools that run in-process rather than as a
+subprocess.
+
+Policy lives in `sandbox.json` (tracked, see [Files](#files) above) and follows
+two rules learned the hard way while writing it:
+
+- **`allowWrite` also grants read on the same path**, so a cache directory that
+  happens to keep a credential file at its root (`~/.cargo/credentials.toml`,
+  `~/.gem/credentials`) is scoped to the specific cache subdirectory
+  (`.../cargo/registry`, `.../gem/specs`) rather than allowed wholesale. The
+  credential files themselves are hard-blocked in `denyWrite` on top, since
+  `denyWrite` always wins and is never prompted.
+- **`*.example.com` also matches the bare `example.com`** (`domainMatchesPattern`
+  in `@carderne/sandbox-runtime`), so a wildcard entry makes the same literal
+  domain redundant; the redundant literals were removed rather than left as
+  belt-and-suspenders.
+- **A package's own data directory can sit outside the workspace it ships
+  in.** `@ctogg/pi-cost-counter` writes to `~/.pi/cost-tracker`, a sibling of
+  this agent directory rather than a path under it, and broke silently
+  (`EPERM` on `mkdir`) the first time a sandboxed session tried to log a cost
+  entry. `allowRead`/`allowWrite` list both `~/.pi/cost-tracker` and its
+  symlink-resolved twin `~/.config/pi/cost-tracker`, since the sandbox
+  canonicalizes through the `~/.pi -> .config/pi` symlink at policy-check time
+  but a still-missing target directory can defeat that resolution depending on
+  which layer resolves it — listing both sides is cheaper than trusting it.
+
+Toolchains here run through `asdf`, which moves everything to XDG paths
+(`~/.local/share/{asdf,cargo,rustup,npm,pipx,uv}`) rather than the classic
+`~/.cargo`, `~/.rustup`, `~/.npm` the package's own example config assumes; the
+committed `allowRead`/`allowWrite` lists reflect the real paths for this setup,
+confirmed against `CARGO_HOME`, `RUSTUP_HOME`, `GOPATH`, and `npm config get
+prefix` rather than assumed. `allowBrowserProcess` stays `false` since nothing
+here drives a browser; the package's own example config warns that flag opens a
+real hole (Chrome's cookie/login-data stores become bash-readable) and should
+only be on for `agent-browser`-style workflows.
+
+`/sandbox` shows the active policy and session allowances, `Alt+S` toggles the
+sandbox for the session, and `/sandbox-allow {read,write,domain} <path>` prompts
+to extend `allowRead`/`allowWrite`/`allowedDomains` — once, for the session, for
+this project (`.pi/sandbox.json`), or for all projects (here). `tests/sandbox.test.ts`
+pins the committed JSON's invariants (which credential paths stay hard-blocked,
+that `allowRead`/`allowWrite`/`denyRead`/`denyWrite` stay sorted, no domain
+redundant with a wildcard already in the list) but not the live effect
+pi-sandbox computes from it: Node's built-in TypeScript loader refuses to strip
+types for anything under `node_modules`
+(`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING`), so `pi-sandbox/src/policy.ts`'s
+real `matchesPattern`/`domainMatchesPattern` can't be imported and exercised
+the way `guard.test.ts` imports `extensions/guard.ts` directly. That gap showed
+up twice while writing this policy — the `~/.pi/cost-tracker` EPERM above, and
+a second one where dropping `~/Library` from `allowRead` (correctly, to close
+the Chrome-credentials hole) also silently took Homebrew's own
+`~/Library/Caches/Homebrew` bootsnap cache with it, breaking `brew` itself
+under a sandboxed `bash` — both found by running real commands under the
+policy, not by the test file.
+
+What the test file does catch is `sandbox.json` and itself drifting apart:
+`filesystem.denyWrite` is asserted to equal, not merely contain,
+`GENERIC_SECRET_GLOBS ∪ CREDENTIAL_PATHS` as defined in `sandbox.test.ts`. A
+plain "the expected paths are present" check only fails when something is
+removed; union-equality also fails when something is *added* to `denyWrite`
+without a matching entry in the test — the direction that would otherwise let
+a new credential path go unpinned. `allowRead`/`allowWrite`/`allowedDomains`
+are left on the weaker per-invariant style on purpose: they are meant to grow
+through ordinary `/sandbox-allow` usage, and a fixed expected set there would
+fight that instead of catching drift.
 
 ## Model tiers
 
@@ -389,15 +468,22 @@ dependency-free, auditable code.
 | `pi-ask-user` | An `ask_user` tool with a structured form, so the model asks instead of guessing. Also ships an `ask-user` skill. Needs a UI: it degrades where `ctx.hasUI` is false, so subagents do not get it |
 | `pi-magpi` | `magpi_fetch` / `magpi_search` / `magpi_cached`: pages fetched as markdown behind a 24 h cache, with official-API handlers for GitHub, GitLab, npm, PyPI, crates, rubygems, maven, hex, arxiv, Wikipedia, StackExchange and HN. Search scrapes `lite.duckduckgo.com`, the one fragile part. SSRF-guarded: a model-supplied URL cannot reach loopback, link-local (AWS IMDS) or private ranges unless `allowPrivateNetwork` is set |
 | `pi-mcporter` | Bridges MCP servers into pi through a `mcporter` proxy tool, with per-server exposure levels (`on-demand`/`index`/`match`/`native`, see `mcporter.json` above) that control how much of a server's tool schema lands in context before it is ever called. **Documented exception** to the bar below: it drags in `@modelcontextprotocol/{client,server,core}`, `es-toolkit`, `zod` and `rolldown`, the last shipping a 16 MB prebuilt native binary (`@rolldown/binding-darwin-arm64/*.node`) — precisely what `pi-smart-fetch` was rejected for. Kept anyway: nothing dependency-free does what MCP access does, and the exposure-level design is the point — it is what lets pi see a server's tools on demand instead of native MCP integrations (Claude Code included) dumping every connected server's full schema into every session's context |
+| `pi-sandbox` | OS-level `bash` and `read`/`write`/`edit` sandboxing (Seatbelt on macOS, bubblewrap+seccomp on Linux) via `@carderne/sandbox-runtime`, policy in `sandbox.json` (see [Sandbox extension](#sandbox-extension)). **Second documented exception**: `sandbox-runtime` ships prebuilt per-arch binaries for its own enforcement (`vendor/seccomp/{x64,arm64}/apply-seccomp`, ~0.6-0.7 MB each; an unused `vendor/srt-win/*.exe` pair too) — the same category of weight `pi-smart-fetch` was rejected for. Kept anyway, for the same reason as `pi-mcporter`: nothing dependency-free gives `bash` an actual kernel-enforced filesystem/network boundary instead of a pattern match, and `extensions/guard.ts` says plainly that its own read block is not one |
 
-Measured: `npm/` holds 79 MB (19 MB before `pi-mcporter`; its `mcporter`
-dependency chain alone accounts for the other 60 MB, see above), all pure
-JavaScript except the one native binary noted above, and startup goes from
-0.67 s to 1.03 s — paid again by every subagent process. `pi-mcporter` was not
-isolated in that 0.67→1.03 s figure; end-to-end trials with and without it
-(`pi --no-session -p "OK"`, 5 runs each) were noisy (~4.6 s vs ~5.6 s, network
-call time dominating) and not clean enough to state a per-launch cost
-separately. Nearly all of the pre-`pi-mcporter` total is MagPi's HTML and PDF
+Measured: `npm/` holds 95 MB. Before `pi-mcporter` it was 19 MB; `pi-mcporter`'s
+`mcporter` dependency chain accounts for 60 MB of the jump to 79 MB (see above);
+`pi-sandbox` plus `@carderne/sandbox-runtime` account for the remaining ~16 MB
+to 95 MB, roughly 7 MB of it the two `apply-seccomp` binaries. All three
+packages are pure JavaScript except for the one native binary each of
+`pi-mcporter` and `pi-sandbox` carries. Startup went from 0.67 s to 1.03 s after
+`pi-mcporter` alone — paid again by every subagent process; `pi-sandbox` was not
+isolated in a follow-up measurement, since every launch is now sandboxed by
+default and there is no more an unsandboxed baseline to diff against on this
+machine. `pi-mcporter` was not isolated in the 0.67→1.03 s figure either:
+end-to-end trials with and without it (`pi --no-session -p "OK"`, 5 runs each)
+were noisy (~4.6 s vs ~5.6 s, network call time dominating) and not clean
+enough to state a per-launch cost separately. Nearly all of the
+pre-`pi-mcporter` total is MagPi's HTML and PDF
 conversion dependencies; retry and ask-user together cost 160 KB and nothing
 measurable, and cost-counter 28 KB.
 
@@ -427,9 +513,12 @@ project-locally when the project is trusted.
 Rejected on the same criteria: `pi-smart-fetch`, which puts
 `@earendil-works/pi-tui@^0.82.1` in `dependencies` against the host's 0.84.1 —
 core packages must be peer dependencies — and pulls 54 MB of prebuilt Rust
-binaries through `wreq-js`. `pi-mcporter` above trips the same native-binary and
-dependency-weight tripwire and was kept anyway, as a deliberate, single
-exception — not a change to the bar itself.
+binaries through `wreq-js`. `pi-mcporter` and `pi-sandbox` above trip the same
+native-binary and dependency-weight tripwire and were kept anyway, each as its
+own deliberate exception — not a change to the bar itself. The line the two
+actually cross is capability, not weight: neither MCP access nor a real OS
+sandbox boundary can be built dependency-free, unlike everything else in the
+table.
 
 ## Language servers (pi-lsp)
 

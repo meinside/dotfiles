@@ -9,6 +9,9 @@
 #   pricing.test.ts   models.json costs against pi's catalog (reported, never fails)
 #   lsp.test.ts       every pi-lsp.json command is present and can exec
 #   guard.test.ts     guard.ts blocks what README says it blocks
+#   sandbox.test.ts   sandbox.json holds the invariants README.md documents (see
+#                     its header for why pi-sandbox's own matching logic can't be
+#                     borrowed the way guard.ts's is)
 #
 # Machine-specific differences (which models, which language servers) arrive as
 # notes or skips; only drift, an unresolvable tier, a leak, a server that cannot
