@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2026.08.10.
+# last update: 2026.08.14.
 
 # unnecessary binary files
 *.a
@@ -117,6 +117,7 @@ erl_crash.dump
 .stack/
 
 # java files/dirs
+.eclipse/
 .gradle/
 .m2/
 .oracle_jre_usage/

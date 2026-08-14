@@ -279,10 +279,27 @@ two rules learned the hard way while writing it:
   (`.../cargo/registry`, `.../gem/specs`) rather than allowed wholesale. The
   credential files themselves are hard-blocked in `denyWrite` on top, since
   `denyWrite` always wins and is never prompted.
-- **`*.example.com` also matches the bare `example.com`** (`domainMatchesPattern`
-  in `@carderne/sandbox-runtime`), so a wildcard entry makes the same literal
-  domain redundant; the redundant literals were removed rather than left as
-  belt-and-suspenders.
+- **`*.example.com` also matches the bare `example.com`** in `pi-sandbox`'s
+  `domainMatchesPattern` — but only there, and that is not the enforcing layer;
+  see the entry below, which corrects what this bullet used to conclude.
+- **A wildcard does *not* cover the bare domain at the layer that enforces it.**
+  The opposite was written here, and it was wrong: `pi-sandbox`'s
+  `domainMatchesPattern` does return true for the bare `example.com` given
+  `*.example.com`, but that function only decides whether to *prompt*.
+  Enforcement is `matchesDomainPattern` in `@carderne/sandbox-runtime`, which
+  requires a strict subdomain (`h.endsWith("." + base)`). So a bare domain
+  present only as a wildcard is hard-blocked by the runtime proxy *without a
+  prompt*: with only `*.github.com` listed, `https://github.com/` returned
+  `000` and `git clone https://github.com/...` failed with `CONNECT tunnel
+  failed, response 403` — measured by generating a sandbox straight from this
+  `sandbox.json` with `@carderne/sandbox-runtime`'s own `srt` CLI. `pypi.org`,
+  `crates.io` and `rubygems.org` were in the same state. The literals
+  "redundant with a wildcard" that this file once bragged about removing are
+  back (`github.com`, `pypi.org`, `crates.io`, `rubygems.org`, plus
+  `nodejs.org`, `pub.dev`, `luarocks.org`), the wildcards stay for
+  the subdomains that serve artifacts, and `tests/sandbox.test.ts`'s
+  redundancy invariant — which actively enforced the broken state — was
+  replaced by its inverse, `BARE_DOMAINS_TOOLS_NEED`.
 - **A package's own data directory can sit outside the workspace it ships
   in.** `@ctogg/pi-cost-counter` writes to `~/.pi/cost-tracker`, a sibling of
   this agent directory rather than a path under it, and broke silently
@@ -303,13 +320,145 @@ here drives a browser; the package's own example config warns that flag opens a
 real hole (Chrome's cookie/login-data stores become bash-readable) and should
 only be on for `agent-browser`-style workflows.
 
+### What the first tightened policy actually broke
+
+The default `allowRead` (`".", "~/.config", "~/.local", "Library"`) was replaced
+here by specific subpaths, which is the right direction but silently removed
+things every toolchain needs. Each of the following was reproduced by running
+the real command inside a sandboxed `bash`, not inferred from the lists:
+
+- **`~/.config/git` read.** `git config --list --global` fails with `fatal:
+  unable to access '~/.config/git/config': Operation not permitted`, and so does
+  anything linking libgit2 — `cargo new` dies with `failed to stat
+  '~/.config/git/config'; class=Config`. Only `config`, `ignore` and
+  `attributes` are listed, plus `~/.gitconfig`, `~/.gitignore` and
+  `~/.gitignore_global`, so a `~/.config/git/credentials` alongside them stays
+  unreadable; the directory is deliberately *not* allowed wholesale.
+- **`GOCACHE`.** `go build` cannot start at all: `failed to initialize build
+  cache at ~/Library/Caches/go-build`. `~/Library/Caches/go-build` (macOS) and
+  `~/.cache` (Linux, `~/.cache/go-build`) are now writable, as is
+  `~/Library/Application Support/go` / `~/.config/go` for the telemetry and
+  `go env -w` files that produced the second error on the same command.
+- **`$CARGO_HOME` root.** Scoping to `cargo/{git,registry}` left out the
+  `.package-cache` lock, `.global-cache`, and `bin`, so `cargo build`/`cargo
+  install` could not run. Those three are listed individually rather than
+  opening `~/.local/share/cargo`, because `allowWrite` implies read and the
+  credential files there are only hard-blocked for *writes*.
+- **`PATH` directories.** `command -v gopls ruff biome taplo marksman
+  lua-language-server` reported every one of them missing under the sandbox
+  although all are installed: execute is a read on both platforms, so
+  `~/.local/bin`, `~/bin`, `~/.local/share/cargo/bin`,
+  `~/.local/share/nvim/mason` and `~/.luarocks` have to be readable for `bash`
+  to see the same tools `pi-lsp` (which spawns in-process, outside the sandbox)
+  happily uses.
+- **`/tmp` on macOS only.** `/tmp` is a symlink to `/private/tmp`, and the
+  `allowWrite` entry did not follow it: `mkdir /tmp/x` was denied while
+  `$TMPDIR` (`/tmp/claude`, set by `sandbox-runtime` itself) worked. `/private/tmp`
+  is listed next to `/tmp` — a no-op on Linux, where `/tmp` is a real directory.
+- **`~/.tool-versions`.** asdf walks up to `$HOME` looking for it, and the home
+  root is `denyRead`. On Linux this is worse than a denial: `denyRead` is
+  implemented as a `tmpfs` over the directory, so the file is *absent* rather
+  than refused and asdf silently resolves a different version.
+- **`~/.asdf`.** `ASDF_DATA_DIR` is exported to `~/.local/share/asdf` on this
+  machine, but asdf 0.16+ defaults to `~/.asdf`; both are listed so the Linux
+  boxes work whether or not the variable is set there.
+- **Language downloads.** `curl` to `nodejs.org`, `static.rust-lang.org`,
+  `cache.ruby-lang.org`, `www.python.org`, `go.dev`, `dl.google.com` and
+  `ghcr.io` all returned `000`: `asdf plugin add` worked (GitHub) but `asdf
+  install <lang>` could not fetch a single runtime, and `brew install` could not
+  fetch a bottle. Both the wildcard and the bare literal are listed where a
+  tool hits the apex host, since the runtime's wildcard matching is
+  strict-subdomain only (see the bullet above). Which hosts these are was not
+  guessed: every installed `asdf` plugin (`babashka clojure erlang gleam golang
+  janet java lua meson nim ninja nodejs python ruby rust zig`) was grepped for
+  the URLs its own scripts and version-definition files fetch. That is where
+  `download.clojure.org`, `dl.google.com`, `golang.org`, `nodejs.org`,
+  `luarocks.org`, `*.lua.org`, `nim-lang.org`, `sh.rustup.rs`, `ziglang.org`,
+  `cache.ruby-lang.org`, `www.python.org` and `ftpmirror.gnu.org` (python-build
+  compiling its own readline/openssl) come from; most plugins resolve to
+  `github.com` alone. Two entries added on assumption were removed again after
+  that grep: `api.adoptium.net` (asdf-java's Temurin rows are GitHub release
+  URLs, and the JDK actually installed here, `openjdk-25.0.2`, comes from
+  `download.java.net`, which was added instead) and `astral.sh` (`uv` is a
+  Homebrew install and `ruff` a mason one, so the installer script host is never
+  hit). `repo1.maven.org` is kept for `deps.edn`/Maven Central resolution rather
+  than any plugin, and `storage.googleapis.com` is the loosest entry in the list
+  — any GCS bucket, accepted for Flutter/Dart. `pip download`, `npm i` and `gem
+  fetch` were verified working *before* these additions and need nothing.
+- **`allowUnauthenticatedSocksProxy`.** Documented above as what makes
+  Git-over-SSH work on macOS, but `~/.ssh` is unreadable under this policy, so
+  SSH cannot authenticate anyway (`ssh -T git@github.com` fails); it is now
+  `false`, closing the local-proxy exposure it was paying for nothing. Turning
+  it back on only makes sense together with an `allowRead` entry for a key.
+- `~/.cache/{npm,pip,uv}` were dropped as dead weight once `~/.cache` itself is
+  writable (prefix matching), and `/root` joined `denyRead` for parity with
+  `/Users` and `/home` on a Linux box entered as root. `~/.npmrc` stays
+  unreadable on purpose: public-registry installs do not need it and it holds a
+  token.
+
+- **`~/.eclipse` (jdtls).** Fixing the `PATH` reads above made `tests/lsp.test.ts`
+  *start* failing on `jdtls is usable` — not a regression from that change but a
+  failure it uncovered: while `~/.local/share/nvim/mason/bin` was unreadable the
+  case was skipped as "not installed here". Under the sandbox Eclipse cannot
+  write its fallback configuration area and reports
+  `java.io.FileNotFoundException: ~/.eclipse/…/configuration/….log (No such file
+  or directory)`, which is one of `lsp.test.ts`'s `EXEC_FAILURE_MARKERS`, so the
+  probe is read as "on PATH but does not exec". `~/.eclipse` is therefore
+  allowed for read and write like any other toolchain state directory. Note this
+  only ever affected `jdtls` invoked from `bash`: `pi-lsp` spawns language
+  servers from pi's own process, which the OS sandbox does not cover. (The entry
+  went live mid-session, without a restart, because granting an unrelated
+  permission prompt reloads the config — see below.)
+- **`~/.gitignore`.** A `git clone` under the fixed policy still warned `unable
+  to access '~/.gitignore'`; git probes that name as well as
+  `~/.gitignore_global`, so both are listed. The `failed to store: -60008` on the
+  same clone is the macOS keychain credential helper, which stays blocked on
+  purpose.
+
+None of this is visible to `tests/sandbox.test.ts` (see below), and when a
+`sandbox.json` edit takes effect is worth knowing exactly, because it is not
+"never until restart": `pi.on("session_start")` initializes from disk,
+`/sandbox-enable` after a `/sandbox-disable` calls `loadConfig()` again (nothing
+caches it), and — the surprising one — granting *any* permission prompt runs
+`applyChoice() -> refreshSandbox() -> SandboxManager.reset()` plus a fresh
+`initializeSandbox(loadConfig(cwd))`, so an unrelated grant silently activates
+whatever the file currently says. Outside those three moments an edit lies
+dormant and re-running a probe reproduces the old behaviour, which is easy to
+mistake for the edit not working.
+
+What that reload does to the *network* half was observed to misbehave once, and a
+second apparent misbehaviour turned out to be self-inflicted. The real one: a
+re-init left the filesystem policy correctly updated while every domain,
+including ones that had worked a minute earlier, returned `000` — the proxy
+bridge did not come back with the reset. It has not been reproduced since, so
+treat it as a transient rather than a rule. The self-inflicted one is worth more
+than the bug: later in the same session `example.com`, `www.wikipedia.org` and a
+domain that had *just been removed* from `allowedDomains` all answered `200`, and
+`/sandbox` showed exactly those three under session allowances. `pi.on("tool_call")`
+runs `extractDomainsFromCommand()` over the bash command *text*, so every URL
+literal in a probe loop raises its own prompt; granting them to let the probe
+finish both whitelists them for the session and — via `applyChoice() ->
+refreshSandbox()` — reloads `sandbox.json` as a side effect. That is what
+activated the `~/.eclipse` entry above without a restart and turned the `jdtls`
+failure green mid-session. Consequences for anyone probing this policy: keep
+hostnames that are *supposed* to be blocked out of the command line unless the
+prompt is going to be refused, remember that session allowances are invisible to
+the agent (so a `200` proves nothing on its own), and read domain results only
+from a session where `/sandbox` lists no allowances — or better, from outside pi:
+build a runtime config from `sandbox.json` the way `buildRuntimeConfig()` does
+(expand `~`, fold `allowWrite` into `allowRead`) and run the probe under `node
+.../@carderne/sandbox-runtime/dist/cli.js -s <that file> -c '<command>'`, which
+has no prompt path at all. It has to be outside pi: nested, it fails with `EPERM`
+on its own mux socket.
+
 `/sandbox` shows the active policy and session allowances, `Alt+S` toggles the
 sandbox for the session, and `/sandbox-allow {read,write,domain} <path>` prompts
 to extend `allowRead`/`allowWrite`/`allowedDomains` — once, for the session, for
 this project (`.pi/sandbox.json`), or for all projects (here). `tests/sandbox.test.ts`
 pins the committed JSON's invariants (which credential paths stay hard-blocked,
-that `allowRead`/`allowWrite`/`denyRead`/`denyWrite` stay sorted, no domain
-redundant with a wildcard already in the list) but not the live effect
+that `allowRead`/`allowWrite`/`denyRead`/`denyWrite` stay sorted, that the bare
+domains tools need are listed literally next to their wildcard) but not the live
+effect
 pi-sandbox computes from it: Node's built-in TypeScript loader refuses to strip
 types for anything under `node_modules`
 (`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING`), so `pi-sandbox/src/policy.ts`'s

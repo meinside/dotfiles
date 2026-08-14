@@ -12,10 +12,17 @@
  * imports `getAgentDir` from `@earendil-works/pi-coding-agent`, which only
  * resolves inside a running pi process, not a bare `node --test` run. So this
  * checks the committed JSON directly rather than the effective policy pi-sandbox
- * computes from it. The one exception is `wildcardCoversLiteral` below, a
- * two-line reimplementation of the redundancy rule in `domainMatchesPattern`
- * (`*.example.com` also matches the bare `example.com`) — simple and stable
- * enough that pinning it locally beats not checking it at all.
+ * computes from it. It used to make one exception, `wildcardCoversLiteral`, a
+ * two-line reimplementation of a "redundancy rule" that turned out not to exist
+ * at the layer that matters: `pi-sandbox`'s own `domainMatchesPattern` does treat
+ * `*.example.com` as covering the bare `example.com`
+ * (`domain === base || endsWith("." + base)`), but that function only decides
+ * whether to *prompt*. Enforcement is `matchesDomainPattern` in
+ * `@carderne/sandbox-runtime`, which requires a strict subdomain
+ * (`h.endsWith("." + base)`), so a bare domain covered only by a wildcard is
+ * hard-blocked by the runtime proxy with no prompt at all. The old invariant
+ * therefore pushed the config into blocking `git clone`; it is replaced below by
+ * `BARE_DOMAINS_TOOLS_NEED`, measured under a real sandbox (see README.md).
  *
  * `denyWrite` gets the strictest treatment: `GENERIC_SECRET_GLOBS` and
  * `CREDENTIAL_PATHS` below are asserted to union to exactly `denyWrite`, not
@@ -90,9 +97,27 @@ const CREDENTIAL_PATHS = [
  * directory can defeat canonicalization depending on which layer resolves it. */
 const COST_TRACKER_PATHS = ["~/.pi/cost-tracker", "~/.config/pi/cost-tracker"];
 
-/** Two-line reimplementation of the redundancy half of
- * `domainMatchesPattern` in `pi-sandbox/src/policy.ts`: a `*.base` entry
- * already matches the bare `base` domain, so listing both is dead weight. */
+/** Bare domains that a wildcard entry does *not* cover at the enforcement
+ * layer. Each was measured under a real `@carderne/sandbox-runtime` sandbox
+ * generated from this `sandbox.json`: with only `*.github.com` present,
+ * `https://github.com/` returned `000` and `git clone` failed with `CONNECT
+ * tunnel failed, response 403`; same for `pypi.org` (pip's index), `crates.io`,
+ * `rubygems.org`, `nodejs.org` (asdf-nodejs), `pub.dev` and `luarocks.org`. The
+ * wildcards stay in the config too, for
+ * the subdomains that actually serve the artifacts. */
+const BARE_DOMAINS_TOOLS_NEED = [
+	"crates.io",
+	"github.com",
+	"luarocks.org",
+	"nodejs.org",
+	"pub.dev",
+	"pypi.org",
+	"rubygems.org",
+];
+
+/** Whether a `*.literal` wildcard is present. No longer a redundancy check —
+ * both forms are needed, and this now backs the assertion that the wildcard was
+ * not dropped once the literal exists. */
 function wildcardCoversLiteral(literal: string, wildcards: string[]): boolean {
 	return wildcards.some((pattern) => pattern.startsWith("*.") && pattern.slice(2) === literal);
 }
@@ -145,13 +170,25 @@ test("denyRead covers both the macOS and Linux home-directory root", () => {
 	assert.ok(denyRead.includes("/home"), "denyRead should list /home (Linux)");
 });
 
-test("no allowedDomains entry is redundant with a wildcard already in the list", () => {
+test("bare domains a wildcard cannot cover are listed literally", () => {
+	// Inverse of the invariant this file used to carry: `*.github.com` does not
+	// match `github.com` in the runtime that enforces the policy, so dropping the
+	// literal as "redundant" silently breaks `git clone https://github.com/...`.
 	const domains = config?.network?.allowedDomains ?? [];
-	for (const domain of domains) {
-		if (domain.startsWith("*.") || domain === "*") continue;
+	for (const domain of BARE_DOMAINS_TOOLS_NEED) {
 		assert.ok(
-			!wildcardCoversLiteral(domain, domains),
-			`${domain} is redundant: a *.${domain} wildcard already covers it`,
+			domains.includes(domain),
+			`${domain} must be listed literally: a *.${domain} wildcard only matches strict subdomains in @carderne/sandbox-runtime`,
+		);
+	}
+});
+
+test("the wildcard is kept alongside the literal where subdomains serve artifacts", () => {
+	const domains = config?.network?.allowedDomains ?? [];
+	for (const domain of ["crates.io", "github.com", "nodejs.org", "pypi.org", "rubygems.org"]) {
+		assert.ok(
+			wildcardCoversLiteral(domain, domains),
+			`*.${domain} should stay in allowedDomains: index/CDN hosts are subdomains`,
 		);
 	}
 });
