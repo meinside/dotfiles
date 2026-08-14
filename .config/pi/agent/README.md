@@ -79,7 +79,7 @@ extension, vendored here.
 
 - **Upstream repo:** <https://github.com/earendil-works/pi-mono>
 - **Upstream path:** `packages/coding-agent/examples/extensions/subagent/`
-- **Local copy of upstream:** `$(brew --prefix pi-coding-agent)/libexec/lib/node_modules/@earendil-works/pi-coding-agent/examples/extensions/subagent/` (`brew --prefix` resolves to a version-independent symlink, so this path survives pi upgrades)
+- **Local copy of upstream:** resolved by `tests/lib.ts`'s `piPackageDir()` (and `check.sh`'s shell equivalent) to `<package root>/examples/extensions/subagent/` — `brew --prefix pi-coding-agent` when Homebrew has the formula, otherwise the real path of the `pi` binary on `PATH`, so this works without Homebrew too (e.g. `pi.dev/install.sh` on Linux)
 - **Vendored from:** pi 0.83.0
 
 It registers a `subagent` tool that spawns a **separate `pi` process** per
@@ -160,10 +160,21 @@ same notes-versus-failures distinction the shell version made by hand.
 local matching rule cannot drift away from `dist/core/model-resolver.js` in
 silence.
 
+Resolving that upstream prefix used to mean only `brew --prefix pi-coding-agent`,
+which fails outright on a machine that installed pi via `pi.dev/install.sh`
+(no Homebrew involved, so no formula to resolve) — the exact failure mode this
+readme originally shipped with, since it was only tested on macOS with
+Homebrew. Both `check.sh` and `tests/lib.ts`'s `piPackageDir()` now try `brew
+--prefix` first, then fall back to resolving the real path of the `pi` binary
+on `PATH` and checking both the Homebrew bottle layout
+(`libexec/lib/node_modules/...`) and the plain `npm install -g` layout
+(`lib/node_modules/...`, what the installer script and a bare global npm
+install both produce) relative to it.
+
 When it reports drift:
 
 ```bash
-U="$(brew --prefix pi-coding-agent)"/libexec/lib/node_modules/@earendil-works/pi-coding-agent/examples/extensions
+U="$(./check.sh 2>&1 | head -1 | sed -E 's/.*upstream: //')"   # or read it from ./check.sh's own output
 C=~/.config/pi/agent
 
 diff -u $C/extensions/subagent/index.ts $U/subagent/index.ts   # inspect first
@@ -178,13 +189,17 @@ cp $U/subagent/agents/*.md $C/agents/     # then re-apply the tiers from the
 
 Then bump "Vendored from" above.
 
-If a pi session is running while upgrading, disable Homebrew's cleanup so the
-Cellar directory the running process started from stays in place:
+If a pi session is running while upgrading Homebrew's copy, disable its cleanup
+so the Cellar directory the running process started from stays in place:
 
 ```bash
 HOMEBREW_NO_INSTALL_CLEANUP=1 brew upgrade pi-coding-agent
 brew cleanup pi-coding-agent    # after the session ends
 ```
+
+On a machine installed via `pi.dev/install.sh` instead (no Homebrew, no
+Cellar), the installer replaces the previous version in place — there is no
+equivalent stale-directory risk to guard against.
 
 ## Guard extension
 

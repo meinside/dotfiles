@@ -25,23 +25,52 @@ set -uo pipefail
 [ "${1:-}" = "-v" ] && export PI_CHECK_VERBOSE=1
 
 C="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PREFIX="$(brew --prefix pi-coding-agent 2>/dev/null)" || true
-U="$PREFIX/libexec/lib/node_modules/@earendil-works/pi-coding-agent/examples/extensions"
+
+# Mirrors tests/lib.ts's piPackageDir(): Homebrew's libexec/lib/node_modules
+# layout first (fast, version-independent symlink), then the plain
+# lib/node_modules layout pi.dev/install.sh and a bare `npm install -g` use,
+# resolved from the real path of the `pi` binary on PATH so this works
+# without Homebrew (e.g. Linux).
+find_pi_package_dir() {
+    local prefix candidate pi_bin pi_real root
+    if command -v brew >/dev/null 2>&1; then
+        prefix="$(brew --prefix pi-coding-agent 2>/dev/null)" || true
+        if [ -n "$prefix" ] && [ -d "$prefix/libexec/lib/node_modules/@earendil-works/pi-coding-agent" ]; then
+            printf '%s\n' "$prefix/libexec/lib/node_modules/@earendil-works/pi-coding-agent"
+            return 0
+        fi
+    fi
+    pi_bin="$(command -v pi 2>/dev/null)" || return 1
+    pi_real="$(readlink -f "$pi_bin" 2>/dev/null || realpath "$pi_bin" 2>/dev/null)" || return 1
+    root="$(dirname "$(dirname "$pi_real")")"
+    for candidate in \
+        "$root/libexec/lib/node_modules/@earendil-works/pi-coding-agent" \
+        "$root/lib/node_modules/@earendil-works/pi-coding-agent"; do
+        if [ -d "$candidate" ]; then
+            printf '%s\n' "$candidate"
+            return 0
+        fi
+    done
+    return 1
+}
+
+PI_PACKAGE_DIR="$(find_pi_package_dir)" || true
+U="$PI_PACKAGE_DIR/examples/extensions"
 
 # Checked here rather than in a test: without it every vendored case fails with
 # the same cause, and tiers.test.ts cannot borrow pi's resolver at all.
-if [ -z "$PREFIX" ] || [ ! -d "$U/subagent" ]; then
-    echo "error: upstream examples not found (looked in ${U:-brew --prefix pi-coding-agent})" >&2
+if [ -z "$PI_PACKAGE_DIR" ] || [ ! -d "$U/subagent" ]; then
+    echo "error: upstream examples not found (tried brew --prefix and the pi binary on PATH; looked in ${U:-<unresolved>})" >&2
     exit 2
 fi
 if ! command -v node >/dev/null; then
-    echo "error: node not found; it comes with pi (brew install pi-coding-agent)" >&2
+    echo "error: node not found; it comes with pi (brew install pi-coding-agent, or pi.dev/install.sh)" >&2
     exit 2
 fi
 
-# Saves every test file a `brew --prefix` subprocess; they fall back to running it
-# themselves when invoked directly (node --test tests/samples.test.ts).
-export PI_CHECK_PREFIX="$PREFIX"
+# Saves every test file a subprocess and the same resolution work; they fall
+# back to running it themselves when invoked directly (node --test tests/samples.test.ts).
+export PI_CHECK_PREFIX="$PI_PACKAGE_DIR"
 
 echo "pi: $(pi --version 2>/dev/null | head -1)  upstream: $U"
 echo

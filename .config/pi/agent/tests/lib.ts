@@ -3,34 +3,74 @@
  *
  * `check.sh` is the entry point, but every file here also runs on its own
  * (`node --test tests/samples.test.ts`), so nothing depends on variables the
- * script exports beyond an optional cache of `brew --prefix`.
+ * script exports beyond an optional cache of the resolved package directory.
  */
 
 import { execFileSync } from "node:child_process";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, realpathSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 /** This config directory: the parent of `tests/`. */
 export const CONFIG_DIR = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
+const PI_NPM_PACKAGE = "@earendil-works/pi-coding-agent";
+
 /**
- * `brew --prefix` resolves to a version-independent symlink, so the path holds
- * across pi upgrades. `check.sh` exports it to save the subprocess.
+ * Candidate layouts for `<root>`, tried in order:
+ *   - Homebrew bottles the npm package under `libexec/lib/node_modules/...`.
+ *   - A plain `npm install -g` (including `pi.dev/install.sh`, which shells out
+ *     to `npm install -g --prefix <dir>`) puts it directly under
+ *     `lib/node_modules/...`, with no `libexec` layer.
  */
-export function piPrefix(): string {
-	const cached = process.env.PI_CHECK_PREFIX;
-	if (cached) return cached;
-	return execFileSync("brew", ["--prefix", "pi-coding-agent"], { encoding: "utf8" }).trim();
+const PACKAGE_SUBPATHS = [`libexec/lib/node_modules/${PI_NPM_PACKAGE}`, `lib/node_modules/${PI_NPM_PACKAGE}`];
+
+/** First existing `<root>/<subpath>` for either layout, or `undefined`. */
+function resolvePackageDir(root: string): string | undefined {
+	return PACKAGE_SUBPATHS.map((subpath) => join(root, subpath)).find((candidate) => existsSync(candidate));
 }
 
-const PI_PACKAGE = "libexec/lib/node_modules/@earendil-works/pi-coding-agent";
+/**
+ * Locates the installed `@earendil-works/pi-coding-agent` package directory
+ * regardless of install method. Tries `brew --prefix` first, since it is a
+ * version-independent symlink and the common case on macOS; falls back to
+ * resolving the real path of the `pi` binary on `PATH` and checking both
+ * layouts above relative to it, which covers `pi.dev/install.sh` and a plain
+ * `npm install -g` on Linux (or anywhere without Homebrew).
+ */
+export function piPackageDir(): string {
+	const cached = process.env.PI_CHECK_PREFIX;
+	if (cached) return cached;
+
+	try {
+		const brewPrefix = execFileSync("brew", ["--prefix", "pi-coding-agent"], {
+			encoding: "utf8",
+			stdio: ["ignore", "pipe", "ignore"],
+		}).trim();
+		const viaBrew = brewPrefix && resolvePackageDir(brewPrefix);
+		if (viaBrew) return viaBrew;
+	} catch {
+		// No Homebrew, or no pi-coding-agent formula; fall through to the binary.
+	}
+
+	const piBinary = execFileSync("sh", ["-c", "command -v pi"], { encoding: "utf8" }).trim();
+	if (!piBinary) throw new Error("pi binary not found on PATH");
+	const realBinary = realpathSync.native(piBinary);
+	// `<root>/bin/pi` in every layout above; `dirname` twice strips `bin/pi`.
+	const root = dirname(dirname(realBinary));
+	const viaBinary = resolvePackageDir(root);
+	if (viaBinary) return viaBinary;
+
+	throw new Error(
+		`could not locate ${PI_NPM_PACKAGE}: tried brew --prefix and both node_modules layouts under ${root}`,
+	);
+}
 
 /** Upstream copy of the vendored examples. */
-export const upstreamExamples = (): string => join(piPrefix(), PI_PACKAGE, "examples/extensions");
+export const upstreamExamples = (): string => join(piPackageDir(), "examples/extensions");
 
 /** pi's own build, imported to reuse its model resolver rather than copy it. */
-export const piDist = (): string => join(piPrefix(), PI_PACKAGE, "dist");
+export const piDist = (): string => join(piPackageDir(), "dist");
 
 export function readText(name: string): string | undefined {
 	try {
