@@ -364,79 +364,49 @@ server. All three dependency-presence checks (`lsp.test.ts`,
 ### Troubleshooting: `apply-seccomp: ... nested userns ... CAP_SYS_ADMIN` on Ubuntu 24.04+
 
 Seen on a stock Ubuntu 24.04+ machine (Oracle Cloud instance, nothing custom
-about the host) where `sandbox-deps.test.ts`'s userns check passed — both
-sysctls read permissive — and a bare `bwrap --unshare-all ... echo ok` outside
-pi worked, yet every `bash` command inside pi failed identically. The
-difference: that bare test only exercises bwrap's *own* first-level userns.
-pi-sandbox's actual bwrap invocation runs `apply-seccomp` (from
-`@carderne/sandbox-runtime`) *inside* that first sandbox to apply its PID and
-mount unshare, which needs a **second, nested** unprivileged userns — and
-Ubuntu's AppArmor-based mitigation for this (upstream project profile
+about the host): every `bash` command inside pi fails with a `CAP_SYS_ADMIN`
+error from `apply-seccomp` (from `@carderne/sandbox-runtime`), even though a
+bare `bwrap --unshare-all ... echo ok` outside pi works fine. Cause: bwrap's
+own first-level userns works, but `apply-seccomp` needs a **second, nested**
+unprivileged userns inside it, which Ubuntu's AppArmor mitigation for this
+(upstream profile
 [`bwrap-userns-restrict`](https://gitlab.com/apparmor/apparmor/-/blob/main/profiles/apparmor/profiles/extras/bwrap-userns-restrict),
-shipped by Canonical since noble) transitions anything `bwrap` execs into a
-`bwrap//&unpriv_bwrap` sub-profile, and unconfined processes elsewhere into a
-generic `unprivileged_userns` profile. Both are **separate from, and enforced
-regardless of,** the `kernel.apparmor_restrict_unprivileged_userns` sysctl —
-disabling that sysctl only changes the *default* for genuinely unconfined
-processes; a process already confined by a loaded profile (`unpriv_bwrap` or
-`unprivileged_userns`) is governed by that profile's own rules instead, so the
-sysctl flip visibly does nothing and looks like it failed silently.
+shipped by Canonical since noble) blocks via the `unpriv_bwrap` and
+`unprivileged_userns` profiles — **regardless of the
+`kernel.apparmor_restrict_unprivileged_userns` sysctl**, which only affects
+genuinely unconfined processes, not ones already governed by a loaded
+profile. Confirm with `sudo aa-status` (look for `bwrap`, `unpriv_bwrap`,
+`unprivileged_userns` under enforce mode) and `sudo dmesg | grep -i apparmor`
+(look for `apparmor="DENIED" ... capname="sys_admin"`).
 
-Diagnose with `sudo aa-status`, not the sysctls: look for `bwrap`,
-`unpriv_bwrap`, and `unprivileged_userns` under "profiles are in enforce
-mode". `sandbox-deps.test.ts` can't see any of this from a bare `node --test`
-run, since `aa-status` needs root and the actual failure only shows up inside
-a real sandboxed `bash` call. Get the exact denial from `dmesg`, not a guess:
-
-```bash
-sudo dmesg | grep -i apparmor | tail -20
-# apparmor="DENIED" operation="capable" class="cap" profile="unpriv_bwrap"
-#   comm="apply-seccomp" capability=21 capname="sys_admin"
-```
-
-`unpriv_bwrap` and `unprivileged_userns` are both defined in one file,
-`/etc/apparmor.d/bwrap-userns-restrict` — not `/etc/apparmor.d/unpriv_bwrap`,
-which doesn't exist as its own file; reload with
-`sudo apparmor_parser -r /etc/apparmor.d/bwrap-userns-restrict`.
-
-A scoped local override (granting just the missing capability, or
-transitioning `apply-seccomp`'s exact binary path to its own profile) is the
-textbook fix and is how OpenAI's Codex CLI docs describe solving the identical
-issue, but neither worked against this profile's blanket `audit deny
-capability,` in testing here, for reasons that stayed unresolved after
-several rounds of `apparmor_parser` reloads. Chasing that further needs fast,
-direct iteration on the box itself, not one reload at a time over chat.
-
-**What actually works: `aa-complain`.**
+A scoped AppArmor override that keeps these profiles enforcing was tried at
+length here and didn't work — the blanket `audit deny capability,` in
+`unpriv_bwrap` won against local-override allows regardless of `priority=`,
+and `no_new_privs` (which bwrap sets) blocks exec transitions to any other
+named profile outright. The working fix:
 
 ```bash
 sudo aa-complain bwrap unpriv_bwrap unprivileged_userns
 ```
 
 This logs violations instead of blocking them, for exactly these three
-profiles — narrower than the global sysctl (which affects every unconfined
-process on the machine, not just `bwrap`'s), but it removes Ubuntu's userns
-hardening for anything else that also happens to run through `bwrap` on that
-machine. **This does not survive a reboot**: verified by checking the actual
-profile file (`grep -n "profile bwrap\|profile unpriv_bwrap"
-/etc/apparmor.d/bwrap-userns-restrict`) before and after — `flags=` stays
-`(attach_disconnected, mediate_deleted)`, with no `complain` added, so
-`aa-complain` only changed the in-kernel runtime state. A reboot reloads from
-disk and re-enforces all three. Re-run the command above after every reboot,
-or make it stick on purpose by editing the flags directly (a real, persistent
-policy change to weigh, not a free lunch):
+profiles — narrower than disabling the sysctl (which affects every unconfined
+process on the machine), but it does remove Ubuntu's userns hardening for
+anything else that also runs through `bwrap` on that machine. **It does not
+survive a reboot** (verified: `aa-complain` only changes in-kernel state, not
+the on-disk `flags=` in `/etc/apparmor.d/bwrap-userns-restrict`) — re-run the
+command after every reboot, or make it stick on purpose:
 
 ```bash
 sudo sed -i 's/flags=(attach_disconnected, mediate_deleted)/flags=(attach_disconnected, mediate_deleted, complain)/' /etc/apparmor.d/bwrap-userns-restrict
 sudo apparmor_parser -r /etc/apparmor.d/bwrap-userns-restrict
 ```
 
-To put the sysctl and enforcement back exactly as found:
+To revert back to full enforcement:
 
 ```bash
 sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=1
 sudo aa-enforce bwrap unpriv_bwrap unprivileged_userns
-sudo aa-status 2>&1 | grep -B2 -A2 "unpriv_bwrap\|unprivileged_userns\b"
 ```
 
 ## Model tiers
