@@ -386,42 +386,58 @@ Diagnose with `sudo aa-status`, not the sysctls: look for `bwrap`,
 `unpriv_bwrap`, and `unprivileged_userns` under "profiles are in enforce
 mode". `sandbox-deps.test.ts` can't see any of this from a bare `node --test`
 run, since `aa-status` needs root and the actual failure only shows up inside
-a real sandboxed `bash` call.
-
-Fix it the way OpenAI's own Codex CLI docs recommend for the identical issue
-([developers.openai.com/codex/concepts/sandboxing](https://developers.openai.com/codex/concepts/sandboxing))
-— a scoped local override, not a global sysctl flip, which Ubuntu's own
-security team explicitly advises against for a single tool's convenience
-([Understanding AppArmor user namespace restriction](https://discourse.ubuntu.com/t/understanding-apparmor-user-namespace-restriction/58007)):
+a real sandboxed `bash` call. Get the exact denial from `dmesg`, not a guess:
 
 ```bash
-# 1. Find exactly which capability got denied - unpriv_bwrap does a blanket
-#    "audit deny capability", so this is usually CAP_SYS_ADMIN but confirm:
 sudo dmesg | grep -i apparmor | tail -20
-
-# 2. Grant only that capability, in a local override file Ubuntu's own
-#    packaging convention reserves for this (survives apparmor-profiles
-#    package upgrades, unlike editing /etc/apparmor.d/unpriv_bwrap directly):
-sudo mkdir -p /etc/apparmor.d/local
-echo 'allow capability sys_admin,' | sudo tee -a /etc/apparmor.d/local/unpriv_bwrap
-
-# 3. Reload and put enforcement back:
-sudo apparmor_parser -r /etc/apparmor.d/unpriv_bwrap
-sudo aa-enforce bwrap unpriv_bwrap unprivileged_userns
-
-# 4. Confirm the fix holds with enforcement back on
-bwrap --ro-bind / / --unshare-all --dev /dev echo ok
+# apparmor="DENIED" operation="capable" class="cap" profile="unpriv_bwrap"
+#   comm="apply-seccomp" capability=21 capname="sys_admin"
 ```
 
-Then retest inside pi. This grants the one missing capability to everything
-`bwrap` execs (`unpriv_bwrap` covers all of it, not just `apply-seccomp`
-specifically), which is coarser than a profile transition scoped to
-`apply-seccomp`'s own binary path but avoids hardcoding a path through
-`node_modules` that shifts with every reinstall. `sudo aa-complain <name>` is
-still the fastest way to confirm this diagnosis before writing the override;
-flip back to enforce with `aa-enforce` once the override is in place rather
-than leaving profiles in complain mode indefinitely, which quietly drops the
-mitigation for everything else `bwrap` touches on that machine, not just pi.
+`unpriv_bwrap` and `unprivileged_userns` are both defined in one file,
+`/etc/apparmor.d/bwrap-userns-restrict` — not `/etc/apparmor.d/unpriv_bwrap`,
+which doesn't exist as its own file; reload with
+`sudo apparmor_parser -r /etc/apparmor.d/bwrap-userns-restrict`.
+
+A scoped local override (granting just the missing capability, or
+transitioning `apply-seccomp`'s exact binary path to its own profile) is the
+textbook fix and is how OpenAI's Codex CLI docs describe solving the identical
+issue, but neither worked against this profile's blanket `audit deny
+capability,` in testing here, for reasons that stayed unresolved after
+several rounds of `apparmor_parser` reloads. Chasing that further needs fast,
+direct iteration on the box itself, not one reload at a time over chat.
+
+**What actually works: `aa-complain`.**
+
+```bash
+sudo aa-complain bwrap unpriv_bwrap unprivileged_userns
+```
+
+This logs violations instead of blocking them, for exactly these three
+profiles — narrower than the global sysctl (which affects every unconfined
+process on the machine, not just `bwrap`'s), but it removes Ubuntu's userns
+hardening for anything else that also happens to run through `bwrap` on that
+machine. **This does not survive a reboot**: verified by checking the actual
+profile file (`grep -n "profile bwrap\|profile unpriv_bwrap"
+/etc/apparmor.d/bwrap-userns-restrict`) before and after — `flags=` stays
+`(attach_disconnected, mediate_deleted)`, with no `complain` added, so
+`aa-complain` only changed the in-kernel runtime state. A reboot reloads from
+disk and re-enforces all three. Re-run the command above after every reboot,
+or make it stick on purpose by editing the flags directly (a real, persistent
+policy change to weigh, not a free lunch):
+
+```bash
+sudo sed -i 's/flags=(attach_disconnected, mediate_deleted)/flags=(attach_disconnected, mediate_deleted, complain)/' /etc/apparmor.d/bwrap-userns-restrict
+sudo apparmor_parser -r /etc/apparmor.d/bwrap-userns-restrict
+```
+
+To put the sysctl and enforcement back exactly as found:
+
+```bash
+sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=1
+sudo aa-enforce bwrap unpriv_bwrap unprivileged_userns
+sudo aa-status 2>&1 | grep -B2 -A2 "unpriv_bwrap\|unprivileged_userns\b"
+```
 
 ## Model tiers
 
