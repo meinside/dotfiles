@@ -15,28 +15,27 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 export const CONFIG_DIR = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 const PI_NPM_PACKAGE = "@earendil-works/pi-coding-agent";
+const NODE_MODULES_MARKER = `node_modules/${PI_NPM_PACKAGE}`;
 
-/**
- * Candidate layouts for `<root>`, tried in order:
- *   - Homebrew bottles the npm package under `libexec/lib/node_modules/...`.
- *   - A plain `npm install -g` (including `pi.dev/install.sh`, which shells out
- *     to `npm install -g --prefix <dir>`) puts it directly under
- *     `lib/node_modules/...`, with no `libexec` layer.
- */
-const PACKAGE_SUBPATHS = [`libexec/lib/node_modules/${PI_NPM_PACKAGE}`, `lib/node_modules/${PI_NPM_PACKAGE}`];
-
-/** First existing `<root>/<subpath>` for either layout, or `undefined`. */
-function resolvePackageDir(root: string): string | undefined {
-	return PACKAGE_SUBPATHS.map((subpath) => join(root, subpath)).find((candidate) => existsSync(candidate));
+/** Homebrew's bottle layout, checked directly since `brew --prefix` already
+ * gives the install root rather than something to marker-search through. */
+function viaHomebrewPrefix(prefix: string): string | undefined {
+	const candidate = join(prefix, "libexec/lib", NODE_MODULES_MARKER);
+	return existsSync(candidate) ? candidate : undefined;
 }
 
 /**
  * Locates the installed `@earendil-works/pi-coding-agent` package directory
  * regardless of install method. Tries `brew --prefix` first, since it is a
  * version-independent symlink and the common case on macOS; falls back to
- * resolving the real path of the `pi` binary on `PATH` and checking both
- * layouts above relative to it, which covers `pi.dev/install.sh` and a plain
- * `npm install -g` on Linux (or anywhere without Homebrew).
+ * resolving the real path of the `pi` binary on `PATH` and finding the
+ * `node_modules/@earendil-works/pi-coding-agent` marker within it, which
+ * covers `pi.dev/install.sh` and a plain `npm install -g` on Linux (or
+ * anywhere without Homebrew). A marker search rather than a fixed number of
+ * `dirname` hops from the binary, because npm's bin symlink can point
+ * arbitrarily deep into the package (`dist/cli.js`, `bin/pi.js`, ...) — only
+ * Homebrew's own Cellar layout happens to put `bin/pi` exactly two levels
+ * below the package root.
  */
 export function piPackageDir(): string {
 	const cached = process.env.PI_CHECK_PREFIX;
@@ -47,7 +46,7 @@ export function piPackageDir(): string {
 			encoding: "utf8",
 			stdio: ["ignore", "pipe", "ignore"],
 		}).trim();
-		const viaBrew = brewPrefix && resolvePackageDir(brewPrefix);
+		const viaBrew = brewPrefix && viaHomebrewPrefix(brewPrefix);
 		if (viaBrew) return viaBrew;
 	} catch {
 		// No Homebrew, or no pi-coding-agent formula; fall through to the binary.
@@ -56,14 +55,10 @@ export function piPackageDir(): string {
 	const piBinary = execFileSync("sh", ["-c", "command -v pi"], { encoding: "utf8" }).trim();
 	if (!piBinary) throw new Error("pi binary not found on PATH");
 	const realBinary = realpathSync.native(piBinary);
-	// `<root>/bin/pi` in every layout above; `dirname` twice strips `bin/pi`.
-	const root = dirname(dirname(realBinary));
-	const viaBinary = resolvePackageDir(root);
-	if (viaBinary) return viaBinary;
+	const markerIndex = realBinary.indexOf(NODE_MODULES_MARKER);
+	if (markerIndex !== -1) return realBinary.slice(0, markerIndex + NODE_MODULES_MARKER.length);
 
-	throw new Error(
-		`could not locate ${PI_NPM_PACKAGE}: tried brew --prefix and both node_modules layouts under ${root}`,
-	);
+	throw new Error(`could not locate ${PI_NPM_PACKAGE}: tried brew --prefix and the pi binary at ${realBinary}`);
 }
 
 /** Upstream copy of the vendored examples. */

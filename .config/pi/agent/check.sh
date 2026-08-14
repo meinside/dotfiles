@@ -27,12 +27,15 @@ set -uo pipefail
 C="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Mirrors tests/lib.ts's piPackageDir(): Homebrew's libexec/lib/node_modules
-# layout first (fast, version-independent symlink), then the plain
-# lib/node_modules layout pi.dev/install.sh and a bare `npm install -g` use,
-# resolved from the real path of the `pi` binary on PATH so this works
-# without Homebrew (e.g. Linux).
+# layout first (fast, version-independent symlink), then a marker search
+# through the real path of the `pi` binary on PATH for
+# node_modules/@earendil-works/pi-coding-agent — covers plain `npm install -g`
+# (including what pi.dev/install.sh does) regardless of how many directories
+# separate the npm bin symlink from the package root, which a fixed number of
+# `dirname` hops cannot assume.
 find_pi_package_dir() {
-    local prefix candidate pi_bin pi_real root
+    local prefix pi_bin pi_real marker
+    marker="node_modules/@earendil-works/pi-coding-agent"
     if command -v brew >/dev/null 2>&1; then
         prefix="$(brew --prefix pi-coding-agent 2>/dev/null)" || true
         if [ -n "$prefix" ] && [ -d "$prefix/libexec/lib/node_modules/@earendil-works/pi-coding-agent" ]; then
@@ -42,15 +45,12 @@ find_pi_package_dir() {
     fi
     pi_bin="$(command -v pi 2>/dev/null)" || return 1
     pi_real="$(readlink -f "$pi_bin" 2>/dev/null || realpath "$pi_bin" 2>/dev/null)" || return 1
-    root="$(dirname "$(dirname "$pi_real")")"
-    for candidate in \
-        "$root/libexec/lib/node_modules/@earendil-works/pi-coding-agent" \
-        "$root/lib/node_modules/@earendil-works/pi-coding-agent"; do
-        if [ -d "$candidate" ]; then
-            printf '%s\n' "$candidate"
+    case "$pi_real" in
+        *"$marker"*)
+            printf '%s\n' "${pi_real%%"$marker"*}$marker"
             return 0
-        fi
-    done
+            ;;
+    esac
     return 1
 }
 
