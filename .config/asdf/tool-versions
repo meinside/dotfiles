@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2026.08.14.
+# last update: 2026.08.16.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -111,7 +111,7 @@ leiningen 2.13.0
 # and put `luarocks path` result to .custom_env file
 #
 # https://www.lua.org/versions.html
-lua 5.5.0
+lua 5.5.1
 
 # $ asdf plugin add meson
 # $ asdf install meson
