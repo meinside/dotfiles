@@ -46,7 +46,7 @@
 #   #ExecStartPre=/bin/mkdir -p /var/log/nginx
 #
 # created on : 2017.08.16.
-# last update: 2026.07.20.
+# last update: 2026.08.18.
 
 set -euo pipefail
 
@@ -233,6 +233,7 @@ function build {
 		--with-http_ssl_module \
 		--with-http_sub_module \
 		--with-http_v2_module \
+		--with-http_realip_module \
 		--with-stream \
 		--with-stream_ssl_module \
 		--with-openssl="${OPENSSL_SRC_DIR}" \
