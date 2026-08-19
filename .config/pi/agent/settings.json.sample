@@ -17,6 +17,7 @@
     "npm:pi-ask-user",
     "npm:pi-magpi",
     "npm:pi-mcporter",
+    "npm:pi-rewind",
     "npm:pi-sandbox"
   ]
 }
