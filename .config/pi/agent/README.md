@@ -31,7 +31,7 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 | `extensions/subagent/` | yes | Vendored subagent extension |
 | `extensions/guard.ts` | yes | Blocks writes to credential files, confirms package installs and irreversible commands |
 | `extensions/git-checkpoint.ts` | yes | Vendored upstream example: per-turn git stash checkpoints for `/fork` |
-| `extensions/statusline.ts` | yes | Claude Code style footer |
+| `extensions/statusline.ts` | yes | Claude Code style footer ([notes](#statusline-extension)) |
 | `AGENTS.md` | yes | [Global instructions](#global-instructions-agentsmd) for every session and subagent, general rules only |
 | `agents/*.md` | yes | Subagent definitions, read by the subagent extension |
 | `prompts/*.md` | yes | Prompt templates, invoked as `/name` in the editor |
@@ -80,10 +80,10 @@ extension, vendored here.
 - **Upstream repo:** <https://github.com/earendil-works/pi-mono>
 - **Upstream path:** `packages/coding-agent/examples/extensions/subagent/`
 - **Local copy of upstream:** resolved by `tests/lib.ts`'s `piPackageDir()` (and `check.sh`'s shell equivalent) to `<package root>/examples/extensions/subagent/` — `brew --prefix pi-coding-agent` when Homebrew has the formula, otherwise the real path of the `pi` binary on `PATH`, so this works without Homebrew too (e.g. `pi.dev/install.sh` on Linux)
-- **Vendored from:** pi 0.83.0
+- **Vendored from:** pi 0.84.2
 
 It registers a `subagent` tool that spawns a **separate `pi` process** per
-delegation (`index.ts`: `args.push("--model", agent.model)`), giving each agent an
+delegation (`index.ts`: `args.push("--model", model)`), giving each agent an
 isolated context window. Agents are discovered from `agents/*.md` by `agents.ts`.
 
 ### Agents
@@ -100,12 +100,13 @@ column is what the example pins there; both are what to re-apply after an upstre
 update.
 
 Each pin carries a thinking level, because `settings.json`
-`defaultThinkingLevel` reaches every spawned child otherwise: `index.ts` passes
-`--model` but never `--thinking`, and `sdk.js` then falls back to that setting, so
-`scout` would do "fast recon" at whatever level the interactive session happened to
-be on. `resolveCliModel` consumes a trailing `:<level>` before the model lookup,
-so `tier:fast:low` still resolves the pattern `tier:fast` — see [Rules the tokens
-must obey](#rules-the-tokens-must-obey).
+`defaultThinkingLevel` reaches every spawned child otherwise: for an agent that
+declares its own `model:`, `index.ts` passes `--model` but deliberately **not**
+`--thinking` (`inheritsDispatchConfig` is false), and `sdk.js` then falls back to
+that setting, so `scout` would do "fast recon" at whatever level the interactive
+session happened to be on. `resolveCliModel` consumes a trailing `:<level>`
+before the model lookup, so `tier:fast:low` still resolves the pattern
+`tier:fast` — see [Rules the tokens must obey](#rules-the-tokens-must-obey).
 
 The split follows the convention visible across large public subagent collections
 (wshobson/agents, VoltAgent/awesome-claude-code-subagents, @vigolium/piolium), and
@@ -114,14 +115,19 @@ expensive model costs little there, while an implementer emits many output token
 where the same model costs the most. Do not "upgrade" `worker` to the top tier;
 upgrade `planner` instead so `worker` needs less rework.
 
-An agent without a `model:` line does **not** track the parent session's current
-model. `index.ts` appends `--model` only for an agent that declares one, and the
-child `pi` then starts where a fresh session would — on `enabledModels[0]`, not
+An agent without a `model:` line inherits the dispatching session's model **and**
+its thinking level: since pi 0.84.x, `index.ts` builds a `dispatchDefaults` from
+`ctx.model` (as `provider/id`) and `ctx.thinkingLevel`, and passes both to the
+child when the agent declares no model of its own. That is a change from 0.83.0,
+where `--model` was appended only for an agent with a pin and a model-less agent
+started where a fresh session would — on `enabledModels[0]` rather than
 `defaultModel`, since `findInitialModel` returns the first scoped model before it
-consults the saved default. Here that is `tier:strong`, so a model-less agent would
-run on opus. `PI_MODEL` / `PI_PROVIDER` are exported to bash-tool commands only and
-never read back as input, so `/model` in the parent has no effect. Every agent here
-therefore pins a tier explicitly.
+consults the saved default, which here meant opus. Either way the conclusion for
+this directory is the same, and the reason is now the opposite one: a model-less
+agent would silently follow `/model` in the parent, so "fast recon" would run on
+whatever the session is on. Every agent here therefore pins a tier explicitly.
+(`PI_MODEL` / `PI_PROVIDER` remain exported to bash-tool commands only and are
+never read back as input; they play no part in this.)
 
 ### Workflow prompt templates
 
@@ -560,6 +566,55 @@ To revert back to full enforcement:
 sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=1
 sudo aa-enforce bwrap unpriv_bwrap unprivileged_userns
 ```
+
+## Statusline extension
+
+`extensions/statusline.ts` replaces pi's footer with the three-line Claude Code
+layout (`user@host 📂dir (branch*)`, then model/context/cost/tokens/durations,
+then whatever other extensions published through `ctx.ui.setStatus()`), and
+`/statusline` toggles back to the built-in one. That toggle is remembered on
+`globalThis` for the rest of the pi process, so a session switch, `/fork` or
+`/reload` — each of which re-imports the extension and re-fires `session_start` —
+keeps the choice instead of reinstating `CONFIG.enabledByDefault`. The api/wall
+clock timers live in the same place for the same reason.
+
+The numbers are re-derived from the raw session log, since extensions get no
+access to what the built-in footer computes internally. Deliberate consequences,
+all of them inherited from pi's own accounting (`FooterComponent.render()` in
+`dist/modes/interactive/components/footer.js`):
+
+- **Everything is session-wide, including abandoned branches.** `getEntries()`
+  returns the whole tree, so tokens, cost and the `+N/-M` line counts still
+  include work discarded by a rewind or a `/fork`. For cost that is simply true
+  (the money was spent); for the line counts it means the footer answers "how
+  much editing has this session done", not "what is in the working tree".
+- **`CH` is the latest response's cache hit rate**, not a session average — same
+  as `latestCacheHitRate` upstream.
+- **`+N/-M` only sees the `edit` and `write` tools.** `write` over an existing
+  file counts the whole file as added (the old content is not in the log), and
+  edits made through `bash` (`sed`, heredocs) are invisible.
+- **No `(sub)` marker for subscription-backed models.** The built-in footer shows
+  `$0.000 (sub)` using `modelRuntime.isUsingSubscription()`, which extensions
+  cannot reach, so this footer just omits the cost group when the cost is zero.
+
+Two things it does *not* inherit, because pi's behaviour is elsewhere: `(auto)`
+reads `compaction.enabled` from `.pi/settings.json` only when
+`ctx.isProjectTrusted()` is true, matching `SettingsManager`, which ignores
+project settings for an untrusted project entirely; and the `*` dirty marker
+treats *any* `git status --porcelain` output as dirty even when git also reports
+an error, so a repository dirty enough to overflow `execFile`'s `maxBuffer` does
+not read as clean.
+
+`tests/statusline.test.ts` pins the accounting and the formatters — the scan is
+incremental across renders, so it also asserts that scanning entry-by-entry
+matches scanning the whole log at once, and that a log *shorter* than the cursor
+(a session file swapped underneath) restarts the scan instead of silently
+skipping it. Unlike `guard.test.ts`, it cannot import the extension directly:
+statusline.ts has runtime imports of `getAgentDir` and `truncateToWidth`, which
+resolve only inside pi's own installation, so the test registers a
+`module.registerHooks()` resolve hook that redirects the two `@earendil-works/*`
+specifiers into the package `piPackageDir()` already locates, then imports the
+module dynamically. The git polling and the timers are not covered.
 
 ## Model tiers
 
