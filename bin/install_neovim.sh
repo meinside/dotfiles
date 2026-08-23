@@ -5,7 +5,7 @@
 # For building neovim from source code.
 # (https://github.com/neovim/neovim/wiki/Installing-Neovim#install-from-source)
 #
-# last update: 2026.07.09.
+# last update: 2026.08.24.
 
 set -euo pipefail
 
@@ -40,7 +40,7 @@ set -euo pipefail
 # frequently updated values
 
 # https://github.com/neovim/neovim/releases
-readonly NVIM_VERSION="v0.12.4" # XXX - edit for other versions
+readonly NVIM_VERSION="v0.12.5" # XXX - edit for other versions
 
 ################################
 #
