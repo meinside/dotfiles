@@ -1,6 +1,6 @@
 # .custom_env.sample
 #
-# last update: 2026.04.27.
+# last update: 2026.08.26.
 
 # for macOS only
 if [[ $OSTYPE == darwin* ]]; then
@@ -69,4 +69,13 @@ export GH_TELEMETRY=false
 
 # use ~/tmp as a TMPDIR for `update-all`
 alias update-all="TMPDIR=$HOME/tmp update-all"
+
+# for unsetting '$LLAMA_API_KEY' before running ollama
+ollama() {
+    if [[ "$1" == "serve" ]]; then
+        env -u LLAMA_API_KEY command ollama "$@"
+    else
+        command ollama "$@"
+    fi
+}
 
