@@ -63,6 +63,7 @@
       "~/.config/git/config",
       "~/.config/git/ignore",
       "~/.config/go",
+      "~/.config/llama.cpp",
       "~/.config/pi/cost-tracker",
       "~/.eclipse",
       "~/.gem/cache",

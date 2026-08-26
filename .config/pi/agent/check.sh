@@ -8,6 +8,9 @@
 #   samples.test.ts   a fresh clone can bootstrap and no sample leaks a secret
 #   pricing.test.ts   models.json costs against pi's catalog (reported, never fails)
 #   lsp.test.ts       every pi-lsp.json command is present and can exec
+#   llama.test.ts     the llama.cpp router config (outside this directory) holds no
+#                     secret or path, every preset can actually load, and its ids
+#                     line up with models.json's overrides and enabledModels
 #   guard.test.ts     guard.ts blocks what README says it blocks
 #   sandbox.test.ts   sandbox.json holds the invariants README.md documents (see
 #                     its header for why pi-sandbox's own matching logic can't be

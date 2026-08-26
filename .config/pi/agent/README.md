@@ -37,11 +37,16 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 | `prompts/*.md` | yes | Prompt templates, invoked as `/name` in the editor |
 | `check.sh` | yes | Entry point for the checks: runs `tests/` on node's test runner and reports what this machine has |
 | `tests/*.ts` | yes | The checks themselves. `lib.ts` is shared helpers, the rest are `node:test` files runnable on their own |
+| `../../llama.cpp/config.ini` | yes | llama.cpp's own user-level config, auto-loaded by every llama.cpp binary from `${XDG_CONFIG_HOME:-~/.config}/llama.cpp/config.ini`. Outside this directory, but committed and checked here because pi's built-in `llama.cpp` provider depends on it ([notes](#llamacpp-provider)) |
+| `../../llama.cpp/models.ini` | yes | The router's model presets, pointed at by `$LLAMA_ARG_MODELS_PRESET`. Tracked as a mirror rather than a `.sample`: it holds no secret, no path and no machine-specific value, so a sample would be a byte-identical copy that only invites drift |
 
 `~/.gitignore` ignores `.config/` wholesale, so tracked files here were added with
 `git add -f`. Files holding secrets or machine-specific values are committed as
 `<name>.sample` with `<<<placeholder>>>` markers, the convention already used for
-`.config/claude`, `.config/git`, etc.
+`.config/claude`, `.config/git`, etc. The two `llama.cpp/*.ini` files are the
+counter-example that shows where the line is: they were written so that every path
+lives in an environment variable and every model is named by Hugging Face repo, so
+there is nothing left to placeholder and they are tracked directly.
 
 ## Global instructions (AGENTS.md)
 
@@ -80,7 +85,7 @@ extension, vendored here.
 - **Upstream repo:** <https://github.com/earendil-works/pi-mono>
 - **Upstream path:** `packages/coding-agent/examples/extensions/subagent/`
 - **Local copy of upstream:** resolved by `tests/lib.ts`'s `piPackageDir()` (and `check.sh`'s shell equivalent) to `<package root>/examples/extensions/subagent/` — `brew --prefix pi-coding-agent` when Homebrew has the formula, otherwise the real path of the `pi` binary on `PATH`, so this works without Homebrew too (e.g. `pi.dev/install.sh` on Linux)
-- **Vendored from:** pi 0.84.2
+- **Vendored from:** pi 0.84.3
 
 It registers a `subagent` tool that spawns a **separate `pi` process** per
 delegation (`index.ts`: `args.push("--model", model)`), giving each agent an
@@ -316,6 +321,18 @@ two rules learned the hard way while writing it:
   but a still-missing target directory can defeat that resolution depending on
   which layer resolves it — listing both sides is cheaper than trusting it.
 
+- **A check that cannot read a file skips instead of failing, which looks like a
+  pass.** `tests/llama.test.ts` verifies the llama.cpp router config in
+  `~/.config/llama.cpp`, outside this directory and therefore outside the
+  tightened `allowRead`. Under the sandbox it hit `EPERM` on `readFileSync`; the
+  test now reports the reason and skips rather than crashing, but a skipped check
+  verifies nothing, so `~/.config/llama.cpp` is in `allowRead`. It stays out of
+  `allowWrite`: pi's own `edit`/`write` tools go through `guard.ts` instead and
+  leave a reviewable diff, while a bash-level write grant would let a session
+  mutate a running service's config with nothing to review. Adding a model does
+  not need it either — `/llama` downloads into the Hugging Face cache and the
+  router lists it without touching the ini.
+
 Toolchains here run through `asdf`, which moves everything to XDG paths
 (`~/.local/share/{asdf,cargo,rustup,npm,pipx,uv}`) rather than the classic
 `~/.cargo`, `~/.rustup`, `~/.npm` the package's own example config assumes; the
@@ -361,6 +378,12 @@ the real command inside a sandboxed `bash`, not inferred from the lists:
   `allowWrite` entry did not follow it: `mkdir /tmp/x` was denied while
   `$TMPDIR` (`/tmp/claude`, set by `sandbox-runtime` itself) worked. `/private/tmp`
   is listed next to `/tmp` — a no-op on Linux, where `/tmp` is a real directory.
+  That `$TMPDIR` survives the sandbox being switched off mid-session while the
+  directory itself does not, so `os.tmpdir()` can name a path nothing has created:
+  `mkdtemp` then fails with `ENOENT` (sandbox off) or, if a test reaches for the
+  real macOS `$TMPDIR` under `/var/folders` instead, with `EPERM` (sandbox on,
+  since only `/tmp` is writable). `statusline.test.ts` therefore creates
+  `tmpdir()` before using it — both failures were reproduced here.
 - **`~/.tool-versions`.** asdf walks up to `$HOME` looking for it, and the home
   root is `denyRead`. On Linux this is worse than a denial: `denyRead` is
   implemented as a `tmpfs` over the directory, so the file is *absent* rather
@@ -621,16 +644,21 @@ module dynamically. The git polling and the timers are not covered.
 Agents and `settings.json` never name a concrete model. They reference role
 tokens embedded in the `name` of a `models.json` entry:
 
-| Token | Meaning | Current model |
-|-------|---------|---------------|
-| `tier:fast` | Cheap, mechanical lookup and recon | `claude-haiku-4-5` |
-| `tier:mid` | Default implementation model | `claude-sonnet-5` |
-| `tier:strong` | Architecture, review, adversarial verification | `claude-opus-5` |
-| `tier:fable` | Experimental top-end model. No agent uses it, and it is kept out of the `Ctrl+P` cycle | `claude-fable-5` |
-| `tier:local` | Local Ollama model, zero cost | `gemma4-e4b`, `muse-glimmer` (see [caveat](#rules-the-tokens-must-obey)) |
+| Token | Meaning |
+|-------|---------|
+| `tier:fast` | Cheap, mechanical lookup and recon |
+| `tier:mid` | Default implementation model |
+| `tier:strong` | Architecture, review, adversarial verification |
+| `tier:fable` | Experimental top-end model. No agent uses it, and it is kept out of the `Ctrl+P` cycle |
+| `tier:local-fast` | Local Ollama model, zero cost, answers in seconds ([notes](#ollama-provider)) |
+| `tier:local-strong` | Local llama.cpp model, zero cost but slow enough to be for delegated work rather than conversation ([notes](#llamacpp-provider)) |
 
 Only `models.json` knows which provider and model a tier resolves to, so a
-machine with entirely different providers needs no changes anywhere else.
+machine with entirely different providers needs no changes anywhere else — and this
+table deliberately does not repeat the current mapping, which would be a copy that
+rots the next time a tier moves. `./check.sh` prints it instead
+(`tiers.test.ts`, "tier tokens and their models"), including which model a mistyped
+tier would silently land on and which prefixes are too ambiguous to pin.
 
 Bedrock (this machine):
 
@@ -691,23 +719,31 @@ the first two:
   level when it is one of `off`, `minimal`, `low`, `medium`, `high`, `xhigh`,
   `max`, and the rest is the pattern. That is what makes the agents'
   `tier:fast:low` work — and what makes `tier:high` a trap, since the pattern is
-  then `tier`, which matches every entry. Measured against this `models.json`, the
-  silent winner is `tier:local`, so a mistyped tier would quietly run an agent on
-  the local Ollama model with the alphabetically highest id — currently
-  `muse-glimmer:30b-mlx`, not `gemma4:e4b`, even though both carry the same
-  `tier:local` name. `fast` / `mid` / `strong` / `fable` / `local` are safe as
+  then `tier`, which matches every entry. pi sorts those by id and takes the
+  highest, so a mistyped tier quietly runs an agent on whichever model happens to
+  sort last; `./check.sh` names that model rather than this paragraph, since it
+  changes with the ids. `fast` / `mid` / `strong` / `fable` / `local` are safe as
   tier names precisely because none of them is a level.
+- **A shared prefix is ambiguous too, even one nobody defined.** Tokens like
+  `tier:local-fast` and `tier:local-strong` are each unique, but the bare
+  `tier:local` is a substring of both, so it hits two models and pi silently takes
+  the higher id. Never pin a prefix; `check.sh` reports every shared prefix it can
+  derive, while its uniqueness assertion only covers tokens an agent actually uses.
 - **A bare, non-glob pattern only ever resolves to one model — even in
   `enabledModels`.** `tier:local` is not a glob (no `*`, `?`, `[`), so
-  `enabledModels: ["tier:local"]` does not enable every model whose name starts
-  with `tier:local`; it substring-matches all of them, then applies the same
-  "sort by id, take the highest" rule as `--model`. With two local models sharing
-  that name, only `muse-glimmer:30b-mlx` would show up under the ollama provider
-  in `/model` and `gemma4:e4b` would silently disappear. Use an actual glob such
-  as `"ollama/*"` (matches on `provider/id`) in `enabledModels` whenever a tier
-  name is meant to cover more than one model.
+  `enabledModels: ["tier:local"]` does not enable both local models; it
+  substring-matches them, then applies the same "sort by id, take the highest"
+  rule as `--model`. Use an actual glob such as `"ollama/*"` (matches on
+  `provider/id`) whenever a tier name is meant to cover more than one model.
+- **`*` does not cross a `/`.** Globs go through minimatch, so a pattern needs one
+  segment per `/` in `provider/id`. Ollama ids have none (`ollama/*` works), but
+  llama.cpp names its models after the Hugging Face repo they came from
+  (`llama.cpp/<hf-user>/<repo>:<quant>`), and there `llama.cpp/*` matches
+  **nothing at all** — the model simply never appears in `/model`, which looks
+  like a broken server rather than a bad glob. It needs `llama.cpp/**`.
+  `llama.test.ts` asserts this by asking pi's own resolver.
 - The colon itself is fine. Full-pattern matching happens before the colon split,
-  which is also why Ollama ids such as `gemma4:e4b` work.
+  which is also why Ollama ids such as `<model>:<tag>` work.
 
 A wrong token behaves differently depending on where it is used:
 
@@ -856,7 +892,8 @@ language used here whose server was never installed.
 
 ## Ollama provider
 
-`models.json` registers a local Ollama provider. Non-obvious bits:
+`models.json` registers a local Ollama provider, which backs `tier:local-fast`.
+Non-obvious bits:
 
 - `apiKey` is a dummy string. Ollama ignores it, but pi hides models with no
   configured auth, so the placeholder is required.
@@ -875,8 +912,103 @@ language used here whose server was never installed.
 - Verified on the GGUF tag: vision, streaming and parallel tool calls,
   tool-result round-trips, thinking combined with tool calls.
 
+Both points are findings about a specific tag, so they name it; which tag
+`tier:local-fast` currently points at is `models.json`'s business, and `check.sh`
+prints it.
+
 If MLX vision lands upstream, re-benchmark before switching, and add `"image"` to
 the model's `input` only after confirming it at runtime.
+
+## llama.cpp provider
+
+Unlike Ollama, this one is **not** a hand-written `models.json` provider: pi ships a
+hidden built-in extension (`dist/extensions/index.js`: `builtInExtensions =
+[{ name: "llama.cpp", ... hidden: true }]`) that registers both the `llama.cpp`
+provider and the `/llama` command, and discovers models from a running
+[router server](https://github.com/ggml-org/llama.cpp/blob/master/tools/server/README.md#using-multiple-models)
+(`docs/llama-cpp.md`). Only *loaded* (or idle-`sleeping`) models reach `/model`.
+
+The server side is two files, both tracked, both free of paths and secrets:
+
+| File | Why there |
+|------|-----------|
+| `~/.config/llama.cpp/config.ini` | The **only** path llama.cpp reads by itself: `/etc/llama.cpp/config.ini`, then `${XDG_CONFIG_HOME:-~/.config}/llama.cpp/config.ini` (`common/arg.cpp`, `common_params_apply_system_config`). Router-level settings live here — `host`, `port`, and `models-max = 1`, which the router strips from child presets (`server-models.cpp`, `unset_reserved_args`) |
+| `~/.config/llama.cpp/models.ini` | Per-model presets. `--models-preset` has **no** default path, and the ini parser expands neither `~` nor `$VARS`, so the location comes from `$LLAMA_ARG_MODELS_PRESET` (exported in `~/.zshrc` and `~/.bashrc`) and every artifact is named by Hugging Face repo or URL instead of a local file |
+
+Non-obvious bits, each of which failed silently once here:
+
+- **A preset section needs its own `hf-repo`.** The router lists a sourceless
+  section in `GET /models` all the same; the failure only shows up on load. With
+  `hf-repo` the router downloads on first load, and once cached the cache entry
+  carries the same `repo:quant` name (`common/preset.cpp`, `load_from_cache`) and
+  *merges* with the preset, so there is no duplicate entry.
+- **`modelOverrides`, not `models`.** The built-in provider hardcodes
+  `reasoning: false` and `supportsReasoningEffort: false` (`dist/extensions/llama/provider.js`),
+  so a thinking model needs `models.json` to override it. The override key must be
+  the router's model id exactly; pi ignores unknown ids without a word.
+- **`thinkingLevelMap` is mandatory for a Qwen3.8-style template.** Its chat
+  template accepts only `low`, `medium`, `xhigh` and calls `raise_exception` on
+  anything else — pi's `high` returns **HTTP 500** from the Jinja engine, measured.
+  The map sends `xhigh` for pi's `high`/`xhigh`/`max` and `low` for
+  `minimal`/`low`. Any local model with thinking controls needs the same treatment,
+  derived from its own template rather than copied from this one.
+- **`enabledModels` needs `llama.cpp/**`**, per the [glob rule](#rules-the-tokens-must-obey).
+- **Downloads bypass `/llama`'s progress bar** when the preset carries `hf-repo`,
+  because the *child* process downloads rather than the router; the status stays
+  `loading`. Watch `~/.cache/huggingface/hub/` instead. Preset-sourced models also
+  report `can_remove: false`, so deleting one means removing that directory by hand
+  (`DELETE /models` only works for pure cache entries).
+- **The port is pinned to 9931**, llama.cpp's announced future default
+  ([PR #26508](https://github.com/ggml-org/llama.cpp/pull/26508)), to keep 8080
+  free for dev servers. pi prefers the URL stored by `/login` over
+  `$LLAMA_BASE_URL`, so changing it means re-running `/login llama.cpp`;
+  `llama.test.ts` reports the mismatch as a diagnostic.
+- **An API key belongs in `$LLAMA_API_KEY`** (`~/.custom_env`, untracked), which
+  llama-server and pi both read. Without one the router warns that CORS is open to
+  every origin, which matters even on a loopback listener.
+
+Measured on this machine (M1 Pro, 32 GB) with the model behind `tier:local-strong`
+at the time — a 27B dense hybrid-attention model at Q4_K_M, 16.8 GB of weights.
+The figures are properties of that pairing, not of llama.cpp, so they are worth
+re-measuring after any model or quant change:
+
+| | Value |
+|---|---|
+| Generation | **4.1-4.4 tok/s** |
+| Prefill | **38 tok/s** — a 3.6k-token prompt costs 95 s |
+| Prompt cache hit | Same prompt again: **0.64 s** (3618 of 3622 tokens reused); appending a sentence reused 3106 and cost 14 s |
+| Resident | **21.4 GB wired**, which pushes the rest of the machine into ~7.4 GB of swap |
+| Idle sleep | `sleep-idle-seconds` drops that to **3.6 GB wired**, but the prompt cache does **not** survive it (`cache_n=0` on wake), so the next request pays a full re-prefill |
+
+So `--cache-ram -1` plus `--cache-reuse 256` is what makes the model usable at all,
+and `tier:local-strong` is meant for delegated, non-interactive work rather than
+conversation. `sleep-idle-seconds = 900` follows from the table: a turn takes
+1.5-2 min, so gaps inside an active session run 2-5 min and must not trigger a
+sleep, while a real walk-away should not keep 21 GB pinned. The measurement behind
+it is worth repeating on other hardware:
+
+```bash
+P=~/.config/llama.cpp/models.ini
+M=$(sed -n 's/^\[\(.*\/.*\)\]$/\1/p' $P | head -1)          # the preset's model id
+U=$(sed -n 's/^port *= *\(.*\)/\1/p' ~/.config/llama.cpp/config.ini | head -1)
+IDLE=$(sed -n 's/^sleep-idle-seconds *= *\(.*\)/\1/p' $P | head -1)
+Q=/tmp/long.json   # any prompt of a few thousand tokens, as an OpenAI chat body
+
+time curl -s 127.0.0.1:$U/v1/chat/completions -d @$Q -H 'Content-Type: application/json' \
+  | python3 -c 'import json,sys;t=json.load(sys.stdin)["timings"];print(t["prompt_n"],t["cache_n"])'
+time curl -s 127.0.0.1:$U/v1/chat/completions -d @$Q -H 'Content-Type: application/json' >/dev/null
+                                        # second run must be < 1 s: prompt cache
+sleep $((IDLE + 15))                    # /props and /models do not reset the timer
+curl -s "127.0.0.1:$U/props?model=$M" | grep -o '"is_sleeping":[a-z]*'
+vm_stat | grep 'wired down'             # compare against the loaded figure
+time curl -s 127.0.0.1:$U/v1/chat/completions -d @$Q -H 'Content-Type: application/json' >/dev/null
+                                        # wake cost: cache_n back to 0 means full re-prefill
+```
+
+`tests/llama.test.ts` covers what is checkable statically: no secret or path in
+either ini, every preset has a model source, every `modelOverrides` key matches a
+preset section, and `enabledModels` actually reaches the models — the last one
+through pi's own `resolveModelScopeWithDiagnostics`, so the glob rule cannot drift.
 
 ## New machine setup
 
@@ -899,7 +1031,18 @@ the model's `input` only after confirming it at runtime.
    `models.json` must define `tier:fast`, `tier:mid` and `tier:strong`, otherwise
    the agents cannot resolve a model. See [Model tiers](#model-tiers) and [Sample
    files](#sample-files).
-5. Local model: `ollama pull gemma4:e4b`
+5. Local models:
+   - Ollama: pull whatever `models.json` lists, so this step needs no editing when
+     the model changes:
+     ```bash
+     python3 -c 'import json;print("\n".join(m["id"] for m in json.load(open("models.json"))["providers"]["ollama"]["models"]))' \
+       | xargs -n1 ollama pull
+     ```
+   - llama.cpp: `brew install llama.cpp`, then start the router in a new shell
+     (`llama-server`, no `--model`) so it picks up `config.ini` and
+     `$LLAMA_ARG_MODELS_PRESET`. In pi: `/login llama.cpp` with the URL built from
+     `config.ini`'s `host`/`port`, then `/llama` to load a model — the first load
+     downloads it. See [llama.cpp provider](#llamacpp-provider).
 6. Language servers: install through mason, as
    [above](#language-servers-pi-lsp). `./check.sh` lists what `pi-lsp.json`
    expects and whether it runs.

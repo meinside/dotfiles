@@ -101,7 +101,10 @@ export interface ModelDefinition {
 }
 
 export interface ModelsConfig {
-	providers?: Record<string, { models?: ModelDefinition[] } | undefined>;
+	providers?: Record<
+		string,
+		{ models?: ModelDefinition[]; modelOverrides?: Record<string, ModelDefinition> } | undefined
+	>;
 }
 
 /** The one pi export these checks borrow, rather than reimplementing it. */
@@ -154,12 +157,21 @@ export interface ModelEntry {
 	name: string;
 }
 
-/** Every named model in a `models.json`-shaped config, flattened. */
+/**
+ * Every named model in a `models.json`-shaped config, flattened.
+ *
+ * `modelOverrides` entries count: pi merges them into the provider's catalog, so a
+ * tier name attached to one is just as real as an entry in `models` — and just as
+ * able to make another tier ambiguous. Their key is the model id.
+ */
 export function modelEntries(config: ModelsConfig | undefined): ModelEntry[] {
 	const out: ModelEntry[] = [];
 	for (const [provider, value] of Object.entries(config?.providers ?? {})) {
 		for (const model of value?.models ?? []) {
 			out.push({ provider, id: String(model?.id ?? ""), name: String(model?.name ?? "") });
+		}
+		for (const [id, override] of Object.entries(value?.modelOverrides ?? {})) {
+			out.push({ provider, id, name: String(override?.name ?? id) });
 		}
 	}
 	return out;

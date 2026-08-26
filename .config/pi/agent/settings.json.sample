@@ -6,8 +6,9 @@
     "tier:strong",
     "tier:mid",
     "tier:fast",
-    "ollama/*",
-    "google-vertex/gemini-3*"
+    "google-vertex/gemini-3*",
+    "llama.cpp/**",
+    "ollama/*"
   ],
   "defaultThinkingLevel": "medium",
   "packages": [

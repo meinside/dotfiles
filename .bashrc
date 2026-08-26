@@ -1,7 +1,7 @@
 # .bashrc
 #
 # created on 2012.05.31.
-# updated on 2026.08.07.
+# updated on 2026.08.26.
 #
 # $ chsh -s `which zsh`
 #
@@ -162,6 +162,12 @@ export CLAUDE_CONFIG_DIR="$XDG_CONFIG_HOME/claude"
 export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 export PI_CODING_AGENT_SESSION_DIR="$XDG_STATE_HOME/pi/sessions"
 
+# llama.cpp: config.ini is auto-loaded from $XDG_CONFIG_HOME/llama.cpp, but the
+# router's model presets have no default path and ini files expand no variables
+export LLAMA_ARG_MODELS_PRESET="$XDG_CONFIG_HOME/llama.cpp/models.ini"
+# pi falls back to :8080; keep both sides on llama.cpp's future default (PR #26508)
+export LLAMA_BASE_URL="http://127.0.0.1:9931"
+
 #
 ######################
 
@@ -176,7 +182,7 @@ fi
 # run starship (not in containers)
 #
 # $ cargo install starship --locked
-if [ -z $CONTAINER_ID ]; then
+if [ -z "$CONTAINER_ID" ]; then
     if command -v starship &>/dev/null; then
         # config file in $HOME/.config/starship.toml
         eval "$(starship init zsh)"

@@ -60,5 +60,49 @@ for (const { agent, token, pattern, level } of agentModels()) {
 		);
 		assert.equal(resolved.thinkingLevel, level, `pi reads a thinking level of ${resolved.thinkingLevel}`);
 		if (!level) t.diagnostic(`${agent} inherits settings.json defaultThinkingLevel`);
+		t.diagnostic(`${pattern} -> ${hits[0].provider}/${hits[0].id}`);
 	});
 }
+
+/**
+ * What a tier token resolves to is machine specific, so this reports rather than
+ * asserts — but reporting it here is what keeps it out of README.md, where it would
+ * be a copy that silently rots the next time a tier points at a different model.
+ */
+test("tier tokens and their models", (t) => {
+	const tokens = [...new Set(entries.map((entry) => entry.name.split(" ")[0]).filter((name) => name.startsWith("tier:")))]
+		.sort();
+	for (const token of tokens) {
+		const hits = substringMatches(entries, token);
+		const shown = hits.map((hit) => `${hit.provider}/${hit.id}`).join(", ");
+		t.diagnostic(hits.length === 1 ? `${token} -> ${shown}` : `${token} -> AMBIGUOUS: ${shown}`);
+	}
+
+	// Every mistyped tier ends up here: a trailing thinking level is stripped off, so
+	// `tier:high` degrades to the pattern `tier`, which matches every entry. pi then
+	// sorts by id and takes the highest, with no warning.
+	const all = substringMatches(entries, "tier");
+	const winner = [...all].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)).at(-1);
+	t.diagnostic(
+		`a mistyped tier (pattern "tier", ${all.length} matches) silently resolves to ${winner?.provider}/${winner?.id}`,
+	);
+
+	// Tokens that share a prefix can never be pinned by that prefix: the shorter form
+	// substring-matches both and pi again takes the higher id. The dangerous form is
+	// usually one nobody defined (`tier:local` behind `tier:local-fast`/`-strong`), so
+	// derive the candidates from the tokens' own `-` boundaries.
+	const reported = new Set<string>();
+	for (const token of tokens) {
+		for (let cut = token.indexOf("-"); cut !== -1; cut = token.indexOf("-", cut + 1)) {
+			const prefix = token.slice(0, cut);
+			if (reported.has(prefix)) continue;
+			const hits = substringMatches(entries, prefix);
+			if (hits.length > 1) {
+				reported.add(prefix);
+				t.diagnostic(
+					`"${prefix}" is a shared prefix of ${hits.length} models (${hits.map((h) => h.name).join(", ")}): never pin it`,
+				);
+			}
+		}
+	}
+});
