@@ -953,6 +953,16 @@ Non-obvious bits, each of which failed silently once here:
   `minimal`/`low`. Any local model with thinking controls needs the same treatment,
   derived from its own template rather than copied from this one.
 - **`enabledModels` needs `llama.cpp/**`**, per the [glob rule](#rules-the-tokens-must-obey).
+- **The presets are shared config; serving them is not.** Both ini files are
+  tracked, so a preset section written for this machine travels to every other one,
+  and a Linux box that only runs cloud models fails `check.sh` for a model it was
+  never meant to serve. That is inert at runtime — a preset does nothing until
+  something asks for that model, and `hf-repo` fetches it then — but the
+  `enabledModels` check only makes sense where the router is actually reachable, so
+  it keys off `auth.json` naming a `llama.cpp` provider (machine-local, written by
+  `/login`, and the one thing pi cannot reach a router without). It reads whether
+  the key is there, never its value. A machine that skips this check says so with a
+  reason; a machine that does serve the presets still fails on a bad glob.
 - **Downloads bypass `/llama`'s progress bar** when the preset carries `hf-repo`,
   because the *child* process downloads rather than the router; the status stays
   `loading`. Watch `~/.cache/huggingface/hub/` instead. Preset-sourced models also

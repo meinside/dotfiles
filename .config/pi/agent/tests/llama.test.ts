@@ -14,9 +14,13 @@
  *   so `llama.cpp/*` matches nothing while `llama.cpp/**` matches everything.
  *
  * Whether this machine uses llama.cpp at all is machine specific, so a missing
- * config directory skips. Everything the files do assert is a fixed invariant:
- * no secrets, no absolute paths (the ini parser expands neither `~` nor `$VARS`,
- * so a path there would pin the file to one machine), and the cross-file links.
+ * config directory skips, and so does a machine whose `auth.json` names no
+ * llama.cpp provider: the router config is shared dotfiles, so its presets reach
+ * machines that will never serve them, while `auth.json` is machine-local and pi
+ * cannot talk to a router without an entry there. Everything the files do assert is
+ * a fixed invariant: no secrets, no absolute paths (the ini parser expands neither
+ * `~` nor `$VARS`, so a path there would pin the file to one machine), and the
+ * cross-file links.
  */
 
 import assert from "node:assert/strict";
@@ -170,6 +174,17 @@ test("models.json overrides match models.ini preset names", (t) => {
 
 test("enabledModels reaches the llama.cpp models", async (t) => {
 	if (!models) return t.skip(blocked("models.ini") ?? "models.ini absent");
+	// The presets are shared config; serving them is not. A machine that never ran
+	// `/login llama.cpp` has no baseUrl for the router, so pi cannot surface these
+	// ids however `enabledModels` is written and there is nothing here to check.
+	// Only the presence of the key is read, never its value.
+	const auth = readJson<Record<string, unknown>>("auth.json");
+	if (!auth || !Object.hasOwn(auth, LLAMA_PROVIDER)) {
+		return t.skip(
+			`auth.json names no "${LLAMA_PROVIDER}" provider, so this machine serves none of the shared presets ` +
+				`(\`/login ${LLAMA_PROVIDER}\` is what puts it there)`,
+		);
+	}
 	const settings = readJson<{ enabledModels?: string[] }>("settings.json");
 	const patterns = settings?.enabledModels;
 	if (!patterns?.length) return t.skip("settings.json defines no enabledModels (nothing is filtered)");
