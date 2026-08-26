@@ -332,6 +332,16 @@ two rules learned the hard way while writing it:
   mutate a running service's config with nothing to review. Adding a model does
   not need it either — `/llama` downloads into the Hugging Face cache and the
   router lists it without touching the ini.
+- **`magpi-cache` lives in pi's data dir, not its config dir.** The web cache
+  `magpi_fetch` fills, and whose paths it hands back for `read`/`grep`, is
+  `~/.pi/agent/magpi-cache` — `~/.pi` was not in `allowRead` at all, so every path
+  the tool reported came back `Operation not permitted` even though the tool itself
+  had just written it (tools run in-process, outside the sandbox; only `bash` is
+  confined). Only that subdirectory is listed, so `~/.pi/agent/auth.json` and the
+  session files stay outside; and only for reading, for the same reason as the ini
+  above. `~/.config/pi/agent/magpi-cache` is an *older* location whose ~9.5 MB of
+  pages are still there and were readable all along — it is inside this directory,
+  which is why the two get confused.
 
 Toolchains here run through `asdf`, which moves everything to XDG paths
 (`~/.local/share/{asdf,cargo,rustup,npm,pipx,uv}`) rather than the classic

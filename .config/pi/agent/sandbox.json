@@ -85,6 +85,7 @@
       "~/.local/share/rustup",
       "~/.local/share/uv",
       "~/.luarocks",
+      "~/.pi/agent/magpi-cache",
       "~/.pi/cost-tracker",
       "~/.pub-cache",
       "~/.tool-versions",
