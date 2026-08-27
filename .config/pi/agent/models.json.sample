@@ -31,14 +31,14 @@
     },
     "llama.cpp": {
       "modelOverrides": {
-        "chimingw/Qwen3.8-27B-Uncensored-OrcaRouter-GGUF:Q4_K_M": {
+        "orcarouter/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M": {
           "name": "tier:local-strong (qwen3.8-27b-uncensored)",
           "reasoning": true,
           "input": [
             "text"
           ],
-          "contextWindow": 32768,
-          "maxTokens": 8192,
+          "contextWindow": 65536,
+          "maxTokens": 4096,
           "thinkingLevelMap": {
             "off": "low",
             "minimal": "low",
@@ -56,6 +56,29 @@
               },
               "reasoning_effort": {
                 "$var": "thinking.effort"
+              }
+            }
+          },
+          "samplingParams": {
+            "temperature": 0.6,
+            "top_p": 0.95,
+            "top_k": 20,
+            "min_p": 0
+          }
+        },
+        "ornith-ai/Ornith-1.5-9B-GGUF:Q5_K_M": {
+          "name": "tier:local-coder (ornith-1.5-9b)",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 65536,
+          "maxTokens": 8192,
+          "compat": {
+            "thinkingFormat": "chat-template",
+            "chatTemplateKwargs": {
+              "enable_thinking": {
+                "$var": "thinking.enabled"
               }
             }
           },

@@ -11,6 +11,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import * as guardModule from "../extensions/guard.ts";
+import { readText } from "./lib.ts";
 
 type Handler = (event: unknown, ctx: unknown) => Promise<unknown>;
 type ToolCallResult = { block?: boolean; reason?: string } | undefined;
@@ -40,21 +41,23 @@ test("guard registers the handlers it needs", () => {
 });
 
 test("credential paths are not writable", async () => {
+	// sorted, like the list in guard.ts, so an addition has one obvious place to go
 	for (const path of [
-		"~/.ssh/authorized_keys",
-		"~/.gnupg/pubring.kbx",
+		"auth.json", // relative to cwd
 		"~/.aws/config",
 		"~/.aws/sso/cache/x.json",
+		"~/.claude/settings.json",
+		"~/.config/claude/settings.json",
 		"~/.config/gcloud/x.json",
+		"~/.config/pi/agent/auth.json",
 		"~/.config/rclone/rclone.conf",
+		"~/.custom_env",
+		"~/.gnupg/pubring.kbx",
 		"~/.netrc",
 		"~/.npmrc",
 		"~/.ollama/id_ed25519",
-		"~/.claude/settings.json",
-		"~/.config/claude/settings.json",
-		"~/.config/pi/agent/auth.json",
 		"~/.pi/agent/auth.json",
-		"auth.json", // relative to cwd
+		"~/.ssh/authorized_keys",
 	]) {
 		assert.equal((await call("write", path))?.block, true, `write ${path} should be blocked`);
 		assert.equal((await call("edit", path))?.block, true, `edit ${path} should be blocked`);
@@ -63,25 +66,44 @@ test("credential paths are not writable", async () => {
 
 test("secret paths are not readable", async () => {
 	for (const path of [
-		"~/.ssh/id_ed25519",
+		"auth.json",
+		"~/.aws/cli/cache/session.db",
 		"~/.aws/credentials",
 		"~/.aws/sso/cache/x.json",
-		"~/.aws/cli/cache/session.db",
-		"~/.config/gcloud/credentials.db",
-		"~/.config/rclone/rclone.conf",
-		"~/.ollama/id_ed25519",
-		"~/.config/pi/agent/auth.json",
-		"auth.json",
-		"~/.config/pi/agent/sessions/x.jsonl",
+		"~/.bash_history",
 		"~/.claude/sessions/x.jsonl",
 		"~/.config/claude/history.jsonl",
-		"~/.zsh_history",
-		"~/.bash_history",
+		"~/.config/gcloud/credentials.db",
+		"~/.config/pi/agent/auth.json",
+		"~/.config/pi/agent/sessions/x.jsonl",
+		"~/.config/rclone/rclone.conf",
+		"~/.custom_env",
+		"~/.ollama/id_ed25519",
 		"~/.python_history",
+		"~/.ssh/id_ed25519",
+		"~/.zsh_history",
 	]) {
 		assert.equal((await call("read", path))?.block, true, `read ${path} should be blocked`);
 	}
 	assert.equal((await call("grep", "~/.gnupg"))?.block, true, "grep inside a secret dir should be blocked");
+});
+
+/**
+ * The lists in guard.ts are long enough that an unsorted addition hides a
+ * duplicate or a near-miss (`~/.aws` next to `~/.aws/sso`). The consts are module
+ * private, so this reads the source rather than importing them.
+ */
+test("guard.ts policy lists stay alphabetically sorted", () => {
+	const source = readText("extensions/guard.ts");
+	assert.ok(source, "extensions/guard.ts should be readable");
+	for (const name of ["PROTECTED_PATHS", "SECRET_PATHS"]) {
+		const block = new RegExp(`const ${name} = \\[([^\\]]*)\\]`).exec(source);
+		assert.ok(block, `${name} not found in extensions/guard.ts`);
+		const entries = [...block[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+		assert.ok(entries.length > 5, `${name} parsed as only ${entries.length} entries — did the literal change shape?`);
+		assert.deepEqual(entries, [...entries].sort(), `${name} should be sorted alphabetically`);
+		assert.equal(new Set(entries).size, entries.length, `${name} has a duplicate entry`);
+	}
 });
 
 test("the two lists differ where they are meant to", async () => {

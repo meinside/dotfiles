@@ -162,12 +162,14 @@ file, policy is:
 
 - **Blocked, never confirmed (writes):** `~/.ssh`, `~/.gnupg`, `~/.aws`,
   `~/.config/gcloud`, `~/.config/rclone`, `~/.netrc`, `~/.npmrc`,
-  `~/.ollama/id_ed25519`, `auth.json`, Claude's `settings.json`. Directories rather
-  than single files where a vendor keeps adding state.
+  `~/.ollama/id_ed25519`, `~/.custom_env`, `auth.json`, Claude's `settings.json`.
+  Directories rather than single files where a vendor keeps adding state.
 - **Also unreadable** through `read`/`grep`: most of the above plus transcript
   stores (`sessions/`, `history.jsonl`, shell histories). `~/.aws/config` and
   Claude's `settings.json` stay readable; transcripts are read-blocked but not
-  write-blocked.
+  write-blocked. `~/.custom_env` is on both lists: it is the untracked file the
+  shells source, so it holds live tokens, and the sandbox keeps `bash` away from it
+  only as a side effect of the home root being `denyRead`.
 - **Ask once:** package managers, irreversible git/filesystem operations.
   Read-only and reversible forms are excluded on purpose.
 - **No UI (`-p`, `--mode json`): a match is blocked**, so headless runs fail
@@ -208,9 +210,13 @@ Rules that decide how entries are written:
   readable or `command -v` reports installed tools as missing.
 - **A package's data directory can sit outside the workspace.** `~/.pi/cost-tracker`
   and its symlink twin `~/.config/pi/cost-tracker` are both listed, as is
-  `~/.pi/agent/magpi-cache` (the live MagPi cache; the paths `magpi_fetch` returns
-  are unreadable to `bash` otherwise). Read-only: tools write those in-process,
-  outside the sandbox.
+  `~/.pi/agent/magpi-cache`. Read-only: tools write those in-process, outside the
+  sandbox.
+- **A `~/.pi/...` entry only helps the in-process tools, not `bash`.** `~/.pi` is a
+  symlink into `.config/pi`, and the home root is `denyRead`, so Seatbelt cannot even
+  stat the symlink: `bash` gets `EPERM` on the `~/.pi/...` spelling while `read`
+  (textual policy matching) succeeds. Use the `~/.config/pi/...` spelling in commands
+  — the paths `magpi_fetch` returns are the `~/.pi/...` ones and must be rewritten.
 - **`~/.config/llama.cpp` is `allowRead`** so `tests/llama.test.ts` checks instead
   of skipping; it stays out of `allowWrite` because `edit`/`write` go through
   `guard.ts` and leave a reviewable diff.
@@ -316,6 +322,7 @@ embedded in the `name` of a `models.json` entry:
 | `tier:fable` | Experimental top-end model. No agent uses it, kept out of the `Ctrl+P` cycle |
 | `tier:local-fast` | Local Ollama model, zero cost, answers in seconds ([notes](#ollama-provider)) |
 | `tier:local-strong` | Local llama.cpp model, zero cost but slow — for delegated work, not conversation ([notes](#llamacpp-provider)) |
+| `tier:local-coder` | Local llama.cpp model tuned for coding/agentic work — smaller and faster than `tier:local-strong` ([notes](#llamacpp-provider)) |
 
 Only `models.json` knows what a tier resolves to, so a machine with different
 providers needs no changes elsewhere. This table does not repeat the current
@@ -519,6 +526,17 @@ Each of these failed silently once:
 - **A preset section needs its own `hf-repo`.** A sourceless section is still listed
   by `GET /models` and only fails on load. With `hf-repo` the router downloads on
   first load and the cache entry merges with the preset, so there is no duplicate.
+- **A gated Hugging Face repo needs `$HF_TOKEN`** (llama-server reads it, or
+  `--hf-token`) *and* a one-time terms acceptance on the model page by that account.
+  Without both the download fails with HTTP 401. A **stale** token is the nasty case:
+  public repos still serve a 307 with an invalid `Authorization` header, so nothing
+  fails until the first gated repo. Check with
+  `curl -sS -H "Authorization: Bearer $HF_TOKEN" https://huggingface.co/api/whoami-v2`.
+- **MTP speculative decoding depends on how the repo ships the head.** `--spec-type
+  draft-mtp` uses "MTP heads from the main model" (`docs/speculative.md`), so a quant
+  with the `nextn` block embedded needs no draft file and no extra weights; a repo
+  that ships an MTP *sidecar* instead needs `spec-draft-hf` + `spec-draft-model` and
+  costs its full size in resident memory.
 - **`modelOverrides`, not `models`.** The built-in provider hardcodes
   `reasoning: false` and `supportsReasoningEffort: false`, so a thinking model needs
   an override in `models.json`. The key must be the router's model id exactly; pi
@@ -526,9 +544,40 @@ Each of these failed silently once:
 - **`thinkingLevelMap` is mandatory for a Qwen3.8-style template**, which accepts
   only `low`/`medium`/`xhigh` and calls `raise_exception` otherwise — pi's `high`
   returns **HTTP 500**. Derive the map from the model's own template rather than
-  copying this one.
+  copying this one: Ornith-1.5-9B's template takes `enable_thinking` and no
+  `reasoning_effort` at all, so its override carries no `thinkingLevelMap`.
 - **`enabledModels` needs `llama.cpp/**`**, per the
   [glob rule](#rules-the-tokens-must-obey).
+- **A local model's context size is set by pi's compaction math, not by memory.**
+  Auto-compaction fires at `contextWindow - compaction.reserveTokens` (16384) and then
+  keeps `compaction.keepRecentTokens` (20000) of recent turns, so a window is only
+  workable when `keepRecentTokens < contextWindow - reserveTokens`. At `c = 32768` it
+  is not: the post-compaction prompt (system + tool schemas + summary + 20k kept)
+  lands *above* the threshold, compaction can never get back under the window, and the
+  next tool result overflows. llama.cpp answers HTTP 400 (`"exceeds the available
+  context size"`, which pi's `isContextOverflow` does match) — but overflow recovery is
+  **one** compact-and-retry per turn, and it drops the failed assistant message, so the
+  edits in that message are lost and the second overflow ends the turn for good. Hence
+  `c = 65536` in `models.ini` and a matching `contextWindow` in `models.json`; the two
+  must agree or the threshold is computed against a window the server does not have.
+  These settings are global, not per model, which is why the window moves instead.
+- **`--context-shift` does not rescue this.** Current builds reject an oversized
+  *prompt* before shifting is considered (the truncation path that worked in b6721 was
+  removed; upstream's position is that compaction is the client's job,
+  [#17284](https://github.com/ggml-org/llama.cpp/issues/17284)). It only affects the
+  generation phase, where it silently discards context — which corrupts tool-call state
+  in an agent session.
+- **The memory ceiling on Apple Silicon is Metal's, and it is not the number everyone
+  quotes.** `sysctl iogpu.wired_limit_mb hw.memsize` plus a 3-line Metal call
+  (`MTLCreateSystemDefaultDevice()!.recommendedMaxWorkingSetSize`) measured 24.96 GiB
+  of 32 GiB here — 78%, not the widely repeated two thirds. Both models fit under it at
+  64k because they are hybrid-attention (16/64 and 8/32 full-attention layers, ~2 GB of
+  KV each at 64k), so `iogpu.wired_limit_mb` never has to be raised. Prefill is the
+  binding constraint instead: KV is allocated in full at load, and a window pi will
+  never fill is pure waste. That also makes `[*] c = 65536` a claim about *these* models:
+  a conventional GQA model pays KV on every layer (~160 KB per token for 40 layers x 8 KV
+  heads x 128 head dim, so ~10 GB at 64k), so give one its own `[section]` with a smaller
+  `c` — a section value beats `[*]` — instead of letting it inherit the global one.
 - **The presets are shared config; serving them is not.** Both ini files are tracked,
   so a preset travels to machines that will never serve it — harmless at runtime, but
   the `enabledModels` check keys off `auth.json` naming a `llama.cpp` provider

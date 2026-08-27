@@ -23,6 +23,8 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
  * state: `~/.aws` was two files until `sso/cache` and `cli/cache` turned up
  * holding live tokens, and prefix matching covers whatever the next CLI version
  * writes there. Claude's `settings.json` is here because its hooks run commands.
+ * `~/.custom_env` is the untracked file every shell sources, so a write there
+ * would land a value in every later process.
  */
 const PROTECTED_PATHS = [
 	"~/.aws",
@@ -31,6 +33,7 @@ const PROTECTED_PATHS = [
 	"~/.config/gcloud",
 	"~/.config/pi/agent/auth.json",
 	"~/.config/rclone",
+	"~/.custom_env",
 	"~/.gnupg",
 	"~/.netrc",
 	"~/.npmrc",
@@ -55,6 +58,10 @@ const PROTECTED_PATHS = [
  *   so both locations are listed.
  * - Claude's `settings.json` is writable-blocked for its hooks, not for secrets,
  *   so it stays readable.
+ * - `~/.custom_env` holds the exported secrets the shell sources (API keys and
+ *   tokens), so it is read-blocked as well as write-blocked. `bash` cannot reach
+ *   it under the sandbox only as a side effect of the home root being `denyRead`,
+ *   which is not a reason to leave the content-returning tools open to it.
  *
  * `bash` is deliberately not gated here; see README.md for why this is a guard
  * against accidents rather than a security boundary.
@@ -71,6 +78,7 @@ const SECRET_PATHS = [
 	"~/.config/pi/agent/auth.json",
 	"~/.config/pi/agent/sessions",
 	"~/.config/rclone",
+	"~/.custom_env",
 	"~/.gnupg",
 	"~/.local/state/pi/sessions",
 	"~/.netrc",

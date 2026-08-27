@@ -11,7 +11,11 @@
  * - an `enabledModels` pattern that matches nothing simply hides the model from
  *   `/model`, which looks like a broken server rather than a bad glob. `*` does
  *   not cross `/` in minimatch, and llama.cpp model ids are `<repo>/<name>:<quant>`,
- *   so `llama.cpp/*` matches nothing while `llama.cpp/**` matches everything.
+ *   so `llama.cpp/*` matches nothing while `llama.cpp/**` matches everything;
+ * - a `contextWindow` that disagrees with the preset's `c` makes pi compute its
+ *   compaction threshold against a window the server does not have;
+ * - a context window too small for pi's compaction settings cannot be compacted
+ *   back under its own threshold, which strands the session (see below).
  *
  * Whether this machine uses llama.cpp at all is machine specific, so a missing
  * config directory skips, and so does a machine whose `auth.json` names no
@@ -214,6 +218,120 @@ test("enabledModels reaches the llama.cpp models", async (t) => {
 			`llama.cpp ids contain "/", and minimatch's "*" does not cross it — use "${LLAMA_PROVIDER}/**"`,
 	);
 	t.diagnostic(`${reached.size} llama.cpp model(s) reachable through enabledModels`);
+});
+
+/**
+ * pi's own defaults, from `dist/core/settings-manager.js` (`getCompactionSettings`).
+ * Duplicated rather than imported because they are read through a class that needs a
+ * loaded settings file; `settings.json` overrides them when it carries the keys.
+ */
+const COMPACTION_DEFAULTS = { reserveTokens: 16384, keepRecentTokens: 20000 };
+
+const compactionSettings = (): { reserveTokens: number; keepRecentTokens: number } => {
+	const configured = readJson<{ compaction?: Partial<typeof COMPACTION_DEFAULTS> }>("settings.json")?.compaction;
+	return {
+		reserveTokens: configured?.reserveTokens ?? COMPACTION_DEFAULTS.reserveTokens,
+		keepRecentTokens: configured?.keepRecentTokens ?? COMPACTION_DEFAULTS.keepRecentTokens,
+	};
+};
+
+/** The `modelOverrides` fields these two checks read. */
+interface LlamaOverride {
+	name?: unknown;
+	contextWindow?: number;
+	maxTokens?: number;
+}
+
+const llamaOverrides = (): Record<string, LlamaOverride> => {
+	const provider = readJson<Record<string, unknown>>("models.json")?.providers as
+		| Record<string, { modelOverrides?: Record<string, LlamaOverride> }>
+		| undefined;
+	return provider?.[LLAMA_PROVIDER]?.modelOverrides ?? {};
+};
+
+/** Every spelling llama-server accepts for the context size, longest form first. */
+const CTX_KEYS = ["LLAMA_ARG_CTX_SIZE", "ctx-size", "c"];
+
+/**
+ * The context size a preset section ends up with: its own value if it has one,
+ * otherwise the global section's, mirroring the preset precedence documented in
+ * `models.ini` (command line > model section > `[*]`).
+ */
+function effectiveCtx(ini: Ini, section: string): number | undefined {
+	const globals = ini.sections.get("*") ?? ini.sections.get("default");
+	for (const keys of [ini.sections.get(section), globals]) {
+		for (const key of CTX_KEYS) {
+			const raw = keys?.get(key);
+			if (raw === undefined) continue;
+			const value = Number.parseInt(raw, 10);
+			if (Number.isFinite(value) && value > 0) return value;
+		}
+	}
+	return undefined;
+}
+
+test("models.json contextWindow matches the preset's context size", (t) => {
+	if (!models) return t.skip(blocked("models.ini") ?? "models.ini absent");
+	const overrides = Object.entries(llamaOverrides());
+	if (overrides.length === 0) return t.skip(`models.json defines no ${LLAMA_PROVIDER} modelOverrides`);
+
+	// pi sizes its compaction threshold from `contextWindow`, while the server enforces
+	// `c`. Too large and pi waits past the point where llama-server answers HTTP 400
+	// ("exceeds the available context size"); too small and it compacts for no reason.
+	// Neither shows up as a configuration error.
+	for (const [id, override] of overrides) {
+		const ctx = effectiveCtx(models, id);
+		if (ctx === undefined) {
+			t.diagnostic(`${id}: no context size in models.ini, so the model's own native window applies`);
+			continue;
+		}
+		if (override.contextWindow === undefined) {
+			// The built-in provider defaults to 128000, which is not this preset's window.
+			assert.fail(`models.json "${id}" sets no contextWindow while models.ini serves it with c = ${ctx}`);
+		}
+		assert.equal(
+			override.contextWindow,
+			ctx,
+			`models.json "${id}" claims contextWindow ${override.contextWindow} but models.ini serves it with c = ${ctx}`,
+		);
+		t.diagnostic(`${id}: ${ctx} tokens on both sides`);
+	}
+});
+
+test("each llama.cpp window can actually be compacted", (t) => {
+	if (!models) return t.skip(blocked("models.ini") ?? "models.ini absent");
+	const overrides = Object.entries(llamaOverrides()).filter(([, o]) => o.contextWindow !== undefined);
+	if (overrides.length === 0) return t.skip(`models.json defines no ${LLAMA_PROVIDER} contextWindow`);
+
+	const { reserveTokens, keepRecentTokens } = compactionSettings();
+	for (const [id, override] of overrides) {
+		const window = override.contextWindow as number;
+		const threshold = window - reserveTokens;
+
+		// Auto-compaction fires above `contextWindow - reserveTokens` and then keeps
+		// `keepRecentTokens` of recent turns. When the kept tail alone is larger than the
+		// threshold, compaction can never bring the context back under it: the next tool
+		// result overflows, and pi retries once (dropping the failed assistant message,
+		// and the edits in it) before the turn dies. Local models are where this bites,
+		// since their windows are the ones sized by hand. Compaction settings are global,
+		// so the window is what has to move.
+		assert.ok(
+			keepRecentTokens < threshold,
+			`${id}: contextWindow ${window} - reserveTokens ${reserveTokens} = ${threshold} leaves no room for ` +
+				`keepRecentTokens ${keepRecentTokens}, so compaction cannot get back under its own threshold`,
+		);
+
+		// The reserve exists for the response, so a larger `maxTokens` can be clipped by
+		// the window before the model is done.
+		if (override.maxTokens !== undefined) {
+			assert.ok(
+				override.maxTokens <= reserveTokens,
+				`${id}: maxTokens ${override.maxTokens} exceeds compaction.reserveTokens ${reserveTokens}, ` +
+					`so a full-length response does not fit the room compaction leaves for it`,
+			);
+		}
+		t.diagnostic(`${id}: compacts at ${threshold}, keeps ${keepRecentTokens} (margin ${threshold - keepRecentTokens})`);
+	}
 });
 
 test("config.ini pins the router's listener", (t) => {
