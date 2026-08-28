@@ -31,6 +31,7 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 | `extensions/guard.ts` | yes | Blocks writes to credential files, confirms installs and irreversible commands |
 | `extensions/git-checkpoint.ts` | yes | Vendored upstream example: per-turn git stash checkpoints for `/fork` |
 | `extensions/statusline.ts` | yes | Claude Code style footer ([notes](#statusline-extension)) |
+| `extensions/magpi-handlers.ts` | yes | Local MagPi fetch handlers: reddit, Discourse, naver blog ([notes](#magpi-handlers)) |
 | `AGENTS.md` | yes | [Global instructions](#global-instructions-agentsmd) for every session and subagent |
 | `agents/*.md` | yes | Subagent definitions |
 | `prompts/*.md` | yes | Prompt templates, invoked as `/name` |
@@ -309,6 +310,104 @@ The numbers are re-derived from the session log, which has consequences:
 `tests/statusline.test.ts` pins the accounting and formatters. Git polling and the
 timers are not covered.
 
+## MagPi handlers
+
+`extensions/magpi-handlers.ts` is the one place local `pi-magpi` handlers live, so
+there is a single file to look at when a site starts returning junk, and one test
+file beside it. Each handler is there because the behaviour was *measured*, not
+guessed:
+
+| Handler | What MagPi's built-ins do here | What this does instead |
+|---------|-------------------------------|------------------------|
+| `reddit` (shadows the built-in) | turns Reddit's login page into a 20-byte "Skip to main content" document and **reports success** | live JSON endpoint, else the Arctic Shift archive, else an error |
+| `discourse` | reads the server-rendered HTML, which carried **18 of 169 posts** on a discuss.python.org thread, silently | `/t/<id>.json?print=true`, the whole stream |
+| `naver-blog` | readability on the iframe-wrapped desktop page returns **0 bytes** | the mobile host, whose HTML has the post inline |
+
+Rules all three follow:
+
+- **A handler throws rather than return an empty or blocked document.** MagPi caches
+  whatever a handler returns, for `ttlHours`, and an empty thread reads to the model
+  as "this thread says nothing" — the failure mode every one of these exists to fix.
+  On a throw MagPi falls back to a stale cache entry if it has one (its documented
+  offline behaviour) and reports the error otherwise.
+- **Registration goes through MagPi's own extension point**,
+  `pi.events.emit("magpi:register-handler", ...)`. Its `registerHandler()` replaces
+  by name, which is how `reddit` shadows the built-in instead of racing it. Nothing
+  under `npm/node_modules` is patched, so a `pi install` or a MagPi upgrade cannot
+  undo any of it. The emit happens at load *and* at `session_start`, since
+  activation order between extensions is not guaranteed.
+- **MagPi's TypeScript cannot be imported** — Node refuses type stripping under
+  `node_modules`, the same wall `tests/sandbox.test.ts` hits. So the file restates
+  the three interfaces it needs, does its own `fetch`, and carries a small regex
+  `htmlToMarkdown()` in place of MagPi's readability+turndown one. That converter is
+  aimed at *fragments* that are already content (a Discourse `cooked` body, a blog
+  post container); handed a whole page it would keep the navigation too.
+- **No `sandbox.json` entry is needed.** Extensions run in-process and the network
+  policy applies to `bash` and other child processes only — which is why `curl` to
+  `arctic-shift.photon-reddit.com` is blocked here while the handler's own request is
+  not.
+
+Per-handler caveats:
+
+- **Reddit has no key path left.** Measured from here: `www.reddit.com/*.json`,
+  `api.reddit.com` and `oauth.reddit.com` answer `403`, `old.reddit.com` `302`s to
+  `/login?reason=lor2`, `r.jina.ai` relays the block page, PullPush answers `429`,
+  public Redlib instances sit behind an Anubis proof-of-work page. Self-service API
+  keys ended with the Responsible Builder Policy (r/redditdev, Nov 2025).
+- **Arctic Shift answers are archive snapshots**, so score and comment count are
+  from crawl time and very recent threads can be missing. The document names its
+  source on its own line so the model cannot mistake one for the other.
+- **Discourse is matched by URL shape, not by host** (`/t/<slug>/<id>`), because it
+  is self-hosted on arbitrary domains. NodeBB (`/topic/<id>/<slug>`), Flarum
+  (`/d/<slug>-<id>`) and phpBB (`viewtopic.php`) do not collide, but a non-Discourse
+  site using that shape gets an error naming the guess — a handler cannot hand a URL
+  back to MagPi's default one.
+- **Naver depends on markup**, not an API: the post container is matched by editor
+  generation (`se-main-container`, then `postViewArea`, then `post_ct`). A redesign
+  surfaces as "could not find the post container", which is the point — the failure
+  it replaced was invisible.
+- **Searching** reddit is still `magpi_search` with `site:reddit.com` (DuckDuckGo);
+  `search.ts`'s source list has no extension point, and DDG results are good enough
+  that adding one is not worth patching the package for.
+
+`tests/magpi-handlers.test.ts` pins the fallback order, the id/ref parsing, the
+comment-tree flattening, the provenance line, the shared HTML converter and — the
+case this file exists for — that no handler ever returns a blocked or empty page as
+a document. It stubs `globalThis.fetch`, so nothing in the checks talks to reddit,
+Discourse or naver.
+
+Removing one handler is deleting its section plus its tests; removing all of them is
+deleting both files and this section (see also the `pi-magpi` row under
+[Packages](#packages)).
+
+### When to add one
+
+`AGENTS.md` carries the general half of this in one line — an empty or boilerplate
+fetch result is a failure, not the answer, and a site that fails that way twice
+deserves a durable fix instead of another workaround. It deliberately stops there,
+naming neither this file nor what "durable fix" means, because it is billed on every
+turn of every session and holds general rules only. The specifics are here. A new
+handler is worth writing when all four hold:
+
+1. **The failure is measured, not assumed**: a byte count, a status code, or a
+   missing-content count against what the page actually has. "Reddit blocks bots" is
+   not a finding; "18 of 169 posts, silently" is.
+2. **MagPi's built-ins genuinely lose information.** A page that arrives fat but
+   complete is a token cost, not a correctness problem, and is not worth a handler —
+   `topic` already slices those.
+3. **A keyless source exists** that returns structure rather than a rendered page:
+   an official JSON endpoint, an archive, or a host that serves the same content
+   without the wrapper. Otherwise the handler is a scraper that will rot.
+4. **The failure is silent.** A visible error already tells the truth; the ones
+   worth intercepting are those that report success — that is what every handler
+   here started as.
+
+Measured and rejected on those grounds: `wiki.archlinux.org` (56 KB, parses fine),
+`gist.github.com` (69 KB, the github handler correctly delegates), dev.to and
+Substack (readability is fine), Hugging Face (works; an API would only be leaner), the
+big Korean forums (no keyless structured source, aggressive bot walls), X and Discord
+(no anonymous path at all), YouTube transcripts (no stable keyless endpoint).
+
 ## Model tiers
 
 Agents and `settings.json` never name a concrete model; they reference role tokens
@@ -439,7 +538,7 @@ process, and a package runs with full system access.
 | `@narumitw/pi-lsp` | Language server tools ([notes](#language-servers-pi-lsp)) |
 | `@narumitw/pi-retry` | Marks empty-detail and stalled provider streams retryable, hands them to pi's backoff |
 | `pi-ask-user` | `ask_user` tool with a structured form, plus an `ask-user` skill. Needs a UI, so subagents do not get it |
-| `pi-magpi` | `magpi_fetch` / `magpi_search` / `magpi_cached`: pages as markdown behind a 24 h cache, official-API handlers for the big registries. SSRF-guarded |
+| `pi-magpi` | `magpi_fetch` / `magpi_search` / `magpi_cached`: pages as markdown behind a 24 h cache, official-API handlers for the big registries. SSRF-guarded. Its reddit handler is replaced locally, and Discourse/naver get their own ([notes](#magpi-handlers)) |
 | `pi-mcporter` | MCP servers behind one `mcporter` proxy tool, with per-server exposure levels (`on-demand`/`index`/`match`/`native`) that decide how much schema reaches context |
 | `pi-sandbox` | OS-level sandboxing ([notes](#sandbox-extension)) |
 

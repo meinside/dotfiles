@@ -22,6 +22,10 @@ belongs in that project's own `README.md` or `AGENTS.md`.
 - Changing an existing test's expectation is a behavior change, not a repair to the test: say which behavior changed and why it is correct now. Retrofitting assertions to whatever the code now produces is how a regression ships green.
 - Never delete, skip, loosen or special-case a test, and never widen a lint config or add an ignore comment, to make a run pass. Report it instead.
 
+## Fetching web content
+
+- A fetched page that comes back suspiciously empty or all boilerplate — a few bytes, a login/consent/bot-check wall, navigation with no article — is a failure, not the answer: say so instead of reasoning from it, never let it stand as a cached success, and name which source did answer. When one site fails that way twice, propose a durable fix instead of working around it again.
+
 ## Reporting
 
 - Separate what you verified from what you did not, and name what you could not check. Unverified work described as done is worse than work reported as incomplete.
