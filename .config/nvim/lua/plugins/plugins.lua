@@ -2,7 +2,7 @@
 --
 -- File for plugins
 --
--- last update: 2026.07.14.
+-- last update: 2026.08.28.
 
 return {
 	-- colorschemes
@@ -117,7 +117,7 @@ return {
 		"m4xshen/smartcolumn.nvim",
 		opts = {
 			colorcolumn = "80",
-			custom_colorcolumns = {},
+			custom_colorcolumn = {},
 			disabled_filetypes = {
 				-- common
 				"checkhealth",
@@ -137,6 +137,16 @@ return {
 			},
 			scope = "line",
 		},
+		config = function(_, opts)
+			require("smartcolumn").setup(opts)
+
+			-- override `ColorColumn` highlight (colorschemes reset it on load)
+			local set_hl = function()
+				vim.api.nvim_set_hl(0, "ColorColumn", { bg = "#4a2a2a" })
+			end
+			vim.api.nvim_create_autocmd("ColorScheme", { callback = set_hl })
+			set_hl()
+		end,
 	},
 
 	-- dim inactive window
