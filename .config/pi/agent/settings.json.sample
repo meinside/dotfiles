@@ -10,7 +10,8 @@
     "google-vertex/gemini-3*",
     "llama.cpp/**",
     "nvidia/**",
-    "ollama/*"
+    "ollama/*",
+    "openrouter/**"
   ],
   "defaultThinkingLevel": "medium",
   "packages": [
