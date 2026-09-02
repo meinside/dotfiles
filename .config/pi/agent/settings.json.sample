@@ -9,6 +9,7 @@
     "google/gemini-3*",
     "google-vertex/gemini-3*",
     "llama.cpp/**",
+    "nvidia/**",
     "ollama/*"
   ],
   "defaultThinkingLevel": "medium",

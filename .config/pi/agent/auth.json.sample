@@ -18,5 +18,16 @@
       "GOOGLE_CLOUD_PROJECT": "<<<google-cloud-project-id-here>>>",
       "GOOGLE_CLOUD_LOCATION": "<<<google-cloud-location-here>>>"
     }
+  },
+  "llama.cpp": {
+    "type": "api_key",
+    "key": "<<<LOCAL_LLAMA_API_KEY>>>",
+    "env": {
+      "LLAMA_BASE_URL": "<<<LOCAL_LLAMA_BASE_URL:PORT>>>"
+    }
+  },
+  "nvidia": {
+    "type": "api_key",
+    "key": "<<<NVIDIA_API_KEY>>>"
   }
 }
