@@ -23,5 +23,10 @@
     "npm:pi-mcporter",
     "npm:pi-rewind",
     "npm:pi-sandbox"
-  ]
+  ],
+  "retry": {
+    "provider": {
+      "timeoutMs": 180000
+    }
+  }
 }
