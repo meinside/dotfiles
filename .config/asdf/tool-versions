@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2026.09.04.
+# last update: 2026.09.09.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -126,7 +126,7 @@ meson 1.12.0
 #   :MasonInstall nimlsp
 #
 # https://nim-lang.org/install.html
-nim 2.2.10
+nim 2.2.12
 
 # $ asdf plugin add ninja
 # $ asdf install ninja
