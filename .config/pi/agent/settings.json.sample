@@ -19,6 +19,7 @@
     "npm:@narumitw/pi-lsp",
     "npm:@narumitw/pi-retry",
     "npm:pi-ask-user",
+    "npm:pi-env",
     "npm:pi-magpi",
     "npm:pi-mcporter",
     "npm:pi-rewind",
@@ -28,5 +29,8 @@
     "provider": {
       "timeoutMs": 180000
     }
+  },
+  "env": {
+    "PI_RETRY_STALL_TIMEOUT_MS": 180000
   }
 }

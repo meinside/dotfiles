@@ -1,6 +1,6 @@
 # .custom_env.sample
 #
-# last update: 2026.09.08.
+# last update: 2026.09.09.
 
 # for macOS only
 if [[ $OSTYPE == darwin* ]]; then
@@ -78,7 +78,4 @@ ollama() {
         command ollama "$@"
     fi
 }
-
-# pi coding agent
-export PI_RETRY_STALL_TIMEOUT_MS=300000
 
