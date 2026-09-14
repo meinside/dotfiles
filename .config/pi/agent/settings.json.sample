@@ -15,7 +15,9 @@
   ],
   "defaultThinkingLevel": "medium",
   "packages": [
+    "git:github.com/meinside/pi-quota-rotate",
     "npm:@ctogg/pi-cost-counter",
+    "npm:@llblab/pi-telegram",
     "npm:@narumitw/pi-lsp",
     "npm:@narumitw/pi-retry",
     "npm:pi-ask-user",
