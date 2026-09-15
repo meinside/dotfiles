@@ -1,7 +1,7 @@
 # .config/ghostty/config
 #
 # created on : 2025.01.02.
-# last update: 2026.07.07.
+# last update: 2026.09.15.
 
 # font
 #
@@ -35,7 +35,7 @@ selection-background = "#e7c547"
 selection-foreground = "#000000"
 
 # window
-macos-titlebar-style = "tabs"
+macos-titlebar-style = "transparent" # was "tabs", looks weird since macOS 27.0 (https://github.com/ghostty-org/ghostty/issues/13070)
 window-padding-x = 12
 window-padding-y = 3,1
 window-width = 160
