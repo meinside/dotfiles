@@ -22,15 +22,18 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 | `models-store.json` | no | Generated model catalog cache. Do not edit or commit; `check.sh` reads it to cross-check prices |
 | `pi-lsp.json` | yes | Language server routes ([notes](#language-servers-pi-lsp)) |
 | `magpi.json` | yes | MagPi config: 100 MB cache budget, `allowPrivateNetwork: false` |
+| `magpi-render.json` | yes | `extensions/magpi-render.ts` config: `enabled`, `browserBinary`, `renderHosts`, `learnHosts`, `sameSiteOnlyHosts`, `maxWaitMs`. Absent means defaults ([notes](#magpi-renderer)) |
 | `mcporter.json` | `.sample` mirror | `pi-mcporter`'s exposure policy. The MCP *server* definitions live in `~/.config/mcporter/mcporter.json`, outside this directory |
 | `sandbox.json` | yes | `pi-sandbox` policy ([notes](#sandbox-extension)). Mutated live by `/sandbox-allow ... for all projects`, so tracking turns that prompt into a `git diff` |
-| `magpi-cache/` | no | Old MagPi cache location; the live one is `~/.pi/agent/magpi-cache` |
+| `quota-rotate.json` | `.sample` mirror | `pi-quota-rotate`'s fallback chain of `provider/modelId` entries, plus `maxRotationsPerRun`. The real file is local (which models a machine has is machine specific); `quota-rotate.test.ts` checks that both it and the sample still resolve ([notes](#magpi-handlers) explain why that check exists) |
+| `magpi-cache/` | no | MagPi's fetch cache. `~/.pi/agent/magpi-cache` in MagPi's own paths and upstream docs is this same directory through the `~/.pi` symlink, not a second one |
 | `cost-tracker/` | no | Cost ledger, one JSONL per day under `YYYY/MM/`. Contains Bedrock ARNs |
 | `npm/` | no | `pi install` target. Ships its own `.gitignore` with `*` |
 | `extensions/subagent/` | yes | Vendored subagent extension ([notes](#vendored-subagent-extension)) |
 | `extensions/guard.ts` | yes | Blocks writes to credential files, confirms installs and irreversible commands |
 | `extensions/git-checkpoint.ts` | yes | Vendored upstream example: per-turn git stash checkpoints for `/fork` |
 | `extensions/statusline.ts` | yes | Claude Code style footer ([notes](#statusline-extension)) |
+| `extensions/magpi-render.ts` | yes | Reads JavaScript-rendered pages through Firefox over WebDriver BiDi ([notes](#magpi-renderer)) |
 | `extensions/magpi-handlers.ts` | yes | Local MagPi fetch handlers: reddit, Discourse, naver blog ([notes](#magpi-handlers)) |
 | `AGENTS.md` | yes | [Global instructions](#global-instructions-agentsmd) for every session and subagent |
 | `agents/*.md` | yes | Subagent definitions |
@@ -320,7 +323,7 @@ guessed:
 | Handler | What MagPi's built-ins do here | What this does instead |
 |---------|-------------------------------|------------------------|
 | `reddit` (shadows the built-in) | turns Reddit's login page into a 20-byte "Skip to main content" document and **reports success** | live JSON endpoint, else the Arctic Shift archive, else an error |
-| `discourse` | reads the server-rendered HTML, which carried **18 of 169 posts** on a discuss.python.org thread, silently | `/t/<id>.json?print=true`, the whole stream |
+| `discourse` | reads the server-rendered HTML, which carried **18 of 169 posts** on a discuss.python.org thread, silently | `/t/<id>.json?print=true`, the whole stream, for URLs that clear the shape-plus-corroboration rule below |
 | `naver-blog` | readability on the iframe-wrapped desktop page returns **0 bytes** | the mobile host, whose HTML has the post inline |
 
 Rules all three follow:
@@ -342,10 +345,24 @@ Rules all three follow:
   `htmlToMarkdown()` in place of MagPi's readability+turndown one. That converter is
   aimed at *fragments* that are already content (a Discourse `cooked` body, a blog
   post container); handed a whole page it would keep the navigation too.
-- **No `sandbox.json` entry is needed.** Extensions run in-process and the network
-  policy applies to `bash` and other child processes only — which is why `curl` to
-  `arctic-shift.photon-reddit.com` is blocked here while the handler's own request is
-  not.
+- **A handler's own requests check every redirect hop.** MagPi's `assertPublicTarget()`
+  runs on the URL the model supplied, before `resolveHandler()`, so the entry point is
+  covered — but its own comment grants that "a redirect hop to a private address can
+  still slip through", and `fetch` follows such a hop silently by default. So the two
+  helpers here use `redirect: "manual"` and re-check each hop (scheme, literal IP, and
+  the addresses the hostname resolves to) against loopback, link-local, carrier-NAT and
+  RFC 1918 ranges, capped at five hops. A name that does not resolve is passed through
+  rather than refused, so the caller sees the real network error. `169.254.169.254` is
+  the reason the list is wider than RFC 1918.
+- **No `sandbox.json` entry is needed.** These handlers run in-process, and
+  `pi-sandbox` enforces its policy at the **`bash` tool** — it replaces that one tool
+  with a sandboxed implementation and hooks `tool_call` for `read`/`write`/`edit`/`bash`
+  (its `src/extension.ts`). It creates its own sandbox manager, which pi's core knows
+  nothing about, so `pi.exec` from an extension is *not* covered either: MagPi's
+  `git clone` writes into `magpi-cache/` through a child process that `bash` cannot even
+  read from. That asymmetry is why `curl` to `arctic-shift.photon-reddit.com` is blocked
+  here while the handler's own request is not — and why a future handler that spawns a
+  browser would not be sandboxed by that setting either.
 
 Per-handler caveats:
 
@@ -357,11 +374,34 @@ Per-handler caveats:
 - **Arctic Shift answers are archive snapshots**, so score and comment count are
   from crawl time and very recent threads can be missing. The document names its
   source on its own line so the model cannot mistake one for the other.
-- **Discourse is matched by URL shape, not by host** (`/t/<slug>/<id>`), because it
-  is self-hosted on arbitrary domains. NodeBB (`/topic/<id>/<slug>`), Flarum
-  (`/d/<slug>-<id>`) and phpBB (`viewtopic.php`) do not collide, but a non-Discourse
-  site using that shape gets an error naming the guess — a handler cannot hand a URL
-  back to MagPi's default one.
+- **Discourse is claimed by URL shape plus corroboration, never by a host list.** It
+  is self-hosted on arbitrary domains, so the URL is all there is to go on, and
+  `match()` is synchronous — it cannot ask the site. The rule is the `/t/<id>` shape
+  *and* either a slug (`/t/<slug>/<id>`, which every canonical Discourse link carries)
+  or a hostname that names Discourse itself (`discourse.`/`discuss.` prefix,
+  `.discourse.group`/`.discourse.org` suffix). NodeBB (`/topic/<id>/<slug>`), Flarum
+  (`/d/<slug>-<id>`) and phpBB (`viewtopic.php`) never collide. **Measured collision:**
+  `v2ex.com/t/1012345` — a busy non-Discourse forum — fitted the earlier shape-only
+  rule exactly, and a false positive is not a slow read but an unreadable page, since a
+  handler cannot hand a URL back to MagPi's default one. The slug requirement separates
+  the two without naming either site.
+- **A host list was rejected on this repository's own terms.** Every external-fact list
+  here has a drift check — `pi-lsp.json`'s 17 servers are execed by `lsp.test.ts`,
+  `models.json`'s costs are compared against pi's catalog by `pricing.test.ts`, tier
+  aliases must resolve to exactly one model, and `quota-rotate.json`'s chain is now
+  checked by `quota-rotate.test.ts`. That last one is the cautionary case: it had no
+  check, and it is the list that went stale (a `:free` model OpenRouter had withdrawn,
+  found by hand, not by `check.sh`). A list of "forums that run Discourse" could not be
+  checked at all without asking the network, which `tests/magpi-handlers.test.ts` does
+  not do. The four host patterns are Discourse's own naming rather than anyone's forum,
+  so they age with the project. `forums.` is excluded: XenForo and phpBB use it as
+  often, and a canonical URL on such a host already carries a slug.
+- **The cost of the narrower rule is a slug-less link to an unlisted install.**
+  `someforum.example/t/12345` is no longer claimed, so it reads through MagPi's default
+  handler — truncated to the posts in the crawler HTML, which is the loss this handler
+  exists to prevent. It is accepted because the alternative made readable pages fail
+  outright, and because forums redirect the short form to the canonical slug URL that
+  people actually paste.
 - **Naver depends on markup**, not an API: the post container is matched by editor
   generation (`se-main-container`, then `postViewArea`, then `post_ct`). A redesign
   surfaces as "could not find the post container", which is the point — the failure
@@ -371,10 +411,13 @@ Per-handler caveats:
   that adding one is not worth patching the package for.
 
 `tests/magpi-handlers.test.ts` pins the fallback order, the id/ref parsing, the
-comment-tree flattening, the provenance line, the shared HTML converter and — the
-case this file exists for — that no handler ever returns a blocked or empty page as
-a document. It stubs `globalThis.fetch`, so nothing in the checks talks to reddit,
-Discourse or naver.
+comment-tree flattening, the provenance line, the shared HTML converter, the redirect
+guard (a hop into a private address, a public name that resolves to one, an ordinary
+redirect still followed, a loop bounded), the Discourse match rule (V2EX and a bare
+`/t/<id>` on an unknown host are not claimed; a numeric first segment is a topic id and
+not a slug) and — the case this file exists for — that no handler ever returns a blocked
+or empty page as a document. It stubs `globalThis.fetch` and `hostResolver`, so nothing
+in the checks talks to reddit, Discourse or naver, and no DNS query leaves the machine.
 
 Removing one handler is deleting its section plus its tests; removing all of them is
 deleting both files and this section (see also the `pi-magpi` row under
@@ -407,6 +450,163 @@ Measured and rejected on those grounds: `wiki.archlinux.org` (56 KB, parses fine
 Substack (readability is fine), Hugging Face (works; an API would only be leaner), the
 big Korean forums (no keyless structured source, aggressive bot walls), X and Discord
 (no anonymous path at all), YouTube transcripts (no stable keyless endpoint).
+
+Measured, working, and still rejected: a parts catalogue and an electronics shop, both
+found during this work. Both *do* have keyless sources — the catalogue answers an
+undocumented `/api/v1/…` JSON endpoint with no cookie or token, the shop serves its
+description, reviews and Q&A as iframe fragments — and handlers for them were dropped
+anyway. An undocumented internal API has no compatibility promise, skips the analytics
+the site runs its business on, and is the
+first thing a site blocks (the catalogue page already answers a proxy's IP with `429`). Those two
+pages go through [the renderer](#magpi-renderer) instead, which consumes the page the
+way the site intends.
+
+## MagPi renderer
+
+`extensions/magpi-render.ts` reads pages whose content only exists after JavaScript
+runs. It registers the `magpi_fetch_rendered` tool and the `/magpi-render <url>`
+command, drives the installed Firefox over WebDriver BiDi, and returns markdown.
+
+The failure it exists for is the familiar one: a parts-catalogue page answers **27.6 KB of
+Next.js scaffold containing zero product data**, MagPi's readability pass extracts the
+**315-byte** company footer from it, and caches that as a successful `article` for
+`ttlHours`. Nothing in the pipeline notices.
+
+Measured on the two pages it was built against:
+
+| Page | Server HTML | Rendered | Result |
+|------|-------------|----------|--------|
+| Parts catalogue, Next.js | 27.6 KB shell, 0 tables | 14.3 K chars, **11 tables** | price tiers and spec tables as markdown tables, `Product` + `FAQPage` ld+json. 13–15 s |
+| Electronics shop product | 13.4 KB, reviews/Q&A/description empty | 4 frames, **61 KB** | description (1,145 lines incl. datasheet links), 630 reviews as a table, Q&A. 6 s |
+
+How it decides things, and why:
+
+- **Every tunable is in one `TUNING` block at the top of the file, with the measurement
+  that set it.** These are not preferences. A 700 ms stability window instead of 1.6 s
+  mistook the catalogue page's mid-load pause for the end, returned 2,767 of 14,296 characters with
+  0 of 11 tables, and reported success in 2.9 s — the exact class of silent failure the
+  renderer exists to fix, reintroduced by a tuning value.
+- **Settling needs five conditions at once**: past a 3 s floor, all-frame text unchanged
+  for 4 polls, no content-bearing response for 1.5 s, no request in flight, and some
+  text present — then a confirm pass re-measures 800 ms later. Waiting for the `load`
+  event instead is not an option: the shop page never reaches it, because an ad subresource
+  never finishes.
+- **Only responses that could carry content reset the idle timer.** Analytics beacons
+  (GA's empty `204`s, ad pixels) never stop, so counting them means never settling.
+- **`sameSiteOnlyHosts` is opt-in per host.** Restricting the idle signal to the page's
+  own registrable domain saves ~1.5 s on the catalogue page (80 of 245 responses are third-party)
+  but would settle early on any service that serves data from a sibling domain. Losing
+  content is invisible; waiting too long is not.
+- **Extraction runs in the page**, so visibility comes from `getComputedStyle` and box
+  geometry rather than from guessing at tag names. No server-side parser has that.
+- **Readability is a candidate, not the extractor.** It is built for articles and drops
+  tables, which on a catalogue page *are* the content: 0.08 coverage with 0 tables where
+  the layout pass scored 0.97 with 11. It is injected only when the layout pass scores
+  below `weakCoverage` and found no table.
+- **Coverage is measured against `document.body.innerText`**, the text the engine
+  actually rendered. An extractor that quietly drops most of the page fails this ratio,
+  which is how Readability disqualifies itself without a special case.
+- **Every frame is read.** the shop page's description, reviews and Q&A are iframes; a
+  top-document extraction sees 5.4 KB and stops. Frame traversal is also why no
+  the shop page handler was written.
+- **An empty render throws, naming why** — login wall, bot check, or nothing at all —
+  rather than handing MagPi a shell to cache.
+
+Operational notes:
+
+- **Nothing is registered on a machine without Firefox.** This directory travels between
+  machines through dotfiles, and a tool that can only fail when called still costs prompt
+  tokens in every session. Discovery tries `browserBinary`, then a list of absolute paths,
+  then `PATH` (`firefox`, `firefox-esr`, `firefox-developer-edition`), which covers
+  Homebrew-formula, Nix and Flatpak installs that no fixed list predicts. A browser
+  installed later needs a `/reload`.
+- **No `sandbox.json` change is needed.** The browser is a child process of pi, and
+  `pi-sandbox` enforces its policy at the `bash` tool. Measured: the same launch from
+  inside sandboxed `bash` fails with Mach `bootstrap_check_in` errors and never gets a
+  browsing context, while `allowBrowserProcess` stays `false` and the extension works.
+- **The BiDi socket is hand-rolled over `node:net`.** Node's global `WebSocket` honours
+  `HTTP(S)_PROXY`, which this machine sets, and sends even a loopback connection through
+  the proxy, where the upgrade fails. Firefox also announces only `ws://127.0.0.1:PORT`;
+  the socket lives at `/session`, and `/` is an ordinary HTML page.
+- **A throwaway profile per render**, so the operator's own Firefox profile is never
+  touched and no debugging port is left open on it. One browser per call: the 1.3 s
+  startup is small next to a 6–15 s render, and pooling can wait until it is not.
+- **The names borrow MagPi's.** `magpi_fetch_rendered` sorts directly under
+  `magpi_fetch`, which is the tool whose thin answer sends you here, and `/magpi-render`
+  follows the `/sandbox-allow`, `/telegram-connect` shape. Nothing under
+  `npm/node_modules` is patched; if upstream MagPi ever ships its own renderer or reads
+  `magpi-render.json`, this file yields the names.
+
+Known limits:
+
+- **A multi-row table header only merges when every cell is a `th`.** the catalogue page's spec
+  table uses `td` for its `ℓx | ℓy` sub-header, so that row lands as a data row. The
+  data rows themselves stay aligned; a heuristic for the general case risks worse.
+- **6–15 seconds per page**, against 0.3 s for a handler. `navigator.webdriver` also
+  stays `true`: `dom.webdriver.enabled=false` does not stick while the remote agent is
+  active, so a site can tell this is automation. The catalogue page did not care; some will.
+- **No automatic escalation yet.** `magpi_fetch` returning a shell does not call this by
+  itself; the model has to notice and escalate. Wiring that in — plus learning which
+  hosts always need it — is the obvious next step and is deliberately not done here.
+
+### Automatic escalation
+
+A shell does not announce itself: a marketing landing page cached **0 bytes** under a
+perfectly good title and `kind: "article"`, which reads as a successful fetch. So detection
+and delivery are split, and each half does the thing it can do well:
+
+- **Detection** runs on `tool_result` for `magpi_fetch` and reads MagPi's own `details`
+  (`contentBytes`, `handler`, `kind`), never its preview text. A result under
+  `detect.minContentBytes` (600) from the **`webpage`** handler with a page-shaped `kind`
+  is a shell: the host is written to `tmp/magpi-render/learned.json` and the result gains
+  a comment saying what happened and what to call next. It fires on nothing else — a thin
+  answer from `reddit`, `discourse`, `naver-blog`, `github` or a registry is a different
+  failure that a browser does not fix, `render` is this extension's own handler and must
+  never re-trigger itself, and an error result is already loud.
+- **Delivery** is a handler registered on MagPi's own extension point, matching only
+  hosts in `renderHosts` (by hand, `*.example.com` allowed) or in the learned store. It
+  goes *through* MagPi on purpose: MagPi writes `content.md`, `meta.json` and the sqlite
+  full-text index together, so TTL applies and `magpi_cached` can find the rendered text.
+  Writing those files from outside would desync the index. MagPi also runs
+  `assertPublicTarget()` before resolving a handler, so the SSRF guard is inherited.
+
+What that adds up to, per host:
+
+```
+1st fetch   magpi_fetch(url) -> 315 bytes -> host learned, result annotated
+2nd fetch   magpi_fetch(url, refresh: true) -> render handler -> 15 s -> cached by MagPi
+thereafter  served from the cache like any other page, and searchable
+```
+
+The first visit cannot be repaired automatically, because nothing here can re-run MagPi's
+tool; it is annotated instead, and `refresh: true` is needed because the shell is already
+cached under MagPi's TTL. `learnHosts: false` turns the automatic half off and leaves
+`renderHosts` as the only route.
+
+**What detection cannot catch**: a partial loss. The shop page returns 13,377 real bytes with
+three empty iframes inside, and no byte threshold will ever notice that. Pages like it
+still need `renderHosts` or the explicit tool.
+
+`tests/magpi-render.test.ts` pins the settle rule (including that the measured 2.9 s
+failure would not settle), the extractor choice, the coverage yardstick, the empty-page
+diagnosis, the same-site heuristic, the shell-detection rule and what it refuses to fire
+on, host pattern matching, the learned store's round-trip, browser discovery on a machine
+without Firefox, and the WebSocket framing. No browser is launched and no network is
+touched.
+
+```json
+{
+  "enabled": true,
+  "browserBinary": "/Applications/Firefox.app/Contents/MacOS/firefox",
+  "sameSiteOnlyHosts": ["kr.example.com"],
+  "renderHosts": ["*.example.com", "shop.example.co.kr"],
+  "learnHosts": true,
+  "maxWaitMs": 25000
+}
+```
+
+Removing it is deleting `extensions/magpi-render.ts`, its test, `magpi-render.json`,
+`tmp/magpi-render/` and this section. Nothing else refers to it.
 
 ## Model tiers
 
@@ -534,12 +734,16 @@ process, and a package runs with full system access.
 
 | Package | Why |
 |---------|-----|
+| `git:github.com/meinside/pi-quota-rotate` | Rotates to the next model in `quota-rotate.json`'s chain when the current one runs out of quota, then continues the interrupted turn |
 | `@ctogg/pi-cost-counter` | Appends every message's `usage` to `cost-tracker/YYYY/MM/DD.jsonl`, adds `/cost [Nd]`. The only cross-session ledger (the statusline is session-only) |
+| `@llblab/pi-telegram` | Telegram runtime adapter: turns can arrive from and be answered on Telegram. In Threaded Mode each workspace gets its own forum topic, with one instance elected leader (it alone polls `getUpdates`) and the rest registered as followers over a local IPC bus, so several concurrent sessions share one bot without fighting for updates. Also a prompt queue, voice replies, `telegram_button` prompt buttons and file delivery. Configured by `telegram.json`, which holds a **literal bot token** |
 | `@narumitw/pi-lsp` | Language server tools ([notes](#language-servers-pi-lsp)) |
 | `@narumitw/pi-retry` | Marks empty-detail and stalled provider streams retryable, hands them to pi's backoff |
 | `pi-ask-user` | `ask_user` tool with a structured form, plus an `ask-user` skill. Needs a UI, so subagents do not get it |
+| `pi-env` | Exports `settings.json`'s `env` block into the process environment. That is the only route by which `PI_RETRY_STALL_TIMEOUT_MS` reaches `@narumitw/pi-retry`, which reads it from the environment and not from settings |
 | `pi-magpi` | `magpi_fetch` / `magpi_search` / `magpi_cached`: pages as markdown behind a 24 h cache, official-API handlers for the big registries. SSRF-guarded. Its reddit handler is replaced locally, and Discourse/naver get their own ([notes](#magpi-handlers)) |
 | `pi-mcporter` | MCP servers behind one `mcporter` proxy tool, with per-server exposure levels (`on-demand`/`index`/`match`/`native`) that decide how much schema reaches context |
+| `pi-rewind` | Snapshots taken per tool call, restored through `/rewind` or `Esc Esc`, with a redo stack. Beside `extensions/git-checkpoint.ts`, not instead of it: that one stashes once per turn so `/fork` has a tree to return to, this one undoes individual edits inside a turn |
 | `pi-sandbox` | OS-level sandboxing ([notes](#sandbox-extension)) |
 
 The bar is small, dependency-free, auditable code. `pi-mcporter` and `pi-sandbox`

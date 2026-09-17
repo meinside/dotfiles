@@ -12,6 +12,13 @@
 #                     secret or path, every preset can actually load, and its ids
 #                     line up with models.json's overrides and enabledModels
 #   guard.test.ts     guard.ts blocks what README says it blocks
+#   quota-rotate.test.ts  every quota-rotate.json chain entry still resolves to a model
+#                     in pi's catalog, and the chain has no duplicates or malformed
+#                     entries (a withdrawn id is dropped silently by the extension)
+#   magpi-render.test.ts  magpi-render.ts's settle rule, extractor choice, coverage
+#                     yardstick, empty-page diagnosis, shell detection, host patterns,
+#                     the learned-host store and the hand-rolled WebSocket framing.
+#                     No browser is launched
 #   sandbox.test.ts   sandbox.json holds the invariants README.md documents (see
 #                     its header for why pi-sandbox's own matching logic can't be
 #                     borrowed the way guard.ts's is)

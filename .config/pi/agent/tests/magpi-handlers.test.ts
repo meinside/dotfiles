@@ -11,7 +11,9 @@
  *
  * No network: `globalThis.fetch` is replaced per test with a table of canned
  * responses, so a case that hits an unexpected URL fails loudly instead of
- * silently going online.
+ * silently going online. `hostResolver` is stubbed for the same reason: the redirect
+ * guard resolves each hop's hostname, and a real DNS lookup would slip past a stubbed
+ * `fetch`.
  */
 
 import assert from "node:assert/strict";
@@ -37,11 +39,17 @@ const {
 	flattenComments,
 	renderThread,
 	discourseTopicId,
+	discourseTopicRef,
+	isDiscourseHost,
 	naverPostRef,
 	naverPostBody,
 	sliceElement,
 	htmlToMarkdown,
 	decodeEntities,
+	hostResolver,
+	isPrivateAddress,
+	assertPublicHop,
+	fetchGuarded,
 } = handlerModule as {
 	redditHandler: Handler;
 	discourseHandler: Handler;
@@ -58,11 +66,17 @@ const {
 		source: "reddit" | "arctic-shift",
 	) => string;
 	discourseTopicId: (url: URL) => string | null;
+	discourseTopicRef: (url: URL) => { id: string; hasSlug: boolean } | null;
+	isDiscourseHost: (hostname: string) => boolean;
 	naverPostRef: (url: URL) => { blogId: string; logNo: string } | null;
 	naverPostBody: (html: string) => string | undefined;
 	sliceElement: (html: string, openTagStart: number) => string | undefined;
 	htmlToMarkdown: (html: string) => string;
 	decodeEntities: (text: string) => string;
+	hostResolver: { addresses: (host: string) => Promise<string[]> };
+	isPrivateAddress: (ip: string) => boolean;
+	assertPublicHop: (url: URL) => Promise<void>;
+	fetchGuarded: (url: string, init?: RequestInit) => Promise<Response>;
 };
 
 /** Type stripping leaves the CJS default nested one level deeper (as in guard.test.ts). */
@@ -93,6 +107,7 @@ function stubFetch(routes: Record<string, unknown>): { calls: string[]; restore:
 		for (const [needle, value] of Object.entries(routes)) {
 			if (!url.includes(needle)) continue;
 			if (value instanceof Error) throw value;
+			if (typeof value === "function") return (value as () => Response)();
 			if (typeof value === "number") return new Response("blocked", { status: value });
 			if (typeof value === "string") {
 				return new Response(value, { status: 200, headers: { "content-type": "text/html; charset=utf-8" } });
@@ -103,6 +118,31 @@ function stubFetch(routes: Record<string, unknown>): { calls: string[]; restore:
 	}) as typeof fetch;
 	return { calls, restore: () => (globalThis.fetch = original) };
 }
+
+/**
+ * Point every hostname at one public address for the duration of a test.
+ *
+ * The default applies to the whole file: without it each handler case would make a
+ * real DNS query through the guard, which is the one thing the `fetch` stub cannot
+ * intercept. A case that cares about resolution passes its own table.
+ */
+function stubResolver(addresses: Record<string, string[] | Error> = {}): () => void {
+	const original = hostResolver.addresses;
+	hostResolver.addresses = async (host: string) => {
+		const canned = addresses[host];
+		if (canned instanceof Error) throw canned;
+		return canned ?? ["93.184.216.34"]; // a public address, so an unnamed host passes
+	};
+	return () => {
+		hostResolver.addresses = original;
+	};
+}
+
+stubResolver();
+
+/** A `location` redirect, for the routes above: `{ "host/path": redirect(302, "https://...") }`. */
+const redirect = (status: number, location: string) => () =>
+	new Response(null, { status, headers: { location } });
 
 const listing = (children: unknown[]) => ({ data: { children } });
 const comment = (author: string, body: string, score = 1, replies: unknown = "") => ({
@@ -298,6 +338,131 @@ test("a url without a post id fails before any request", async () => {
 	}
 });
 
+// ---------------------------------------------------------------- redirect guard
+
+test("private and public addresses are told apart", () => {
+	for (const ip of [
+		"127.0.0.1",
+		"10.1.2.3",
+		"172.16.0.1",
+		"172.31.255.255",
+		"192.168.1.1",
+		"169.254.169.254", // the cloud metadata endpoint this exists for
+		"100.64.0.1",
+		"0.0.0.0",
+		"::1",
+		"::",
+		"fd00::1",
+		"fe80::1",
+		"::ffff:127.0.0.1", // v4-mapped loopback
+	]) {
+		assert.equal(isPrivateAddress(ip), true, `${ip} should be private`);
+	}
+	for (const ip of ["8.8.8.8", "93.184.216.34", "172.32.0.1", "192.169.0.1", "100.128.0.1", "2606:4700::1111"]) {
+		assert.equal(isPrivateAddress(ip), false, `${ip} should be public`);
+	}
+});
+
+test("a hop to a literal private address is refused before the request is made", async () => {
+	const stub = stubFetch({});
+	try {
+		await assert.rejects(() => fetchGuarded("http://169.254.169.254/latest/meta-data/"), /private address/);
+		await assert.rejects(() => fetchGuarded("http://localhost:8080/"), /loopback/);
+		await assert.rejects(() => fetchGuarded("file:///etc/passwd"), /only http and https/);
+		// Bracketed v6 literals: the host arrives as "[::1]" and has to be unwrapped first.
+		await assert.rejects(() => assertPublicHop(new URL("http://[::1]:9200/")), /private address/);
+		await assert.doesNotReject(() => assertPublicHop(new URL("https://[2606:4700::1111]/")));
+		// Refused means refused: no request was attempted for any of them.
+		assert.deepEqual(stub.calls, []);
+	} finally {
+		stub.restore();
+	}
+});
+
+test("a redirect into a private address is refused, which fetch's own follow would not do", async () => {
+	const stub = stubFetch({ "example.com/post": redirect(302, "http://192.168.0.10/admin") });
+	try {
+		await assert.rejects(() => fetchGuarded("https://example.com/post"), /192\.168\.0\.10 is a private address/);
+		// The first hop was made (it is public); the second never was.
+		assert.deepEqual(stub.calls, ["https://example.com/post"]);
+	} finally {
+		stub.restore();
+	}
+});
+
+test("a hop whose public name resolves to a private address is refused", async () => {
+	const restoreResolver = stubResolver({ "rebind.example": ["127.0.0.1"] });
+	const stub = stubFetch({ "example.com/post": redirect(307, "https://rebind.example/inside") });
+	try {
+		await assert.rejects(
+			() => fetchGuarded("https://example.com/post"),
+			/rebind\.example resolves to 127\.0\.0\.1/,
+		);
+		assert.deepEqual(stub.calls, ["https://example.com/post"]);
+	} finally {
+		stub.restore();
+		restoreResolver();
+	}
+});
+
+test("an ordinary redirect is still followed, relative location included", async () => {
+	const stub = stubFetch({
+		"example.com/old": redirect(301, "/new"),
+		"example.com/new": "<html><body>arrived</body></html>",
+	});
+	try {
+		const res = await fetchGuarded("https://example.com/old");
+		assert.equal(res.status, 200);
+		assert.match(await res.text(), /arrived/);
+		assert.deepEqual(stub.calls, ["https://example.com/old", "https://example.com/new"]);
+	} finally {
+		stub.restore();
+	}
+});
+
+test("a redirect loop ends in an error rather than a hang", async () => {
+	const stub = stubFetch({ "example.com/loop": redirect(302, "https://example.com/loop") });
+	try {
+		await assert.rejects(() => fetchGuarded("https://example.com/loop"), /More than 5 redirects/);
+		assert.equal(stub.calls.length, 6); // the initial request plus the five hops allowed
+	} finally {
+		stub.restore();
+	}
+});
+
+test("a name that does not resolve is left to the request, not refused here", async () => {
+	const restoreResolver = stubResolver({ "gone.example": new Error("ENOTFOUND") });
+	const stub = stubFetch({ "gone.example": new Error("connect ECONNREFUSED") });
+	try {
+		// The guard passes it through, so the failure the caller sees is the real one.
+		await assert.rejects(() => fetchGuarded("https://gone.example/thing"), /ECONNREFUSED/);
+	} finally {
+		stub.restore();
+		restoreResolver();
+	}
+});
+
+test("a 3xx without a location is the server's answer, not a hop", async () => {
+	const stub = stubFetch({ "example.com/weird": () => new Response("no location here", { status: 302 }) });
+	try {
+		const res = await fetchGuarded("https://example.com/weird");
+		assert.equal(res.status, 302);
+	} finally {
+		stub.restore();
+	}
+});
+
+test("the handlers go through the guard, so a redirected page cannot reach localhost", async () => {
+	// naver's mobile host answering with a redirect to a private address: the handler
+	// must fail, not read whatever is listening there.
+	const stub = stubFetch({ "m.blog.naver.com": redirect(302, "http://127.0.0.1:9200/_search") });
+	try {
+		await assert.rejects(() => naverBlogHandler.fetch(NAVER, ctx), /127\.0\.0\.1 is a private address/);
+	} finally {
+		stub.restore();
+	}
+});
+
 // ---------------------------------------------------------------- shared html converter
 
 test("entities are decoded, named and numeric", () => {
@@ -332,15 +497,27 @@ test("html converter keeps structure and drops what an LLM cannot use", () => {
 
 // ---------------------------------------------------------------- discourse
 
-test("discourse matches the canonical topic url shape only", () => {
+test("discourse claims a topic on shape plus corroboration, not shape alone", () => {
 	for (const href of [
+		// A slug: every canonical Discourse url has one, whatever the host.
 		"https://discuss.python.org/t/pep-832-virtual-environment-discovery/106998",
 		"https://discuss.python.org/t/pep-832-virtual-environment-discovery/106998/14",
+		"https://linux.do/t/topic/123456",
+		"https://forum.kicad.info/t/some-topic/12345",
+		// No slug, but the host names Discourse itself.
 		"https://discourse.nixos.org/t/12345/",
+		"https://meta.discourse.org/t/1",
+		"https://klipper.discourse.group/t/9999",
 	]) {
 		assert.ok(discourseHandler.match(new URL(href)), `${href} should match`);
 	}
 	for (const href of [
+		// Measured collision: V2EX is a busy forum, is not Discourse, and its topic urls
+		// are exactly the slug-less shape. The old shape-only rule claimed them, which
+		// made a readable page unreadable — a handler cannot delegate back to MagPi.
+		"https://www.v2ex.com/t/1012345",
+		"https://www.v2ex.com/t/1012345#reply5",
+		"https://example.com/t/12345",
 		"https://discuss.python.org/c/ideas/6", // category listing
 		"https://discuss.python.org/latest",
 		"https://community.nodebb.org/topic/17545/some-slug", // NodeBB
@@ -351,6 +528,28 @@ test("discourse matches the canonical topic url shape only", () => {
 	}
 });
 
+test("the host patterns follow Discourse's own naming, and nothing wider", () => {
+	for (const host of [
+		"discourse.nixos.org",
+		"discuss.python.org",
+		"meta.discourse.org",
+		"klipper.discourse.group",
+		"DISCUSS.EXAMPLE.COM", // case is not a distinction
+	]) {
+		assert.ok(isDiscourseHost(host), `${host} should read as Discourse`);
+	}
+	for (const host of [
+		"www.v2ex.com",
+		"forums.swift.org", // Discourse, but `forums.` is XenForo's and phpBB's too
+		"forum.example.com",
+		"discourseish.example.com", // prefix must be the whole label
+		"notdiscourse.org",
+		"example.discourse.group.evil.com", // suffix must be the end
+	]) {
+		assert.ok(!isDiscourseHost(host), `${host} should not read as Discourse`);
+	}
+});
+
 test("discourse topic id survives every url shape", () => {
 	const cases: Array<[string, string | null]> = [
 		["https://discuss.python.org/t/some-slug/106998", "106998"],
@@ -358,10 +557,21 @@ test("discourse topic id survives every url shape", () => {
 		["https://discuss.python.org/t/some-slug/106998/42", "106998"],
 		["https://discuss.python.org/t/106998", "106998"],
 		["https://discuss.python.org/t/some-slug/106998/42/extra", null],
+		// A numeric first segment is the topic, never a slug: /t/<id>/<post number>.
+		// One regex with an optional leading group reads this the other way round.
+		["https://discuss.python.org/t/123/456", "123"],
 	];
 	for (const [href, expected] of cases) {
 		assert.equal(discourseTopicId(new URL(href)), expected, href);
 	}
+	assert.deepEqual(discourseTopicRef(new URL("https://discuss.python.org/t/123/456")), {
+		id: "123",
+		hasSlug: false,
+	});
+	assert.deepEqual(discourseTopicRef(new URL("https://linux.do/t/topic/123456")), {
+		id: "123456",
+		hasSlug: true,
+	});
 });
 
 test("discourse reads the whole stream, which is the point of the handler", async () => {

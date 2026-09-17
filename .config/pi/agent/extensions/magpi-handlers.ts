@@ -16,7 +16,8 @@
  * - **discourse** — measured on a 169-reply thread at discuss.python.org: the
  *   server-rendered HTML MagPi reads carries only the first 18 posts, silently, so
  *   every long thread loses its conclusion. `/t/<id>.json?print=true` returns all
- *   169.
+ *   169. Claimed on URL shape *plus* a slug or a Discourse-named host, because the
+ *   shape alone also fits `v2ex.com/t/<id>`, which is not Discourse.
  * - **naver-blog** — `blog.naver.com/<id>/<logNo>` puts the post inside an iframe,
  *   so readability returns a **0-byte** document (reproduced from this cache). The
  *   mobile host renders the same post server-side.
@@ -36,6 +37,16 @@
  * - A handler **throws** rather than return an empty or blocked document: MagPi
  *   then falls back to a stale cache entry if it has one and reports the error
  *   otherwise, which is the behaviour worth having.
+ * - **Every request here walks its redirect chain by hand, checking each hop.** MagPi
+ *   runs `assertPublicTarget()` on the URL the model supplied *before* it resolves a
+ *   handler (its `index.ts`: guard, then `resolveHandler`), so the entry point is
+ *   covered and the derived URLs below stay on fixed or same-origin hosts. What that
+ *   preflight cannot cover is a hop — its own comment says "a redirect hop to a
+ *   private address can still slip through" — and `fetch`'s default
+ *   `redirect: "follow"` takes such a hop silently. So `getJson`/`getHtml` use
+ *   `redirect: "manual"` and re-check every hop against loopback, link-local and
+ *   private ranges, the same list MagPi checks, restated for the same reason its
+ *   types are.
  *
  * Notes, caveats and how to remove any of this in README.md.
  */
@@ -81,8 +92,117 @@ function timeoutSignal(signal?: AbortSignal): AbortSignal {
 	return signal ? AbortSignal.any([signal, timeout]) : timeout;
 }
 
+// ---------------------------------------------------------------- redirect guard
+
+/** Hops followed before giving up. More than any of these sites uses, and it bounds a redirect loop. */
+const MAX_REDIRECTS = 5;
+/** A name lookup takes no AbortSignal and can hold a threadpool slot indefinitely, so it gets its own clock. */
+const DNS_TIMEOUT_MS = 5_000;
+/** Statuses whose `location` is a hop. 303 included: nothing here POSTs, so its method rewrite is moot. */
+const REDIRECT_STATUSES = new Set([301, 302, 303, 307, 308]);
+
+/**
+ * Name resolution, in a replaceable slot.
+ *
+ * The guard has to resolve a hop's hostname — a public name whose A record points at
+ * `127.0.0.1` is exactly what a literal-IP check misses — but the test file stubs
+ * `globalThis.fetch` so that `check.sh` never goes online, and a DNS lookup would walk
+ * straight past that stub. Tests replace this instead.
+ */
+export const hostResolver = {
+	async addresses(host: string): Promise<string[]> {
+		const { lookup } = await import("node:dns/promises");
+		const resolved = await Promise.race([
+			lookup(host, { all: true }),
+			new Promise<never>((_, reject) => {
+				setTimeout(() => reject(new Error(`dns lookup for ${host} timed out`)), DNS_TIMEOUT_MS).unref();
+			}),
+		]);
+		return resolved.map((address) => address.address);
+	},
+};
+
+/**
+ * Loopback, link-local and private ranges, v4 and v6.
+ *
+ * Restated from MagPi's `isPrivateIp()` for the same reason its interfaces are. The
+ * cloud metadata endpoint (`169.254.169.254`) is the payload that makes a hop check
+ * worth having at all, which is why `169.254/16` and carrier NAT `100.64/10` are here
+ * and not just the three RFC 1918 blocks.
+ */
+export function isPrivateAddress(ip: string): boolean {
+	const address = ip.startsWith("::ffff:") ? ip.slice(7) : ip; // v4-mapped v6
+	if (/^\d+\.\d+\.\d+\.\d+$/.test(address)) {
+		const [a, b] = address.split(".").map(Number);
+		return (
+			a === 0 ||
+			a === 10 ||
+			a === 127 ||
+			(a === 100 && b >= 64 && b <= 127) ||
+			(a === 169 && b === 254) ||
+			(a === 172 && b >= 16 && b <= 31) ||
+			(a === 192 && b === 168)
+		);
+	}
+	const low = address.toLowerCase();
+	return low === "::" || low === "::1" || /^f[cd]/.test(low) || /^fe[89ab]/.test(low);
+}
+
+/**
+ * Passes one hop's URL, or throws naming why it was refused.
+ *
+ * A DNS failure is deliberately *not* a refusal: a name that does not resolve cannot
+ * reach a private address either, and the request that follows fails with the real
+ * error instead of one invented here. MagPi's preflight makes the same choice.
+ */
+export async function assertPublicHop(url: URL): Promise<void> {
+	if (url.protocol !== "http:" && url.protocol !== "https:") {
+		throw new Error(`Refusing ${url.protocol}// hop to ${url.href}; only http and https are fetched here`);
+	}
+	const host = url.hostname.replace(/^\[|\]$/g, "");
+	if (host === "localhost" || host.endsWith(".localhost")) {
+		throw new Error(`Refusing hop to ${url.href}: ${host} is loopback`);
+	}
+	if (/^\d+\.\d+\.\d+\.\d+$/.test(host) || host.includes(":")) {
+		if (isPrivateAddress(host)) throw new Error(`Refusing hop to ${url.href}: ${host} is a private address`);
+		return;
+	}
+	let addresses: string[];
+	try {
+		addresses = await hostResolver.addresses(host);
+	} catch {
+		return; // unresolvable: let the request itself report the truth
+	}
+	const blocked = addresses.find(isPrivateAddress);
+	if (blocked) throw new Error(`Refusing hop to ${url.href}: ${host} resolves to ${blocked}, a private address`);
+}
+
+/**
+ * `fetch` with the redirect chain walked here rather than by undici, so every hop is
+ * checked before it is made.
+ *
+ * What comes back is the first response that is not a redirect. A 3xx carrying no
+ * `location` is handed over as-is: that is the server's answer, not a hop.
+ */
+export async function fetchGuarded(url: string, init: RequestInit = {}): Promise<Response> {
+	let target = new URL(url);
+	for (let hop = 0; hop <= MAX_REDIRECTS; hop += 1) {
+		await assertPublicHop(target);
+		const res = await fetch(target, { ...init, redirect: "manual" });
+		if (!REDIRECT_STATUSES.has(res.status)) return res;
+		const location = res.headers.get("location");
+		if (!location) return res;
+		try {
+			target = new URL(location, target);
+		} catch {
+			throw new Error(`${target.href} redirected to an unparseable location (${location})`);
+		}
+	}
+	throw new Error(`More than ${MAX_REDIRECTS} redirects starting at ${url}`);
+}
+
 async function getJson(url: string, signal?: AbortSignal, headers: Record<string, string> = {}): Promise<unknown> {
-	const res = await fetch(url, {
+	const res = await fetchGuarded(url, {
 		signal: timeoutSignal(signal),
 		headers: { accept: "application/json", ...headers },
 	});
@@ -91,7 +211,7 @@ async function getJson(url: string, signal?: AbortSignal, headers: Record<string
 }
 
 async function getHtml(url: string, signal?: AbortSignal): Promise<string> {
-	const res = await fetch(url, {
+	const res = await fetchGuarded(url, {
 		signal: timeoutSignal(signal),
 		headers: { accept: "text/html,*/*", "user-agent": BROWSER_UA },
 	});
@@ -408,12 +528,80 @@ interface DiscourseTopic {
 }
 
 /**
- * Topic id out of a canonical Discourse URL: `/t/<slug>/<id>`, optionally with a
- * post number (`/t/<slug>/<id>/14`). The slug-less `/t/<id>` form is accepted too.
+ * The `/t/...` part of a Discourse URL, split into what the match rule needs.
+ *
+ * Segments rather than one regex, because `/t/123/456` is genuinely ambiguous to a
+ * pattern with an optional leading group: the greedy read makes `123` a slug, when
+ * Discourse means topic 123, post 456. A numeric first segment is therefore never a
+ * slug. Shapes accepted: `/t/<id>`, `/t/<id>/<post>`, `/t/<slug>/<id>`,
+ * `/t/<slug>/<id>/<post>`.
+ */
+export function discourseTopicRef(url: URL): { id: string; hasSlug: boolean } | null {
+	const segments = url.pathname.split("/").filter(Boolean);
+	if (segments[0] !== "t") return null;
+	const rest = segments.slice(1);
+	const numeric = (value: string | undefined) => value !== undefined && /^\d+$/.test(value);
+	if (rest.length === 0) return null;
+	const [first, second, third] = rest;
+	if (first === undefined) return null;
+	if (numeric(first)) {
+		if (rest.length > 2) return null;
+		if (rest.length === 2 && !numeric(second)) return null;
+		return { id: first, hasSlug: false };
+	}
+	if (rest.length < 2 || rest.length > 3) return null;
+	if (second === undefined || !numeric(second)) return null;
+	if (rest.length === 3 && !numeric(third)) return null;
+	return { id: second, hasSlug: true };
+}
+
+/**
+ * Topic id out of a Discourse URL, or null. Kept as the name the handler reads.
  */
 export function discourseTopicId(url: URL): string | null {
-	const m = /^\/t\/(?:[^/]+\/)?(\d+)(?:\/\d+)?\/?$/.exec(url.pathname);
-	return m ? m[1] : null;
+	return discourseTopicRef(url)?.id ?? null;
+}
+
+/**
+ * Hosts that say "Discourse" in their own name.
+ *
+ * Deliberately patterns and not a list of forums: a list of third-party hostnames is
+ * an external fact that goes stale, and `check.sh` could not detect the drift without
+ * asking the network, which the test file does not do. These four patterns are
+ * Discourse's *own* naming (its hosted domains and the convention its installs
+ * follow), so they age with the project rather than with anyone's forum. `forums.` is
+ * left out on purpose: XenForo and phpBB use it at least as often, and a canonical
+ * Discourse URL on such a host already carries a slug.
+ */
+export function isDiscourseHost(hostname: string): boolean {
+	const host = hostname.toLowerCase();
+	return (
+		host.startsWith("discourse.") ||
+		host.startsWith("discuss.") ||
+		host.endsWith(".discourse.group") ||
+		host.endsWith(".discourse.org")
+	);
+}
+
+/**
+ * Whether this URL is claimed as a Discourse topic.
+ *
+ * Shape alone is not enough, and the cost of getting it wrong is not a slow read but
+ * an unreadable page: a handler cannot hand a URL back to MagPi's default one, so a
+ * false positive turns a page that read fine into an error. Measured collision:
+ * `v2ex.com/t/1012345` — a busy non-Discourse forum — matched the old shape-only rule
+ * exactly.
+ *
+ * So a claim needs the shape *and* one piece of corroboration: a slug, which every
+ * canonical Discourse URL carries and V2EX's shape does not have, or a hostname that
+ * names Discourse itself. Neither is proof, and an unlisted install linked by its
+ * slug-less short form is not claimed — that page then reads through MagPi's default
+ * handler, truncated to the posts in the crawler HTML. Losing the tail is the bug this
+ * handler exists to fix, so that is a real cost; it is the smaller one.
+ */
+export function looksLikeDiscourseTopic(url: URL): boolean {
+	const ref = discourseTopicRef(url);
+	return !!ref && (ref.hasSlug || isDiscourseHost(url.hostname));
 }
 
 export function renderTopic(topic: DiscourseTopic, host: string): string {
@@ -439,17 +627,18 @@ export function renderTopic(topic: DiscourseTopic, host: string): string {
 }
 
 /**
- * Matched by URL shape, not by host: Discourse is self-hosted on arbitrary domains
- * and there is no way to know from the URL alone. `/t/<slug>/<number>` is specific
- * enough in practice — NodeBB uses `/topic/<id>/<slug>`, Flarum `/d/<slug>-<id>`,
- * phpBB `viewtopic.php` — and a site that shape-matches without being Discourse
- * gets a clear error rather than a wrong document, since a handler cannot hand the
- * URL back to MagPi's default one.
+ * Matched by URL shape plus corroboration, not by host: Discourse is self-hosted on
+ * arbitrary domains and there is no way to know from the URL alone. `looksLikeDiscourseTopic()`
+ * above states what "corroboration" means and why a shape-only rule was not enough
+ * — NodeBB uses `/topic/<id>/<slug>`, Flarum `/d/<slug>-<id>`, phpBB `viewtopic.php`,
+ * but V2EX uses `/t/<id>` and is not Discourse. A site that clears the rule without
+ * being Discourse still gets a clear error rather than a wrong document, since a
+ * handler cannot hand the URL back to MagPi's default one.
  */
 export const discourseHandler: MagpiHandler = {
 	name: "discourse",
 	description: "Discourse forum topics: the whole thread via /t/<id>.json, not just the ~20 posts in the crawler HTML",
-	match: (url) => discourseTopicId(url) !== null,
+	match: looksLikeDiscourseTopic,
 	async fetch(url, ctx) {
 		const id = discourseTopicId(url);
 		if (!id) throw new Error(`No Discourse topic id in ${url.href}`);
