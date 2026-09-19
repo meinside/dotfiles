@@ -49,6 +49,23 @@
  *   types are.
  *
  * Notes, caveats and how to remove any of this in README.md.
+ *
+ * Before adding a handler, all four must hold - most candidates fail one, and a handler
+ * that is not needed is a scraper waiting to rot:
+ *
+ *   1. The failure is measured, not assumed. "Reddit blocks bots" is not a finding;
+ *      "18 of 169 posts, silently" is.
+ *   2. MagPi's built-ins genuinely lose information. Fat but complete is a token cost,
+ *      not a correctness problem, and `topic` already slices those.
+ *   3. A keyless source exists that returns structure, not a rendered page: an official
+ *      JSON endpoint, an archive, or a host serving the same content unwrapped.
+ *   4. The failure is silent. A visible error already tells the truth.
+ *
+ * Measured and rejected on those grounds: wiki.archlinux.org, gist.github.com, dev.to,
+ * Substack and Hugging Face (all parse fine), the big Korean forums and X/Discord (no
+ * keyless path), YouTube transcripts (no stable endpoint). Rejected despite working: a
+ * parts catalogue's undocumented JSON API and a shop's iframe endpoints - those two go
+ * through magpi-render.ts instead, which consumes the page the way the site intends.
  */
 
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";

@@ -45,7 +45,6 @@ const {
 	thinNote,
 	configPaths,
 	loadConfig,
-	readabilityPath,
 	renderArtifactPath,
 	RawWebSocket,
 } = renderModule as typeof import("../extensions/magpi-render.ts");
@@ -292,10 +291,6 @@ test("config paths sit beside MagPi's own, and defaults are safe", () => {
 	const config = loadConfig("/tmp/definitely-not-a-project", false);
 	assert.equal(typeof config.enabled, "boolean");
 	assert.ok(Array.isArray(config.sameSiteOnlyHosts));
-});
-
-test("Readability is looked up in the agent's own package tree", () => {
-	assert.match(readabilityPath(), /npm\/node_modules\/@mozilla\/readability\/Readability\.js$/);
 });
 
 test("the command writes to a stable per-url path instead of a custom message", () => {

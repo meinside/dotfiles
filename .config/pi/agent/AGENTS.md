@@ -26,6 +26,36 @@ belongs in that project's own `README.md` or `AGENTS.md`.
 
 - A fetched page that comes back suspiciously empty or all boilerplate — a few bytes, a login/consent/bot-check wall, navigation with no article — is a failure, not the answer: say so instead of reasoning from it, never let it stand as a cached success, and name which source did answer. When one site fails that way twice, propose a durable fix instead of working around it again.
 
+## Writing docs and comments
+
+- A README answers what something is, where it lives and where to change it. The
+  experiment that settled a value, the alternatives measured and rejected, and the
+  statistics behind them are not that: they push the answer further down the page. Keep
+  only what a reader needs to act.
+- Where a reason is worth keeping because the mistake would otherwise repeat, put it next
+  to the thing it constrains — a comment on the tunable, the config key, the test — not in
+  a document a page away. A comment beside the value is read when the value is edited; a
+  document is not, and drifts unnoticed.
+- Do not state the same thing in two places. If the source already explains it, the README
+  points at the source instead of restating it: two copies diverge, and there is no way to
+  tell which one is current.
+
+## Before committing
+
+- Read the diff of what is staged before committing, not just the file list. `git add`
+  taken earlier does not describe what the file says now.
+- Look for what must not leave the machine: credentials and tokens, account and project
+  ids, absolute home paths, internal hostnames, and personal identifiers belonging to
+  anyone — including third parties whose account name, post id or address arrived as a
+  test fixture, a sample URL or an error message copied from a real run. A neutral value
+  of the same shape tests the same code.
+- Point the check at every staged file, not the ones that look risky. A secrets scanner
+  and a sample-file check cover the files they were written for; the leak arrives in the
+  one nobody classified as sensitive.
+- When something is found, say what it was and where, rather than quietly rewriting it:
+  a value already committed needs history rewritten and the credential rotated, which is
+  the owner's decision, not a cleanup.
+
 ## Reporting
 
 - Separate what you verified from what you did not, and name what you could not check. Unverified work described as done is worse than work reported as incomplete.

@@ -86,9 +86,9 @@ const activate = (typeof entry === "function" ? entry : (entry as { default?: un
 	on: (name: string, handler: () => Promise<unknown>) => void;
 }) => void;
 
-const THREAD = new URL("https://www.reddit.com/r/meshtastic/comments/1bb3yax/what_do_you_use_meshtastic_for/");
+const THREAD = new URL("https://www.reddit.com/r/somesubreddit/comments/1aa0aaa/some_thread_title/");
 const TOPIC = new URL("https://discuss.python.org/t/pep-832-virtual-environment-discovery/106998");
-const NAVER = new URL("https://blog.naver.com/zzinddagongdol/223869551743");
+const NAVER = new URL("https://blog.naver.com/exampleblogger/223400000000");
 const ctx = { mode: "light" as const, entryDir: "/tmp/does-not-matter" };
 
 /**
@@ -154,15 +154,15 @@ const comment = (author: string, body: string, score = 1, replies: unknown = "")
 
 test("reddit matches thread urls and nothing else", () => {
 	for (const href of [
-		"https://www.reddit.com/r/meshtastic/comments/1bb3yax/what_do_you_use_meshtastic_for/",
-		"https://old.reddit.com/comments/1bb3yax",
+		"https://www.reddit.com/r/somesubreddit/comments/1aa0aaa/some_thread_title/",
+		"https://old.reddit.com/comments/1aa0aaa",
 		"https://reddit.com/r/x/comments/abcd1/t/",
 	]) {
 		assert.ok(redditHandler.match(new URL(href)), `${href} should match`);
 	}
 	for (const href of [
-		"https://www.reddit.com/r/meshtastic/", // subreddit listing: the default webpage handler's job
-		"https://www.reddit.com/user/spez",
+		"https://www.reddit.com/r/somesubreddit/", // subreddit listing: the default webpage handler's job
+		"https://www.reddit.com/user/someone",
 		"https://notreddit.com/r/x/comments/abcd1/t/",
 		"https://reddit.com.evil.example/r/x/comments/abcd1/",
 	]) {
@@ -172,14 +172,14 @@ test("reddit matches thread urls and nothing else", () => {
 
 test("post id is read from every thread url shape", () => {
 	const cases: Array<[string, string | null]> = [
-		["https://www.reddit.com/r/meshtastic/comments/1bb3yax/what_do_you_use_meshtastic_for/", "1bb3yax"],
-		["https://www.reddit.com/r/meshtastic/comments/1bb3yax", "1bb3yax"],
-		["https://www.reddit.com/comments/1bb3yax/", "1bb3yax"],
+		["https://www.reddit.com/r/somesubreddit/comments/1aa0aaa/some_thread_title/", "1aa0aaa"],
+		["https://www.reddit.com/r/somesubreddit/comments/1aa0aaa", "1aa0aaa"],
+		["https://www.reddit.com/comments/1aa0aaa/", "1aa0aaa"],
 		// permalink to one comment inside the thread: still keyed by the post
-		["https://www.reddit.com/r/meshtastic/comments/1bb3yax/slug/kucbxwr/", "1bb3yax"],
-		["https://www.reddit.com/r/meshtastic/comments/t3_1bb3yax/slug/", "1bb3yax"],
-		["https://www.reddit.com/r/meshtastic/comments/", null],
-		["https://www.reddit.com/r/meshtastic/s/AbCdEfGh", null],
+		["https://www.reddit.com/r/somesubreddit/comments/1aa0aaa/slug/kaa0aaa/", "1aa0aaa"],
+		["https://www.reddit.com/r/somesubreddit/comments/t3_1aa0aaa/slug/", "1aa0aaa"],
+		["https://www.reddit.com/r/somesubreddit/comments/", null],
+		["https://www.reddit.com/r/somesubreddit/s/AbCdEfGh", null],
 	];
 	for (const [href, expected] of cases) {
 		assert.equal(postIdFromUrl(new URL(href)), expected, href);
@@ -216,10 +216,10 @@ test("flatten drops empty bodies and honours the cap", () => {
 // ---------------------------------------------------------------- rendering
 
 test("archive provenance is stated in the document, live is not confused with it", () => {
-	const post = { title: "T", subreddit: "meshtastic", author: "u", score: 7, num_comments: 20, selftext: "body" };
+	const post = { title: "T", subreddit: "somesubreddit", author: "u", score: 7, num_comments: 20, selftext: "body" };
 	const archived = renderThread(post, [], "arctic-shift");
 	assert.match(archived, /^# T$/m);
-	assert.match(archived, /r\/meshtastic \| 7 points \| 20 comments \| u\/u/);
+	assert.match(archived, /r\/somesubreddit \| 7 points \| 20 comments \| u\/u/);
 	assert.match(archived, /source: Arctic Shift archive \(snapshot/);
 	assert.equal(renderThread(post, [], "reddit").includes("Arctic Shift"), false);
 	assert.match(renderThread(post, [], "reddit"), /source: reddit/);
@@ -239,7 +239,7 @@ test("link posts keep their target, self posts do not gain one", () => {
 test("live reddit is preferred and the archive is left alone", async () => {
 	const stub = stubFetch({
 		"reddit.com/comments": [
-			listing([{ kind: "t3", data: { title: "Live title", subreddit: "meshtastic", score: 7, selftext: "live body" } }]),
+			listing([{ kind: "t3", data: { title: "Live title", subreddit: "somesubreddit", score: 7, selftext: "live body" } }]),
 			listing([comment("alice", "live comment", 4)]),
 		],
 	});
@@ -262,7 +262,7 @@ test("a 403 from reddit falls back to the archive instead of failing", async () 
 	const stub = stubFetch({
 		"reddit.com/comments": 403,
 		"/api/posts/ids": {
-			data: [{ title: "Archived title", subreddit: "meshtastic", score: 7, num_comments: 20, selftext: "archived body" }],
+			data: [{ title: "Archived title", subreddit: "somesubreddit", score: 7, num_comments: 20, selftext: "archived body" }],
 		},
 		"/api/comments/tree": { data: [comment("bob", "archived comment", 2)] },
 	});
@@ -316,7 +316,7 @@ test("both sources failing throws, naming both, and never returns a document", a
 		await assert.rejects(
 			() => redditHandler.fetch(THREAD, ctx),
 			(err: Error) => {
-				assert.match(err.message, /1bb3yax/);
+				assert.match(err.message, /1aa0aaa/);
 				assert.match(err.message, /403/);
 				assert.match(err.message, /429/);
 				return true;
@@ -637,21 +637,21 @@ test("an empty stream is an error, not an empty thread", async () => {
 // ---------------------------------------------------------------- naver blog
 
 test("naver matches its blog host and reads the post ref from every url shape", () => {
-	assert.ok(naverBlogHandler.match(new URL("https://blog.naver.com/zzinddagongdol/223869551743")));
-	assert.ok(naverBlogHandler.match(new URL("https://m.blog.naver.com/zzinddagongdol/223869551743")));
+	assert.ok(naverBlogHandler.match(new URL("https://blog.naver.com/exampleblogger/223400000000")));
+	assert.ok(naverBlogHandler.match(new URL("https://m.blog.naver.com/exampleblogger/223400000000")));
 	assert.ok(!naverBlogHandler.match(new URL("https://cafe.naver.com/x/123")));
 	assert.ok(!naverBlogHandler.match(new URL("https://blog.naver.com.evil.example/a/1")));
 
-	const expected = { blogId: "zzinddagongdol", logNo: "223869551743" };
+	const expected = { blogId: "exampleblogger", logNo: "223400000000" };
 	for (const href of [
-		"https://blog.naver.com/zzinddagongdol/223869551743",
-		"https://m.blog.naver.com/zzinddagongdol/223869551743",
-		"https://blog.naver.com/PostView.naver?blogId=zzinddagongdol&logNo=223869551743",
-		"https://blog.naver.com/zzinddagongdol?Redirect=Log&logNo=223869551743",
+		"https://blog.naver.com/exampleblogger/223400000000",
+		"https://m.blog.naver.com/exampleblogger/223400000000",
+		"https://blog.naver.com/PostView.naver?blogId=exampleblogger&logNo=223400000000",
+		"https://blog.naver.com/exampleblogger?Redirect=Log&logNo=223400000000",
 	]) {
 		assert.deepEqual(naverPostRef(new URL(href)), expected, href);
 	}
-	assert.equal(naverPostRef(new URL("https://blog.naver.com/zzinddagongdol")), null);
+	assert.equal(naverPostRef(new URL("https://blog.naver.com/exampleblogger")), null);
 });
 
 test("naver post body is found for both editor generations", () => {
@@ -694,7 +694,7 @@ test("naver is read from the mobile host whichever host was asked for", async ()
 	try {
 		const result = await naverBlogHandler.fetch(NAVER, ctx);
 		assert.equal(stub.calls.length, 1);
-		assert.equal(stub.calls[0], "https://m.blog.naver.com/zzinddagongdol/223869551743");
+		assert.equal(stub.calls[0], "https://m.blog.naver.com/exampleblogger/223400000000");
 		assert.equal(result.title, "제목입니다");
 		assert.match(result.content, /^# 제목입니다$/m);
 		assert.match(result.content, /^source: https:\/\/m\.blog\.naver\.com\//m);
@@ -753,9 +753,9 @@ test("every handler is registered, at load and at session_start", () => {
 
 test("no two handlers claim the same url", () => {
 	for (const href of [
-		"https://www.reddit.com/r/meshtastic/comments/1bb3yax/slug/",
+		"https://www.reddit.com/r/somesubreddit/comments/1aa0aaa/slug/",
 		"https://discuss.python.org/t/some-slug/106998",
-		"https://blog.naver.com/zzinddagongdol/223869551743",
+		"https://blog.naver.com/exampleblogger/223400000000",
 	]) {
 		const claimed = HANDLERS.filter((h) => h.match(new URL(href))).map((h) => h.name);
 		assert.equal(claimed.length, 1, `${href} claimed by ${claimed.join(", ") || "nothing"}`);

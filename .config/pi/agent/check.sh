@@ -15,6 +15,12 @@
 #   quota-rotate.test.ts  every quota-rotate.json chain entry still resolves to a model
 #                     in pi's catalog, and the chain has no duplicates or malformed
 #                     entries (a withdrawn id is dropped silently by the extension)
+#   compaction-log.test.ts  compaction-log.ts pairs each attempt with its outcome and
+#                     derives the summary budget, the compression ratio and the verdict
+#                     that names threshold vs overflow. No compaction is triggered
+#   compaction-summary.test.ts  compaction-summary.ts hands pi's own summarizer a
+#                     larger reserve so the context window never has to shrink: when it
+#                     takes over, what it hands back, and when it steps aside
 #   magpi-render.test.ts  magpi-render.ts's settle rule, extractor choice, coverage
 #                     yardstick, empty-page diagnosis, shell detection, host patterns,
 #                     the learned-host store and the hand-rolled WebSocket framing.

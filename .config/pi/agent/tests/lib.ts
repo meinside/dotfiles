@@ -8,6 +8,7 @@
 
 import { execFileSync, spawnSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, realpathSync } from "node:fs";
+import { registerHooks } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -199,4 +200,47 @@ export function leaves(value: unknown, prefix = ""): Array<[string, unknown]> {
 /** pi's own modules, so the checks reuse its logic instead of approximating it. */
 export async function importPi(): Promise<PiModule> {
 	return (await import(pathToFileURL(join(piDist(), "index.js")).href)) as PiModule;
+}
+
+/**
+ * Entry point of a package shipped inside (or beside) pi's installation.
+ *
+ * `createRequire().resolve()` cannot do this: these packages declare only an `import`
+ * condition in `exports`, which CJS resolution refuses to honour.
+ */
+function piPackageEntry(name: string): string {
+	const pkgRoot = piPackageDir();
+	const roots = [join(pkgRoot, "node_modules"), dirname(dirname(pkgRoot))];
+	for (const root of roots) {
+		const dir = join(root, name);
+		try {
+			const pkg = JSON.parse(readFileSync(join(dir, "package.json"), "utf8")) as {
+				exports?: Record<string, { import?: string } | string>;
+				main?: string;
+			};
+			const dot = pkg.exports?.["."];
+			const entry = (typeof dot === "string" ? dot : dot?.import) ?? pkg.main ?? "index.js";
+			return join(dir, entry);
+		} catch {
+			// Not this root; try the next one.
+		}
+	}
+	throw new Error(`${name} not found in ${roots.join(" or ")}`);
+}
+
+/**
+ * Make `@earendil-works/*` resolve to this machine's pi installation, for the extensions
+ * that import pi at *runtime* rather than only for types. Those specifiers do not resolve
+ * from this config directory - pi resolves them against its own installation - so a test
+ * must install this before importing the extension, and therefore import the extension
+ * dynamically. Returns nothing: node's hooks stay for the life of the process.
+ */
+export function redirectPiImports(names = ["@earendil-works/pi-coding-agent", "@earendil-works/pi-tui"]): void {
+	const redirects = new Map(names.map((name) => [name, pathToFileURL(piPackageEntry(name)).href]));
+	registerHooks({
+		resolve(specifier, context, nextResolve) {
+			const url = redirects.get(specifier);
+			return url ? { url, shortCircuit: true } : nextResolve(specifier, context);
+		},
+	});
 }
