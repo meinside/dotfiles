@@ -70,9 +70,9 @@ const CONFIG = {
 	summarizerModel: undefined as { provider: string; id: string } | undefined,
 	/**
 	 * How often the footer's elapsed-time status updates, in ms. Summarizing a large span
-	 * takes minutes with nothing on screen, which reads as a hang: the cancelled attempt
-	 * above was 206 s into a call whose successful sibling took 282 s. A visible clock is
-	 * the difference between waiting and giving up.
+	 * takes minutes with nothing on screen, which reads as a hang: one attempt was cancelled
+	 * at 206 s for that reason. A visible clock is the difference between waiting and giving
+	 * up.
 	 */
 	progressIntervalMs: 1_000,
 	/**
@@ -159,13 +159,14 @@ export function describeAttempt(model: ModelLike, messageCount: number, budget: 
 
 /**
  * Footer text while the call is in flight. The count and the clock are what tell a reader
- * that a multi-minute wait is progress rather than a hang, and the reference point is
- * what makes the number mean something.
+ * that a multi-minute wait is progress rather than a hang. It says "minutes" and no number:
+ * the two completions measured here took 190 s and 282 s on different inputs, which is not
+ * a basis for predicting a third, and a hardcoded figure would go quietly wrong the moment
+ * the model or the summarizer changed.
  */
-export function progressText(elapsedMs: number, messageCount: number, referenceMs = 282_000): string {
+export function progressText(elapsedMs: number, messageCount: number): string {
 	const seconds = Math.floor(elapsedMs / 1000);
-	const reference = Math.round(referenceMs / 1000);
-	return `\u{1F5DC} compacting ${messageCount} msg - ${seconds}s (a measured one took ${reference}s)`;
+	return `\u{1F5DC} compacting ${messageCount} msg - ${seconds}s (takes minutes)`;
 }
 
 /** Local overrides, so an ARN or a machine-specific choice stays out of the repo. */

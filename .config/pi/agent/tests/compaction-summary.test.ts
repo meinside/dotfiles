@@ -44,7 +44,7 @@ const { budgetFor, improvesBudget, messagesFor, compactionFrom, describeAttempt,
 			count: number,
 			budget: number,
 		) => string;
-		progressText: (elapsedMs: number, messageCount: number, referenceMs?: number) => string;
+		progressText: (elapsedMs: number, messageCount: number) => string;
 		readFileConfig: (path: string) => { reserveTokens?: number; summarizerModel?: { provider: string; id: string } };
 	};
 
@@ -73,11 +73,13 @@ test("a model whose output cap already binds is left to pi", () => {
 
 test("the progress line answers the question that cancelled a working call", () => {
 	// A compaction was aborted at 206 s because nothing on screen distinguished a long call
-	// from a hung one, while its successful sibling had taken 282 s.
+	// from a hung one. What it needed was the live facts and a warning, not a duration: see
+	// `progressText` for why no figure is predicted here.
 	const line = progressText(206_000, 205);
 	assert.match(line, /205 msg/);
 	assert.match(line, /206s/);
-	assert.match(line, /282s/, "a measured reference is what makes the elapsed number mean something");
+	assert.match(line, /takes minutes/, "a qualitative warning survives a model change; a measured figure would not");
+	assert.deepEqual(line.match(/\d+s\b/g), ["206s"], "the only duration shown is the live clock");
 	assert.match(progressText(0, 1), /0s/, "the clock starts before the first tick");
 });
 
