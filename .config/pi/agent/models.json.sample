@@ -116,7 +116,7 @@
             "max": "max"
           },
           "compat": {
-            "supportsStrictMode": true
+            "supportsStrictMode": false
           }
         },
         {
@@ -141,7 +141,7 @@
             "max": "max"
           },
           "compat": {
-            "supportsStrictMode": true
+            "supportsStrictMode": false
           }
         },
         {
@@ -166,7 +166,7 @@
             "max": "max"
           },
           "compat": {
-            "supportsStrictMode": true
+            "supportsStrictMode": false
           }
         },
         {
@@ -187,7 +187,7 @@
             "cacheWrite": 1.25
           },
           "compat": {
-            "supportsStrictMode": true
+            "supportsStrictMode": false
           }
         }
       ]
