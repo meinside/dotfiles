@@ -10,10 +10,26 @@
  *
  * The path names the mechanism. pi 0.86.0 turned on strict-prefer JSON-schema
  * sampling for the built-in `read`, `bash`, `edit` and `write` tools, which had
- * needed `PI_EXPERIMENTAL` before. With `compat.supportsStrictMode` set, the Bedrock
- * adapter then adds `strict: true` to each `toolSpec` (`convertToolConfig`), Bedrock
- * forwards the tool as Anthropic's `custom` type, and Anthropic's schema has no
- * `strict` member - so the whole turn fails before any tool runs.
+ * needed `PI_EXPERIMENTAL` before (0.84.2), to stop newer Claude models inventing
+ * fields in `edit` arguments (pi#6278). The flag below had been here since 0.82.0
+ * doing nothing, because nothing asked for strict; once something did, the Bedrock
+ * adapter started adding `strict: true` to each `toolSpec` (`convertToolConfig`).
+ *
+ * Anthropic's own API does accept `strict`, as a top-level sibling of `input_schema`.
+ * Bedrock Converse carries it on `toolSpec` instead, and when it maps that onto the
+ * native `custom` tool shape the newer models' validator rejects the extra key - so
+ * the turn fails before any tool runs. This is not pi-specific: LiteLLM has it from
+ * three reporters (BerriAI/litellm#31582, #33193, #38799), including for a
+ * cross-region inference profile id, which is the shape used here.
+ *
+ * Per those reports the capability splits by model, not by family: Opus 4.5 and
+ * Sonnet 4.5/4.6 accept `toolSpec.strict` while Opus 4.7/4.8, Sonnet 5 and Fable
+ * reject it. This config turns it off for every Claude here anyway, because an
+ * application inference profile ARN hides which model answers and can be repointed
+ * without this file changing. Re-enabling one would need a live call to prove it.
+ *
+ * pi fixed the same class of bug for Cerebras in 0.86.1 (pi#9804) by dropping the
+ * unsupported claim; this is that, for Bedrock.
  *
  * pi's generated catalog does mark `anthropic.claude-*` on Bedrock as strict-capable,
  * and `pi-ai/README.md` says custom Bedrock models may override that. An application
