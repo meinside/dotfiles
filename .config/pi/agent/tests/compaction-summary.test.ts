@@ -25,7 +25,7 @@ redirectPiImports();
 // Dynamic, so the hook above is installed before the module's own imports run.
 const mod = await import(join(dirname(import.meta.dirname), "extensions/compaction-summary.ts"));
 
-const { budgetFor, improvesBudget, messagesFor, compactionFrom, describeAttempt, progressText, readFileConfig } =
+const { budgetFor, improvesBudget, messagesFor, compactionFrom, describeAttempt, progressText, readFileConfig, triggerAt, shouldTriggerEarly } =
 	mod as {
 		budgetFor: (reserveTokens: number, modelMaxTokens: number | undefined) => number;
 		improvesBudget: (
@@ -45,7 +45,13 @@ const { budgetFor, improvesBudget, messagesFor, compactionFrom, describeAttempt,
 			budget: number,
 		) => string;
 		progressText: (elapsedMs: number, messageCount: number) => string;
-		readFileConfig: (path: string) => { reserveTokens?: number; summarizerModel?: { provider: string; id: string } };
+		readFileConfig: (path: string) => { reserveTokens?: number; summarizerModel?: { provider: string; id: string }; triggerRatio?: number };
+		triggerAt: (contextWindow: number, reserveTokens: number, ratio: number) => number;
+		shouldTriggerEarly: (
+			usage: { tokens: number | null; contextWindow: number } | undefined,
+			reserveTokens: number,
+			ratio: number,
+		) => boolean;
 	};
 
 test("the budget mirrors pi's own sizing, including the model's cap", () => {
@@ -97,6 +103,8 @@ test("an unreadable or malformed config file leaves the defaults in place", () =
 	assert.deepEqual(readFileConfig(write('{"reserveTokens": "lots"}')), {}, "a wrong type is not a value");
 	assert.deepEqual(readFileConfig(write('{"reserveTokens": -5}')), {});
 	assert.deepEqual(readFileConfig(write('{"summarizerModel": {"provider": "p"}}')), {}, "half a model is none");
+	assert.deepEqual(readFileConfig(write('{"triggerRatio": 0}')), {}, "a ratio of zero is not a way to disable");
+	assert.deepEqual(readFileConfig(write('{"triggerRatio": 1}')), { triggerRatio: 1 }, "1 disables the ceiling");
 	assert.deepEqual(readFileConfig(write('{"reserveTokens": 49152, "summarizerModel": {"provider": "p", "id": "i"}}')), {
 		reserveTokens: 49_152,
 		summarizerModel: { provider: "p", id: "i" },
@@ -109,6 +117,39 @@ test("a split turn's prefix goes into the same summary, in order", () => {
 	const out = messagesFor({ messagesToSummarize: ["a", "b"], turnPrefixMessages: ["c"] });
 	assert.deepEqual(out, ["a", "b", "c"]);
 	assert.deepEqual(messagesFor({ messagesToSummarize: [], turnPrefixMessages: [] }), []);
+});
+
+test("the ratio ceiling is a ceiling, and only binds where pi's absolute margin is thin", () => {
+	const R = 16_384;
+	// Above the crossover the ratio wins: a 1M window stops at 92% instead of 98.4%, which
+	// is 80,000 tokens of headroom instead of 16,384.
+	assert.equal(triggerAt(1_000_000, R, 0.92), 920_000);
+	assert.equal(triggerAt(1_048_576, R, 0.92), 964_689);
+	// The crossover, `reserveTokens / (1 - ratio)`: both rules give the same point, so no
+	// window is affected twice.
+	assert.equal(triggerAt(204_800, R, 0.92), 188_416);
+	assert.equal(204_800 - R, Math.floor(0.92 * 204_800));
+	// Below it pi's margin is already the earlier of the two and nothing changes. A flat
+	// 92% here would be a regression: 0.92 * 65,536 leaves 5,243 tokens, under one turn.
+	assert.equal(triggerAt(200_000, R, 0.92), 183_616);
+	assert.equal(triggerAt(131_072, R, 0.92), 114_688);
+	assert.equal(triggerAt(65_536, R, 0.92), 49_152);
+	// A ratio of 1 or more disables the ceiling; so does a nonsensical one.
+	assert.equal(triggerAt(1_000_000, R, 1), 983_616);
+	assert.equal(triggerAt(1_000_000, R, 0), 983_616);
+	assert.equal(triggerAt(1_000_000, R, Number.NaN), 983_616);
+});
+
+test("an unmeasured context is not an over-full one", () => {
+	const over = { tokens: 950_000, contextWindow: 1_000_000 };
+	assert.equal(shouldTriggerEarly(over, 16_384, 0.92), true);
+	assert.equal(shouldTriggerEarly({ tokens: 900_000, contextWindow: 1_000_000 }, 16_384, 0.92), false);
+	// Right after a compaction pi reports null until the next response measures the window.
+	// Treating that as over would compact again immediately, on nothing.
+	assert.equal(shouldTriggerEarly({ tokens: null, contextWindow: 1_000_000 }, 16_384, 0.92), false);
+	assert.equal(shouldTriggerEarly(undefined, 16_384, 0.92), false);
+	assert.equal(shouldTriggerEarly({ tokens: 950_000, contextWindow: 0 }, 16_384, 0.92), false, "no window, no ratio");
+	assert.equal(shouldTriggerEarly(over, 16_384, 1), false, "disabled leaves the decision to pi");
 });
 
 test("an empty summary never becomes a checkpoint", () => {

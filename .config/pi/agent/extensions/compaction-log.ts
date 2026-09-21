@@ -15,7 +15,9 @@
  *                       rotating model chain this is what a mid-session switch to a
  *                       smaller-window model looks like -> the chain's smallest window
  *                       is the real ceiling, not the current model's.
- *   reason "manual"     /compact, so the numbers are whatever the session had.
+ *   reason "manual"     /compact, so the numbers are whatever the session had. An
+ *                       extension compacting early arrives here too and says so on the
+ *                       bus, which prints as `manual (ratio ceiling 92%)`.
  *
  * `session_compact_failed` carries neither the preparation nor the settings, so an
  * attempt is remembered from `session_before_compact` and paired with its outcome.
@@ -98,6 +100,13 @@ export interface Attempt {
 	 * summarizer ran.
 	 */
 	suppliedBudget?: number;
+	/**
+	 * Why the compaction started, when that is narrower than pi's `reason`. An extension
+	 * that compacts early enters through the manual path, so the reason reads "manual" and
+	 * the log would blame a `/compact` nobody typed. Announced on the same bus as the
+	 * budget; absent when the trigger really was pi's own or a user's.
+	 */
+	triggeredBy?: string;
 	model?: { id: string; name: string; contextWindow: number; maxTokens: number; reasoning: boolean };
 	thinkingLevel?: string;
 }
@@ -267,7 +276,7 @@ export function formatLog(records: Record_[], limit = TUNING.showLast): string {
 			const unaccounted = told(r.unaccountedTokensEst);
 			const budgetSource = r.suppliedBudget ? " (supplied by an extension)" : "";
 			return [
-				`${mark} ${r.startedAt}  ${r.reason}${r.willRetry ? " (retry)" : ""}`,
+				`${mark} ${r.startedAt}  ${r.reason}${r.triggeredBy ? ` (${r.triggeredBy})` : ""}${r.willRetry ? " (retry)" : ""}`,
 				`     context ${r.tokensBefore} / window ${win}   reserve ${r.reserveTokens}  keep ${r.keepRecentTokens}`,
 				`     span ~${r.spanTokensEst} tok in ${r.spanMessages} msg -> budget ${r.summaryBudget}${budgetSource}  ratio ${r.compressionRatio}:1`,
 				...(r.isSplitTurn
@@ -318,9 +327,15 @@ export default function (pi: ExtensionAPI) {
 	 * different one. Cleared with the attempt so a later compaction cannot inherit it.
 	 */
 	let announcedBudget: number | undefined;
+	/** Same shape as the budget announcement: see `Attempt.triggeredBy`. */
+	let announcedTrigger: string | undefined;
 
 	pi.events.on("compaction-log:budget", (budget: unknown) => {
 		if (typeof budget === "number" && Number.isFinite(budget) && budget > 0) announcedBudget = budget;
+	});
+
+	pi.events.on("compaction-log:trigger", (label: unknown) => {
+		if (typeof label === "string" && label.trim()) announcedTrigger = label.trim().slice(0, 60);
 	});
 
 	const modelOf = (ctx: ExtensionContext) => {
@@ -339,6 +354,7 @@ export default function (pi: ExtensionAPI) {
 		const attempt = pending;
 		pending = undefined;
 		announcedBudget = undefined;
+		announcedTrigger = undefined;
 		if (!attempt) return undefined;
 		const record = deriveRecord(attempt, outcome, new Date().toISOString());
 		try {
@@ -380,6 +396,7 @@ export default function (pi: ExtensionAPI) {
 
 	pi.on("session_compact", async (event, ctx) => {
 		if (pending && announcedBudget) pending.suppliedBudget = announcedBudget;
+		if (pending && announcedTrigger) pending.triggeredBy = announcedTrigger;
 		finish(
 			{
 				kind: "ok",
@@ -392,6 +409,7 @@ export default function (pi: ExtensionAPI) {
 
 	pi.on("session_compact_failed", async (event, ctx) => {
 		if (pending && announcedBudget) pending.suppliedBudget = announcedBudget;
+		if (pending && announcedTrigger) pending.triggeredBy = announcedTrigger;
 		const record = finish(
 			event.aborted
 				? { kind: "aborted", fromExtension: event.fromExtension }

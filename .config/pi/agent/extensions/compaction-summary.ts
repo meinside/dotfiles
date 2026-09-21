@@ -27,6 +27,11 @@
  * On any failure it returns nothing and pi runs its normal compaction, so the worst case
  * is the behaviour without this file. compaction-log.ts records which path ran
  * (`fromExtension`) and how much of the budget the summary used (`budgetUsed`).
+ *
+ * The same absolute `reserveTokens` also decides *when* compaction starts, and 16,384 of a
+ * 1M window is 1.6% - one large file read, checked a turn late. `CONFIG.triggerRatio`
+ * adds a ceiling on top of pi's margin, taking whichever fires first, so large windows
+ * stop relying on a margin smaller than a turn and small windows keep pi's behaviour.
  */
 
 import { readFileSync } from "node:fs";
@@ -88,13 +93,40 @@ const CONFIG = {
 	 * wrong.
 	 */
 	notify: true,
+	/**
+	 * Ceiling on how full the context may get before compaction starts, as a fraction of
+	 * the window. pi's own trigger is an absolute margin (`contextWindow -
+	 * reserveTokens`), which means the same 16,384 leaves 25% of a 65k window free and
+	 * 1.6% of a 1M one - and the check runs on the last assistant usage, so it is always a
+	 * turn late. At 1.6% a single large file read crosses the line inside that turn, and
+	 * overflow is not "slightly late": summarizing requires sending the history to the
+	 * model, so once the window is full there is nothing compaction can do, and pi retries
+	 * a compact-and-retry exactly once.
+	 *
+	 * Both other tools that publish this converged on a ceiling for that reason. Gemini CLI
+	 * compresses at 0.7 of the window, and its maintainer's stated reason is that above
+	 * that any new input can overshoot the limit, after which nothing can be compressed.
+	 * Codex clamps the trigger to 0.9 of the window no matter what the user configures,
+	 * because compaction failures from overflow were common enough to remove the choice.
+	 *
+	 * 0.92 rather than their 0.7-0.9 because compacting is far more expensive here: a
+	 * measured summarization took 190 s and another 282 s, against the 3-10 s Gemini's
+	 * users report, so each early compaction costs minutes of waiting and an Opus-priced
+	 * call. 0.92 of 1M leaves 80,000 tokens of headroom, comfortably more than any single
+	 * turn has been observed to add, while still using 920k of the window.
+	 *
+	 * This is a ceiling, never a target: `triggerAt` takes whichever of the two fires
+	 * first, so the ratio only binds on windows above `reserveTokens / (1 - ratio)` =
+	 * 204,800 tokens. Smaller windows keep pi's behaviour unchanged. Set 1 (or higher) to
+	 * disable and leave the trigger entirely to pi.
+	 */
+	triggerRatio: 0.92,
 } as const;
 
 /** Mirrors pi's own sizing, so this file can tell whether it is an improvement at all. */
 const BUDGET_FRACTION = 0.8;
 /** pi's default, from DEFAULT_COMPACTION_SETTINGS. Only used to compare against. */
 const DEFAULT_RESERVE_TOKENS = 16_384;
-
 // ---------------------------------------------------------------- pure helpers
 
 export interface ModelLike {
@@ -173,6 +205,34 @@ export function progressText(elapsedMs: number, messageCount: number): string {
 export interface FileConfig {
 	reserveTokens?: number;
 	summarizerModel?: { provider: string; id: string };
+	triggerRatio?: number;
+}
+
+/**
+ * Where compaction should start: the earlier of pi's absolute margin and the ratio
+ * ceiling. The ratio only binds on windows above `reserveTokens / (1 - ratio)`, so this
+ * lowers the trigger on large windows and leaves small ones exactly as pi had them - a
+ * flat 0.92 would give a 65k window only 5,243 tokens of headroom, less than one turn.
+ * A ratio outside (0, 1) means "no ceiling".
+ */
+export function triggerAt(contextWindow: number, reserveTokens: number, ratio: number): number {
+	const absolute = contextWindow - reserveTokens;
+	if (!(ratio > 0) || ratio >= 1) return absolute;
+	return Math.min(absolute, Math.floor(ratio * contextWindow));
+}
+
+/**
+ * Whether the turn that just ended left the context past that point. `tokens` is null
+ * right after a compaction, before the next response has measured anything: unknown is
+ * not "over".
+ */
+export function shouldTriggerEarly(
+	usage: { tokens: number | null; contextWindow: number } | undefined,
+	reserveTokens: number,
+	ratio: number,
+): boolean {
+	if (!usage || usage.tokens === null || !(usage.contextWindow > 0)) return false;
+	return usage.tokens > triggerAt(usage.contextWindow, reserveTokens, ratio);
 }
 
 /**
@@ -185,6 +245,8 @@ export function readFileConfig(path: string): FileConfig {
 		const raw = JSON.parse(readFileSync(path, "utf8")) as FileConfig;
 		const out: FileConfig = {};
 		if (typeof raw.reserveTokens === "number" && raw.reserveTokens > 0) out.reserveTokens = raw.reserveTokens;
+		// A ratio of 1 or more is meaningful: it disables the ceiling. Zero or negative is not.
+		if (typeof raw.triggerRatio === "number" && raw.triggerRatio > 0) out.triggerRatio = raw.triggerRatio;
 		if (raw.summarizerModel && typeof raw.summarizerModel.provider === "string" && typeof raw.summarizerModel.id === "string") {
 			out.summarizerModel = { provider: raw.summarizerModel.provider, id: raw.summarizerModel.id };
 		}
@@ -199,6 +261,7 @@ export function readFileConfig(path: string): FileConfig {
 export default function (pi: ExtensionAPI) {
 	const fileConfig = readFileConfig(join(homedir(), ".pi", "agent", "compaction-summary.json"));
 	const reserveTokens = fileConfig.reserveTokens ?? CONFIG.reserveTokens;
+	const triggerRatio = fileConfig.triggerRatio ?? CONFIG.triggerRatio;
 
 	const pickModel = (ctx: ExtensionContext) => {
 		const wanted = fileConfig.summarizerModel ?? CONFIG.summarizerModel;
@@ -214,6 +277,30 @@ export default function (pi: ExtensionAPI) {
 		}
 		return ctx.model;
 	};
+
+	/**
+	 * The ceiling from CONFIG.triggerRatio. `agent_settled` fires once pi has decided that
+	 * no compaction, retry or queued continuation is coming, so this adds a trigger rather
+	 * than racing pi's own: if pi was going to compact, it already has.
+	 *
+	 * `DEFAULT_RESERVE_TOKENS` stands in for pi's configured reserve, which extensions
+	 * cannot read. Being wrong about it is safe in both directions: a larger real reserve
+	 * means pi compacts before this ever fires, and a smaller one means this ceiling still
+	 * holds. It only matters if `settings.json` grows a `compaction` block.
+	 */
+	pi.on("agent_settled", (_event, ctx) => {
+		const usage = ctx.getContextUsage();
+		if (!shouldTriggerEarly(usage, DEFAULT_RESERVE_TOKENS, triggerRatio)) return;
+		const at = triggerAt(usage?.contextWindow ?? 0, DEFAULT_RESERVE_TOKENS, triggerRatio);
+		if (CONFIG.notify && ctx.hasUI) {
+			const percent = Math.round(100 * triggerRatio);
+			ctx.ui.notify(`Compacting at ${usage?.tokens} tokens: past the ${percent}% ceiling (${at})`, "info");
+		}
+		// Without this the log reads "manual", blaming a /compact nobody typed. Same one-way
+		// bus as the budget: a missing listener is not an error.
+		if (CONFIG.announceBudget) pi.events.emit("compaction-log:trigger", `ratio ceiling ${Math.round(100 * triggerRatio)}%`);
+		ctx.compact();
+	});
 
 	pi.on("session_before_compact", async (event, ctx) => {
 		const { preparation: prep, customInstructions, signal } = event;

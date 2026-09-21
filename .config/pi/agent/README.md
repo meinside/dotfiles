@@ -35,7 +35,7 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 | `extensions/statusline.ts` | yes | Claude Code style footer ([notes](#statusline-extension)) |
 | `extensions/compaction-summary.ts` | yes | Gives the compaction summary room without shrinking the context window ([notes](#compaction-extensions)) |
 | `extensions/compaction-log.ts` | yes | Records every compaction attempt with its outcome and a verdict ([notes](#compaction-extensions)) |
-| `compaction-summary.json` | no | Optional `extensions/compaction-summary.ts` overrides: `reserveTokens`, `summarizerModel`. Absent means defaults; a Bedrock id belongs here, not in the tracked extension |
+| `compaction-summary.json` | no | Optional `extensions/compaction-summary.ts` overrides: `reserveTokens`, `summarizerModel`, `triggerRatio`. Absent means defaults; a Bedrock id belongs here, not in the tracked extension |
 | `extensions/magpi-render.ts` | yes | Reads JavaScript-rendered pages through Firefox over WebDriver BiDi ([notes](#magpi-renderer)) |
 | `extensions/magpi-handlers.ts` | yes | Local MagPi fetch handlers: reddit, Discourse, naver blog ([notes](#magpi-handlers)) |
 | `AGENTS.md` | yes | [Global instructions](#global-instructions-agentsmd) for every session and subagent |
@@ -274,15 +274,16 @@ every model keeps its native context window**. It steps aside (pi's own compacti
 when the model's `maxTokens` already binds, when the summary is empty, and on any error.
 
 - **Tune it in the `CONFIG` block at the top of the file**, which carries the measurement
-  behind each value. `compaction-summary.json` overrides `reserveTokens` and
-  `summarizerModel` per machine.
+  behind each value. `compaction-summary.json` overrides `reserveTokens`,
+  `summarizerModel` and `triggerRatio` per machine.
 - **`extensions/compaction-log.ts` only watches**: each attempt and outcome is appended to
   `tmp/compaction/log.jsonl` and printed by `/compaction-log` with a verdict. Either half
   works without the other.
-- **`reserveTokens` is now purely the room left for the next answer**, and it is global:
-  16,384 suits both a 65,536-window local preset and a 1 M model, which then reaches 98.4%
-  of its window before compacting — where a long answer can overflow instead (pi compacts
-  and retries once).
+- **`CONFIG.triggerRatio` (0.92) caps how full the window may get**, because pi's trigger
+  is an absolute margin: 16,384 is 25% of a 65,536 window but 1.6% of a 1 M one. The
+  extension compacts at `min(contextWindow - 16384, 0.92 * contextWindow)` on
+  `agent_settled`, so windows above 204,800 stop earlier and smaller ones are unchanged.
+  Set `1` to leave the trigger entirely to pi.
 
 ## MagPi handlers
 

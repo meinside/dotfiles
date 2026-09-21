@@ -235,6 +235,21 @@ test("a budget announced by a handler replaces the one derived from settings", (
 	assert.ok(!formatLog([own]).includes("supplied by an extension"));
 });
 
+test("an early trigger says so instead of reading as a /compact nobody typed", () => {
+	// compaction-summary.ts enters through the manual path when the ratio ceiling fires, so
+	// `reason` is "manual" and the log would misattribute it to the user.
+	const early = deriveRecord(
+		attempt({ reason: "manual", triggeredBy: "ratio ceiling 92%" }),
+		{ kind: "ok", summaryChars: 30_758, fromExtension: true },
+		"t1",
+	);
+	assert.match(formatLog([early]), /manual \(ratio ceiling 92%\)/);
+
+	// A real /compact carries no label, and gets no parenthesis.
+	const typed = deriveRecord(attempt({ reason: "manual" }), { kind: "ok", summaryChars: 10, fromExtension: false }, "t1");
+	assert.doesNotMatch(formatLog([typed]), /manual \(/);
+});
+
 test("an empty log says so instead of printing an empty table", () => {
 	assert.match(formatLog([]), /No compaction has been attempted/);
 });
