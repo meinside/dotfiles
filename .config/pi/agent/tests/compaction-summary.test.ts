@@ -25,8 +25,9 @@ redirectPiImports();
 // Dynamic, so the hook above is installed before the module's own imports run.
 const mod = await import(join(dirname(import.meta.dirname), "extensions/compaction-summary.ts"));
 
-const { budgetFor, improvesBudget, messagesFor, compactionFrom, describeAttempt, progressText, readFileConfig, triggerAt, shouldTriggerEarly } =
+const { budgetFor, improvesBudget, messagesFor, compactionFrom, describeAttempt, progressText, readFileConfig, triggerAt, shouldTriggerEarly, failureAnnouncement } =
 	mod as {
+		failureAnnouncement: (message: string, elapsedMs?: number) => { message: string; elapsedMs?: number };
 		budgetFor: (reserveTokens: number, modelMaxTokens: number | undefined) => number;
 		improvesBudget: (
 			model: { id: string; maxTokens: number } | undefined,
@@ -178,4 +179,11 @@ test("the notice names the model and the budget, which is what a wrong summary r
 	assert.match(line, /tier:strong/);
 	assert.match(line, /budget 65536 tokens/);
 	assert.ok(!line.includes("arn:"), "the configured name is what a reader recognises");
+});
+
+test("a failed attempt is announced in the shape compaction-log.ts accepts", async () => {
+	// The two files only share a bus, so a renamed field would drop the reason silently.
+	const { parseExtensionFailure } = await import(join(dirname(import.meta.dirname), "extensions/compaction-log.ts"));
+	assert.deepEqual(parseExtensionFailure(failureAnnouncement("token cap", 312_400)), { message: "token cap", elapsedMs: 312_400 });
+	assert.deepEqual(parseExtensionFailure(failureAnnouncement("no key")), { message: "no key" });
 });

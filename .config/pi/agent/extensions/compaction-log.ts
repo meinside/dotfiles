@@ -101,6 +101,19 @@ export interface Attempt {
 	 */
 	suppliedBudget?: number;
 	/**
+	 * The budget a `session_before_compact` handler tried and did not deliver a summary
+	 * under. pi's own compaction ran after it, under the settings-derived cap, so this is
+	 * kept apart from `suppliedBudget`: a fallback reported against the handler's larger
+	 * budget understates how tight pi's path was (a 13,107 failure logged as 26,214).
+	 */
+	extensionBudget?: number;
+	/**
+	 * Why that handler gave up, and after how long. Its own warning only reaches the UI,
+	 * so without this the log records pi's fallback error and nothing about the attempt
+	 * that ran first and usually took most of the wait.
+	 */
+	extensionFailure?: ExtensionFailure;
+	/**
 	 * Why the compaction started, when that is narrower than pi's `reason`. An extension
 	 * that compacts early enters through the manual path, so the reason reads "manual" and
 	 * the log would blame a `/compact` nobody typed. Announced on the same bus as the
@@ -109,6 +122,19 @@ export interface Attempt {
 	triggeredBy?: string;
 	model?: { id: string; name: string; contextWindow: number; maxTokens: number; reasoning: boolean };
 	thinkingLevel?: string;
+}
+
+/** What a summarizing handler announces when it steps back to pi's compaction. */
+export interface ExtensionFailure {
+	message: string;
+	elapsedMs?: number;
+}
+
+/** What the bus delivered for the attempt in flight, applied once the outcome is known. */
+export interface Announcements {
+	budget?: number;
+	trigger?: string;
+	extensionFailure?: ExtensionFailure;
 }
 
 export type Outcome =
@@ -194,6 +220,50 @@ export function verdictOf(r: Omit<Record_, "verdict">): string {
 	return `${ratio}:1 compression failed inside a ${r.summaryBudget} token budget`;
 }
 
+/**
+ * The bus payload for `compaction-log:extension-failed`, or undefined when it is not one.
+ * A malformed announcement is dropped rather than logged as a failure nobody reported.
+ */
+export function parseExtensionFailure(payload: unknown): ExtensionFailure | undefined {
+	if (!payload || typeof payload !== "object") return undefined;
+	const { message, elapsedMs } = payload as { message?: unknown; elapsedMs?: unknown };
+	if (typeof message !== "string" || !message.trim()) return undefined;
+	const out: ExtensionFailure = { message: message.trim().slice(0, 300) };
+	if (typeof elapsedMs === "number" && Number.isFinite(elapsedMs) && elapsedMs >= 0) out.elapsedMs = Math.round(elapsedMs);
+	return out;
+}
+
+/**
+ * Folds the announcements into the attempt. Which path produced the outcome decides what
+ * an announced budget means: the summary's cap when the handler's summary was used, a
+ * failed first try when pi's compaction ran instead. Only in the first case does it
+ * replace the settings-derived budget.
+ */
+export function withAnnouncements(attempt: Attempt, ann: Announcements, fromExtension: boolean): Attempt {
+	const out: Attempt = { ...attempt };
+	if (ann.trigger) out.triggeredBy = ann.trigger;
+	if (fromExtension) {
+		if (ann.budget) out.suppliedBudget = ann.budget;
+		return out;
+	}
+	if (ann.budget) out.extensionBudget = ann.budget;
+	if (ann.extensionFailure) out.extensionFailure = ann.extensionFailure;
+	return out;
+}
+
+/** "failed after 312s under a 26214 token budget: <message>", from whatever was recorded. */
+export function describeExtensionFailure(r: Pick<Attempt, "extensionBudget" | "extensionFailure">): string | undefined {
+	if (!r.extensionBudget && !r.extensionFailure) return undefined;
+	const after = told(r.extensionFailure?.elapsedMs);
+	const parts = [
+		"failed",
+		...(after === undefined ? [] : [`after ${Math.round(Number(after) / 1000)}s`]),
+		...(r.extensionBudget ? [`under a ${r.extensionBudget} token budget`] : []),
+	];
+	const why = r.extensionFailure?.message ?? "no reason announced";
+	return `${parts.join(" ")}: ${why}`;
+}
+
 export function deriveRecord(attempt: Attempt, outcome: Outcome, finishedAt: string): Record_ {
 	// A handler that supplies the summary chooses its own cap, so the settings-derived
 	// budget would describe a request that was never made.
@@ -223,7 +293,13 @@ export function deriveRecord(attempt: Attempt, outcome: Outcome, finishedAt: str
 				? Number((outcome.summaryChars / TUNING.charsPerToken / budget).toFixed(2))
 				: undefined,
 	};
-	return { ...base, verdict: verdictOf(base) };
+	const verdict = verdictOf(base);
+	// pi's fallback is the path that failed last, but the handler's attempt ran first under
+	// a larger budget; a verdict about the fallback alone hides that both gave up. The
+	// reason itself is in `extensionFailure` and gets its own line in the listing.
+	const handlerFailedFirst = base.outcome === "failed" && (base.extensionBudget || base.extensionFailure);
+	const first = base.extensionBudget ? `the extension's ${base.extensionBudget} token attempt` : "the extension's attempt";
+	return { ...base, verdict: handlerFailedFirst ? `${verdict}; ${first} had failed first` : verdict };
 }
 
 /**
@@ -257,7 +333,7 @@ export function parseLog(raw: string): Record_[] {
  * (the first cut did) reads like a bug in the run being diagnosed, and substituting 0
  * would claim a measurement nobody took.
  */
-function told(value: number | undefined): string | undefined {
+export function told(value: number | undefined): string | undefined {
 	return typeof value === "number" && Number.isFinite(value) ? String(value) : undefined;
 }
 
@@ -289,6 +365,7 @@ export function formatLog(records: Record_[], limit = TUNING.showLast): string {
 				...(unaccounted === undefined
 					? []
 					: [`     unaccounted ~${unaccounted} tok (system prompt, tool schemas, estimate error)`]),
+				...(describeExtensionFailure(r) ? [`     extension ${describeExtensionFailure(r)}; pi's compaction ran`] : []),
 				`     ${r.verdict}`,
 				...(r.errorMessage ? [`     error: ${r.errorMessage}`] : []),
 			].join("\n");
@@ -329,6 +406,8 @@ export default function (pi: ExtensionAPI) {
 	let announcedBudget: number | undefined;
 	/** Same shape as the budget announcement: see `Attempt.triggeredBy`. */
 	let announcedTrigger: string | undefined;
+	/** Same again: see `Attempt.extensionFailure`. */
+	let announcedFailure: ExtensionFailure | undefined;
 
 	pi.events.on("compaction-log:budget", (budget: unknown) => {
 		if (typeof budget === "number" && Number.isFinite(budget) && budget > 0) announcedBudget = budget;
@@ -337,6 +416,21 @@ export default function (pi: ExtensionAPI) {
 	pi.events.on("compaction-log:trigger", (label: unknown) => {
 		if (typeof label === "string" && label.trim()) announcedTrigger = label.trim().slice(0, 60);
 	});
+
+	pi.events.on("compaction-log:extension-failed", (payload: unknown) => {
+		const failure = parseExtensionFailure(payload);
+		if (failure) announcedFailure = failure;
+	});
+
+	/** Applies what the bus said, now that the outcome says which path produced it. */
+	const announce = (fromExtension: boolean) => {
+		if (!pending) return;
+		pending = withAnnouncements(
+			pending,
+			{ budget: announcedBudget, trigger: announcedTrigger, extensionFailure: announcedFailure },
+			fromExtension,
+		);
+	};
 
 	const modelOf = (ctx: ExtensionContext) => {
 		const m = ctx.model;
@@ -355,6 +449,7 @@ export default function (pi: ExtensionAPI) {
 		pending = undefined;
 		announcedBudget = undefined;
 		announcedTrigger = undefined;
+		announcedFailure = undefined;
 		if (!attempt) return undefined;
 		const record = deriveRecord(attempt, outcome, new Date().toISOString());
 		try {
@@ -395,8 +490,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	pi.on("session_compact", async (event, ctx) => {
-		if (pending && announcedBudget) pending.suppliedBudget = announcedBudget;
-		if (pending && announcedTrigger) pending.triggeredBy = announcedTrigger;
+		announce(event.fromExtension);
 		finish(
 			{
 				kind: "ok",
@@ -408,8 +502,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	pi.on("session_compact_failed", async (event, ctx) => {
-		if (pending && announcedBudget) pending.suppliedBudget = announcedBudget;
-		if (pending && announcedTrigger) pending.triggeredBy = announcedTrigger;
+		announce(event.fromExtension);
 		const record = finish(
 			event.aborted
 				? { kind: "aborted", fromExtension: event.fromExtension }

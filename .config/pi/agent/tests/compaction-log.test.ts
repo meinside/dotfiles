@@ -16,9 +16,11 @@ import {
 	contentChars,
 	deriveRecord,
 	formatLog,
+	parseExtensionFailure,
 	parseLog,
 	type Record_,
 	summaryBudget,
+	withAnnouncements,
 } from "../extensions/compaction-log.ts";
 
 const attempt = (over: Partial<Attempt> = {}): Attempt => ({
@@ -233,6 +235,52 @@ test("a budget announced by a handler replaces the one derived from settings", (
 	const own = deriveRecord(attempt(), { kind: "ok", summaryChars: 30_758, fromExtension: false }, "t1");
 	assert.equal(own.summaryBudget, 13_107);
 	assert.ok(!formatLog([own]).includes("supplied by an extension"));
+});
+
+test("a budget from an extension that failed is not the budget pi's fallback had", () => {
+	// The 2026-09-22 failures: compaction-summary.ts announced 26,214, gave up, and pi's
+	// own compaction then hit its 13,107 cap. Logging 26,214 put the ratio at 14.4:1 against
+	// a request that never produced the error, and dropped the extension's own reason.
+	const ann = { budget: 26_214, extensionFailure: { message: "generation hit the token cap", elapsedMs: 312_400 } };
+	const failed = { kind: "failed", errorMessage: "token cap", fromExtension: false } as const;
+	const r = deriveRecord(withAnnouncements(attempt({ spanChars: 1_508_017 }), ann, false), failed, "t1");
+	assert.equal(r.suppliedBudget, undefined);
+	assert.equal(r.summaryBudget, 13_107, "pi's own cap, the one the logged error came from");
+	assert.equal(r.compressionRatio, 28.76);
+	assert.equal(r.extensionBudget, 26_214);
+	assert.match(r.verdict, /28\.8:1 .* 13107 .*; the extension's 26214 token attempt had failed first$/);
+	assert.doesNotMatch(r.verdict, /generation hit/, "the reason has its own line; the verdict does not repeat it");
+	assert.match(formatLog([r]), /extension failed after 312s under a 26214 token budget: .*; pi's compaction ran/);
+
+	// When the extension's summary is the one kept, its budget is the summary's budget.
+	const ok = deriveRecord(
+		withAnnouncements(attempt(), { budget: 26_214 }, true),
+		{ kind: "ok", summaryChars: 20_000, fromExtension: true },
+		"t1",
+	);
+	assert.equal(ok.summaryBudget, 26_214);
+	assert.equal(ok.extensionBudget, undefined);
+	assert.ok(!formatLog([ok]).includes("pi's compaction ran"));
+
+	// A fallback that succeeded keeps the extension's reason, and its verdict stays about the fit.
+	const rescued = deriveRecord(
+		withAnnouncements(attempt(), ann, false),
+		{ kind: "ok", summaryChars: 20_000, fromExtension: false },
+		"t1",
+	);
+	assert.equal(rescued.summaryBudget, 13_107);
+	assert.match(rescued.verdict, /^fit in/);
+	assert.match(formatLog([rescued]), /extension failed after 312s/);
+});
+
+test("an extension failure announcement is validated, not trusted", () => {
+	assert.deepEqual(parseExtensionFailure({ message: " boom ", elapsedMs: 1234.6 }), { message: "boom", elapsedMs: 1235 });
+	assert.deepEqual(parseExtensionFailure({ message: "no clock" }), { message: "no clock" });
+	assert.deepEqual(parseExtensionFailure({ message: "bad clock", elapsedMs: -1 }), { message: "bad clock" });
+	for (const junk of [undefined, null, "text", 3, {}, { message: "" }, { message: "  " }, { message: 7 }]) {
+		assert.equal(parseExtensionFailure(junk), undefined, `accepted ${JSON.stringify(junk)}`);
+	}
+	assert.equal(parseExtensionFailure({ message: "x".repeat(1000) })?.message.length, 300);
 });
 
 test("an early trigger says so instead of reading as a /compact nobody typed", () => {
