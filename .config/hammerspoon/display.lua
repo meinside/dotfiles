@@ -1,6 +1,6 @@
 -- ~/.config/hammerspoon/display.lua
 --
--- last update: 2026.07.01.
+-- last update: 2026.10.01.
 
 -- Dim the inactive displays so the active display stands out.
 --
@@ -9,7 +9,7 @@
 -- to look. With a single display nothing is dimmed.
 
 -- configuration
-local DIM_ALPHA = 0.50 -- darkness of inactive displays (0..1)
+local DIM_ALPHA = 0.25 -- darkness of inactive displays (0..1)
 local POLL_INTERVAL = 0.3 -- seconds between focus checks
 
 -- persistent dim overlays, keyed by screen id
@@ -42,6 +42,16 @@ local function dimInactiveDisplays(activeScreenID)
 			canvas:behavior(hs.canvas.windowBehaviors.canJoinAllSpaces)
 			canvas:canvasMouseEvents(false, false, false, false)
 			canvas:level(hs.canvas.windowLevels.overlay)
+			canvas:show()
+			dimOverlays[screen:id()] = canvas
+		else
+			local canvas = hs.canvas.new(screen:fullFrame())
+			canvas:appendElements({
+				type = "rectangle",
+				action = "stroke",
+				strokeWidth = 5.0,
+				strokeColor = { red = 1.0, green = 1.0, blue = 0, alpha = 0.5 },
+			})
 			canvas:show()
 			dimOverlays[screen:id()] = canvas
 		end
