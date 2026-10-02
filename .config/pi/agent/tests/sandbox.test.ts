@@ -84,6 +84,9 @@ const CREDENTIAL_PATHS = [
 	"~/.config/claude/settings.json",
 	"~/.config/pi/agent/auth.json",
 	"~/.pi/agent/auth.json",
+	// OAuth tokens of the built-in MCP client, written by pi itself (not bash)
+	"~/.config/pi/agent/mcp-auth.json",
+	"~/.pi/agent/mcp-auth.json",
 	"~/.local/share/cargo/credentials.toml",
 	"~/.local/share/cargo/credentials",
 	"~/.gem/credentials",

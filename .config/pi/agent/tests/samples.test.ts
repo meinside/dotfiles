@@ -12,7 +12,7 @@ import { agentModels, leaves, type ModelsConfig, modelEntries, readJson, readTex
 const PLACEHOLDER = /^<<<.*>>>$/;
 const SECRET_KEY = /(key|token|secret|password|credential)$/i;
 const RUNTIME_KEYS = ["lastChangelogVersion", "defaultThinkingLevel"];
-const SAMPLES = ["models.json", "settings.json", "auth.json", "mcporter.json"];
+const SAMPLES = ["models.json", "settings.json", "auth.json", "mcp.json"];
 
 for (const name of SAMPLES) {
 	test(`${name}.sample is valid JSON`, () => {
@@ -173,4 +173,40 @@ test("auth.json.sample holds no real credentials", (t) => {
 
 	assert.deepEqual(leaked, [], `auth.json.sample leaks: ${leaked.join(", ")}`);
 	t.diagnostic("auth.json.sample has no real credentials");
+});
+
+/**
+ * `mcp.json` is not on guard.ts's read-block list, unlike `auth.json` and
+ * `mcp-auth.json`, so a token written into it literally would reach the provider
+ * the first time the agent reads its own config. pi expands `${VAR}` and runs
+ * `!command` in `env`, `headers` and `oauth` values (docs/mcp.md), which keeps
+ * the token in `~/.custom_env` instead. Only paths are reported, never values.
+ */
+const MCP_REFERENCE = /\$\{[A-Za-z_][A-Za-z0-9_]*\}|^!./;
+const mcpSecretLeaves = (config: unknown) =>
+	leaves(config).filter(
+		([path, value]) => typeof value === "string" && /^mcpServers\.[^.]+\.(env|headers|oauth)\./.test(path),
+	) as Array<[string, string]>;
+
+test("mcp.json values that can hold a token reference one instead", (t) => {
+	const sample = readJson<unknown>("mcp.json.sample");
+	if (!sample) return t.skip("mcp.json.sample unreadable");
+	const literalInSample = mcpSecretLeaves(sample)
+		.filter(([, value]) => !PLACEHOLDER.test(value) && !MCP_REFERENCE.test(value))
+		.map(([path]) => path);
+	assert.deepEqual(literalInSample, [], `mcp.json.sample: literal values at ${literalInSample.join(", ")}`);
+
+	const real = readJson<unknown>("mcp.json");
+	if (!real) return t.diagnostic("mcp.json absent or not valid JSON");
+	const literalInReal = mcpSecretLeaves(real)
+		.filter(([, value]) => !MCP_REFERENCE.test(value) && !PLACEHOLDER.test(value))
+		.map(([path]) => path);
+	assert.deepEqual(literalInReal, [], `mcp.json: use \${VAR} or !command instead of a literal at ${literalInReal.join(", ")}`);
+
+	// A placeholder left in the real file only breaks that server, which pi
+	// reports and skips, so it is a note rather than a failure.
+	const unfilled = leaves(real)
+		.filter(([, value]) => typeof value === "string" && value.includes("<<<"))
+		.map(([path]) => path);
+	t.diagnostic(unfilled.length ? `mcp.json still has placeholders at ${unfilled.join(", ")}` : "mcp.json is filled in");
 });

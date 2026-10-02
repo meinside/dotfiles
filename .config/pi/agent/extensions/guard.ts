@@ -7,6 +7,12 @@
  * credential files, blocks the file-reading tools from returning their contents,
  * confirms machine-changing or irreversible commands, and leaves everything else
  * unprompted. Rationale and the limits of the read block in README.md.
+ *
+ * Calls a `codemode` script makes (`tools.read`, `tools.bash`, MCP tools) reach
+ * the same `tool_call`/`tool_result` handlers under their own tool names, with
+ * `parentToolCallId` set (docs/mcp.md, "Permissions"), so nothing here keys on
+ * the caller. `models.classify()` and `models.generateImages()` are not tool
+ * calls and never pass through this file.
  */
 
 import { homedir } from "node:os";
@@ -32,6 +38,7 @@ const PROTECTED_PATHS = [
 	"~/.config/claude/settings.json",
 	"~/.config/gcloud",
 	"~/.config/pi/agent/auth.json",
+	"~/.config/pi/agent/mcp-auth.json",
 	"~/.config/rclone",
 	"~/.custom_env",
 	"~/.gnupg",
@@ -39,6 +46,7 @@ const PROTECTED_PATHS = [
 	"~/.npmrc",
 	"~/.ollama/id_ed25519",
 	"~/.pi/agent/auth.json",
+	"~/.pi/agent/mcp-auth.json",
 	"~/.ssh",
 ];
 
@@ -76,6 +84,7 @@ const SECRET_PATHS = [
 	"~/.config/claude/sessions",
 	"~/.config/gcloud",
 	"~/.config/pi/agent/auth.json",
+	"~/.config/pi/agent/mcp-auth.json",
 	"~/.config/pi/agent/sessions",
 	"~/.config/rclone",
 	"~/.custom_env",
@@ -85,6 +94,7 @@ const SECRET_PATHS = [
 	"~/.npmrc",
 	"~/.ollama/id_ed25519",
 	"~/.pi/agent/auth.json",
+	"~/.pi/agent/mcp-auth.json",
 	"~/.pi/agent/sessions",
 	"~/.python_history",
 	"~/.ssh",

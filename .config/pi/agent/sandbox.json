@@ -144,6 +144,7 @@
       "~/.config/gcloud",
       "~/.config/gh",
       "~/.config/pi/agent/auth.json",
+      "~/.config/pi/agent/mcp-auth.json",
       "~/.config/rclone",
       "~/.gem/credentials",
       "~/.gnupg",
@@ -153,6 +154,7 @@
       "~/.npmrc",
       "~/.ollama/id_ed25519",
       "~/.pi/agent/auth.json",
+      "~/.pi/agent/mcp-auth.json",
       "~/.ssh"
     ]
   }

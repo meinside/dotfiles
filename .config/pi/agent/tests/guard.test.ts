@@ -44,12 +44,14 @@ test("credential paths are not writable", async () => {
 	// sorted, like the list in guard.ts, so an addition has one obvious place to go
 	for (const path of [
 		"auth.json", // relative to cwd
+		"mcp-auth.json",
 		"~/.aws/config",
 		"~/.aws/sso/cache/x.json",
 		"~/.claude/settings.json",
 		"~/.config/claude/settings.json",
 		"~/.config/gcloud/x.json",
 		"~/.config/pi/agent/auth.json",
+		"~/.config/pi/agent/mcp-auth.json",
 		"~/.config/rclone/rclone.conf",
 		"~/.custom_env",
 		"~/.gnupg/pubring.kbx",
@@ -57,6 +59,7 @@ test("credential paths are not writable", async () => {
 		"~/.npmrc",
 		"~/.ollama/id_ed25519",
 		"~/.pi/agent/auth.json",
+		"~/.pi/agent/mcp-auth.json",
 		"~/.ssh/authorized_keys",
 	]) {
 		assert.equal((await call("write", path))?.block, true, `write ${path} should be blocked`);
@@ -67,6 +70,7 @@ test("credential paths are not writable", async () => {
 test("secret paths are not readable", async () => {
 	for (const path of [
 		"auth.json",
+		"mcp-auth.json",
 		"~/.aws/cli/cache/session.db",
 		"~/.aws/credentials",
 		"~/.aws/sso/cache/x.json",
@@ -75,6 +79,7 @@ test("secret paths are not readable", async () => {
 		"~/.config/claude/history.jsonl",
 		"~/.config/gcloud/credentials.db",
 		"~/.config/pi/agent/auth.json",
+		"~/.config/pi/agent/mcp-auth.json",
 		"~/.config/pi/agent/sessions/x.jsonl",
 		"~/.config/rclone/rclone.conf",
 		"~/.custom_env",

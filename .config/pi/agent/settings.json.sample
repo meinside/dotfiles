@@ -13,6 +13,7 @@
     "ollama/*",
     "openrouter/**"
   ],
+  "defaultTools": ["+codemode"],
   "defaultThinkingLevel": "medium",
   "packages": [
     "git:github.com/meinside/pi-quota-rotate",
@@ -23,7 +24,6 @@
     "npm:pi-ask-user",
     "npm:pi-env",
     "npm:pi-magpi",
-    "npm:pi-mcporter",
     "npm:pi-rewind",
     "npm:pi-sandbox"
   ],

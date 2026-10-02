@@ -16,14 +16,15 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 
 | Path | Tracked in dotfiles | Purpose |
 |------|---------------------|---------|
-| `settings.json` | `.sample` mirror | Theme, default model, `enabledModels` for `Ctrl+P` cycling |
+| `settings.json` | `.sample` mirror | Theme, default model, `enabledModels` for `Ctrl+P` cycling, `defaultTools` (`+codemode`, so scripts can call classifier and image models through `models`) |
 | `models.json` | `.sample` only | Providers, models, tier aliases. Holds the AWS account ID inside Bedrock ARNs |
 | `auth.json` | `.sample` template | Credentials. Never commit the real file. The sample is a template, not a mirror |
 | `models-store.json` | no | Generated model catalog cache. Do not edit or commit; `check.sh` reads it to cross-check prices |
 | `pi-lsp.json` | yes | Language server routes ([notes](#language-servers-pi-lsp)) |
 | `magpi.json` | yes | MagPi config: 100 MB cache budget, `allowPrivateNetwork: false` |
 | `magpi-render.json` | no | Optional `extensions/magpi-render.ts` overrides: `enabled`, `browserBinary`, `renderHosts`, `learnHosts`, `sameSiteOnlyHosts`, `maxWaitMs`. Absent means defaults, which is the state here ([notes](#magpi-renderer)) |
-| `mcporter.json` | `.sample` mirror | `pi-mcporter`'s exposure policy. The MCP *server* definitions live in `~/.config/mcporter/mcporter.json`, outside this directory |
+| `mcp.json` | `.sample` mirror | Servers for pi's built-in MCP client, reached from `codemode` scripts. Tokens go in as `${VAR}` from `~/.custom_env`, never literally: unlike `auth.json` the file is readable by the agent (`samples.test.ts` enforces it) |
+| `mcp-auth.json` | no | Built-in MCP OAuth tokens, written by `/mcp login`. Write- and read-blocked like `auth.json` |
 | `sandbox.json` | yes | `pi-sandbox` policy ([notes](#sandbox-extension)). Mutated live by `/sandbox-allow ... for all projects`, so tracking turns that prompt into a `git diff` |
 | `quota-rotate.json` | `.sample` mirror | `pi-quota-rotate`'s fallback chain of `provider/modelId` entries, plus `maxRotationsPerRun`. Real file is local; `quota-rotate.test.ts` checks that it and the sample still resolve |
 | `magpi-cache/` | no | MagPi's fetch cache. `~/.pi/agent/magpi-cache` in MagPi's docs is this same directory through the `~/.pi` symlink |
@@ -155,7 +156,8 @@ process. `extensions/guard.ts` is the narrow middle ground — patterns live in 
 
 - **Blocked, never confirmed (writes):** `~/.ssh`, `~/.gnupg`, `~/.aws`,
   `~/.config/gcloud`, `~/.config/rclone`, `~/.netrc`, `~/.npmrc`,
-  `~/.ollama/id_ed25519`, `~/.custom_env`, `auth.json`, Claude's `settings.json`.
+  `~/.ollama/id_ed25519`, `~/.custom_env`, `auth.json`, `mcp-auth.json`, Claude's
+  `settings.json`.
 - **Also unreadable** through `read`/`grep`: most of the above plus transcript stores
   (`sessions/`, `history.jsonl`, shell histories). `~/.aws/config` and Claude's
   `settings.json` stay readable; transcripts are read-blocked but not write-blocked.
@@ -493,13 +495,13 @@ process, and a package runs with full system access.
 | `pi-ask-user` | `ask_user` tool with a structured form, plus an `ask-user` skill. Needs a UI, so subagents do not get it |
 | `pi-env` | Exports `settings.json`'s `env` block into the process environment. That is the only route by which `PI_RETRY_STALL_TIMEOUT_MS` reaches `@narumitw/pi-retry`, which reads it from the environment and not from settings |
 | `pi-magpi` | `magpi_fetch` / `magpi_search` / `magpi_cached`: pages as markdown behind a 24 h cache, official-API handlers for the big registries. SSRF-guarded. Its reddit handler is replaced locally, and Discourse/naver get their own ([notes](#magpi-handlers)) |
-| `pi-mcporter` | MCP servers behind one `mcporter` proxy tool, with per-server exposure levels (`on-demand`/`index`/`match`/`native`) that decide how much schema reaches context |
 | `pi-rewind` | Snapshots taken per tool call, restored through `/rewind` or `Esc Esc`, with a redo stack. Beside `extensions/git-checkpoint.ts`, not instead of it: that one stashes once per turn so `/fork` has a tree to return to, this one undoes individual edits inside a turn |
 | `pi-sandbox` | OS-level sandboxing ([notes](#sandbox-extension)) |
 
-The bar is small, dependency-free, auditable code. `pi-mcporter` and `pi-sandbox` are
-**documented exceptions** (prebuilt native binaries, large dependency chains) kept for
-capability. `pi-smart-fetch` is rejected on the same criteria.
+The bar is small, dependency-free, auditable code. `pi-sandbox` is a **documented
+exception** (prebuilt native binaries, large dependency chain) kept for capability.
+MCP needs no package: pi's built-in client reads `mcp.json`, so an MCP bridge such as
+`pi-mcporter` would only duplicate it. `pi-smart-fetch` is rejected on the same criteria.
 
 - **`/cost` prints the AWS account ID**: cost-counter records `message.model`, the full
   inference profile ARN under Bedrock. The ledger holds the same ARNs, so it is never

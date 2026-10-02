@@ -1,0 +1,18 @@
+{
+  "mcpServers": {
+    "<<<mcp-with-stdio>>>": {
+      "command": "<<<one executable such as npx or an absolute path, not a shell string>>>",
+      "args": ["<<<one argument per entry>>>"],
+      "env": {
+        "<<<ENV_NAME>>>": "${ENV_NAME}"
+      },
+      "description": "<<<description of the mcp>>>",
+      "exposure": "codemode"
+    },
+    "<<<mcp-with-oauth>>>": {
+      "url": "<<<streamable HTTP endpoint, the /mcp one, not /sse>>>",
+      "description": "<<<description of the mcp>>>",
+      "exposure": "codemode"
+    }
+  }
+}
