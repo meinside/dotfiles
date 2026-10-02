@@ -20,14 +20,28 @@ type ToolResultPatch = { content: Array<{ type: string; text?: string }> } | und
 /** Type stripping leaves the CJS default nested one level deeper. */
 const entry = (guardModule as { default?: unknown }).default;
 const guard = (typeof entry === "function" ? entry : (entry as { default?: unknown })?.default) as (
-	pi: { on: (name: string, handler: Handler) => void },
+	pi: { on: (name: string, handler: Handler) => void; getAllTools: () => unknown[] },
 ) => void;
+
+/**
+ * MCP tools as `pi.getAllTools()` reports them, one per combination of hints the
+ * approval rule distinguishes. Server and tool names are neutral on purpose.
+ */
+const MCP_TOOLS: Array<{ name: string; annotations?: Record<string, boolean> }> = [
+	{ name: "mcp__srv__no_hints" },
+	{ name: "mcp__srv__read", annotations: { readOnlyHint: true } },
+	{ name: "mcp__srv__read_but_destructive", annotations: { readOnlyHint: true, destructiveHint: true } },
+	{ name: "mcp__srv__additive_closed", annotations: { destructiveHint: false, openWorldHint: false } },
+	{ name: "mcp__srv__additive_open", annotations: { destructiveHint: false } },
+	{ name: "mcp__srv__destructive", annotations: { destructiveHint: true } },
+];
 
 const handlers: Record<string, Handler> = {};
 guard({
 	on: (name, handler) => {
 		handlers[name] = handler;
 	},
+	getAllTools: () => MCP_TOOLS,
 });
 
 const CWD = join(homedir(), ".config/pi/agent");
@@ -138,6 +152,48 @@ test("machine-changing commands need a confirmation that headless cannot give", 
 		await handlers.tool_call({ toolName: "bash", input: { command: "cat ~/.aws/credentials" } }, ctx),
 		undefined,
 	);
+});
+
+const mcpCall = (toolName: string, context: unknown = ctx) =>
+	handlers.tool_call({ toolName, input: { id: 1 } }, context) as Promise<ToolCallResult>;
+
+test("MCP calls follow pi's documented approval rule on server annotations", async () => {
+	// headless: anything needing approval is blocked, the rest passes untouched
+	const expected: Record<string, boolean> = {
+		mcp__srv__no_hints: true, // MCP defaults: not read-only, may be destructive, open world
+		mcp__srv__read: false,
+		mcp__srv__read_but_destructive: true, // an explicit destructive hint wins
+		mcp__srv__additive_closed: false,
+		mcp__srv__additive_open: true, // openWorldHint defaults to true
+		mcp__srv__destructive: true,
+		mcp__srv__not_listed: true, // a tool pi does not report has no hints at all
+	};
+	for (const [name, blocked] of Object.entries(expected)) {
+		const result = await mcpCall(name);
+		assert.equal(result?.block === true, blocked, name);
+	}
+});
+
+test("an MCP call needing approval runs once the user allows it", async () => {
+	let asked = "";
+	const withUI = {
+		...ctx,
+		hasUI: true,
+		ui: {
+			...ctx.ui,
+			select: async (title: string) => {
+				asked = title;
+				return "Allow once";
+			},
+		},
+	};
+	assert.equal(await mcpCall("mcp__srv__destructive", withUI), undefined);
+	assert.match(asked, /mcp__srv__destructive \{"id":1\}/);
+});
+
+test("the MCP rule leaves non-MCP tools alone, hints or not", async () => {
+	assert.equal(await mcpCall("magpi_fetch"), undefined);
+	assert.equal(await mcpCall("codemode"), undefined);
 });
 
 const grepResult = (path: string | undefined, text: string) =>

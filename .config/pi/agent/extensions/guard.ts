@@ -5,8 +5,9 @@
  * Sandbox") and its answer for risky work is to isolate the process, which is no
  * use for a config that edits the home directory. So this blocks writes to
  * credential files, blocks the file-reading tools from returning their contents,
- * confirms machine-changing or irreversible commands, and leaves everything else
- * unprompted. Rationale and the limits of the read block in README.md.
+ * confirms machine-changing or irreversible commands and MCP calls their server
+ * does not declare safe, and leaves everything else unprompted. Rationale and
+ * the limits of the read block in README.md.
  *
  * Calls a `codemode` script makes (`tools.read`, `tools.bash`, MCP tools) reach
  * the same `tool_call`/`tool_result` handlers under their own tool names, with
@@ -17,7 +18,7 @@
 
 import { homedir } from "node:os";
 import { isAbsolute, resolve, sep } from "node:path";
-import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext, ToolAnnotations } from "@earendil-works/pi-coding-agent";
 
 // ---------------------------------------------------------------- policy
 
@@ -153,6 +154,33 @@ function matchCommand(command: string): string | undefined {
 }
 
 /**
+ * Whether an MCP call needs the user's approval, from the annotations its server
+ * declares. This is the rule pi documents for permission extensions
+ * (docs/extensions.md, "Tool exposure") and Codex applies, kept as given:
+ * missing hints take the MCP defaults (not read-only, may be destructive, open
+ * world), so a server that declares nothing is confirmed on every call.
+ *
+ * The cure for a server that over-prompts is annotations on that server, not a
+ * name pattern here: a tool called `get_*` is no evidence the call only reads,
+ * and a wrong guess in this direction sends a write without asking.
+ */
+export function needsApproval(hints: ToolAnnotations | undefined): boolean {
+	return (
+		hints?.destructiveHint === true ||
+		(!hints?.readOnlyHint && ((hints?.destructiveHint ?? true) || (hints?.openWorldHint ?? true)))
+	);
+}
+
+/** MCP tools are named `mcp__<server>__<tool>` (docs/mcp.md). */
+const MCP_PREFIX = "mcp__";
+
+/** Enough of the arguments to tell what the call does, without filling the dialog. */
+function preview(input: unknown, max = 400): string {
+	const text = JSON.stringify(input) ?? "";
+	return text.length > max ? `${text.slice(0, max)}…` : text;
+}
+
+/**
  * Ask before running. Blocks without asking when no UI can answer: headless runs
  * (`-p`, `--mode json`) should fail loudly rather than install something.
  */
@@ -187,6 +215,18 @@ export default function (pi: ExtensionAPI) {
 				};
 			}
 			return undefined;
+		}
+
+		// Looked up per call: servers connect in the background and can change their
+		// tools, so annotations read at load time would be missing or stale.
+		if (event.toolName.startsWith(MCP_PREFIX)) {
+			const hints = pi.getAllTools().find((tool) => tool.name === event.toolName)?.annotations;
+			if (!needsApproval(hints)) return undefined;
+			if (await allow(ctx, "MCP call", `${event.toolName} ${preview(event.input)}`)) return undefined;
+			return {
+				block: true,
+				reason: `${event.toolName} was not approved (guard.ts: its server's annotations do not mark it safe); ask the user before retrying`,
+			};
 		}
 
 		if (event.toolName !== "bash") return undefined;

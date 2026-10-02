@@ -1,5 +1,5 @@
 {
-  "theme": "dark",
+  "theme": "system",
   "defaultProvider": "<<<provider-id>>>",
   "defaultModel": "<<<model-id-from-list-models-not-a-tier>>>",
   "enabledModels": [
@@ -34,5 +34,6 @@
   },
   "env": {
     "PI_RETRY_STALL_TIMEOUT_MS": 180000
-  }
+  },
+  "quietStartup": "header"
 }

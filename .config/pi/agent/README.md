@@ -31,7 +31,7 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 | `cost-tracker/` | no | Cost ledger, one JSONL per day under `YYYY/MM/`. Contains Bedrock ARNs |
 | `npm/` | no | `pi install` target. Ships its own `.gitignore` with `*` |
 | `extensions/subagent/` | yes | Vendored subagent extension ([notes](#vendored-subagent-extension)) |
-| `extensions/guard.ts` | yes | Blocks writes to credential files, confirms installs and irreversible commands |
+| `extensions/guard.ts` | yes | Blocks writes to credential files, confirms installs, irreversible commands and MCP calls not marked safe |
 | `extensions/git-checkpoint.ts` | yes | Vendored upstream example: per-turn git stash checkpoints for `/fork` |
 | `extensions/statusline.ts` | yes | Claude Code style footer ([notes](#statusline-extension)) |
 | `extensions/compaction-summary.ts` | yes | Gives the compaction summary room without shrinking the context window ([notes](#compaction-extensions)) |
@@ -163,6 +163,10 @@ process. `extensions/guard.ts` is the narrow middle ground — patterns live in 
   `settings.json` stay readable; transcripts are read-blocked but not write-blocked.
 - **Ask once:** package managers, irreversible git/filesystem operations. Read-only and
   reversible forms are excluded.
+- **Ask once, MCP:** every `mcp__*` call, `codemode` scripts included, unless its
+  server's annotations mark it safe. The rule is pi's own (`needsApproval` in the file);
+  a server that prompts too often needs `readOnlyHint` on its tools, not an exception
+  here.
 - **No UI (`-p`, `--mode json`): a match is blocked**, so headless runs fail loudly. `!`
   commands go through `user_bash` and enforce only that rule.
 
