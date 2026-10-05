@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2026.10.02.
+# last update: 2026.10.06.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -40,7 +40,7 @@ erlang 29.1.1
 # $ asdf plugin add gleam
 #
 # https://github.com/gleam-lang/gleam/releases
-gleam 1.18.1
+gleam 1.19.0
 
 # $ asdf plugin add golang
 # $ asdf install golang
@@ -186,5 +186,5 @@ tinygo 0.41.1
 #   :MasonInstall zls
 #
 # https://codeberg.org/ziglang/zig/tags
-zig 0.16.0
+zig 0.17.0
 
