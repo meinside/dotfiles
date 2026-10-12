@@ -22,6 +22,7 @@
     "npm:@narumitw/pi-lsp",
     "npm:@narumitw/pi-retry",
     "npm:pi-ask-user",
+    "npm:pi-claude-bridge",
     "npm:pi-env",
     "npm:pi-magpi",
     "npm:pi-rewind",

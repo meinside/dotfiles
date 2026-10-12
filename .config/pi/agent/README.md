@@ -30,6 +30,7 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 | `magpi-cache/` | no | MagPi's fetch cache. `~/.pi/agent/magpi-cache` in MagPi's docs is this same directory through the `~/.pi` symlink |
 | `cost-tracker/` | no | Cost ledger, one JSONL per day under `YYYY/MM/`. Contains Bedrock ARNs |
 | `npm/` | no | `pi install` target. Ships its own `.gitignore` with `*` |
+| `install/`, `bin/pi` | no | pi itself, from `pi.dev/install.sh`: `bin/pi` runs `install/releases/<install/current-version>/`. Managed by `pi update`; do not edit |
 | `extensions/subagent/` | yes | Vendored subagent extension ([notes](#vendored-subagent-extension)) |
 | `extensions/guard.ts` | yes | Blocks writes to credential files, confirms installs, irreversible commands and MCP calls not marked safe |
 | `extensions/git-checkpoint.ts` | yes | Vendored upstream example: per-turn git stash checkpoints for `/fork` |
@@ -71,7 +72,7 @@ pi ships no built-in sub-agents, so tiered model usage comes from the upstream
 
 - **Upstream repo:** <https://github.com/earendil-works/pi-mono>
 - **Upstream path:** `packages/coding-agent/examples/extensions/subagent/`
-- **Local copy of upstream:** resolved by `tests/lib.ts`'s `piPackageDir()` — `brew --prefix pi-coding-agent`, else the real path of the `pi` binary on `PATH` (works for `pi.dev/install.sh` installs too)
+- **Local copy of upstream:** resolved by `tests/lib.ts`'s `piPackageDir()` — `brew --prefix pi-coding-agent`, else the real path of the `pi` binary on `PATH` (npm installs), else that binary's managed-install release (`pi.dev/install.sh`)
 - **Vendored from:** pi 0.84.3
 
 Each delegation spawns a separate `pi` process with its own context window. Agents
@@ -115,7 +116,7 @@ concurrent, `Ctrl+O` expands output and per-step cost).
 ### Updating the vendored files
 
 The vendored files are byte-identical to upstream except the `model:` lines, which the
-comparison ignores. Run after every `brew upgrade pi-coding-agent` and before committing:
+comparison ignores. Run after every `pi update` and before committing:
 
 ```bash
 ~/.config/pi/agent/check.sh      # -v to print the diffs
@@ -135,14 +136,6 @@ cp $U/subagent/prompts/*.md $C/prompts/
 cp $U/subagent/agents/*.md $C/agents/     # then re-apply the tiers from the
                                           # Agents table
 ~/.config/pi/agent/check.sh                # then bump "Vendored from" above
-```
-
-Upgrading Homebrew's copy while a pi session runs deletes the Cellar directory that
-process started from (`pi.dev/install.sh` installs replace in place, no such risk):
-
-```bash
-HOMEBREW_NO_INSTALL_CLEANUP=1 brew upgrade pi-coding-agent
-brew cleanup pi-coding-agent    # after the session ends
 ```
 
 `check.sh` resolves the upstream prefix, then hands over to `node --test tests/*.test.ts`
@@ -596,7 +589,8 @@ has a model source, every `modelOverrides` key matches a preset section, and
 
 1. `export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"` must be active (already
    in `~/.zshrc`). Without it pi reads `~/.pi/agent`.
-2. `brew install pi-coding-agent`
+2. `curl -fsSL https://pi.dev/install.sh | sh` — installs into this directory
+   (`install/`, `bin/pi`) and links a `pi` on `PATH`; `pi update` upgrades it
 3. Clone the dotfiles repo — brings `extensions/`, `agents/`, `prompts/`,
    `AGENTS.md`, `check.sh`, this README, the `.sample` files and the
    `~/.pi -> .config/pi` symlink.

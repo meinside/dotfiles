@@ -25,15 +25,32 @@ function viaHomebrewPrefix(prefix: string): string | undefined {
 	return existsSync(candidate) ? candidate : undefined;
 }
 
+/** pi.dev's installer-managed layout: `pi` is a shell launcher in `<agentDir>/bin`
+ * that runs `<agentDir>/install/releases/<current-version>/...`, so its real path
+ * holds no marker. Mirrors the launcher's own lookup rather than guessing. */
+function viaManagedLauncher(realBinary: string): string | undefined {
+	const installDir = join(dirname(dirname(realBinary)), "install");
+	let version: string;
+	try {
+		version = readFileSync(join(installDir, "current-version"), "utf8").split("\n")[0].trim();
+	} catch {
+		return undefined;
+	}
+	if (!/^[0-9A-Za-z._+-]+$/.test(version) || version === "." || version === "..") return undefined;
+	const candidate = join(installDir, "releases", version, NODE_MODULES_MARKER);
+	return existsSync(candidate) ? candidate : undefined;
+}
+
 /**
  * Locates the installed `@earendil-works/pi-coding-agent` package directory
  * regardless of install method. Tries `brew --prefix` first, since it is a
  * version-independent symlink and the common case on macOS; falls back to
  * resolving the real path of the `pi` binary on `PATH` and finding the
  * `node_modules/@earendil-works/pi-coding-agent` marker within it, which
- * covers `pi.dev/install.sh` and a plain `npm install -g` on Linux (or
- * anywhere without Homebrew). A marker search rather than a fixed number of
- * `dirname` hops from the binary, because npm's bin symlink can point
+ * covers a plain `npm install -g` on Linux (or anywhere without Homebrew).
+ * Last, `pi.dev/install.sh`'s managed launcher (`viaManagedLauncher`).
+ *
+ * A marker search rather than a fixed number of `dirname` hops from the binary, because npm's bin symlink can point
  * arbitrarily deep into the package (`dist/cli.js`, `bin/pi.js`, ...) — only
  * Homebrew's own Cellar layout happens to put `bin/pi` exactly two levels
  * below the package root.
@@ -58,8 +75,12 @@ export function piPackageDir(): string {
 	const realBinary = realpathSync.native(piBinary);
 	const markerIndex = realBinary.indexOf(NODE_MODULES_MARKER);
 	if (markerIndex !== -1) return realBinary.slice(0, markerIndex + NODE_MODULES_MARKER.length);
+	const managed = viaManagedLauncher(realBinary);
+	if (managed) return managed;
 
-	throw new Error(`could not locate ${PI_NPM_PACKAGE}: tried brew --prefix and the pi binary at ${realBinary}`);
+	throw new Error(
+		`could not locate ${PI_NPM_PACKAGE}: tried brew --prefix, the pi binary at ${realBinary} and its managed install`,
+	);
 }
 
 /** Upstream copy of the vendored examples. */

@@ -50,11 +50,12 @@ C="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # layout first (fast, version-independent symlink), then a marker search
 # through the real path of the `pi` binary on PATH for
 # node_modules/@earendil-works/pi-coding-agent — covers plain `npm install -g`
-# (including what pi.dev/install.sh does) regardless of how many directories
-# separate the npm bin symlink from the package root, which a fixed number of
-# `dirname` hops cannot assume.
+# regardless of how many directories separate the npm bin symlink from the
+# package root, which a fixed number of `dirname` hops cannot assume. Last,
+# pi.dev/install.sh's managed layout: `pi` is a shell launcher in <agent>/bin
+# that runs <agent>/install/releases/<install/current-version>; same rule here.
 find_pi_package_dir() {
-    local prefix pi_bin pi_real marker
+    local prefix pi_bin pi_real marker install_dir version
     marker="node_modules/@earendil-works/pi-coding-agent"
     if command -v brew >/dev/null 2>&1; then
         prefix="$(brew --prefix pi-coding-agent 2>/dev/null)" || true
@@ -71,6 +72,15 @@ find_pi_package_dir() {
             return 0
             ;;
     esac
+    install_dir="$(dirname "$(dirname "$pi_real")")/install"
+    IFS= read -r version < "$install_dir/current-version" 2>/dev/null || return 1
+    case "$version" in
+        ""|.|..|*[!0-9A-Za-z._+-]*) return 1 ;;
+    esac
+    if [ -d "$install_dir/releases/$version/$marker" ]; then
+        printf '%s\n' "$install_dir/releases/$version/$marker"
+        return 0
+    fi
     return 1
 }
 
@@ -80,11 +90,15 @@ U="$PI_PACKAGE_DIR/examples/extensions"
 # Checked here rather than in a test: without it every vendored case fails with
 # the same cause, and tiers.test.ts cannot borrow pi's resolver at all.
 if [ -z "$PI_PACKAGE_DIR" ] || [ ! -d "$U/subagent" ]; then
-    echo "error: upstream examples not found (tried brew --prefix and the pi binary on PATH; looked in ${U:-<unresolved>})" >&2
+    echo "error: upstream examples not found (tried brew --prefix, the pi binary on PATH and its managed install; looked in ${U:-<unresolved>})" >&2
     exit 2
 fi
+# pi.dev/install.sh may install its own node without adding it to shell profiles;
+# the launcher puts it on PATH the same way.
+pi_node_bin="${XDG_DATA_HOME:-$HOME/.local/share}/pi-node/current/bin"
+[ -x "$pi_node_bin/node" ] && PATH="$pi_node_bin:$PATH"
 if ! command -v node >/dev/null; then
-    echo "error: node not found; it comes with pi (brew install pi-coding-agent, or pi.dev/install.sh)" >&2
+    echo "error: node not found; install Node.js 22.19+ or let pi.dev/install.sh install it" >&2
     exit 2
 fi
 
