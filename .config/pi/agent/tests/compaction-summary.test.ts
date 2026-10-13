@@ -25,8 +25,9 @@ redirectPiImports();
 // Dynamic, so the hook above is installed before the module's own imports run.
 const mod = await import(join(dirname(import.meta.dirname), "extensions/compaction-summary.ts"));
 
-const { budgetFor, improvesBudget, messagesFor, compactionFrom, describeAttempt, progressText, readFileConfig, triggerAt, shouldTriggerEarly, failureAnnouncement } =
+const { budgetFor, improvesBudget, messagesFor, compactionFrom, describeAttempt, progressText, readFileConfig, triggerAt, shouldTriggerEarly, failureAnnouncement, summarizedByBridge } =
 	mod as {
+		summarizedByBridge: (model: { api?: string } | undefined) => boolean;
 		failureAnnouncement: (message: string, elapsedMs?: number) => { message: string; elapsedMs?: number };
 		budgetFor: (reserveTokens: number, modelMaxTokens: number | undefined) => number;
 		improvesBudget: (
@@ -76,6 +77,16 @@ test("a model whose output cap already binds is left to pi", () => {
 	assert.equal(improvesBudget({ id: "big", maxTokens: 128_000 }, 32_768, 16_384), true);
 	assert.equal(improvesBudget({ id: "mid", maxTokens: 20_000 }, 32_768, 16_384), true);
 	assert.equal(improvesBudget(undefined, 32_768, 16_384), false, "no model means nothing to improve");
+});
+
+test("a claude-bridge model is left to pi-claude-bridge's own compaction", () => {
+	// Calling one failed with "No API provider registered for api: claude-bridge" and
+	// warned that pi's compaction ran, while the bridge's takeover was what actually did.
+	assert.equal(summarizedByBridge({ api: "claude-bridge" }), true);
+	assert.equal(summarizedByBridge({ api: "bedrock-converse-stream" }), false);
+	assert.equal(summarizedByBridge({ api: "anthropic-messages" }), false);
+	assert.equal(summarizedByBridge({}), false);
+	assert.equal(summarizedByBridge(undefined), false, "no model is pi's case, not the bridge's");
 });
 
 test("the progress line answers the question that cancelled a working call", () => {

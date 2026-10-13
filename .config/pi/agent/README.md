@@ -272,6 +272,8 @@ and summarizing a 577 K-token session failed there.
 retry policy, only the budget differs — so **`settings.json` keeps the default 16,384 and
 every model keeps its native context window**. It steps aside (pi's own compaction runs)
 when the model's `maxTokens` already binds, when the summary is empty, and on any error.
+On `claude-bridge` models it takes no part: pi-claude-bridge compacts those itself, at
+pi's default budget (`BRIDGE_API` in the source says why).
 
 - **Tune it in the `CONFIG` block at the top of the file**, which carries the measurement
   behind each value. `compaction-summary.json` overrides `reserveTokens`,

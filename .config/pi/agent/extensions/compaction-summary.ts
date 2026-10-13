@@ -128,14 +128,30 @@ const CONFIG = {
 const BUDGET_FRACTION = 0.8;
 /** pi's default, from DEFAULT_COMPACTION_SETTINGS. Only used to compare against. */
 const DEFAULT_RESERVE_TOKENS = 16_384;
+/**
+ * The `api` pi-claude-bridge registers its models under. Its stream exists only inside
+ * pi's model runtime, not pi-ai's global registry, so `generateSummaryWithUsage` without a
+ * `streamFn` fails with "No API provider registered for api: claude-bridge". Routing it
+ * through `ctx.modelRegistry.streamSimple` instead would reach the bridge's live Claude
+ * Code session, which the bridge deliberately keeps summaries out of. It takes over
+ * `session_before_compact` for its own models with an isolated subprocess, and pi keeps
+ * the last handler's answer, so taking part could only fail or be overwritten.
+ */
+const BRIDGE_API = "claude-bridge";
 // ---------------------------------------------------------------- pure helpers
 
 export interface ModelLike {
 	id: string;
 	name?: string;
 	provider?: string;
+	api?: string;
 	maxTokens: number;
 	reasoning?: boolean;
+}
+
+/** Whether pi-claude-bridge, not this file, summarizes for this model (see BRIDGE_API). */
+export function summarizedByBridge(model: Pick<ModelLike, "api"> | undefined): boolean {
+	return model?.api === BRIDGE_API;
 }
 
 /** `min(0.8 * reserveTokens, model.maxTokens)`; a model declaring no cap keeps the fraction. */
@@ -315,7 +331,11 @@ export default function (pi: ExtensionAPI) {
 
 	pi.on("session_before_compact", async (event, ctx) => {
 		const { preparation: prep, customInstructions, signal } = event;
+		// The session model decides whether the bridge takes over; the summarizer model
+		// decides whether this file could call it at all.
+		if (summarizedByBridge(ctx.model)) return undefined;
 		const model = pickModel(ctx);
+		if (summarizedByBridge(model)) return undefined;
 		if (!improvesBudget(model, reserveTokens, DEFAULT_RESERVE_TOKENS)) return undefined;
 		if (!model) return undefined;
 
