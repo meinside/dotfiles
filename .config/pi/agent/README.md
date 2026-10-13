@@ -17,7 +17,8 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 | Path | Tracked in dotfiles | Purpose |
 |------|---------------------|---------|
 | `settings.json` | `.sample` mirror | Theme, default model, `enabledModels` for `Ctrl+P` cycling, `defaultTools` (`+codemode`, so scripts can call classifier and image models through `models`) |
-| `models.json` | `.sample` only | Providers, models, tier aliases. Holds the AWS account ID inside Bedrock ARNs |
+| `models.json` | `.sample` only | Providers, models, tier aliases. Holds the AWS account ID whenever it carries Bedrock ARNs |
+| `claude-bridge.json` | yes | `pi-claude-bridge` config: `provider.plan` (`max` unlocks 1M-context Opus), `askClaude.enabled: false` |
 | `auth.json` | `.sample` template | Credentials. Never commit the real file. The sample is a template, not a mirror |
 | `models-store.json` | no | Generated model catalog cache. Do not edit or commit; `check.sh` reads it to cross-check prices |
 | `pi-lsp.json` | yes | Language server routes ([notes](#language-servers-pi-lsp)) |
@@ -28,7 +29,7 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 | `sandbox.json` | yes | `pi-sandbox` policy ([notes](#sandbox-extension)). Mutated live by `/sandbox-allow ... for all projects`, so tracking turns that prompt into a `git diff` |
 | `quota-rotate.json` | `.sample` mirror | `pi-quota-rotate`'s fallback chain of `provider/modelId` entries, plus `maxRotationsPerRun`. Real file is local; `quota-rotate.test.ts` checks that it and the sample still resolve |
 | `magpi-cache/` | no | MagPi's fetch cache. `~/.pi/agent/magpi-cache` in MagPi's docs is this same directory through the `~/.pi` symlink |
-| `cost-tracker/` | no | Cost ledger, one JSONL per day under `YYYY/MM/`. Contains Bedrock ARNs |
+| `cost-tracker/` | no | Cost ledger, one JSONL per day under `YYYY/MM/`. Entries from the Bedrock era contain ARNs |
 | `npm/` | no | `pi install` target. Ships its own `.gitignore` with `*` |
 | `install/`, `bin/pi` | no | pi itself, from `pi.dev/install.sh`: `bin/pi` runs `install/releases/<install/current-version>/`. Managed by `pi update`; do not edit |
 | `extensions/subagent/` | yes | Vendored subagent extension ([notes](#vendored-subagent-extension)) |
@@ -388,31 +389,41 @@ mapping — `./check.sh` prints it (`tiers.test.ts`, "tier tokens and their mode
 including which model a mistyped tier would land on and which prefixes are too
 ambiguous to pin.
 
+Claude subscription through `pi-claude-bridge` (current) — the bridge registers the
+`claude-bridge` provider from pi's Anthropic catalog, and `modelOverrides` names it
+(pi applies overrides to extension providers too):
+
+```json
+{ "providers": { "claude-bridge": { "modelOverrides": {
+    "claude-opus-5-5":  { "name": "tier:strong (claude-opus-5-5)" },
+    "claude-sonnet-5-5":  { "name": "tier:mid (claude-sonnet-5-5)" },
+    "claude-haiku-5-5": { "name": "tier:fast (claude-haiku-5-5)" }
+} } } }
+```
+
+The same shape works for an Anthropic API key under `"anthropic"`. Do not use it with a
+Claude login through pi's `/login`: pi then calls the API with the subscription token,
+which Anthropic bills as extra usage, not against the plan.
+
 Bedrock:
 
 ```json
 { "id": "arn:aws:bedrock:...:application-inference-profile/...",
-  "name": "tier:strong (claude-opus-5)" }
-```
-
-Direct Anthropic — attach the alias to a built-in model with `modelOverrides`:
-
-```json
-{ "providers": { "anthropic": { "modelOverrides": {
-    "claude-opus-4-5":   { "name": "tier:strong (claude-opus-4.5)" },
-    "claude-sonnet-4-5": { "name": "tier:mid (claude-sonnet-4.5)" },
-    "claude-haiku-4-5":  { "name": "tier:fast (claude-haiku-4.5)" }
-} } } }
+  "name": "tier:strong (claude-opus-5-5)" }
 ```
 
 Local-only machine:
 
 ```json
-{ "id": "qwen3-coder:30b", "name": "tier:strong (qwen3-coder-30b)" }
+{ "id": "qwen3-coder:30b", "name": "tier:strong (qwen3-coder-30b)" },
 { "id": "gemma4:e4b",      "name": "tier:mid (gemma4-e4b)" }
 ```
 
 ### Pricing
+
+Applies to entries that carry their own `cost`, which today is none of the tiers:
+`pi-claude-bridge` registers its models at zero cost, since the plan, not tokens, is
+what is paid. For Bedrock entries, when present:
 
 `cost` is **USD per 1M tokens**, `cacheWrite` the 5-minute cache write price,
 `cacheRead` the cache hit price. Basis: the AWS Bedrock pricing page for **us-east-1,
@@ -466,9 +477,11 @@ Samples are **not** required to mirror the real config: an entry present on only
 side is a note, not a failure. Treat those notes as a reminder to sync when the
 difference was not intentional.
 
-- `models.json.sample`: generated from the real file by replacing each Bedrock ARN
+- `models.json.sample`: generated from the real file, replacing any Bedrock ARN
   with its `<<<...>>>` placeholder, keyed on the tier name. Regenerate whenever a
-  model is added or a tier renamed.
+  model is added or a tier renamed. It also keeps an `amazon-bedrock` block the real
+  file no longer has, as a template: its names carry no `tier:`, since a tier may
+  resolve only once. To switch back, move the tier names from `claude-bridge` onto it.
 - `settings.json.sample`: the real file minus the two keys pi rewrites at runtime
   (`lastChangelogVersion`, `defaultThinkingLevel` — the sample holds the intended
   starting level). `defaultProvider` and `defaultModel` are placeholders and only
@@ -488,6 +501,7 @@ process, and a package runs with full system access.
 | `@ctogg/pi-cost-counter` | Appends every message's `usage` to `cost-tracker/YYYY/MM/DD.jsonl`, adds `/cost [Nd]`. The only cross-session ledger (the statusline is session-only) |
 | `@llblab/pi-telegram` | Telegram runtime adapter: turns can arrive from and be answered on Telegram. In Threaded Mode each workspace gets its own forum topic, with one instance elected leader (it alone polls `getUpdates`) and the rest followers over a local IPC bus, so concurrent sessions share one bot. Also a prompt queue, voice replies, `telegram_button` buttons and file delivery. Configured by `telegram.json`, which holds a **literal bot token** |
 | `@narumitw/pi-lsp` | Language server tools ([notes](#language-servers-pi-lsp)) |
+| `pi-claude-bridge` | The `claude-bridge` provider: Claude models through Claude Code (Agent SDK), so turns draw on the Claude subscription. Authenticates with Claude Code's own login (`claude`), not pi's `/login`. Every agent tier points here |
 | `@narumitw/pi-retry` | Marks empty-detail and stalled provider streams retryable, hands them to pi's backoff |
 | `pi-ask-user` | `ask_user` tool with a structured form, plus an `ask-user` skill. Needs a UI, so subagents do not get it |
 | `pi-env` | Exports `settings.json`'s `env` block into the process environment. That is the only route by which `PI_RETRY_STALL_TIMEOUT_MS` reaches `@narumitw/pi-retry`, which reads it from the environment and not from settings |
@@ -496,13 +510,14 @@ process, and a package runs with full system access.
 | `pi-sandbox` | OS-level sandboxing ([notes](#sandbox-extension)) |
 
 The bar is small, dependency-free, auditable code. `pi-sandbox` is a **documented
-exception** (prebuilt native binaries, large dependency chain) kept for capability.
+exception** (prebuilt native binaries, large dependency chain) kept for capability, and
+so is `pi-claude-bridge` (bundles Anthropic's Agent SDK and its `claude` binary).
 MCP needs no package: pi's built-in client reads `mcp.json`, so an MCP bridge such as
 `pi-mcporter` would only duplicate it. `pi-smart-fetch` is rejected on the same criteria.
 
-- **`/cost` prints the AWS account ID**: cost-counter records `message.model`, the full
-  inference profile ARN under Bedrock. The ledger holds the same ARNs, so it is never
-  committed.
+- **`/cost` prints the AWS account ID** for Bedrock turns: cost-counter records
+  `message.model`, the full inference profile ARN under Bedrock. The ledger holds the
+  same ARNs, so it is never committed.
 - MagPi and cost-counter build paths from `homedir()` + a hardcoded `.pi/...` instead of
   `getAgentDir()`; the `~/.pi -> .config/pi` symlink is what lands them here.
 - `/magpi status` reports scope, ttl and budget; `/magpi scope project` moves writes to

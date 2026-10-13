@@ -94,8 +94,8 @@
     "amazon-bedrock": {
       "models": [
         {
-          "id": "<<<bedrock-application-inference-profile-id-for-fable-5>>>",
-          "name": "tier:fable (claude-fable-5)",
+          "id": "<<<bedrock-application-inference-profile-id-for-fable-5-1>>>",
+          "name": "bedrock (claude-fable-5-1)",
           "api": "bedrock-converse-stream",
           "reasoning": true,
           "input": [
@@ -120,8 +120,8 @@
           }
         },
         {
-          "id": "<<<bedrock-application-inference-profile-id-for-opus-5>>>",
-          "name": "tier:strong (claude-opus-5)",
+          "id": "<<<bedrock-application-inference-profile-id-for-opus-5-5>>>",
+          "name": "bedrock (claude-opus-5-5)",
           "api": "bedrock-converse-stream",
           "reasoning": true,
           "input": [
@@ -145,8 +145,8 @@
           }
         },
         {
-          "id": "<<<bedrock-application-inference-profile-id-for-sonnet-5>>>",
-          "name": "tier:mid (claude-sonnet-5)",
+          "id": "<<<bedrock-application-inference-profile-id-for-sonnet-5-5>>>",
+          "name": "bedrock (claude-sonnet-5-5)",
           "api": "bedrock-converse-stream",
           "reasoning": true,
           "input": [
@@ -170,8 +170,8 @@
           }
         },
         {
-          "id": "<<<bedrock-application-inference-profile-id-for-haiku-4-5>>>",
-          "name": "tier:fast (claude-haiku-4-5)",
+          "id": "<<<bedrock-application-inference-profile-id-for-haiku-5-5>>>",
+          "name": "bedrock (claude-haiku-5-5)",
           "api": "bedrock-converse-stream",
           "reasoning": true,
           "input": [
@@ -191,6 +191,22 @@
           }
         }
       ]
+    },
+    "claude-bridge": {
+      "modelOverrides": {
+        "claude-fable-5-1": {
+          "name": "tier:fable (claude-fable-5-1)"
+        },
+        "claude-opus-5-5": {
+          "name": "tier:strong (claude-opus-5-5)"
+        },
+        "claude-sonnet-5-5": {
+          "name": "tier:mid (claude-sonnet-5-5)"
+        },
+        "claude-haiku-5-5": {
+          "name": "tier:fast (claude-haiku-5-5)"
+        }
+      }
     }
   }
 }
