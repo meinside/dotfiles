@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2026.08.14.
+# last update: 2026.10.14.
 
 # unnecessary binary files
 *.a
@@ -155,6 +155,7 @@ xcuserdata
 .vs-kubernetes/
 
 # other applications' files & dirs
+.agents/
 .android/
 .antigravitycli/
 .ape-*
