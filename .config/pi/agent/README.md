@@ -18,7 +18,7 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 |------|---------------------|---------|
 | `settings.json` | `.sample` mirror | Theme, default model, `enabledModels` for `Ctrl+P` cycling, `defaultTools` (`+codemode`, so scripts can call classifier and image models through `models`) |
 | `models.json` | `.sample` only | Providers, models, tier aliases. Holds the AWS account ID whenever it carries Bedrock ARNs |
-| `claude-bridge.json` | yes | `pi-claude-bridge` config: `provider.plan` (`max` unlocks 1M-context Opus), `askClaude.enabled: false` |
+| `claude-bridge.json` | `.sample` mirror | `pi-claude-bridge` config: `provider.plan` (`max` unlocks 1M-context Opus), `askClaude.enabled: false` |
 | `auth.json` | `.sample` template | Credentials. Never commit the real file. The sample is a template, not a mirror |
 | `models-store.json` | no | Generated model catalog cache. Do not edit or commit; `check.sh` reads it to cross-check prices |
 | `pi-lsp.json` | yes | Language server routes ([notes](#language-servers-pi-lsp)) |
@@ -26,11 +26,14 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 | `magpi-render.json` | no | Optional `extensions/magpi-render.ts` overrides: `enabled`, `browserBinary`, `renderHosts`, `learnHosts`, `sameSiteOnlyHosts`, `maxWaitMs`. Absent means defaults, which is the state here ([notes](#magpi-renderer)) |
 | `mcp.json` | `.sample` mirror | Servers for pi's built-in MCP client, reached from `codemode` scripts. Tokens go in as `${VAR}` from `~/.custom_env`, never literally: unlike `auth.json` the file is readable by the agent (`samples.test.ts` enforces it) |
 | `mcp-auth.json` | no | Built-in MCP OAuth tokens, written by `/mcp login`. Write- and read-blocked like `auth.json` |
+| `telegram.json` | no | `@llblab/pi-telegram` config, written by `/telegram-setup`. The bot token should be the `$TELEGRAM_BOT_TOKEN` reference, not the value ([setup](#new-machine-setup)); write- and read-blocked like `auth.json` either way |
 | `sandbox.json` | yes | `pi-sandbox` policy ([notes](#sandbox-extension)). Mutated live by `/sandbox-allow ... for all projects`, so tracking turns that prompt into a `git diff` |
 | `quota-rotate.json` | `.sample` mirror | `pi-quota-rotate`'s fallback chain of `provider/modelId` entries, plus `maxRotationsPerRun`. Real file is local; `quota-rotate.test.ts` checks that it and the sample still resolve |
+| `quota-rotate/` | no | `pi-quota-rotate`'s rotation state |
 | `magpi-cache/` | no | MagPi's fetch cache. `~/.pi/agent/magpi-cache` in MagPi's docs is this same directory through the `~/.pi` symlink |
-| `cost-tracker/` | no | Cost ledger, one JSONL per day under `YYYY/MM/`. Entries from the Bedrock era contain ARNs |
-| `npm/` | no | `pi install` target. Ships its own `.gitignore` with `*` |
+| `../cost-tracker/` | no | Cost ledger, one JSONL per day under `YYYY/MM/`. Outside this directory: `~/.pi/cost-tracker` through the symlink. Entries from the Bedrock era contain ARNs |
+| `npm/`, `git/` | no | `pi install` targets for `npm:` and `git:` packages. Each ships its own `.gitignore` with `*` |
+| `tmp/` | no | Extension state: `compaction/` (compaction-log), `magpi-render/` (learned hosts), `pi-telegram/` (bridge runtime, inbox, logs) |
 | `install/`, `bin/pi` | no | pi itself, from `pi.dev/install.sh`: `bin/pi` runs `install/releases/<install/current-version>/`. Managed by `pi update`; do not edit |
 | `extensions/subagent/` | yes | Vendored subagent extension ([notes](#vendored-subagent-extension)) |
 | `extensions/guard.ts` | yes | Blocks writes to credential files, confirms installs, irreversible commands and MCP calls not marked safe |
@@ -74,7 +77,7 @@ pi ships no built-in sub-agents, so tiered model usage comes from the upstream
 - **Upstream repo:** <https://github.com/earendil-works/pi-mono>
 - **Upstream path:** `packages/coding-agent/examples/extensions/subagent/`
 - **Local copy of upstream:** resolved by `tests/lib.ts`'s `piPackageDir()` — `brew --prefix pi-coding-agent`, else the real path of the `pi` binary on `PATH` (npm installs), else that binary's managed-install release (`pi.dev/install.sh`)
-- **Vendored from:** pi 0.84.3
+- **Vendored from:** pi 1.3.0
 
 Each delegation spawns a separate `pi` process with its own context window. Agents
 come from `agents/*.md`.
@@ -150,8 +153,8 @@ process. `extensions/guard.ts` is the narrow middle ground — patterns live in 
 
 - **Blocked, never confirmed (writes):** `~/.ssh`, `~/.gnupg`, `~/.aws`,
   `~/.config/gcloud`, `~/.config/rclone`, `~/.netrc`, `~/.npmrc`,
-  `~/.ollama/id_ed25519`, `~/.custom_env`, `auth.json`, `mcp-auth.json`, Claude's
-  `settings.json`.
+  `~/.ollama/id_ed25519`, `~/.custom_env`, `auth.json`, `mcp-auth.json`,
+  `telegram.json`, Claude's `settings.json`.
 - **Also unreadable** through `read`/`grep`: most of the above plus transcript stores
   (`sessions/`, `history.jsonl`, shell histories). `~/.aws/config` and Claude's
   `settings.json` stay readable; transcripts are read-blocked but not write-blocked.
@@ -189,6 +192,9 @@ Rules that decide how entries are written:
 - **A wildcard does not cover the bare domain at the enforcing layer**, so a domain
   present only as `*.example.com` is hard-blocked *without a prompt*. Every apex host a
   tool hits is listed literally next to its wildcard (`BARE_DOMAINS_TOOLS_NEED`).
+- **`allowRead: "."` re-opens this directory when pi runs in it**, credentials included.
+  `mcp-auth.json` and `telegram.json` are `denyRead` on top; `auth.json` is not, because
+  the checks read it (`AGENT_DIR_SECRETS` in `tests/sandbox.test.ts`).
 - **Execute is a read**, so every `PATH` directory must be readable or `command -v`
   reports installed tools as missing.
 - **A package's data directory can sit outside the workspace**: `~/.pi/cost-tracker`, its
@@ -380,7 +386,7 @@ embedded in the `name` of a `models.json` entry:
 | `tier:fast` | Cheap, mechanical lookup and recon |
 | `tier:mid` | Default implementation model |
 | `tier:strong` | Architecture, review, adversarial verification |
-| `tier:fable` | Experimental top-end model. No agent uses it, kept out of the `Ctrl+P` cycle |
+| `tier:fable` | Experimental top-end model. No agent uses it; reached through `Ctrl+P` only |
 | `tier:local-fast` | Local Ollama model, zero cost, answers in seconds ([notes](#ollama-provider)) |
 | `tier:local-strong` | Local llama.cpp model, zero cost but slow — for delegated work, not conversation ([notes](#llamacpp-provider)) |
 | `tier:local-coder` | Local llama.cpp model tuned for coding/agentic work — smaller and faster than `tier:local-strong` ([notes](#llamacpp-provider)) |
@@ -500,8 +506,8 @@ process, and a package runs with full system access.
 | Package | Why |
 |---------|-----|
 | `git:github.com/meinside/pi-quota-rotate` | Rotates to the next model in `quota-rotate.json`'s chain when the current one runs out of quota, then continues the interrupted turn |
-| `@ctogg/pi-cost-counter` | Appends every message's `usage` to `cost-tracker/YYYY/MM/DD.jsonl`, adds `/cost [Nd]`. The only cross-session ledger (the statusline is session-only) |
-| `@llblab/pi-telegram` | Telegram runtime adapter: turns can arrive from and be answered on Telegram. In Threaded Mode each workspace gets its own forum topic, with one instance elected leader (it alone polls `getUpdates`) and the rest followers over a local IPC bus, so concurrent sessions share one bot. Also a prompt queue, voice replies, `telegram_button` buttons and file delivery. Configured by `telegram.json`, which holds a **literal bot token** |
+| `@ctogg/pi-cost-counter` | Appends every message's `usage` to `~/.pi/cost-tracker/YYYY/MM/DD.jsonl`, adds `/cost [Nd]`. The only cross-session ledger (the statusline is session-only) |
+| `@llblab/pi-telegram` | Telegram runtime adapter: turns can arrive from and be answered on Telegram. In Threaded Mode each workspace gets its own forum topic, with one instance elected leader (it alone polls `getUpdates`) and the rest followers over a local IPC bus, so concurrent sessions share one bot. Also a prompt queue, voice replies, `telegram_button` buttons and file delivery. Configured by `telegram.json` |
 | `@narumitw/pi-lsp` | Language server tools ([notes](#language-servers-pi-lsp)) |
 | `pi-claude-bridge` | The `claude-bridge` provider: Claude models through Claude Code (Agent SDK), so turns draw on the Claude subscription. Authenticates with Claude Code's own login (`claude`), not pi's `/login`. Every agent tier points here |
 | `@narumitw/pi-retry` | Marks empty-detail and stalled provider streams retryable, hands them to pi's backoff |
@@ -618,10 +624,21 @@ has a model source, every `modelOverrides` key matches a preset section, and
    cp models.json.sample models.json       # replace <<<...>>> with real ARNs, or
                                            # rewrite for this machine's providers
    cp auth.json.sample auth.json           # or use /login
+   cp claude-bridge.json.sample claude-bridge.json   # plan: this account's
+                                                     # Claude plan
+   cp mcp.json.sample mcp.json             # tokens as ${VAR}, never literal
+   cp quota-rotate.json.sample quota-rotate.json
    ```
    `models.json` must define `tier:fast`, `tier:mid` and `tier:strong`, or the agents
    cannot resolve a model.
-5. Local models:
+5. Claude: run `claude` once and log in — `pi-claude-bridge` uses Claude Code's login,
+   not pi's `/login`. Claude Code's own `settings.json` must not carry
+   `CLAUDE_CODE_USE_BEDROCK`: the bridge inherits it, sends every turn to Bedrock and
+   fails with `403 Authentication failed`.
+6. Telegram: export `TELEGRAM_BOT_TOKEN` in `~/.custom_env`, then `/telegram-setup`
+   and `/telegram-connect` in pi. With the variable set, setup stores the reference
+   `$TELEGRAM_BOT_TOKEN` in `telegram.json` instead of the token itself.
+7. Local models:
    - Ollama — pull whatever `models.json` lists, so this needs no editing when the
      model changes:
      ```bash
@@ -633,9 +650,9 @@ has a model source, every `modelOverrides` key matches a preset section, and
      `$LLAMA_ARG_MODELS_PRESET`. In pi: `/login llama.cpp` with the URL built from
      `config.ini`'s `host`/`port`, then `/llama` to load a model — the first load
      downloads it.
-6. Language servers: install through mason. `./check.sh` lists what `pi-lsp.json`
+8. Language servers: install through mason. `./check.sh` lists what `pi-lsp.json`
    expects and whether it runs.
-7. Verify: `pi --list-models` and `./check.sh`
+9. Verify: `pi --list-models` and `./check.sh`
 
 ## Security note
 

@@ -87,6 +87,9 @@ const CREDENTIAL_PATHS = [
 	// OAuth tokens of the built-in MCP client, written by pi itself (not bash)
 	"~/.config/pi/agent/mcp-auth.json",
 	"~/.pi/agent/mcp-auth.json",
+	// pi-telegram's bot token, stored literally
+	"~/.config/pi/agent/telegram.json",
+	"~/.pi/agent/telegram.json",
 	"~/.local/share/cargo/credentials.toml",
 	"~/.local/share/cargo/credentials",
 	"~/.gem/credentials",
@@ -99,6 +102,21 @@ const CREDENTIAL_PATHS = [
  * the `~/.pi -> .config/pi` symlink are listed since a still-missing target
  * directory can defeat canonicalization depending on which layer resolves it. */
 const COST_TRACKER_PATHS = ["~/.pi/cost-tracker", "~/.config/pi/cost-tracker"];
+
+/** Credential files that `bash` must not read even when pi runs in the agent
+ * directory, where `allowRead: "."` re-allows everything under the `/Users`
+ * deny. On macOS sandbox-runtime re-emits a literal `denyRead` path nested in an
+ * `allowRead` subpath after it, so the more specific deny wins.
+ *
+ * `auth.json` is deliberately absent: `llama.test.ts`, `quota-rotate.test.ts`
+ * and `samples.test.ts` read it to cross-check the samples, and they run under
+ * this sandbox when `check.sh` is started from inside pi. */
+const AGENT_DIR_SECRETS = [
+	"~/.config/pi/agent/mcp-auth.json",
+	"~/.config/pi/agent/telegram.json",
+	"~/.pi/agent/mcp-auth.json",
+	"~/.pi/agent/telegram.json",
+];
 
 /** Bare domains that a wildcard entry does *not* cover at the enforcement
  * layer. Each was measured under a real `@carderne/sandbox-runtime` sandbox
@@ -171,6 +189,13 @@ test("denyRead covers both the macOS and Linux home-directory root", () => {
 	const denyRead = config?.filesystem?.denyRead ?? [];
 	assert.ok(denyRead.includes("/Users"), "denyRead should list /Users (macOS)");
 	assert.ok(denyRead.includes("/home"), "denyRead should list /home (Linux)");
+});
+
+test("agent-dir credential files stay unreadable when pi runs in the agent dir", () => {
+	const denyRead = config?.filesystem?.denyRead ?? [];
+	for (const path of AGENT_DIR_SECRETS) {
+		assert.ok(denyRead.includes(path), `${path} should be in filesystem.denyRead`);
+	}
 });
 
 test("bare domains a wildcard cannot cover are listed literally", () => {

@@ -52,7 +52,11 @@
     "denyRead": [
       "/Users",
       "/home",
-      "/root"
+      "/root",
+      "~/.config/pi/agent/mcp-auth.json",
+      "~/.config/pi/agent/telegram.json",
+      "~/.pi/agent/mcp-auth.json",
+      "~/.pi/agent/telegram.json"
     ],
     "allowRead": [
       ".",
@@ -145,6 +149,7 @@
       "~/.config/gh",
       "~/.config/pi/agent/auth.json",
       "~/.config/pi/agent/mcp-auth.json",
+      "~/.config/pi/agent/telegram.json",
       "~/.config/rclone",
       "~/.gem/credentials",
       "~/.gnupg",
@@ -155,6 +160,7 @@
       "~/.ollama/id_ed25519",
       "~/.pi/agent/auth.json",
       "~/.pi/agent/mcp-auth.json",
+      "~/.pi/agent/telegram.json",
       "~/.ssh"
     ]
   }

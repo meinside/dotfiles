@@ -12,7 +12,7 @@ import { agentModels, leaves, type ModelsConfig, modelEntries, readJson, readTex
 const PLACEHOLDER = /^<<<.*>>>$/;
 const SECRET_KEY = /(key|token|secret|password|credential)$/i;
 const RUNTIME_KEYS = ["lastChangelogVersion", "defaultThinkingLevel"];
-const SAMPLES = ["models.json", "settings.json", "auth.json", "mcp.json"];
+const SAMPLES = ["models.json", "settings.json", "auth.json", "mcp.json", "claude-bridge.json"];
 
 for (const name of SAMPLES) {
 	test(`${name}.sample is valid JSON`, () => {

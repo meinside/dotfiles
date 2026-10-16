@@ -59,6 +59,7 @@ test("credential paths are not writable", async () => {
 	for (const path of [
 		"auth.json", // relative to cwd
 		"mcp-auth.json",
+		"telegram.json",
 		"~/.aws/config",
 		"~/.aws/sso/cache/x.json",
 		"~/.claude/settings.json",
@@ -66,6 +67,7 @@ test("credential paths are not writable", async () => {
 		"~/.config/gcloud/x.json",
 		"~/.config/pi/agent/auth.json",
 		"~/.config/pi/agent/mcp-auth.json",
+		"~/.config/pi/agent/telegram.json",
 		"~/.config/rclone/rclone.conf",
 		"~/.custom_env",
 		"~/.gnupg/pubring.kbx",
@@ -74,6 +76,7 @@ test("credential paths are not writable", async () => {
 		"~/.ollama/id_ed25519",
 		"~/.pi/agent/auth.json",
 		"~/.pi/agent/mcp-auth.json",
+		"~/.pi/agent/telegram.json",
 		"~/.ssh/authorized_keys",
 	]) {
 		assert.equal((await call("write", path))?.block, true, `write ${path} should be blocked`);
@@ -85,6 +88,7 @@ test("secret paths are not readable", async () => {
 	for (const path of [
 		"auth.json",
 		"mcp-auth.json",
+		"telegram.json",
 		"~/.aws/cli/cache/session.db",
 		"~/.aws/credentials",
 		"~/.aws/sso/cache/x.json",
@@ -95,6 +99,7 @@ test("secret paths are not readable", async () => {
 		"~/.config/pi/agent/auth.json",
 		"~/.config/pi/agent/mcp-auth.json",
 		"~/.config/pi/agent/sessions/x.jsonl",
+		"~/.config/pi/agent/telegram.json",
 		"~/.config/rclone/rclone.conf",
 		"~/.custom_env",
 		"~/.ollama/id_ed25519",

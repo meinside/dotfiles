@@ -1,4 +1,5 @@
 {
+  "$schema": "https://pi.dev/schemas/settings.schema.json",
   "theme": "system",
   "defaultProvider": "<<<provider-id>>>",
   "defaultModel": "<<<model-id-from-list-models-not-a-tier>>>",
@@ -6,6 +7,7 @@
     "tier:strong",
     "tier:mid",
     "tier:fast",
+    "tier:fable",
     "google/gemini-3*",
     "google/gemini-4*",
     "google-vertex/gemini-3*",

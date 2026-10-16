@@ -40,6 +40,7 @@ const PROTECTED_PATHS = [
 	"~/.config/gcloud",
 	"~/.config/pi/agent/auth.json",
 	"~/.config/pi/agent/mcp-auth.json",
+	"~/.config/pi/agent/telegram.json",
 	"~/.config/rclone",
 	"~/.custom_env",
 	"~/.gnupg",
@@ -48,6 +49,7 @@ const PROTECTED_PATHS = [
 	"~/.ollama/id_ed25519",
 	"~/.pi/agent/auth.json",
 	"~/.pi/agent/mcp-auth.json",
+	"~/.pi/agent/telegram.json",
 	"~/.ssh",
 ];
 
@@ -87,6 +89,7 @@ const SECRET_PATHS = [
 	"~/.config/pi/agent/auth.json",
 	"~/.config/pi/agent/mcp-auth.json",
 	"~/.config/pi/agent/sessions",
+	"~/.config/pi/agent/telegram.json",
 	"~/.config/rclone",
 	"~/.custom_env",
 	"~/.gnupg",
@@ -97,6 +100,7 @@ const SECRET_PATHS = [
 	"~/.pi/agent/auth.json",
 	"~/.pi/agent/mcp-auth.json",
 	"~/.pi/agent/sessions",
+	"~/.pi/agent/telegram.json",
 	"~/.python_history",
 	"~/.ssh",
 	"~/.zsh_history",
