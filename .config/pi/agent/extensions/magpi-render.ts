@@ -8,7 +8,7 @@
  * drive the installed Firefox over WebDriver BiDi, wait for the page to stop changing,
  * and extract what a reader would see.
  *
- * Measured on the two pages this was built for (see README for the full numbers):
+ * Measured on the two pages this was built for:
  *
  *   parts catalogue   27.6 KB shell -> 14.3 K chars, 11 tables, price and spec tables
  *                     intact, Product + FAQPage ld+json. 13-15 s.
@@ -47,7 +47,7 @@
  *     ambient configuration to get wrong.
  *   - Names borrow MagPi's: `magpi_fetch_rendered` sorts directly under `magpi_fetch`,
  *     which is the tool whose thin answer sends you here. Nothing under
- *     `npm/node_modules` is patched; see README for the namespace note.
+ *     `npm/node_modules` is patched.
  */
 
 import { type ChildProcess, spawn } from "node:child_process";

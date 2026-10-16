@@ -48,7 +48,7 @@
  *   private ranges, the same list MagPi checks, restated for the same reason its
  *   types are.
  *
- * Notes, caveats and how to remove any of this in README.md.
+ * What a user needs to know from outside is in README.md.
  *
  * Before adding a handler, all four must hold - most candidates fail one, and a handler
  * that is not needed is a scraper waiting to rot:

@@ -8,10 +8,6 @@ else `~/.pi/agent`. `~/.zshrc` exports the variable and a committed
 `~/.pi/agent` path land here too. Read `~/.pi/agent` in upstream docs as "this
 directory".
 
-```bash
-export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
-```
-
 ## Files
 
 | Path | Tracked in dotfiles | Purpose |
@@ -54,9 +50,10 @@ export PI_CODING_AGENT_DIR="$XDG_CONFIG_HOME/pi/agent"
 
 `~/.gitignore` ignores `.config/` wholesale, so tracked files here were added with
 `git add -f`. Files holding secrets or machine-specific values are committed as
-`<name>.sample` with `<<<placeholder>>>` markers. Files with nothing to
-placeholder (`pi-lsp.json`, `sandbox.json`, both `llama.cpp/*.ini`) are tracked
-directly.
+`<name>.sample` with `<<<placeholder>>>` markers. `claude-bridge.json` has no
+placeholder but is a `.sample` too: `provider.plan` depends on whose Claude account the
+machine uses. Files with nothing to placeholder (`pi-lsp.json`, `sandbox.json`, both
+`llama.cpp/*.ini`) are tracked directly.
 
 ## Global instructions (AGENTS.md)
 
@@ -141,10 +138,6 @@ cp $U/subagent/agents/*.md $C/agents/     # then re-apply the tiers from the
                                           # Agents table
 ~/.config/pi/agent/check.sh                # then bump "Vendored from" above
 ```
-
-`check.sh` resolves the upstream prefix, then hands over to `node --test tests/*.test.ts`
-— no build step, no test dependency. A single file runs on its own. Machine-specific facts
-(which models and language servers this machine has) arrive as diagnostics and skips.
 
 ## Guard extension
 
@@ -270,8 +263,7 @@ The numbers are re-derived from the session log, so:
 
 pi sizes a compaction summary as `min(0.8 * compaction.reserveTokens, model.maxTokens)`
 and starts compacting at `contextWindow - reserveTokens`. One number for both means a 1 M
-window cannot have a workable summary budget: at the default 16,384 the budget is 13,107,
-and summarizing a 577 K-token session failed there.
+window cannot have a workable summary budget: at the default 16,384 the budget is 13,107.
 
 `extensions/compaction-summary.ts` answers `session_before_compact` by calling pi's own
 `generateSummaryWithUsage()` with a larger reserve for that one call — same prompt, same
@@ -287,17 +279,13 @@ pi's default budget (`BRIDGE_API` in the source says why).
 - **`extensions/compaction-log.ts` only watches**: each attempt and outcome is appended to
   `tmp/compaction/log.jsonl` and printed by `/compaction-log` with a verdict. Either half
   works without the other.
-- **`CONFIG.triggerRatio` (0.92) caps how full the window may get**, because pi's trigger
-  is an absolute margin: 16,384 is 25% of a 65,536 window but 1.6% of a 1 M one. The
-  extension compacts at `min(contextWindow - 16384, 0.92 * contextWindow)` on
-  `agent_settled`, so windows above 204,800 stop earlier and smaller ones are unchanged.
-  Set `1` to leave the trigger entirely to pi.
+- **`CONFIG.triggerRatio` (0.92) caps how full the window may get**, since pi's trigger
+  is a fixed margin. Only windows above 204,800 are affected; `1` leaves the trigger to pi.
 
 ## MagPi handlers
 
 `extensions/magpi-handlers.ts` — local `pi-magpi` handlers, one file, one test file
-beside it. Its header states what was measured for each and the four criteria a new
-handler must meet; this is what to know from outside.
+beside it. How each one works and the criteria for a new one are in its header.
 
 | Handler | Fixes |
 |---------|-------|
@@ -305,25 +293,14 @@ handler must meet; this is what to know from outside.
 | `discourse` | MagPi reads the server HTML: 18 of 169 posts, silently. `/t/<id>.json?print=true` reads the whole stream |
 | `naver-blog` | The desktop page wraps the post in an iframe, so readability returns 0 bytes. Reads the mobile host |
 
-- **Claimed by URL shape *plus* corroboration**, never a host list: `/t/<id>` and either
-  a slug or a Discourse-named host (`discourse.`/`discuss.` prefix,
-  `.discourse.group`/`.discourse.org` suffix). `forums.` is excluded. The cost is that
-  `someforum.example/t/12345` is left to MagPi's default handler.
-- **A handler throws rather than return an empty document** — MagPi caches whatever it
-  returns for `ttlHours`. On a throw MagPi serves a stale entry if it has one.
-- **Every request re-checks each redirect hop** (max 5). MagPi's `assertPublicTarget()`
-  covers only the URL the model supplied.
+- **Discourse is detected by URL shape, not a host list**, so a forum on an unusual host
+  (`someforum.example/t/12345`) falls back to MagPi's default handler.
 - **No `sandbox.json` entry**: these run in-process, and `pi-sandbox` only replaces the
   `bash` tool. Which is why `curl` to the archive host is blocked while the handler's own
   request is not.
-- **Arctic Shift answers are crawl-time snapshots**; the document names its source.
 - **Naver depends on markup** (`se-main-container`, `postViewArea`, `post_ct`). A
   redesign surfaces as "could not find the post container".
 - Searching reddit is still `magpi_search` with `site:reddit.com`.
-
-Removing one handler is deleting its section plus its tests; removing all of them is
-deleting both files and this section (and the `pi-magpi` row under
-[Packages](#packages)).
 
 ## MagPi renderer
 
@@ -354,7 +331,6 @@ Config is `magpi-render.json` (absent means defaults):
 - **A throwaway profile per render**, so the real Firefox profile is never touched.
 - **6–15 s per page** against 0.3 s for a handler, and `navigator.webdriver` stays `true`,
   so a site can tell this is automation.
-- **A multi-row table header only merges when every cell is a `th`.**
 
 **Automatic escalation.** A `magpi_fetch` result under 600 bytes from the `webpage`
 handler with a page-shaped `kind` is treated as a shell: the host is recorded in
@@ -362,19 +338,10 @@ handler with a page-shaped `kind` is treated as a shell: the host is recorded in
 through a handler registered on MagPi's own extension point, so MagPi does the caching and
 indexing. `learnHosts: false` turns the automatic half off, leaving `renderHosts`.
 
-```
-1st fetch   magpi_fetch(url) -> 315 bytes -> host learned, result annotated
-2nd fetch   magpi_fetch(url, refresh: true) -> render handler -> 15 s -> cached by MagPi
-thereafter  served from the cache like any other page, and searchable
-```
-
 The first visit cannot be repaired automatically (nothing here can re-run MagPi's tool),
 and `refresh: true` is needed because the shell is already cached. **A partial loss is not
 detectable at all** — a page returning real bytes with empty iframes inside needs
 `renderHosts` or the explicit tool.
-
-Removing it is deleting `extensions/magpi-render.ts`, its test, `magpi-render.json` and
-`tmp/magpi-render/`.
 
 ## Model tiers
 
@@ -392,10 +359,7 @@ embedded in the `name` of a `models.json` entry:
 | `tier:local-coder` | Local llama.cpp model tuned for coding/agentic work — smaller and faster than `tier:local-strong` ([notes](#llamacpp-provider)) |
 
 Only `models.json` knows what a tier resolves to, so a machine with different
-providers needs no changes elsewhere. This table does not repeat the current
-mapping — `./check.sh` prints it (`tiers.test.ts`, "tier tokens and their models"),
-including which model a mistyped tier would land on and which prefixes are too
-ambiguous to pin.
+providers needs no changes elsewhere. `./check.sh` prints the current mapping.
 
 Claude subscription through `pi-claude-bridge` (current) — the bridge registers the
 `claude-bridge` provider from pi's Anthropic catalog, and `modelOverrides` names it
@@ -507,14 +471,14 @@ process, and a package runs with full system access.
 |---------|-----|
 | `git:github.com/meinside/pi-quota-rotate` | Rotates to the next model in `quota-rotate.json`'s chain when the current one runs out of quota, then continues the interrupted turn |
 | `@ctogg/pi-cost-counter` | Appends every message's `usage` to `~/.pi/cost-tracker/YYYY/MM/DD.jsonl`, adds `/cost [Nd]`. The only cross-session ledger (the statusline is session-only) |
-| `@llblab/pi-telegram` | Telegram runtime adapter: turns can arrive from and be answered on Telegram. In Threaded Mode each workspace gets its own forum topic, with one instance elected leader (it alone polls `getUpdates`) and the rest followers over a local IPC bus, so concurrent sessions share one bot. Also a prompt queue, voice replies, `telegram_button` buttons and file delivery. Configured by `telegram.json` |
+| `@llblab/pi-telegram` | Turns arrive from and are answered on Telegram; concurrent sessions share one bot, one forum topic each. Configured by `telegram.json` |
 | `@narumitw/pi-lsp` | Language server tools ([notes](#language-servers-pi-lsp)) |
 | `pi-claude-bridge` | The `claude-bridge` provider: Claude models through Claude Code (Agent SDK), so turns draw on the Claude subscription. Authenticates with Claude Code's own login (`claude`), not pi's `/login`. Every agent tier points here |
 | `@narumitw/pi-retry` | Marks empty-detail and stalled provider streams retryable, hands them to pi's backoff |
 | `pi-ask-user` | `ask_user` tool with a structured form, plus an `ask-user` skill. Needs a UI, so subagents do not get it |
 | `pi-env` | Exports `settings.json`'s `env` block into the process environment. That is the only route by which `PI_RETRY_STALL_TIMEOUT_MS` reaches `@narumitw/pi-retry`, which reads it from the environment and not from settings |
 | `pi-magpi` | `magpi_fetch` / `magpi_search` / `magpi_cached`: pages as markdown behind a 24 h cache, official-API handlers for the big registries. SSRF-guarded. Its reddit handler is replaced locally, and Discourse/naver get their own ([notes](#magpi-handlers)) |
-| `pi-rewind` | Snapshots taken per tool call, restored through `/rewind` or `Esc Esc`, with a redo stack. Beside `extensions/git-checkpoint.ts`, not instead of it: that one stashes once per turn so `/fork` has a tree to return to, this one undoes individual edits inside a turn |
+| `pi-rewind` | Per-tool-call snapshots, restored through `/rewind` or `Esc Esc`. Complements `extensions/git-checkpoint.ts`, which stashes once per turn for `/fork` |
 | `pi-sandbox` | OS-level sandboxing ([notes](#sandbox-extension)) |
 
 The bar is small, dependency-free, auditable code. `pi-sandbox` is a **documented
@@ -528,8 +492,6 @@ MCP needs no package: pi's built-in client reads `mcp.json`, so an MCP bridge su
   same ARNs, so it is never committed.
 - MagPi and cost-counter build paths from `homedir()` + a hardcoded `.pi/...` instead of
   `getAgentDir()`; the `~/.pi -> .config/pi` symlink is what lands them here.
-- `/magpi status` reports scope, ttl and budget; `/magpi scope project` moves writes to
-  `.pi/magpi-cache` inside the repo.
 
 ## Language servers (pi-lsp)
 
@@ -564,9 +526,7 @@ points at is `models.json`'s business; `check.sh` prints it.
 - `apiKey` is a dummy string: Ollama ignores it, but pi hides models with no configured
   auth. `compat.supportsDeveloperRole: false` — Ollama rejects that role.
 - **Prefer GGUF tags over `-mlx`.** The MLX runner is text-only despite advertising
-  vision (ollama issues #16700, #17065) and its speed collapses as context grows. If MLX
-  vision lands, re-benchmark before switching and add `"image"` to `input` only after
-  confirming it at runtime.
+  vision, and slows down as context grows.
 
 ## llama.cpp provider
 
@@ -579,10 +539,8 @@ Not a hand-written provider: pi ships a hidden built-in extension registering th
 | `~/.config/llama.cpp/config.ini` | The only path llama.cpp reads by itself. Router-level settings: `host`, `port`, `models-max` |
 | `~/.config/llama.cpp/models.ini` | Per-model presets. `--models-preset` has no default path, so the location comes from `$LLAMA_ARG_MODELS_PRESET` (exported in `~/.zshrc`) |
 
-**Both ini files carry their reasoning as comments next to each value** — why `c = 65536`
-rather than 32k, the memory budget it assumes, why `sleep-idle-seconds = 900`, what a
-gated Hugging Face repo needs, when MTP speculative decoding needs a draft file. Read
-them there; they are the files being edited. What lives on pi's side instead:
+**Both ini files carry their reasoning as comments next to each value**; read them there.
+What lives on pi's side instead:
 
 - **`modelOverrides`, not `models`.** The built-in provider hardcodes `reasoning: false`,
   so a thinking model needs an override in `models.json`. The key must be the router's
@@ -636,8 +594,10 @@ has a model source, every `modelOverrides` key matches a preset section, and
    `CLAUDE_CODE_USE_BEDROCK`: the bridge inherits it, sends every turn to Bedrock and
    fails with `403 Authentication failed`.
 6. Telegram: export `TELEGRAM_BOT_TOKEN` in `~/.custom_env`, then `/telegram-setup`
-   and `/telegram-connect` in pi. With the variable set, setup stores the reference
-   `$TELEGRAM_BOT_TOKEN` in `telegram.json` instead of the token itself.
+   and `/telegram-connect` in pi. With the variable set and no token saved yet, setup
+   prefills and stores the reference `$TELEGRAM_BOT_TOKEN` instead of the token itself.
+   A token already in `telegram.json` wins the prefill, so to convert one, replace it
+   with `$TELEGRAM_BOT_TOKEN` in the setup editor or in the file.
 7. Local models:
    - Ollama — pull whatever `models.json` lists, so this needs no editing when the
      model changes:
