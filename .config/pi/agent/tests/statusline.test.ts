@@ -18,6 +18,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test from "node:test";
+import { stripVTControlCharacters } from "node:util";
 import { redirectPiImports } from "./lib.ts";
 
 redirectPiImports();
@@ -33,6 +34,8 @@ const {
 	sanitizeStatus,
 	SessionScanner,
 	readAutoCompactEnabled,
+	buildStatsLine,
+	buildExtensionStatusLine,
 } = statusline as {
 	formatTokens: (count: number) => string;
 	formatDuration: (ms: number) => string;
@@ -55,7 +58,17 @@ const {
 		scan(entries: readonly unknown[]): void;
 	};
 	readAutoCompactEnabled: (cwd: string, trusted: boolean) => boolean;
+	buildStatsLine: (data: {
+		model: { id: string } | undefined;
+		totals: { input: number; output: number; cacheRead: number; cacheWrite: number; cost: number };
+		context: undefined;
+		autoCompact: boolean;
+		duration: string;
+		inline: string[];
+	}) => string;
+	buildExtensionStatusLine: (statuses: ReadonlyMap<string, string>) => string | undefined;
 };
+
 
 // ---------------------------------------------------------------- formatters
 
@@ -90,6 +103,27 @@ test("ARN model ids fall back to the configured name", () => {
 
 test("extension statuses are collapsed to a single line", () => {
 	assert.equal(sanitizeStatus("  two\nlines\tand   gaps "), "two lines and gaps");
+});
+
+test("an inline status ends the stats line and is left off the status line", () => {
+	const statuses = new Map([
+		["claude-usage", "5h 35%\n"],
+		["zeta", "z"],
+		["alpha", "a"],
+	]);
+	assert.equal(buildExtensionStatusLine(statuses), "a z");
+	assert.equal(buildExtensionStatusLine(new Map([["claude-usage", "5h 35%"]])), undefined);
+
+	const totals = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0 };
+	const line = buildStatsLine({
+		model: { id: "m" },
+		totals,
+		context: undefined,
+		autoCompact: false,
+		duration: "0s/0s",
+		inline: [statuses.get("claude-usage") ?? ""],
+	});
+	assert.match(stripVTControlCharacters(line), / • 5h 35%$/);
 });
 
 // ---------------------------------------------------------------- session scan

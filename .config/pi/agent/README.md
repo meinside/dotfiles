@@ -29,12 +29,14 @@ directory".
 | `magpi-cache/` | no | MagPi's fetch cache. `~/.pi/agent/magpi-cache` in MagPi's docs is this same directory through the `~/.pi` symlink |
 | `../cost-tracker/` | no | Cost ledger, one JSONL per day under `YYYY/MM/`. Outside this directory: `~/.pi/cost-tracker` through the symlink. Entries from the Bedrock era contain ARNs |
 | `npm/`, `git/` | no | `pi install` targets for `npm:` and `git:` packages. Each ships its own `.gitignore` with `*` |
+| `cache/` | no | `claude-usage.json`: the last plan usage seen, shared by every running pi session |
 | `tmp/` | no | Extension state: `compaction/` (compaction-log), `magpi-render/` (learned hosts), `pi-telegram/` (bridge runtime, inbox, logs) |
 | `install/`, `bin/pi` | no | pi itself, from `pi.dev/install.sh`: `bin/pi` runs `install/releases/<install/current-version>/`. Managed by `pi update`; do not edit |
 | `extensions/subagent/` | yes | Vendored subagent extension ([notes](#vendored-subagent-extension)) |
 | `extensions/guard.ts` | yes | Blocks writes to credential files, confirms installs, irreversible commands and MCP calls not marked safe |
 | `extensions/git-checkpoint.ts` | yes | Vendored upstream example: per-turn git stash checkpoints for `/fork` |
 | `extensions/statusline.ts` | yes | Claude Code style footer ([notes](#statusline-extension)) |
+| `extensions/claude-usage.ts` | yes | Claude plan usage (`5h`, `7d`, and the active model's weekly window) with reset times, at the end of the statusline ([notes](#statusline-extension)) |
 | `extensions/compaction-summary.ts` | yes | Gives the compaction summary room without shrinking the context window ([notes](#compaction-extensions)) |
 | `extensions/compaction-log.ts` | yes | Records every compaction attempt with its outcome and a verdict ([notes](#compaction-extensions)) |
 | `compaction-summary.json` | no | Optional `extensions/compaction-summary.ts` overrides: `reserveTokens`, `summarizerModel`, `triggerRatio`. Absent means defaults; a Bedrock id belongs here, not in the tracked extension |
@@ -258,6 +260,12 @@ The numbers are re-derived from the session log, so:
   this session done", not "what is in the working tree", and only sees `edit`/`write`.
 - **`CH` is the latest response's cache hit rate**, not a session average.
 - The cost group is omitted when cost is zero, and there is no `(sub)` marker.
+
+`extensions/claude-usage.ts` adds the plan usage to the end of the second line (its key is
+in `CONFIG.inlineStatusKeys`), only while a `claude-bridge` or `anthropic` model is
+selected. It reads the rate-limit headers of each response and fetches nothing, so the
+numbers are as of the last response from any pi session; a window past its reset reads
+`0%`.
 
 ## Compaction extensions
 

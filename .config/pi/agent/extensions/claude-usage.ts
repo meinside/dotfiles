@@ -1,0 +1,121 @@
+// Claude plan usage in pi's status line, e.g. "5h 35% ~16:59 · 7d 27% ~Fri 04:59".
+//
+// Read from the anthropic-ratelimit-unified-* headers of each provider response:
+// the Anthropic API sends them, and pi-claude-bridge rebuilds them from Claude
+// Code's rate_limit_event. Nothing is fetched and no process is started, so the
+// values only change when some pi session gets a response. The last values are
+// shared by all running pi sessions through a cache file.
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
+import { type ExtensionAPI, type ExtensionContext, getAgentDir } from "@earendil-works/pi-coding-agent";
+
+/** utilization: fraction 0..1, resetsAt: Unix seconds (as Claude Code reports them). */
+type Window = { utilization: number; resetsAt?: number; model?: string };
+
+// Claude Code reports the active model's own weekly window (Fable's, for now) as
+// seven_day_overage_included, which the bridge abbreviates to 7d_oi. It only
+// arrives while that model is in use, so the model it came with is kept as its label.
+const MODEL_WINDOW = "7d_oi";
+export type Cache = {
+	windows: Record<string, Window>;
+	/** Last header set as received, kept to see which windows a response actually carries. */
+	raw?: Record<string, string>;
+};
+
+const STATUS_KEY = "claude-usage";
+const PROVIDERS = ["claude-bridge", "anthropic"];
+const HEADER = /^anthropic-ratelimit-unified-(.+)-(utilization|reset)$/;
+
+const cacheFile = () => join(getAgentDir(), "cache", "claude-usage.json");
+
+async function readCache(): Promise<Cache> {
+	try {
+		const cache = JSON.parse(await readFile(cacheFile(), "utf8"));
+		if (cache?.windows) return cache;
+	} catch {}
+	return { windows: {} };
+}
+
+async function writeCache(cache: Cache) {
+	await mkdir(dirname(cacheFile()), { recursive: true });
+	const tmp = `${cacheFile()}.${process.pid}`;
+	await writeFile(tmp, JSON.stringify(cache, null, 2));
+	await rename(tmp, cacheFile()); // readers never see a half-written file
+}
+
+/** Windows named in the headers. Not every response carries every window. */
+export function parseHeaders(headers: Record<string, string>) {
+	const found: Record<string, Partial<Window>> = {};
+	for (const [key, value] of Object.entries(headers)) {
+		const match = HEADER.exec(key.toLowerCase());
+		const number = Number(value);
+		if (!match || !Number.isFinite(number)) continue;
+		found[match[1]] ??= {};
+		const window = found[match[1]];
+		if (match[2] === "utilization") window.utilization = number;
+		else window.resetsAt = number;
+	}
+	return Object.entries(found).filter((entry): entry is [string, Window] => entry[1].utilization !== undefined);
+}
+
+function resetTime(seconds: number) {
+	const at = new Date(seconds * 1000);
+	const sameDay = at.toDateString() === new Date().toDateString();
+	const opts: Intl.DateTimeFormatOptions = { hour: "2-digit", minute: "2-digit", hour12: false };
+	// en-US weekday ("Thu") is narrower than the ko-KR "(목)", which is three cells wide plus parentheses.
+	return ` ~${at.toLocaleString("en-US", sameDay ? opts : { ...opts, weekday: "short" }).replace(",", "")}`;
+}
+
+export function format(cache: Cache) {
+	const now = Date.now() / 1000;
+	return Object.entries(cache.windows)
+		.map(([name, w]) => {
+			const label = name === MODEL_WINDOW ? (w.model ?? "model") : name.replace(/^seven_day_/, "");
+			// A window past its reset is empty until the next response says otherwise.
+			if (w.resetsAt && w.resetsAt < now) return `${label} 0%`;
+			return `${label} ${Math.round(w.utilization * 100)}%${w.resetsAt ? resetTime(w.resetsAt) : ""}`;
+		})
+		.join(" · ");
+}
+
+export default function (pi: ExtensionAPI) {
+	// Bumped on every refresh and on shutdown, so a late write never paints over a newer or closed session.
+	let generation = 0;
+
+	function show(ctx: ExtensionContext, cache: Cache) {
+		if (ctx.mode !== "tui") return;
+		const text = PROVIDERS.includes(ctx.model?.provider ?? "") ? format(cache) : "";
+		// Normal text colour: the stats around it are dim, and "muted" was still too close to them.
+		ctx.ui.setStatus(STATUS_KEY, text ? ctx.ui.theme.fg("text", text) : undefined);
+	}
+
+	// Picks up what other sessions wrote since.
+	const reload = (_event: unknown, ctx: ExtensionContext) => {
+		const current = ++generation;
+		readCache().then((cache) => current === generation && show(ctx, cache), () => {});
+	};
+	pi.on("session_start", reload);
+	pi.on("model_select", reload);
+	pi.on("agent_settled", reload);
+	pi.on("session_shutdown", () => {
+		generation++;
+	});
+
+	pi.on("after_provider_response", (event, ctx) => {
+		if (!PROVIDERS.includes(ctx.model?.provider ?? "")) return;
+		const windows = parseHeaders(event.headers);
+		if (windows.length === 0) return;
+		for (const [name, w] of windows) {
+			if (name === MODEL_WINDOW) w.model = ctx.model?.id.replace(/^claude-|-\d.*$/g, "");
+		}
+		// Handlers delay the response stream, so the file work runs in the background.
+		const current = ++generation;
+		(async () => {
+			const cache = await readCache();
+			Object.assign(cache.windows, Object.fromEntries(windows));
+			cache.raw = Object.fromEntries(Object.entries(event.headers).filter(([key]) => key.toLowerCase().startsWith("anthropic-ratelimit")));
+			await writeCache(cache);
+			if (current === generation) show(ctx, cache);
+		})().catch(() => {});
+	});
+}
