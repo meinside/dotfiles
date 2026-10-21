@@ -1,42 +1,11 @@
 #!/usr/bin/env bash
 #
-# Verify this config directory, as documented in README.md. The checks themselves
-# live in tests/ and run on node's built-in test runner:
-#
-#   vendored.test.ts  the vendored files still match upstream except model: lines
-#   tiers.test.ts     every agent pins a tier that pi resolves to exactly one model
-#   samples.test.ts   a fresh clone can bootstrap and no sample leaks a secret
-#   pricing.test.ts   models.json costs against pi's catalog (reported, never fails)
-#   lsp.test.ts       every pi-lsp.json command is present and can exec
-#   llama.test.ts     the llama.cpp router config (outside this directory) holds no
-#                     secret or path, every preset can actually load, and its ids
-#                     line up with models.json's overrides and enabledModels
-#   guard.test.ts     guard.ts blocks what README says it blocks
-#   quota-rotate.test.ts  every quota-rotate.json chain entry still resolves to a model
-#                     in pi's catalog, and the chain has no duplicates or malformed
-#                     entries (a withdrawn id is dropped silently by the extension)
-#   compaction-log.test.ts  compaction-log.ts pairs each attempt with its outcome and
-#                     derives the summary budget, the compression ratio and the verdict
-#                     that names threshold vs overflow. No compaction is triggered
-#   compaction-summary.test.ts  compaction-summary.ts hands pi's own summarizer a
-#                     larger reserve so the context window never has to shrink: when it
-#                     takes over, what it hands back, and when it steps aside
-#   magpi-render.test.ts  magpi-render.ts's settle rule, extractor choice, coverage
-#                     yardstick, empty-page diagnosis, shell detection, host patterns,
-#                     the learned-host store and the hand-rolled WebSocket framing.
-#                     No browser is launched
-#   sandbox.test.ts   sandbox.json holds the invariants README.md documents (see
-#                     its header for why pi-sandbox's own matching logic can't be
-#                     borrowed the way guard.ts's is)
-#   sandbox-deps.test.ts  pi-sandbox's OS-level prerequisites (ripgrep, and on
-#                     Linux bubblewrap/socat plus unprivileged userns) are met
-#   extensions-deps.test.ts  git is installed (git-checkpoint.ts, statusline.ts)
-#   statusline.test.ts  statusline.ts's session accounting and formatters
-#
-# Machine-specific differences (which models, which language servers) arrive as
-# notes or skips; only drift, an unresolvable tier, a leak, a server that cannot
-# exec or a guard regression fails. Node runs the TypeScript directly, so there is
-# nothing to build and nothing to install.
+# Verify this config directory, as documented in README.md. The checks live in
+# tests/ and run on node's built-in test runner; each file's header says what it
+# pins and why. Machine-specific differences (which models, which language
+# servers) arrive as notes or skips; only drift, an unresolvable tier, a leak, a
+# server that cannot exec or a guard regression fails. Node runs the TypeScript
+# directly, so there is nothing to build and nothing to install.
 #
 # Usage: ./check.sh [-v]     # -v prints diffs for drifting vendored files
 #
@@ -46,53 +15,6 @@ set -uo pipefail
 
 C="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# Mirrors tests/lib.ts's piPackageDir(): Homebrew's libexec/lib/node_modules
-# layout first (fast, version-independent symlink), then a marker search
-# through the real path of the `pi` binary on PATH for
-# node_modules/@earendil-works/pi-coding-agent — covers plain `npm install -g`
-# regardless of how many directories separate the npm bin symlink from the
-# package root, which a fixed number of `dirname` hops cannot assume. Last,
-# pi.dev/install.sh's managed layout: `pi` is a shell launcher in <agent>/bin
-# that runs <agent>/install/releases/<install/current-version>; same rule here.
-find_pi_package_dir() {
-    local prefix pi_bin pi_real marker install_dir version
-    marker="node_modules/@earendil-works/pi-coding-agent"
-    if command -v brew >/dev/null 2>&1; then
-        prefix="$(brew --prefix pi-coding-agent 2>/dev/null)" || true
-        if [ -n "$prefix" ] && [ -d "$prefix/libexec/lib/node_modules/@earendil-works/pi-coding-agent" ]; then
-            printf '%s\n' "$prefix/libexec/lib/node_modules/@earendil-works/pi-coding-agent"
-            return 0
-        fi
-    fi
-    pi_bin="$(command -v pi 2>/dev/null)" || return 1
-    pi_real="$(readlink -f "$pi_bin" 2>/dev/null || realpath "$pi_bin" 2>/dev/null)" || return 1
-    case "$pi_real" in
-        *"$marker"*)
-            printf '%s\n' "${pi_real%%"$marker"*}$marker"
-            return 0
-            ;;
-    esac
-    install_dir="$(dirname "$(dirname "$pi_real")")/install"
-    IFS= read -r version < "$install_dir/current-version" 2>/dev/null || return 1
-    case "$version" in
-        ""|.|..|*[!0-9A-Za-z._+-]*) return 1 ;;
-    esac
-    if [ -d "$install_dir/releases/$version/$marker" ]; then
-        printf '%s\n' "$install_dir/releases/$version/$marker"
-        return 0
-    fi
-    return 1
-}
-
-PI_PACKAGE_DIR="$(find_pi_package_dir)" || true
-U="$PI_PACKAGE_DIR/examples/extensions"
-
-# Checked here rather than in a test: without it every vendored case fails with
-# the same cause, and tiers.test.ts cannot borrow pi's resolver at all.
-if [ -z "$PI_PACKAGE_DIR" ] || [ ! -d "$U/subagent" ]; then
-    echo "error: upstream examples not found (tried brew --prefix, the pi binary on PATH and its managed install; looked in ${U:-<unresolved>})" >&2
-    exit 2
-fi
 # pi.dev/install.sh may install its own node without adding it to shell profiles;
 # the launcher puts it on PATH the same way.
 pi_node_bin="${XDG_DATA_HOME:-$HOME/.local/share}/pi-node/current/bin"
@@ -102,9 +24,22 @@ if ! command -v node >/dev/null; then
     exit 2
 fi
 
-# Saves every test file a subprocess and the same resolution work; they fall
-# back to running it themselves when invoked directly (node --test tests/samples.test.ts).
+# Resolved once, by the same function the tests use, and handed to them through
+# PI_CHECK_PREFIX: saves every test file a `brew --prefix` and a PATH search. They
+# fall back to resolving it themselves when run directly (node --test tests/x.test.ts).
+# Checked here rather than in a test: without it every vendored case fails with the
+# same cause, and tiers.test.ts cannot borrow pi's resolver at all.
+if ! PI_PACKAGE_DIR="$(node --input-type=module -e \
+    "import { piPackageDir } from '$C/tests/lib.ts'; console.log(piPackageDir())" 2>&1)"; then
+    echo "error: $PI_PACKAGE_DIR" >&2
+    exit 2
+fi
 export PI_CHECK_PREFIX="$PI_PACKAGE_DIR"
+U="$PI_PACKAGE_DIR/examples/extensions"
+if [ ! -d "$U/subagent" ]; then
+    echo "error: upstream examples not found in $U" >&2
+    exit 2
+fi
 
 echo "pi: $(pi --version 2>/dev/null | head -1)  upstream: $U"
 echo

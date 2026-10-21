@@ -623,6 +623,10 @@ export function thinNote(url: string, bytes: number): string {
  * and sends even a loopback connection through the proxy, where the upgrade fails with
  * an immediate close. Measured on this machine before this existed. Only what BiDi
  * needs is implemented: text frames, server pings, close.
+ *
+ * Both the global `WebSocket` and pi's own dispatcher honour `NO_PROXY`, so a shell
+ * that exports `NO_PROXY=localhost,127.0.0.1` would make this class replaceable by
+ * `new WebSocket(url)`. Kept so the renderer does not depend on that variable.
  */
 export class RawWebSocket {
 	private socket?: Socket;

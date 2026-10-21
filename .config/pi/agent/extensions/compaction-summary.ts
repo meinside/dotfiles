@@ -25,8 +25,7 @@
  *   models.json      untouched; every model keeps its native contextWindow
  *
  * On any failure it returns nothing and pi runs its normal compaction, so the worst case
- * is the behaviour without this file. compaction-log.ts records which path ran
- * (`fromExtension`) and how much of the budget the summary used (`budgetUsed`).
+ * is the behaviour without this file.
  *
  * The same absolute `reserveTokens` also decides *when* compaction starts, and 16,384 of a
  * 1M window is 1.6% - one large file read, checked a turn late. `CONFIG.triggerRatio`
@@ -80,14 +79,6 @@ const CONFIG = {
 	 * up.
 	 */
 	progressIntervalMs: 1_000,
-	/**
-	 * Tell compaction-log.ts which budget this attempt really had. Without it that log
-	 * divides the summary by pi's settings-derived cap and reports a percentage of a
-	 * request nobody made. Also gates the failure announcement, without which the log keeps
-	 * only pi's fallback error. Same bus magpi-handlers.ts uses; a missing listener is not an
-	 * error, so this stays a one-way announcement.
-	 */
-	announceBudget: true,
 	/**
 	 * Say in the UI which path ran. Compaction is otherwise invisible until it fails,
 	 * and "which summarizer produced this" is the first question when a summary looks
@@ -218,16 +209,6 @@ export function progressText(elapsedMs: number, messageCount: number): string {
 	return `\u{1F5DC} compacting ${messageCount} msg - ${seconds}s (takes minutes)`;
 }
 
-/**
- * What `compaction-log:extension-failed` carries when this file steps back to pi's
- * compaction. The UI warning is gone once dismissed, and the log otherwise records only
- * pi's fallback error, which ran second, under a smaller budget, and says nothing about
- * this attempt.
- */
-export function failureAnnouncement(message: string, elapsedMs?: number): { message: string; elapsedMs?: number } {
-	return elapsedMs === undefined ? { message } : { message, elapsedMs };
-}
-
 /** Local overrides, so an ARN or a machine-specific choice stays out of the repo. */
 export interface FileConfig {
 	reserveTokens?: number;
@@ -323,9 +304,6 @@ export default function (pi: ExtensionAPI) {
 			const percent = Math.round(100 * triggerRatio);
 			ctx.ui.notify(`Compacting at ${usage?.tokens} tokens: past the ${percent}% ceiling (${at})`, "info");
 		}
-		// Without this the log reads "manual", blaming a /compact nobody typed. Same one-way
-		// bus as the budget: a missing listener is not an error.
-		if (CONFIG.announceBudget) pi.events.emit("compaction-log:trigger", `ratio ceiling ${Math.round(100 * triggerRatio)}%`);
 		ctx.compact();
 	});
 
@@ -342,20 +320,13 @@ export default function (pi: ExtensionAPI) {
 		const messages = messagesFor(prep);
 		if (messages.length === 0) return undefined;
 
-		// Same one-way bus as the budget; compaction-log.ts keeps it beside pi's fallback.
-		const announceFailure = (message: string, elapsedMs?: number) => {
-			if (CONFIG.announceBudget) pi.events.emit("compaction-log:extension-failed", failureAnnouncement(message, elapsedMs));
-		};
-
 		const auth = await ctx.modelRegistry.getApiKeyAndHeaders(model);
 		if (!auth.ok) {
-			announceFailure(auth.error);
 			if (ctx.hasUI) ctx.ui.notify(`compaction-summary: ${auth.error}; using pi's compaction`, "warning");
 			return undefined;
 		}
 
 		const budget = budgetFor(reserveTokens, model.maxTokens);
-		if (CONFIG.announceBudget) pi.events.emit("compaction-log:budget", budget);
 		if (CONFIG.notify && ctx.hasUI) ctx.ui.notify(describeAttempt(model, messages.length, budget), "info");
 
 		// A multi-minute wait with an empty screen is indistinguishable from a hang, and was
@@ -389,7 +360,6 @@ export default function (pi: ExtensionAPI) {
 			);
 			const result = compactionFrom(prep, text, usage);
 			if (!result) {
-				announceFailure(signal.aborted ? "aborted" : "the summary came back empty", Date.now() - startedAt);
 				if (ctx.hasUI && !signal.aborted) {
 					ctx.ui.notify("compaction-summary: the summary came back empty; using pi's compaction", "warning");
 				}
@@ -397,10 +367,8 @@ export default function (pi: ExtensionAPI) {
 			}
 			return result;
 		} catch (err) {
-			// Including the length stop this file exists to avoid: pi's own path runs next,
-			// and compaction-log.ts records which one produced the entry.
+			// Including the length stop this file exists to avoid: pi's own path runs next.
 			const message = err instanceof Error ? err.message : String(err);
-			announceFailure(signal.aborted ? "aborted" : message, Date.now() - startedAt);
 			if (ctx.hasUI && !signal.aborted) {
 				ctx.ui.notify(`compaction-summary: ${message}; using pi's compaction`, "warning");
 			}

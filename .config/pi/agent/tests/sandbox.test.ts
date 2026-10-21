@@ -37,8 +37,13 @@
  */
 
 import assert from "node:assert/strict";
+import { basename } from "node:path";
 import test from "node:test";
+import { PROTECTED_PATHS, SECRET_PATHS } from "../extensions/guard.ts";
 import { readJson } from "./lib.ts";
+
+/** The agent-dir files guard.ts protects, so a file added there is demanded here too. */
+const agentDirFiles = (paths: readonly string[]): string[] => paths.filter((path) => /^~\/(\.config\/pi|\.pi)\/agent\/[^/]+\.json$/.test(path));
 
 interface SandboxConfig {
 	enabled?: boolean;
@@ -82,14 +87,8 @@ const CREDENTIAL_PATHS = [
 	"~/.ollama/id_ed25519",
 	"~/.claude/settings.json",
 	"~/.config/claude/settings.json",
-	"~/.config/pi/agent/auth.json",
-	"~/.pi/agent/auth.json",
-	// OAuth tokens of the built-in MCP client, written by pi itself (not bash)
-	"~/.config/pi/agent/mcp-auth.json",
-	"~/.pi/agent/mcp-auth.json",
-	// pi-telegram's bot token, stored literally
-	"~/.config/pi/agent/telegram.json",
-	"~/.pi/agent/telegram.json",
+	// auth.json, mcp-auth.json (built-in MCP client's OAuth tokens), telegram.json
+	...agentDirFiles(PROTECTED_PATHS),
 	"~/.local/share/cargo/credentials.toml",
 	"~/.local/share/cargo/credentials",
 	"~/.gem/credentials",
@@ -111,12 +110,7 @@ const COST_TRACKER_PATHS = ["~/.pi/cost-tracker", "~/.config/pi/cost-tracker"];
  * `auth.json` is deliberately absent: `llama.test.ts`, `quota-rotate.test.ts`
  * and `samples.test.ts` read it to cross-check the samples, and they run under
  * this sandbox when `check.sh` is started from inside pi. */
-const AGENT_DIR_SECRETS = [
-	"~/.config/pi/agent/mcp-auth.json",
-	"~/.config/pi/agent/telegram.json",
-	"~/.pi/agent/mcp-auth.json",
-	"~/.pi/agent/telegram.json",
-];
+const AGENT_DIR_SECRETS = agentDirFiles(SECRET_PATHS).filter((path) => basename(path) !== "auth.json");
 
 /** Bare domains that a wildcard entry does *not* cover at the enforcement
  * layer. Each was measured under a real `@carderne/sandbox-runtime` sandbox

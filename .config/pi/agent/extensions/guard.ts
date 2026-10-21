@@ -32,8 +32,13 @@ import type { ExtensionAPI, ExtensionContext, ToolAnnotations } from "@earendil-
  * writes there. Claude's `settings.json` is here because its hooks run commands.
  * `~/.custom_env` is the untracked file every shell sources, so a write there
  * would land a value in every later process.
+ *
+ * Agent-dir entries are listed once, under `~/.config/pi/agent`; `withPiTwin` adds
+ * the `~/.pi/agent` spelling, since `~/.pi` is a symlink to `~/.config/pi` and a path
+ * arrives in whichever form the caller typed. sandbox.test.ts reads both lists, so
+ * a file added here must also be added to sandbox.json's deny lists.
  */
-const PROTECTED_PATHS = [
+export const PROTECTED_PATHS = withPiTwin([
 	"~/.aws",
 	"~/.claude/settings.json",
 	"~/.config/claude/settings.json",
@@ -47,11 +52,8 @@ const PROTECTED_PATHS = [
 	"~/.netrc",
 	"~/.npmrc",
 	"~/.ollama/id_ed25519",
-	"~/.pi/agent/auth.json",
-	"~/.pi/agent/mcp-auth.json",
-	"~/.pi/agent/telegram.json",
 	"~/.ssh",
-];
+]);
 
 /**
  * Never readable by `read` or `grep`, which return file contents: a secret the
@@ -77,7 +79,7 @@ const PROTECTED_PATHS = [
  * `bash` is deliberately not gated here; see README.md for why this is a guard
  * against accidents rather than a security boundary.
  */
-const SECRET_PATHS = [
+export const SECRET_PATHS = withPiTwin([
 	"~/.aws/cli/cache",
 	"~/.aws/credentials",
 	"~/.aws/sso",
@@ -97,14 +99,10 @@ const SECRET_PATHS = [
 	"~/.netrc",
 	"~/.npmrc",
 	"~/.ollama/id_ed25519",
-	"~/.pi/agent/auth.json",
-	"~/.pi/agent/mcp-auth.json",
-	"~/.pi/agent/sessions",
-	"~/.pi/agent/telegram.json",
 	"~/.python_history",
 	"~/.ssh",
 	"~/.zsh_history",
-];
+]);
 
 /**
  * Shell commands that change the machine outside the workspace, or that cannot
@@ -134,6 +132,10 @@ const CONFIRM_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
 ];
 
 // ---------------------------------------------------------------- helpers
+
+function withPiTwin(paths: string[]): string[] {
+	return paths.flatMap((path) => (path.startsWith("~/.config/pi/") ? [path, path.replace("~/.config/pi/", "~/.pi/")] : [path]));
+}
 
 /** Expand a leading `~` and normalise, so comparisons are path-shape agnostic. */
 function expand(path: string): string {

@@ -32,11 +32,6 @@
     "npm:pi-rewind",
     "npm:pi-sandbox"
   ],
-  "retry": {
-    "provider": {
-      "timeoutMs": 180000
-    }
-  },
   "env": {
     "PI_RETRY_STALL_TIMEOUT_MS": 180000
   },

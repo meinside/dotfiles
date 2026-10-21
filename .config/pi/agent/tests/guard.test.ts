@@ -114,14 +114,15 @@ test("secret paths are not readable", async () => {
 
 /**
  * The lists in guard.ts are long enough that an unsorted addition hides a
- * duplicate or a near-miss (`~/.aws` next to `~/.aws/sso`). The consts are module
- * private, so this reads the source rather than importing them.
+ * duplicate or a near-miss (`~/.aws` next to `~/.aws/sso`). Read from the source
+ * rather than imported: the exported arrays carry the derived `~/.pi` twins, which
+ * are not in sorted position.
  */
 test("guard.ts policy lists stay alphabetically sorted", () => {
 	const source = readText("extensions/guard.ts");
 	assert.ok(source, "extensions/guard.ts should be readable");
 	for (const name of ["PROTECTED_PATHS", "SECRET_PATHS"]) {
-		const block = new RegExp(`const ${name} = \\[([^\\]]*)\\]`).exec(source);
+		const block = new RegExp(`const ${name} = withPiTwin\\(\\[([^\\]]*)\\]`).exec(source);
 		assert.ok(block, `${name} not found in extensions/guard.ts`);
 		const entries = [...block[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]);
 		assert.ok(entries.length > 5, `${name} parsed as only ${entries.length} entries — did the literal change shape?`);

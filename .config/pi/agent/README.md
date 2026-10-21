@@ -30,7 +30,7 @@ directory".
 | `../cost-tracker/` | no | Cost ledger, one JSONL per day under `YYYY/MM/`. Outside this directory: `~/.pi/cost-tracker` through the symlink. Entries from the Bedrock era contain ARNs |
 | `npm/`, `git/` | no | `pi install` targets for `npm:` and `git:` packages. Each ships its own `.gitignore` with `*` |
 | `cache/` | no | `claude-usage.json`: the last plan usage seen, shared by every running pi session |
-| `tmp/` | no | Extension state: `compaction/` (compaction-log), `magpi-render/` (learned hosts), `pi-telegram/` (bridge runtime, inbox, logs) |
+| `tmp/` | no | Extension state: `magpi-render/` (learned hosts), `pi-telegram/` (bridge runtime, inbox, logs) |
 | `install/`, `bin/pi` | no | pi itself, from `pi.dev/install.sh`: `bin/pi` runs `install/releases/<install/current-version>/`. Managed by `pi update`; do not edit |
 | `extensions/subagent/` | yes | Vendored subagent extension ([notes](#vendored-subagent-extension)) |
 | `extensions/guard.ts` | yes | Blocks writes to credential files, confirms installs, irreversible commands and MCP calls not marked safe |
@@ -38,7 +38,6 @@ directory".
 | `extensions/statusline.ts` | yes | Claude Code style footer ([notes](#statusline-extension)) |
 | `extensions/claude-usage.ts` | yes | Claude plan usage (`5h`, `7d`, and the active model's weekly window) with reset times, at the end of the statusline ([notes](#statusline-extension)) |
 | `extensions/compaction-summary.ts` | yes | Gives the compaction summary room without shrinking the context window ([notes](#compaction-extensions)) |
-| `extensions/compaction-log.ts` | yes | Records every compaction attempt with its outcome and a verdict ([notes](#compaction-extensions)) |
 | `compaction-summary.json` | no | Optional `extensions/compaction-summary.ts` overrides: `reserveTokens`, `summarizerModel`, `triggerRatio`. Absent means defaults; a Bedrock id belongs here, not in the tracked extension |
 | `extensions/magpi-render.ts` | yes | Reads JavaScript-rendered pages through Firefox over WebDriver BiDi ([notes](#magpi-renderer)) |
 | `extensions/magpi-handlers.ts` | yes | Local MagPi fetch handlers: reddit, Discourse, naver blog ([notes](#magpi-handlers)) |
@@ -284,9 +283,6 @@ pi's default budget (`BRIDGE_API` in the source says why).
 - **Tune it in the `CONFIG` block at the top of the file**, which carries the measurement
   behind each value. `compaction-summary.json` overrides `reserveTokens`,
   `summarizerModel` and `triggerRatio` per machine.
-- **`extensions/compaction-log.ts` only watches**: each attempt and outcome is appended to
-  `tmp/compaction/log.jsonl` and printed by `/compaction-log` with a verdict. Either half
-  works without the other.
 - **`CONFIG.triggerRatio` (0.92) caps how full the window may get**, since pi's trigger
   is a fixed margin. Only windows above 204,800 are affected; `1` leaves the trigger to pi.
 
