@@ -66,16 +66,28 @@ function resetTime(seconds: number) {
 	return ` ~${at.toLocaleString("en-US", sameDay ? opts : { ...opts, weekday: "short" }).replace(",", "")}`;
 }
 
-export function format(cache: Cache) {
+export type Color = "text" | "warning" | "error";
+type Paint = (color: Color, text: string) => string;
+
+/** Judged on the rounded value, so a "40%" on screen is never painted as above 40. */
+export function percentColor(percent: number): Color {
+	return percent > 70 ? "error" : percent > 40 ? "warning" : "text";
+}
+
+// Each piece is painted on its own: a colour ends in a reset, so nesting the
+// percentage inside one "text" span would leave the rest of the line uncoloured.
+export function format(cache: Cache, paint: Paint = (_color, text) => text) {
 	const now = Date.now() / 1000;
 	return Object.entries(cache.windows)
 		.map(([name, w]) => {
 			const label = name === MODEL_WINDOW ? (w.model ?? "model") : name.replace(/^seven_day_/, "");
 			// A window past its reset is empty until the next response says otherwise.
-			if (w.resetsAt && w.resetsAt < now) return `${label} 0%`;
-			return `${label} ${Math.round(w.utilization * 100)}%${w.resetsAt ? resetTime(w.resetsAt) : ""}`;
+			if (w.resetsAt && w.resetsAt < now) return paint("text", `${label} 0%`);
+			const percent = Math.round(w.utilization * 100);
+			const reset = w.resetsAt ? paint("text", resetTime(w.resetsAt)) : "";
+			return `${paint("text", `${label} `)}${paint(percentColor(percent), `${percent}%`)}${reset}`;
 		})
-		.join(" · ");
+		.join(paint("text", " · "));
 }
 
 export default function (pi: ExtensionAPI) {
@@ -84,9 +96,10 @@ export default function (pi: ExtensionAPI) {
 
 	function show(ctx: ExtensionContext, cache: Cache) {
 		if (ctx.mode !== "tui") return;
-		const text = PROVIDERS.includes(ctx.model?.provider ?? "") ? format(cache) : "";
 		// Normal text colour: the stats around it are dim, and "muted" was still too close to them.
-		ctx.ui.setStatus(STATUS_KEY, text ? ctx.ui.theme.fg("text", text) : undefined);
+		const paint: Paint = (color, text) => ctx.ui.theme.fg(color, text);
+		const text = PROVIDERS.includes(ctx.model?.provider ?? "") ? format(cache, paint) : "";
+		ctx.ui.setStatus(STATUS_KEY, text || undefined);
 	}
 
 	// Picks up what other sessions wrote since.

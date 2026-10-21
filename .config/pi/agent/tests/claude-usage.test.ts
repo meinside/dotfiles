@@ -20,8 +20,11 @@ const claudeUsage = await import(join(dirname(import.meta.dirname), "extensions/
 type Window = { utilization: number; resetsAt?: number; model?: string };
 const { parseHeaders, format } = claudeUsage as {
 	parseHeaders: (headers: Record<string, string>) => [string, Window][];
-	format: (cache: { windows: Record<string, Window> }) => string;
+	format: (cache: { windows: Record<string, Window> }, paint?: (color: string, text: string) => string) => string;
 };
+
+/** Marks each painted piece as <color:text>, so the test sees which colour got what. */
+const tag = (color: string, text: string) => `<${color}:${text}>`;
 
 const hour = 3600;
 const now = () => Math.floor(Date.now() / 1000);
@@ -54,6 +57,21 @@ test("labels: the model window takes its model's name, seven_day_ is shortened",
 		},
 	});
 	assert.equal(text, "5h 35% · fable 17% · opus 10%");
+});
+
+test("only the percentage is coloured: warning above 40, error above 70, by the shown value", () => {
+	const colorOf = (utilization: number) =>
+		/<(\w+):\d+%>/.exec(format({ windows: { "5h": { utilization } } }, tag))?.[1];
+	assert.equal(colorOf(0.404), "text"); // shown as 40%
+	assert.equal(colorOf(0.41), "warning");
+	assert.equal(colorOf(0.7), "warning");
+	assert.equal(colorOf(0.705), "error"); // shown as 71%
+	assert.equal(colorOf(1), "error");
+
+	const text = format({ windows: { "5h": { utilization: 0.92, resetsAt: now() + hour }, "7d": { utilization: 0.2 } } }, tag);
+	assert.match(text, /^<text:5h ><error:92%><text: ~[^>]+><text: · ><text:7d ><text:20%>$/);
+	// A window past its reset is plain 0%, whatever it read before.
+	assert.equal(format({ windows: { "5h": { utilization: 0.92, resetsAt: now() - hour } } }, tag), "<text:5h 0%>");
 });
 
 test("a window past its reset reads 0% until the next response; a future one shows its reset", () => {
