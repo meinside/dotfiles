@@ -102,6 +102,15 @@ export const TUNING = {
 		 * at 13-15 s and 6 s respectively.
 		 */
 		maxWaitMs: 25_000,
+		/**
+		 * A page this short that matches `empty.botPattern` does not settle before the cap. A
+		 * JS challenge ("Just a moment...") holds still for seconds before it navigates to the
+		 * real page, and stability alone would return the challenge. Longer pages are read as
+		 * articles mentioning one of the words, which must not wait out the cap.
+		 * Not measured: none of 309 renders in one session met a challenge. A hard block
+		 * ("Access denied") now costs the full cap instead of ~3 s.
+		 */
+		challengeMaxChars: 1_000,
 		/** A response only resets the idle timer when it could carry content. */
 		contentBearing: {
 			statusMin: 200,
@@ -197,6 +206,14 @@ export const TUNING = {
 			'user_pref("browser.shell.checkDefaultBrowser", false);',
 		],
 		startupTimeoutMs: 20_000,
+		/**
+		 * Launches tried when Firefox exits before announcing its BiDi port.
+		 * Measured: 2 of 309 renders in one session failed within a second, Firefox exiting 0
+		 * with only its headless banner on stderr; both URLs rendered when called again.
+		 * Cause unknown. A startup timeout is not retried: it has already cost 20 s.
+		 */
+		startupAttempts: 2,
+		startupRetryDelayMs: 1_000,
 		commandTimeoutMs: 30_000,
 		/**
 		 * One browser per render, killed afterwards. A pooled instance would save the
@@ -351,6 +368,8 @@ export interface SettleFacts {
 	quietForMs: number;
 	inflight: number;
 	totalText: number;
+	/** The page reads like a bot check; see `isChallenge`. */
+	challenge?: boolean;
 }
 
 /** The settle rule, kept separate from the loop so its truth table can be tested. */
@@ -361,8 +380,14 @@ export function shouldSettle(facts: SettleFacts, maxWaitMs = TUNING.settle.maxWa
 		facts.stableRounds >= TUNING.settle.stableRounds &&
 		facts.quietForMs >= TUNING.settle.networkIdleMs &&
 		facts.inflight === 0 &&
-		facts.totalText > 0
+		facts.totalText > 0 &&
+		!facts.challenge
 	);
+}
+
+/** Whether the page on screen is a bot check that may still navigate to the real one. */
+export function isChallenge(text: string, totalText: number): boolean {
+	return totalText < TUNING.settle.challengeMaxChars && classifyEmpty(text) === "botcheck";
 }
 
 export interface FrameResult {
@@ -463,6 +488,47 @@ export function classifyEmpty(text: string): "login" | "botcheck" | "empty" {
 	if (new RegExp(TUNING.empty.botPattern, "i").test(text)) return "botcheck";
 	if (new RegExp(TUNING.empty.loginPattern, "i").test(text)) return "login";
 	return "empty";
+}
+
+/**
+ * The reason given for an empty render. The document's HTTP status rides along because
+ * an empty 404 and an empty 403 read the same on screen but call for different next
+ * steps: a corrected URL, or another source.
+ */
+export function emptyDetail(
+	reason: ReturnType<typeof classifyEmpty>,
+	hitCap: boolean,
+	maxWaitMs: number,
+	status?: number,
+): string {
+	const detail =
+		reason === "login"
+			? "the page asks for a login"
+			: reason === "botcheck"
+				? "the page served a bot check"
+				: hitCap
+					? `nothing settled within ${maxWaitMs}ms`
+					: "the rendered page held no text";
+	return status === undefined ? detail : `${detail} (HTTP ${status})`;
+}
+
+/** Firefox quit before announcing its BiDi port: the one startup failure worth retrying. */
+export class BrowserExited extends Error {}
+
+/** Runs `start` again after a `BrowserExited`, up to `attempts` times in all. */
+export async function retryStartup<T>(
+	start: () => Promise<T>,
+	attempts: number = TUNING.browser.startupAttempts,
+	delayMs: number = TUNING.browser.startupRetryDelayMs,
+): Promise<T> {
+	for (let attempt = 1; ; attempt++) {
+		try {
+			return await start();
+		} catch (error) {
+			if (!(error instanceof BrowserExited) || attempt >= attempts) throw error;
+			await new Promise((resolve) => setTimeout(resolve, delayMs));
+		}
+	}
 }
 
 /**
@@ -781,7 +847,8 @@ function pageConfig(): string {
 	});
 }
 
-const PROBE = '(() => JSON.stringify({ ready: document.readyState, textLen: (document.body ? document.body.innerText : "").length }))()';
+const PROBE =
+	'(() => { const text = document.body ? document.body.innerText : ""; return JSON.stringify({ ready: document.readyState, textLen: text.length, head: (document.title + " " + text).slice(0, 1000) }); })()';
 
 function structuredScript(): string {
 	return `(() => {
@@ -1036,24 +1103,31 @@ async function render(
 	};
 
 	try {
-		child = spawn(binary, [...TUNING.browser.args, "--profile", profile], {
-			stdio: ["ignore", "pipe", "pipe"],
-		});
-		let stderr = "";
-		const wsUrl = await new Promise<string>((resolve, reject) => {
-			const timer = setTimeout(
-				() => reject(new Error(`browser did not announce a BiDi port in ${TUNING.browser.startupTimeoutMs}ms`)),
-				TUNING.browser.startupTimeoutMs,
-			);
-			child?.stderr?.on("data", (chunk: Buffer) => {
-				stderr += chunk.toString();
-				const match = /ws:\/\/\S+/.exec(stderr);
-				if (match) {
-					clearTimeout(timer);
-					resolve(match[0]);
-				}
+		const wsUrl = await retryStartup(() => {
+			child?.kill("SIGKILL");
+			const launched = spawn(binary, [...TUNING.browser.args, "--profile", profile], {
+				stdio: ["ignore", "pipe", "pipe"],
 			});
-			child?.on("exit", (code) => reject(new Error(`browser exited with ${code}: ${stderr.slice(0, 300)}`)));
+			child = launched;
+			let stderr = "";
+			return new Promise<string>((resolve, reject) => {
+				const timer = setTimeout(
+					() => reject(new Error(`browser did not announce a BiDi port in ${TUNING.browser.startupTimeoutMs}ms`)),
+					TUNING.browser.startupTimeoutMs,
+				);
+				launched.stderr?.on("data", (chunk: Buffer) => {
+					stderr += chunk.toString();
+					const match = /ws:\/\/\S+/.exec(stderr);
+					if (match) {
+						clearTimeout(timer);
+						resolve(match[0]);
+					}
+				});
+				launched.on("exit", (code) => {
+					clearTimeout(timer);
+					reject(new BrowserExited(`browser exited with ${code}: ${stderr.slice(0, 300)}`));
+				});
+			});
 		});
 
 		// Firefox prints the origin only; the BiDi socket lives at /session.
@@ -1065,6 +1139,8 @@ async function render(
 		let lastResponseAt = Date.now();
 		let responses = 0;
 		let inflight = 0;
+		/** Last navigation response per browsing context; redirects overwrite their 3xx. */
+		const navigationStatus = new Map<string, number>();
 		socket.onMessage((text) => {
 			let message: Record<string, unknown>;
 			try {
@@ -1080,7 +1156,12 @@ async function render(
 			if (method === "network.responseCompleted" || method === "network.fetchError") {
 				inflight = Math.max(0, inflight - 1);
 				responses += 1;
-				const params = message.params as { response?: ResponseFacts; request?: { url?: string } } | undefined;
+				const params = message.params as
+					| { context?: string; navigation?: string | null; response?: ResponseFacts; request?: { url?: string } }
+					| undefined;
+				if (params?.navigation && params.context && params.response) {
+					navigationStatus.set(params.context, params.response.status);
+				}
 				const facts = params?.response
 					? { ...params.response, url: params.response.url ?? params.request?.url }
 					: undefined;
@@ -1132,15 +1213,20 @@ async function render(
 			return JSON.parse(result.result?.value ?? "null") as T;
 		};
 		const frameTree = async () => flatten((await send<{ contexts: TreeNode[] }>("browsingContext.getTree", { root })).contexts);
+		let heads = "";
 		const measure = async () => {
 			let total = 0;
+			const seen: string[] = [];
 			for (const frame of await frameTree()) {
 				try {
-					total += (await evaluate<{ textLen: number }>(frame.context, PROBE)).textLen;
+					const probe = await evaluate<{ textLen: number; head: string }>(frame.context, PROBE);
+					total += probe.textLen;
+					seen.push(probe.head);
 				} catch {
 					// a frame mid-navigation cannot be measured; the next poll will see it
 				}
 			}
+			heads = seen.join(" ");
 			return total;
 		};
 
@@ -1163,6 +1249,7 @@ async function render(
 				quietForMs: Date.now() - lastResponseAt,
 				inflight,
 				totalText: total,
+				challenge: isChallenge(heads, total),
 			};
 			onUpdate?.(`rendering ${target.host}: ${total} chars, ${responses} responses`);
 			if (facts.elapsedMs >= maxWaitMs || !shouldSettle(facts, maxWaitMs)) continue;
@@ -1224,15 +1311,7 @@ async function render(
 		const markdown = assembleMarkdown(target.href, frames);
 		const plain = markdown.replace(/<!--[\s\S]*?-->/g, "").replace(/\s+/g, " ").trim();
 		if (plain.length < TUNING.empty.minChars) {
-			const reason = classifyEmpty(plain);
-			const detail =
-				reason === "login"
-					? "the page asks for a login"
-					: reason === "botcheck"
-						? "the page served a bot check"
-						: hitCap
-							? `nothing settled within ${maxWaitMs}ms`
-							: "the rendered page held no text";
+			const detail = emptyDetail(classifyEmpty(plain), hitCap, maxWaitMs, navigationStatus.get(root));
 			throw new Error(
 				`Rendered ${target.href} and got ${plain.length} characters: ${detail}. ` +
 					"Reporting this rather than caching an empty document.",

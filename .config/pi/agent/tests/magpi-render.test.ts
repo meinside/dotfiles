@@ -28,11 +28,15 @@ const {
 	registrableDomain,
 	isContentBearing,
 	shouldSettle,
+	isChallenge,
 	coverageOf,
 	chooseExtractor,
 	toFrameResult,
 	assembleMarkdown,
 	classifyEmpty,
+	emptyDetail,
+	retryStartup,
+	BrowserExited,
 	findBrowser,
 	browserLookup,
 	learnedStorePath,
@@ -127,6 +131,15 @@ test("settling needs every condition, not any of them", () => {
 	assert.equal(shouldSettle({ ...ok, quietForMs: 200 }), false, "still fetching");
 	assert.equal(shouldSettle({ ...ok, inflight: 1 }), false, "a request is on the wire");
 	assert.equal(shouldSettle({ ...ok, totalText: 0 }), false, "nothing rendered yet");
+	assert.equal(shouldSettle({ ...ok, challenge: true }), false, "a bot check may still navigate away");
+});
+
+test("only a short page reading like a bot check holds the settle back", () => {
+	assert.equal(isChallenge("Just a moment... Checking your browser", 40), true);
+	assert.equal(isChallenge("Just a moment... Checking your browser", 1_000), false, "an article mentioning it");
+	assert.equal(isChallenge("Voron Trident ACM Panel Set £43.50", 40), false);
+	// the cap still ends a challenge that never clears
+	assert.equal(shouldSettle({ elapsedMs: 30_000, stableRounds: 9, quietForMs: 9_000, inflight: 0, totalText: 40, challenge: true }), true);
 });
 
 test("the cap settles regardless, so a hung page cannot hold the turn", () => {
@@ -259,6 +272,40 @@ test("an empty render is diagnosed rather than returned", () => {
 });
 
 // ---------------------------------------------------------------- browser discovery
+
+test("an empty render names the document's HTTP status when there was one", () => {
+	// a mistyped URL rendered empty and read like a block until the status was shown
+	assert.equal(emptyDetail("empty", false, 25_000, 404), "the rendered page held no text (HTTP 404)");
+	assert.equal(emptyDetail("botcheck", false, 25_000, 403), "the page served a bot check (HTTP 403)");
+	assert.equal(emptyDetail("empty", true, 25_000), "nothing settled within 25000ms");
+});
+
+test("a browser that quits during startup is launched once more, and nothing else is retried", async () => {
+	let calls = 0;
+	const flaky = async () => {
+		calls += 1;
+		if (calls === 1) throw new BrowserExited("browser exited with 0");
+		return "ws://127.0.0.1:1";
+	};
+	assert.equal(await retryStartup(flaky, 2, 0), "ws://127.0.0.1:1");
+	assert.equal(calls, 2);
+
+	calls = 0;
+	const dead = async () => {
+		calls += 1;
+		throw new BrowserExited("browser exited with 0");
+	};
+	await assert.rejects(retryStartup(dead, 2, 0), BrowserExited);
+	assert.equal(calls, 2, "gives up after the configured attempts");
+
+	calls = 0;
+	const hung = async () => {
+		calls += 1;
+		throw new Error("browser did not announce a BiDi port in 20000ms");
+	};
+	await assert.rejects(retryStartup(hung, 2, 0), /did not announce/);
+	assert.equal(calls, 1, "a timeout has already cost its wait");
+});
 
 test("the configured binary wins, then fixed paths, then PATH", () => {
 	const onlyFirefoxApp = (path: string) => path === "/Applications/Firefox.app/Contents/MacOS/firefox";
