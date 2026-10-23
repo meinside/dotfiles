@@ -34,7 +34,7 @@
   ],
   "env": {
     "PI_RETRY_STALL_TIMEOUT_MS": 180000,
-    "QUOTA_ROTATE_DIR": "${HOME}/.local/state/pi/quota-rotate"
+    "QUOTA_ROTATE_DIR": "${XDG_STATE_HOME}/pi/quota-rotate"
   },
   "quietStartup": "header"
 }
