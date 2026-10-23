@@ -38,7 +38,9 @@ ledger have no such option and stay.
 | `tmp/pi-telegram/` | no | `@llblab/pi-telegram` runtime, inbox and logs |
 | `install/`, `bin/pi` | no | pi itself, from `pi.dev/install.sh`: `bin/pi` runs `install/releases/<install/current-version>/`. Managed by `pi update`; do not edit |
 | `extensions/subagent/` | yes | Vendored subagent extension ([notes](#vendored-subagent-extension)) |
-| `extensions/guard.ts` | yes | Blocks writes to credential files, confirms installs, irreversible commands and MCP calls not marked safe |
+| `extensions/guard.ts` | yes | Blocks writes to credential files, confirms installs, irreversible commands and MCP calls not marked safe. In a Telegram turn the confirmation also goes to Telegram as buttons, label only |
+| `extensions/ask-user-telegram.ts` | yes | In a Telegram turn, turns `ask_user` away so the model asks with `telegram_button` choices instead of a terminal prompt nobody sees |
+| `extensions/lib/telegram.ts` | yes | Optional link to pi-telegram for the two above; anything missing means terminal only. Not loaded as an extension (no `index.ts`) |
 | `extensions/git-checkpoint.ts` | yes | Vendored upstream example: per-turn git stash checkpoints for `/fork` |
 | `extensions/statusline.ts` | yes | Claude Code style footer ([notes](#statusline-extension)) |
 | `extensions/claude-usage.ts` | yes | Claude plan usage (`5h`, `7d`, and the active model's weekly window) with reset times, at the end of the statusline ([notes](#statusline-extension)) |

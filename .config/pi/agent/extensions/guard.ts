@@ -16,9 +16,11 @@
  * calls and never pass through this file.
  */
 
+import { randomBytes } from "node:crypto";
 import { homedir } from "node:os";
 import { isAbsolute, resolve, sep } from "node:path";
 import type { ExtensionAPI, ExtensionContext, ToolAnnotations } from "@earendil-works/pi-coding-agent";
+import { loadTelegramPort, type TelegramHandle, type TelegramPort } from "./lib/telegram.ts";
 
 // ---------------------------------------------------------------- policy
 
@@ -186,19 +188,112 @@ function preview(input: unknown, max = 400): string {
 	return text.length > max ? `${text.slice(0, max)}…` : text;
 }
 
+// ---------------------------------------------------------------- telegram
+
 /**
- * Ask before running. Blocks without asking when no UI can answer: headless runs
- * (`-p`, `--mode json`) should fail loudly rather than install something.
+ * A confirmation waiting for an answer that may come from Telegram. Its button
+ * data is `guard:<pid>:<nonce>:<y|n>`: in Threaded Mode one leader process polls
+ * for every pi instance, and a button another instance sent must be passed on to
+ * it rather than taken here.
  */
-async function allow(ctx: ExtensionContext, label: string, command: string): Promise<boolean> {
-	if (!ctx.hasUI) return false;
-	const choice = await ctx.ui.select(`Allow this ${label}?\n\n  ${command.trim()}`, ["Allow once", "Block"]);
-	return choice === "Allow once";
+type Pending = { handle: TelegramHandle; settle: (allowed: boolean, where: string) => void };
+type CallbackQuery = {
+	data?: string;
+	from?: { id?: number };
+	message?: { message_id?: number; chat?: { id?: number } };
+};
+
+const CALLBACK = /^guard:(\d+):([0-9a-f]+):([yn])$/;
+
+/**
+ * Settles the confirmation a guard button belongs to. Handlers run before
+ * pi-telegram authorizes the sender, so this does: an active-turn target is the
+ * paired user's private chat, whose id is that user's id. Every `guard:` button of
+ * this process is consumed, answered or not; one passed on would reach the model as
+ * a `[callback] guard:…` prompt.
+ */
+export function answerCallback(update: unknown, pending: Map<string, Pending>, pid = process.pid): "consume" | "pass" {
+	const query = (update as { callback_query?: CallbackQuery } | undefined)?.callback_query;
+	const match = CALLBACK.exec(query?.data ?? "");
+	if (!query || !match) return "pass";
+	if (Number(match[1]) !== pid) return "pass";
+	const approval = pending.get(match[2]);
+	if (!approval) return "consume"; // already answered, or sent before /reload
+	const { target, messageIds } = approval.handle;
+	const fromOwner = query.from?.id === target.chatId && query.message?.chat?.id === target.chatId;
+	if (!fromOwner || !messageIds.includes(query.message?.message_id ?? Number.NaN)) return "consume";
+	approval.settle(match[3] === "y", "from Telegram");
+	return "consume";
 }
 
 // ---------------------------------------------------------------- extension
 
-export default function (pi: ExtensionAPI) {
+/** `loadTelegram` is a parameter so tests can stand in for pi-telegram; pi passes only `pi`. */
+export default function (pi: ExtensionAPI, loadTelegram: () => Promise<TelegramPort | undefined> = loadTelegramPort) {
+	let telegram: Promise<TelegramPort | undefined> | undefined;
+	let unregister: (() => void) | undefined;
+	const pending = new Map<string, Pending>();
+	const port = () => (telegram ??= loadTelegram());
+
+	// Registered for the whole session, not per confirmation, so a button tapped
+	// after its confirmation ended is still consumed instead of reaching the model.
+	pi.on("session_start", async () => {
+		const found = await port();
+		unregister?.();
+		unregister = found?.onUpdate((update) => answerCallback(update, pending));
+	});
+	pi.on("session_shutdown", async () => {
+		unregister?.();
+		unregister = undefined;
+		for (const approval of pending.values()) approval.settle(false, "as the session ended");
+	});
+
+	/**
+	 * Ask before running. Blocks without asking when no UI can answer: headless runs
+	 * (`-p`, `--mode json`) should fail loudly rather than install something.
+	 *
+	 * During a Telegram turn the same question also goes to Telegram, and whichever
+	 * answer comes first decides. Telegram gets `summary` only, never the command:
+	 * it can carry tokens, and a message there stays on Telegram's servers.
+	 */
+	async function allow(ctx: ExtensionContext, label: string, command: string, summary = label): Promise<boolean> {
+		if (!ctx.hasUI) return false;
+		let settle!: (allowed: boolean, where: string) => void;
+		const decided = new Promise<{ allowed: boolean; where: string }>((resolve) => {
+			settle = (allowed, where) => resolve({ allowed, where });
+		});
+		let done = false;
+
+		const local = new AbortController();
+		void ctx.ui
+			.select(`Allow this ${label}?\n\n  ${command.trim()}`, ["Allow once", "Block"], { signal: local.signal })
+			.then((choice) => settle(choice === "Allow once", "locally"), () => settle(false, "locally"));
+
+		const nonce = randomBytes(6).toString("hex");
+		const button = (text: string, answer: string) => ({ text, callback_data: `guard:${process.pid}:${nonce}:${answer}` });
+		const found = await port();
+		const sent = found
+			?.send({
+				text: `🛡 guard: allow this ${summary}?\nThe full command is shown in the terminal.`,
+				replyMarkup: { inline_keyboard: [[button("✅ Allow once", "y"), button("⛔ Block", "n")]] },
+			})
+			.then((result) => {
+				if (!result.ok) return undefined;
+				if (!done) pending.set(nonce, { handle: result.value, settle });
+				return result.value;
+			});
+
+		const { allowed, where } = await decided;
+		done = true;
+		pending.delete(nonce);
+		local.abort();
+		// Not awaited: the tool call should not wait on Telegram to tidy up.
+		void sent?.then((handle) => {
+			if (handle) void found?.edit(handle, { text: `🛡 guard: ${summary} ${allowed ? "✅ allowed" : "⛔ blocked"} ${where}` });
+		});
+		return allowed;
+	}
+
 	pi.on("tool_call", async (event, ctx) => {
 		if (event.toolName === "write" || event.toolName === "edit") {
 			const path = event.input.path;
@@ -228,7 +323,8 @@ export default function (pi: ExtensionAPI) {
 		if (event.toolName.startsWith(MCP_PREFIX)) {
 			const hints = pi.getAllTools().find((tool) => tool.name === event.toolName)?.annotations;
 			if (!needsApproval(hints)) return undefined;
-			if (await allow(ctx, "MCP call", `${event.toolName} ${preview(event.input)}`)) return undefined;
+			const call = `${event.toolName} ${preview(event.input)}`;
+			if (await allow(ctx, "MCP call", call, `MCP call ${event.toolName}`)) return undefined;
 			return {
 				block: true,
 				reason: `${event.toolName} was not approved (guard.ts: its server's annotations do not mark it safe); ask the user before retrying`,

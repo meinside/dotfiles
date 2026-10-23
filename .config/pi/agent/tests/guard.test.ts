@@ -11,6 +11,7 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import * as guardModule from "../extensions/guard.ts";
+import type { TelegramHandle, TelegramPort, TelegramUpdateHandler, TelegramView } from "../extensions/lib/telegram.ts";
 import { readText } from "./lib.ts";
 
 type Handler = (event: unknown, ctx: unknown) => Promise<unknown>;
@@ -21,7 +22,9 @@ type ToolResultPatch = { content: Array<{ type: string; text?: string }> } | und
 const entry = (guardModule as { default?: unknown }).default;
 const guard = (typeof entry === "function" ? entry : (entry as { default?: unknown })?.default) as (
 	pi: { on: (name: string, handler: Handler) => void; getAllTools: () => unknown[] },
+	loadTelegram?: () => Promise<TelegramPort | undefined>,
 ) => void;
+const { answerCallback } = guardModule;
 
 /**
  * MCP tools as `pi.getAllTools()` reports them, one per combination of hints the
@@ -51,7 +54,13 @@ const call = (toolName: string, path: string) =>
 	handlers.tool_call({ toolName, input: { path } }, ctx) as Promise<ToolCallResult>;
 
 test("guard registers the handlers it needs", () => {
-	assert.deepEqual(Object.keys(handlers).sort(), ["tool_call", "tool_result", "user_bash"]);
+	assert.deepEqual(Object.keys(handlers).sort(), [
+		"session_shutdown",
+		"session_start",
+		"tool_call",
+		"tool_result",
+		"user_bash",
+	]);
 });
 
 test("credential paths are not writable", async () => {
@@ -250,4 +259,166 @@ test("results with nothing to hide are left untouched", async () => {
 		),
 		undefined,
 	);
+});
+
+// ---------------------------------------------------------------- telegram
+
+/**
+ * pi-telegram as guard sees it through extensions/lib/telegram.ts: records what was
+ * sent and edited, and taps a sent button the way the paired user's phone would.
+ * `turn: false` is every case where there is no Telegram turn to send to.
+ */
+function fakeTelegram(turn = true) {
+	const sent: TelegramView[] = [];
+	const edits: TelegramView[] = [];
+	let handler: TelegramUpdateHandler | undefined;
+	const handle: TelegramHandle = { target: { chatId: 42, threadId: 7 }, messageIds: [100], generation: "g1" };
+	const port: TelegramPort = {
+		send: async (view) => {
+			sent.push(view);
+			return turn ? { ok: true, value: handle } : { ok: false, reason: "target-unavailable", message: "" };
+		},
+		edit: async (_handle, view) => {
+			edits.push(view);
+			return { ok: true, value: handle };
+		},
+		isTelegramTurn: async () => turn,
+		onUpdate: (h) => {
+			handler = h;
+			return () => {
+				handler = undefined;
+			};
+		},
+	};
+	const buttonData = (answer: "y" | "n") =>
+		sent.at(-1)?.replyMarkup?.inline_keyboard[0].find((b) => b.callback_data.endsWith(`:${answer}`))?.callback_data;
+	const tap = (answer: "y" | "n") =>
+		handler?.({ callback_query: { data: buttonData(answer), from: { id: 42 }, message: { message_id: 100, chat: { id: 42 } } } });
+	return { port, sent, edits, tap, buttonData, registered: () => handler !== undefined };
+}
+
+/** A terminal whose select stays open until answered or aborted, like pi's. */
+function terminal() {
+	let answer: (choice: string | undefined) => void = () => {};
+	let signal: AbortSignal | undefined;
+	const ui = {
+		notify: () => {},
+		select: (_title: string, _options: string[], opts?: { signal?: AbortSignal }) => {
+			signal = opts?.signal;
+			return new Promise<string | undefined>((resolve) => {
+				answer = resolve;
+				signal?.addEventListener("abort", () => resolve(undefined));
+			});
+		},
+	};
+	return { ctx: { cwd: CWD, hasUI: true, ui }, answer: (choice: string) => answer(choice), closed: () => signal?.aborted === true };
+}
+
+async function guardWith(telegram: TelegramPort | undefined) {
+	const own: Record<string, Handler> = {};
+	const on = (name: string, handler: Handler) => {
+		own[name] = handler;
+	};
+	guard({ on, getAllTools: () => MCP_TOOLS }, async () => telegram);
+	await own.session_start({}, {});
+	return own;
+}
+
+/** Lets the send that follows the terminal dialog happen. */
+const tick = () => new Promise((resolve) => setImmediate(resolve));
+
+test("in a Telegram turn a tap there decides, and the terminal dialog closes", async () => {
+	for (const [answer, blocked] of [["y", false], ["n", true]] as const) {
+		const telegram = fakeTelegram();
+		const own = await guardWith(telegram.port);
+		const local = terminal();
+		const result = own.tool_call({ toolName: "mcp__srv__destructive", input: { id: 1 } }, local.ctx) as Promise<ToolCallResult>;
+		await tick();
+		assert.equal(telegram.tap(answer), "consume");
+		assert.equal((await result)?.block === true, blocked, answer);
+		assert.ok(local.closed(), "the terminal dialog should close");
+		await tick();
+		assert.match(telegram.edits[0]?.text ?? "", blocked ? /blocked from Telegram/ : /allowed from Telegram/);
+	}
+});
+
+test("Telegram gets the label and tool name, never the command or its arguments", async () => {
+	const telegram = fakeTelegram();
+	const own = await guardWith(telegram.port);
+	const local = terminal();
+	const mcp = own.tool_call({ toolName: "mcp__srv__destructive", input: { token: "s3cret" } }, local.ctx);
+	await tick();
+	local.answer("Block");
+	await mcp;
+	const bash = own.tool_call({ toolName: "bash", input: { command: "sudo cat /tmp/s3cret" } }, local.ctx);
+	await tick();
+	local.answer("Block");
+	await bash;
+	assert.equal(telegram.sent.length, 2);
+	assert.match(telegram.sent[0].text, /MCP call mcp__srv__destructive/);
+	assert.match(telegram.sent[1].text, /allow this sudo\?/);
+	for (const view of [...telegram.sent, ...telegram.edits]) assert.ok(!view.text.includes("s3cret"), view.text);
+});
+
+test("an answer in the terminal settles the Telegram message, and a later tap does nothing", async () => {
+	const telegram = fakeTelegram();
+	const own = await guardWith(telegram.port);
+	const local = terminal();
+	const result = own.tool_call({ toolName: "bash", input: { command: "sudo true" } }, local.ctx) as Promise<ToolCallResult>;
+	await tick();
+	local.answer("Allow once");
+	assert.equal(await result, undefined);
+	await tick();
+	assert.match(telegram.edits[0]?.text ?? "", /allowed locally/);
+	assert.equal(telegram.tap("n"), "consume", "a stale guard button must not reach the model as [callback]");
+});
+
+test("outside a Telegram turn, or without pi-telegram, only the terminal is asked", async () => {
+	for (const telegram of [fakeTelegram(false), undefined]) {
+		const own = await guardWith(telegram?.port);
+		const local = terminal();
+		const result = own.tool_call({ toolName: "bash", input: { command: "sudo true" } }, local.ctx) as Promise<ToolCallResult>;
+		await tick();
+		local.answer("Allow once");
+		assert.equal(await result, undefined);
+		assert.deepEqual(telegram?.edits ?? [], []);
+	}
+});
+
+test("a session ending blocks a confirmation still waiting and stops listening", async () => {
+	const telegram = fakeTelegram();
+	const own = await guardWith(telegram.port);
+	assert.ok(telegram.registered());
+	const result = own.tool_call({ toolName: "bash", input: { command: "sudo true" } }, terminal().ctx) as Promise<ToolCallResult>;
+	await tick();
+	await own.session_shutdown({}, {});
+	assert.equal((await result)?.block, true);
+	assert.ok(!telegram.registered());
+});
+
+test("a guard button settles only for the paired chat's tap on the message it was sent in", () => {
+	let settled: boolean | undefined;
+	const pending = new Map([
+		[
+			"ab12",
+			{
+				handle: { target: { chatId: 42 }, messageIds: [100], generation: "g" },
+				settle: (allowed: boolean) => {
+					settled = allowed;
+				},
+			},
+		],
+	]);
+	const query = (data: string, from = 42, chat = 42, message = 100) => ({
+		callback_query: { data, from: { id: from }, message: { message_id: message, chat: { id: chat } } },
+	});
+	assert.equal(answerCallback(query("tgbtn:x"), pending, 7), "pass", "not ours");
+	assert.equal(answerCallback(query("guard:8:ab12:y"), pending, 7), "pass", "another pi instance's, routed on by the leader");
+	assert.equal(answerCallback(query("guard:7:ffff:y"), pending, 7), "consume", "answered already or from before /reload");
+	for (const [from, chat, message] of [[99, 42, 100], [42, 99, 100], [42, 42, 101]]) {
+		assert.equal(answerCallback(query("guard:7:ab12:y", from, chat, message), pending, 7), "consume");
+		assert.equal(settled, undefined, `${from}/${chat}/${message} must not settle`);
+	}
+	assert.equal(answerCallback(query("guard:7:ab12:n"), pending, 7), "consume");
+	assert.equal(settled, false);
 });
