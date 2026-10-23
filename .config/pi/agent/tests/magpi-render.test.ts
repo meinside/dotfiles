@@ -18,7 +18,7 @@
 
 import assert from "node:assert/strict";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import * as renderModule from "../extensions/magpi-render.ts";
@@ -344,7 +344,7 @@ test("the command writes to a stable per-url path instead of a custom message", 
 	// A custom message needs a registered renderer; the first cut returned one without
 	// and the whole rendered document vanished, leaving only the summary notification.
 	const first = renderArtifactPath("https://kr.example.com/catalogue/detail/12345/?variant=A1-2020-500");
-	assert.match(first, /tmp\/magpi-render\/kr\.example\.com-[0-9a-f]{8}\.md$/);
+	assert.match(first, /\/pi\/magpi-render\/kr\.example\.com-[0-9a-f]{8}\.md$/);
 	assert.equal(
 		renderArtifactPath("https://kr.example.com/catalogue/detail/12345/?variant=A1-2020-500"),
 		first,
@@ -466,7 +466,25 @@ test("the learned store round-trips and keeps the first sighting", (t) => {
 
 	writeFileSync(path, "{ not json", "utf8");
 	assert.deepEqual(loadLearned(path), { hosts: {} }, "a corrupt store costs one repeated discovery");
-	assert.match(learnedStorePath(), /tmp\/magpi-render\/learned\.json$/);
+});
+
+test("learned hosts live in XDG state and artefacts in XDG cache, outside the agent dir", (t) => {
+	const saved = { state: process.env.XDG_STATE_HOME, cache: process.env.XDG_CACHE_HOME };
+	t.after(() => {
+		for (const [key, value] of [["XDG_STATE_HOME", saved.state], ["XDG_CACHE_HOME", saved.cache]] as const) {
+			if (value === undefined) delete process.env[key];
+			else process.env[key] = value;
+		}
+	});
+	process.env.XDG_STATE_HOME = "/xdg/state";
+	process.env.XDG_CACHE_HOME = "/xdg/cache";
+	assert.equal(learnedStorePath(), "/xdg/state/pi/magpi-render/learned.json");
+	assert.match(renderArtifactPath("https://example.com/"), /^\/xdg\/cache\/pi\/magpi-render\/example\.com-[0-9a-f]{8}\.md$/);
+
+	delete process.env.XDG_STATE_HOME;
+	delete process.env.XDG_CACHE_HOME;
+	assert.equal(learnedStorePath(), join(homedir(), ".local/state/pi/magpi-render/learned.json"));
+	assert.ok(renderArtifactPath("https://example.com/").startsWith(join(homedir(), ".cache/pi/magpi-render/")));
 });
 
 test("the note tells the caller what changed and what to do next", () => {

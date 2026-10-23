@@ -3,25 +3,25 @@
  * plan usage shown in the status line. The header names are not a documented API
  * (pi-claude-bridge rebuilds them from Claude Code's rate_limit_event), so what the
  * parser accepts and how each window is labelled are pinned here.
- *
- * The module imports `getAgentDir` from pi at runtime, so it is loaded behind
- * tests/lib.ts's `redirectPiImports()` like statusline.test.ts.
  */
 
 import assert from "node:assert/strict";
-import { dirname, join } from "node:path";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
-import { redirectPiImports } from "./lib.ts";
+import { cacheFile, format, parseHeaders } from "../extensions/claude-usage.ts";
 
-redirectPiImports();
-
-const claudeUsage = await import(join(dirname(import.meta.dirname), "extensions/claude-usage.ts"));
-
-type Window = { utilization: number; resetsAt?: number; model?: string };
-const { parseHeaders, format } = claudeUsage as {
-	parseHeaders: (headers: Record<string, string>) => [string, Window][];
-	format: (cache: { windows: Record<string, Window> }, paint?: (color: string, text: string) => string) => string;
-};
+test("the cache lives in XDG cache, outside the agent dir", (t) => {
+	const saved = process.env.XDG_CACHE_HOME;
+	t.after(() => {
+		if (saved === undefined) delete process.env.XDG_CACHE_HOME;
+		else process.env.XDG_CACHE_HOME = saved;
+	});
+	process.env.XDG_CACHE_HOME = "/xdg/cache";
+	assert.equal(cacheFile(), "/xdg/cache/pi/claude-usage.json");
+	delete process.env.XDG_CACHE_HOME;
+	assert.equal(cacheFile(), join(homedir(), ".cache/pi/claude-usage.json"));
+});
 
 /** Marks each painted piece as <color:text>, so the test sees which colour got what. */
 const tag = (color: string, text: string) => `<${color}:${text}>`;

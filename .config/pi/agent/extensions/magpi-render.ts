@@ -580,11 +580,16 @@ export interface LearnedStore {
  * Hosts detection has caught serving a shell.
  *
  * A file rather than memory, because the point is the *second* visit: the first fetch of
- * a host pays for the discovery, and every session afterwards should not. It sits beside
- * the render artefacts, is plain JSON, and deleting it only costs one repeated discovery.
+ * a host pays for the discovery, and every session afterwards should not. It is plain
+ * JSON, and deleting it only costs one repeated discovery.
  */
 export function learnedStorePath(): string {
-	return join(homedir(), ".pi", "agent", "tmp", "magpi-render", "learned.json");
+	return join(xdgDir("XDG_STATE_HOME", ".local/state"), "learned.json");
+}
+
+/** Learned hosts are state, render artefacts are cache; neither belongs in the dotfiles-tracked agent dir. */
+function xdgDir(variable: "XDG_STATE_HOME" | "XDG_CACHE_HOME", fallback: string): string {
+	return join(process.env[variable] || join(homedir(), fallback), "pi", "magpi-render");
 }
 
 export function loadLearned(path = learnedStorePath()): LearnedStore {
@@ -1039,7 +1044,7 @@ export function renderArtifactPath(url: string): string {
 		// unparseable url: the hash still makes the name unique
 	}
 	const hash = createHash("sha256").update(url).digest("hex").slice(0, 8);
-	return join(homedir(), ".pi", "agent", "tmp", "magpi-render", `${host}-${hash}.md`);
+	return join(xdgDir("XDG_CACHE_HOME", ".cache"), `${host}-${hash}.md`);
 }
 
 /**

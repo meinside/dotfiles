@@ -24,8 +24,8 @@
  * therefore pushed the config into blocking `git clone`; it is replaced below by
  * `BARE_DOMAINS_TOOLS_NEED`, measured under a real sandbox (see README.md).
  *
- * `denyWrite` gets the strictest treatment: `GENERIC_SECRET_GLOBS` and
- * `CREDENTIAL_PATHS` below are asserted to union to exactly `denyWrite`, not
+ * `denyWrite` gets the strictest treatment: `GENERIC_SECRET_GLOBS`,
+ * `CREDENTIAL_PATHS` and `READ_ONLY_DATA` below are asserted to union to exactly `denyWrite`, not
  * just be contained in it. A plain "each expected path is present" check only
  * catches removals; this also catches additions left uncategorized, which is
  * the direction that actually matters here — a new credential-bearing path
@@ -102,6 +102,12 @@ const CREDENTIAL_PATHS = [
  * directory can defeat canonicalization depending on which layer resolves it. */
 const COST_TRACKER_PATHS = ["~/.pi/cost-tracker", "~/.config/pi/cost-tracker"];
 
+/** Data that in-process tools write and `bash` must only read. MagPi's cache is
+ * the agent dir's `magpi-cache` symlink into XDG cache, where `~/.cache` is
+ * otherwise `allowWrite`: a command able to write it could plant a page that a
+ * later `magpi_fetch` serves as fetched. */
+const READ_ONLY_DATA = ["~/.cache/pi/magpi-cache"];
+
 /** Credential files that `bash` must not read even when pi runs in the agent
  * directory, where `allowRead: "."` re-allows everything under the `/Users`
  * deny. On macOS sandbox-runtime re-emits a literal `denyRead` path nested in an
@@ -143,16 +149,16 @@ test("sandbox.json is valid JSON with the documented top-level shape", () => {
 	assert.equal(config?.allowBrowserProcess, false, "no browser workflow here; see README.md");
 });
 
-test("denyWrite is exactly the generic secret globs plus the credential paths", () => {
+test("denyWrite is exactly the generic secret globs, the credential paths and the read-only data", () => {
 	// Union-equality, not subset: this fails on a removal (weakened policy) same
 	// as an addition (new entry left uncategorized here) instead of only the
 	// former, so sandbox.json and this file can't drift apart silently.
 	const denyWrite = config?.filesystem?.denyWrite ?? [];
-	const expected = [...GENERIC_SECRET_GLOBS, ...CREDENTIAL_PATHS].sort();
+	const expected = [...GENERIC_SECRET_GLOBS, ...CREDENTIAL_PATHS, ...READ_ONLY_DATA].sort();
 	assert.deepEqual(
 		[...denyWrite].sort(),
 		expected,
-		"filesystem.denyWrite drifted from GENERIC_SECRET_GLOBS + CREDENTIAL_PATHS in this file — update whichever one is stale",
+		"filesystem.denyWrite drifted from GENERIC_SECRET_GLOBS + CREDENTIAL_PATHS + READ_ONLY_DATA in this file — update whichever one is stale",
 	);
 });
 

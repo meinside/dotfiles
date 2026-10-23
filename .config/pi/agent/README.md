@@ -6,7 +6,11 @@ Config directory for [pi](https://github.com/earendil-works/pi-mono) (`pi-coding
 else `~/.pi/agent`. `~/.zshrc` exports the variable and a committed
 `~/.pi -> .config/pi` symlink covers the fallback, so packages that build their own
 `~/.pi/agent` path land here too. Read `~/.pi/agent` in upstream docs as "this
-directory".
+directory". Upstream declined XDG support
+([#5301](https://github.com/earendil-works/pi/issues/5301)), so generated files leave
+this directory only where a path can be changed: this repo's extensions, an env
+variable, or a symlink. pi's `models-store.json`, `tmp/pi-telegram/` and the cost
+ledger have no such option and stay.
 
 ## Files
 
@@ -25,12 +29,13 @@ directory".
 | `telegram.json` | no | `@llblab/pi-telegram` config, written by `/telegram-setup`. The bot token should be the `$TELEGRAM_BOT_TOKEN` reference, not the value ([setup](#new-machine-setup)); write- and read-blocked like `auth.json` either way |
 | `sandbox.json` | yes | `pi-sandbox` policy ([notes](#sandbox-extension)). Mutated live by `/sandbox-allow ... for all projects`, so tracking turns that prompt into a `git diff` |
 | `quota-rotate.json` | `.sample` mirror | `pi-quota-rotate`'s fallback chain of `provider/modelId` entries, plus `maxRotationsPerRun`. Real file is local; `quota-rotate.test.ts` checks that it and the sample still resolve |
-| `quota-rotate/` | no | `pi-quota-rotate`'s rotation state |
-| `magpi-cache/` | no | MagPi's fetch cache. `~/.pi/agent/magpi-cache` in MagPi's docs is this same directory through the `~/.pi` symlink |
+| `~/.local/state/pi/quota-rotate/` | no | `pi-quota-rotate`'s rotation state, moved by `QUOTA_ROTATE_DIR` in `settings.json`'s `env` |
+| `magpi-cache` | no | Symlink to `~/.cache/pi/magpi-cache`, MagPi's fetch cache, whose path is hardcoded. Made by hand ([setup](#new-machine-setup)); without it MagPi creates a real directory here |
 | `../cost-tracker/` | no | Cost ledger, one JSONL per day under `YYYY/MM/`. Outside this directory: `~/.pi/cost-tracker` through the symlink. Entries from the Bedrock era contain ARNs |
 | `npm/`, `git/` | no | `pi install` targets for `npm:` and `git:` packages. Each ships its own `.gitignore` with `*` |
-| `cache/` | no | `claude-usage.json`: the last plan usage seen, shared by every running pi session |
-| `tmp/` | no | Extension state: `magpi-render/` (learned hosts), `pi-telegram/` (bridge runtime, inbox, logs) |
+| `~/.cache/pi/claude-usage.json` | no | The last plan usage seen, shared by every running pi session |
+| `~/.local/state/pi/magpi-render/`, `~/.cache/pi/magpi-render/` | no | `extensions/magpi-render.ts`: learned hosts, and `/magpi-render` output |
+| `tmp/pi-telegram/` | no | `@llblab/pi-telegram` runtime, inbox and logs |
 | `install/`, `bin/pi` | no | pi itself, from `pi.dev/install.sh`: `bin/pi` runs `install/releases/<install/current-version>/`. Managed by `pi update`; do not edit |
 | `extensions/subagent/` | yes | Vendored subagent extension ([notes](#vendored-subagent-extension)) |
 | `extensions/guard.ts` | yes | Blocks writes to credential files, confirms installs, irreversible commands and MCP calls not marked safe |
@@ -40,6 +45,7 @@ directory".
 | `extensions/compaction-summary.ts` | yes | Gives the compaction summary room without shrinking the context window ([notes](#compaction-extensions)) |
 | `compaction-summary.json` | no | Optional `extensions/compaction-summary.ts` overrides: `reserveTokens`, `summarizerModel`, `triggerRatio`. Absent means defaults; a Bedrock id belongs here, not in the tracked extension |
 | `extensions/magpi-render.ts` | yes | Reads JavaScript-rendered pages through Firefox over WebDriver BiDi ([notes](#magpi-renderer)) |
+| `extensions/section-order.ts` | yes | Workaround for pi-claude-bridge's "prompt-capture: no capture" turn failure after `/reload`: keeps custom prompt sections in transcript order. Remove once the bridge fixes it; `check.sh` fails when it does (reason in the file) |
 | `extensions/magpi-handlers.ts` | yes | Local MagPi fetch handlers: reddit, Discourse, naver blog ([notes](#magpi-handlers)) |
 | `AGENTS.md` | yes | [Global instructions](#global-instructions-agentsmd) for every session and subagent |
 | `agents/*.md` | yes | Subagent definitions |
@@ -191,9 +197,10 @@ Rules that decide how entries are written:
   the checks read it (`AGENT_DIR_SECRETS` in `tests/sandbox.test.ts`).
 - **Execute is a read**, so every `PATH` directory must be readable or `command -v`
   reports installed tools as missing.
-- **A package's data directory can sit outside the workspace**: `~/.pi/cost-tracker`, its
-  symlink twin under `~/.config`, and `~/.pi/agent/magpi-cache` are listed read-only —
-  tools write them in-process.
+- **A package's data directory can sit outside the workspace**: `~/.pi/cost-tracker` and
+  its symlink twin under `~/.config` are listed for read and write. MagPi's
+  `~/.cache/pi/magpi-cache` is `denyWrite` inside the writable `~/.cache`; MagPi writes it
+  in-process.
 - **A `~/.pi/...` entry only helps the in-process tools, not `bash`**, which gets `EPERM`
   on that spelling because the home root is `denyRead`. Use `~/.config/pi/...` in
   commands; the paths `magpi_fetch` returns must be rewritten.
@@ -338,7 +345,7 @@ Config is `magpi-render.json` (absent means defaults):
 
 **Automatic escalation.** A `magpi_fetch` result under 600 bytes from the `webpage`
 handler with a page-shaped `kind` is treated as a shell: the host is recorded in
-`tmp/magpi-render/learned.json` and the result annotated. Thereafter that host is rendered
+`~/.local/state/pi/magpi-render/learned.json` and the result annotated. Thereafter that host is rendered
 through a handler registered on MagPi's own extension point, so MagPi does the caching and
 indexing. `learnHosts: false` turns the automatic half off, leaving `renderHosts`.
 
@@ -590,6 +597,7 @@ has a model source, every `modelOverrides` key matches a preset section, and
                                                      # Claude plan
    cp mcp.json.sample mcp.json             # tokens as ${VAR}, never literal
    cp quota-rotate.json.sample quota-rotate.json
+   mkdir -p ~/.cache/pi/magpi-cache && ln -s ~/.cache/pi/magpi-cache magpi-cache
    ```
    `models.json` must define `tier:fast`, `tier:mid` and `tier:strong`, or the agents
    cannot resolve a model.
