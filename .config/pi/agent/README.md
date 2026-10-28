@@ -500,6 +500,11 @@ so is `pi-claude-bridge` (bundles Anthropic's Agent SDK and its `claude` binary)
 MCP needs no package: pi's built-in client reads `mcp.json`, so an MCP bridge such as
 `pi-mcporter` would only duplicate it. `pi-smart-fetch` is rejected on the same criteria.
 
+- **After `pi update` changes `@llblab/pi-telegram`, quit and restart every running pi**;
+  whether `/reload` suffices is unverified. A process started on the old version keeps
+  reporting it (`runtimeBuild` in `tmp/pi-telegram/state.json`) and fails at delivery
+  against the new files: replies reach the terminal but not Telegram, logged as
+  `proactive-push ... is not a function` in `tmp/pi-telegram/logs.jsonl`.
 - **`/cost` prints the AWS account ID** for Bedrock turns: cost-counter records
   `message.model`, the full inference profile ARN under Bedrock. The ledger holds the
   same ARNs, so it is never committed.
