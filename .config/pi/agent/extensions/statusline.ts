@@ -10,6 +10,10 @@
  * Statuses whose key is in CONFIG.inlineStatusKeys go at the end of the second line
  * instead of the third (claude-usage.ts's plan usage).
  *
+ * A line wider than the terminal wraps between its groups (the space- or `•`-separated
+ * parts above) rather than being cut, so a narrow terminal gets a taller footer with
+ * everything on it. Only a group wider than the terminal on its own is broken inside.
+ *
  * Colors are the claude ones: user=blue, host=bright red, dir=dim green,
  * branch=cyan, dirty=red, +added/-removed=green/red, stats=dim,
  * context=green/yellow/red by usage.
@@ -24,7 +28,7 @@ import { join, relative, resolve, sep } from "node:path";
 import type { ContextUsage, ExtensionAPI, ExtensionContext, SessionEntry } from "@earendil-works/pi-coding-agent";
 import { getAgentDir } from "@earendil-works/pi-coding-agent";
 import type { TUI } from "@earendil-works/pi-tui";
-import { truncateToWidth } from "@earendil-works/pi-tui";
+import { truncateToWidth, visibleWidth, wrapTextWithAnsi } from "@earendil-works/pi-tui";
 
 // ---------------------------------------------------------------- config
 
@@ -74,6 +78,7 @@ const red = (text: string) => ansi("31", text);
 const yellow = (text: string) => ansi("33", text);
 
 const ELLIPSIS = dim("…");
+const STATS_SEPARATOR = dim(" • ");
 
 // ---------------------------------------------------------------- formatting
 
@@ -117,6 +122,29 @@ export function formatModel(model: { id: string; name?: string } | undefined): s
 /** Sanitize a single-line status: no newlines/tabs, no repeated spaces. */
 export function sanitizeStatus(text: string): string {
 	return text.replace(/[\r\n\t]/g, " ").replace(/ {2,}/g, " ").trim();
+}
+
+/**
+ * Lay `groups` out as `separator`-joined lines no wider than `width`, starting a new
+ * line before a group that would not fit, so a line never ends in half a group. A
+ * group wider than `width` by itself is word-wrapped, the only case that splits one.
+ */
+export function flowGroups(groups: readonly string[], separator: string, width: number): string[] {
+	const lines: string[] = [];
+	let current = "";
+	for (const group of groups) {
+		const joined = current ? current + separator + group : group;
+		if (visibleWidth(joined) <= width) {
+			current = joined;
+			continue;
+		}
+		if (current) lines.push(current);
+		const wrapped = wrapTextWithAnsi(group, Math.max(1, width));
+		lines.push(...wrapped.slice(0, -1));
+		current = wrapped[wrapped.length - 1];
+	}
+	if (current) lines.push(current);
+	return lines;
 }
 
 // ---------------------------------------------------------------- session scan
@@ -467,8 +495,8 @@ interface LocationLine {
 	diff: { added: number; removed: number; hasChanges: boolean };
 }
 
-/** `[session] user@host 📂dir (branch*) (+12/-3)` */
-function buildLocationLine(data: LocationLine): string {
+/** `[session] user@host 📂dir (branch*) (+12/-3)`, as its space-separated groups */
+function buildLocationGroups(data: LocationLine): string[] {
 	const parts: string[] = [];
 
 	if (data.sessionName) parts.push(dim(`[${data.sessionName}]`));
@@ -481,7 +509,7 @@ function buildLocationLine(data: LocationLine): string {
 		parts.push(`(${green(`+${data.diff.added}`)}/${red(`-${data.diff.removed}`)})`);
 	}
 
-	return parts.join(" ");
+	return parts;
 }
 
 interface StatsLine {
@@ -495,9 +523,12 @@ interface StatsLine {
 	inline: string[];
 }
 
-/** `model • thinking • [1.3%/1.0M] (auto) 💰0.158 • ↑14 ↓2.5k CR43k CW12k CH99.3% • ⏱1m02s/12m30s` */
-export function buildStatsLine(data: StatsLine): string {
-	/** Space-joined segments, themselves joined by ` • ` below. */
+/**
+ * `model • thinking • [1.3%/1.0M] (auto) 💰0.158 • ↑14 ↓2.5k CR43k CW12k CH99.3% • ⏱1m02s/12m30s`,
+ * as its groups: the parts STATS_SEPARATOR joins (model and thinking level are one).
+ */
+export function buildStatsGroups(data: StatsLine): string[] {
+	/** Space-joined segments, themselves joined by STATS_SEPARATOR when rendered. */
 	const groups: string[] = [];
 	const { totals } = data;
 
@@ -541,17 +572,15 @@ export function buildStatsLine(data: StatsLine): string {
 
 	for (const text of data.inline) groups.push(sanitizeStatus(text));
 
-	return groups.join(dim(" • "));
+	return groups;
 }
 
-/** Statuses other extensions published via ctx.ui.setStatus(), sorted by key. */
-export function buildExtensionStatusLine(statuses: ReadonlyMap<string, string>): string | undefined {
-	const rest = Array.from(statuses.entries()).filter(([key]) => !CONFIG.inlineStatusKeys.includes(key));
-	if (rest.length === 0) return undefined;
-	return rest
+/** Statuses other extensions published via ctx.ui.setStatus(), sorted by key, one group each. */
+export function buildExtensionStatusGroups(statuses: ReadonlyMap<string, string>): string[] {
+	return Array.from(statuses.entries())
+		.filter(([key]) => !CONFIG.inlineStatusKeys.includes(key))
 		.sort(([a], [b]) => a.localeCompare(b))
-		.map(([, text]) => sanitizeStatus(text))
-		.join(" ");
+		.map(([, text]) => sanitizeStatus(text));
 }
 
 // ---------------------------------------------------------------- extension
@@ -597,29 +626,36 @@ export default function (pi: ExtensionAPI) {
 					const statuses = footerData.getExtensionStatuses();
 
 					const lines = [
-						buildLocationLine({
-							user,
-							host,
-							cwd,
-							sessionName: ctx.sessionManager.getSessionName(),
-							branch: footerData.getGitBranch(),
-							dirty: gitDirty.isDirty(),
-							diff: { added: scanner.added, removed: scanner.removed, hasChanges: scanner.hasChanges },
-						}),
-						buildStatsLine({
-							model: ctx.model,
-							thinkingLevel: ctx.thinkingLevel,
-							totals: scanner.totals,
-							context: ctx.getContextUsage(),
-							autoCompact,
-							duration: durations.format(),
-							inline: CONFIG.inlineStatusKeys.flatMap((key) => statuses.get(key) ?? []),
-						}),
+						...flowGroups(
+							buildLocationGroups({
+								user,
+								host,
+								cwd,
+								sessionName: ctx.sessionManager.getSessionName(),
+								branch: footerData.getGitBranch(),
+								dirty: gitDirty.isDirty(),
+								diff: { added: scanner.added, removed: scanner.removed, hasChanges: scanner.hasChanges },
+							}),
+							" ",
+							width,
+						),
+						...flowGroups(
+							buildStatsGroups({
+								model: ctx.model,
+								thinkingLevel: ctx.thinkingLevel,
+								totals: scanner.totals,
+								context: ctx.getContextUsage(),
+								autoCompact,
+								duration: durations.format(),
+								inline: CONFIG.inlineStatusKeys.flatMap((key) => statuses.get(key) ?? []),
+							}),
+							STATS_SEPARATOR,
+							width,
+						),
+						...flowGroups(buildExtensionStatusGroups(statuses), " ", width),
 					];
 
-					const statusLine = buildExtensionStatusLine(statuses);
-					if (statusLine) lines.push(statusLine);
-
+					// Already within width; only a guard against a measuring disagreement.
 					return lines.map((line) => truncateToWidth(line, width, ELLIPSIS));
 				},
 			};

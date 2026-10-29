@@ -25,6 +25,7 @@ redirectPiImports();
 
 // Dynamic, so the hook above is installed before the module's own imports run.
 const statusline = await import(join(dirname(import.meta.dirname), "extensions/statusline.ts"));
+const { visibleWidth } = (await import("@earendil-works/pi-tui")) as { visibleWidth: (text: string) => number };
 
 const {
 	formatTokens,
@@ -32,16 +33,18 @@ const {
 	shortenPath,
 	formatModel,
 	sanitizeStatus,
+	flowGroups,
 	SessionScanner,
 	readAutoCompactEnabled,
-	buildStatsLine,
-	buildExtensionStatusLine,
+	buildStatsGroups,
+	buildExtensionStatusGroups,
 } = statusline as {
 	formatTokens: (count: number) => string;
 	formatDuration: (ms: number) => string;
 	shortenPath: (path: string) => string;
 	formatModel: (model: { id: string; name?: string } | undefined) => string;
 	sanitizeStatus: (text: string) => string;
+	flowGroups: (groups: readonly string[], separator: string, width: number) => string[];
 	SessionScanner: new () => {
 		readonly totals: {
 			input: number;
@@ -58,15 +61,15 @@ const {
 		scan(entries: readonly unknown[]): void;
 	};
 	readAutoCompactEnabled: (cwd: string, trusted: boolean) => boolean;
-	buildStatsLine: (data: {
+	buildStatsGroups: (data: {
 		model: { id: string } | undefined;
 		totals: { input: number; output: number; cacheRead: number; cacheWrite: number; cost: number };
 		context: undefined;
 		autoCompact: boolean;
 		duration: string;
 		inline: string[];
-	}) => string;
-	buildExtensionStatusLine: (statuses: ReadonlyMap<string, string>) => string | undefined;
+	}) => string[];
+	buildExtensionStatusGroups: (statuses: ReadonlyMap<string, string>) => string[];
 };
 
 
@@ -111,11 +114,11 @@ test("an inline status ends the stats line and is left off the status line", () 
 		["zeta", "z"],
 		["alpha", "a"],
 	]);
-	assert.equal(buildExtensionStatusLine(statuses), "a z");
-	assert.equal(buildExtensionStatusLine(new Map([["claude-usage", "5h 35%"]])), undefined);
+	assert.deepEqual(buildExtensionStatusGroups(statuses), ["a", "z"]);
+	assert.deepEqual(buildExtensionStatusGroups(new Map([["claude-usage", "5h 35%"]])), []);
 
 	const totals = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0 };
-	const line = buildStatsLine({
+	const groups = buildStatsGroups({
 		model: { id: "m" },
 		totals,
 		context: undefined,
@@ -123,7 +126,35 @@ test("an inline status ends the stats line and is left off the status line", () 
 		duration: "0s/0s",
 		inline: [statuses.get("claude-usage") ?? ""],
 	});
-	assert.match(stripVTControlCharacters(line), / • 5h 35%$/);
+	assert.equal(groups.at(-1), "5h 35%");
+});
+
+// ---------------------------------------------------------------- wrapping
+
+const SEP = "\x1b[2m \u2022 \x1b[0m";
+const GROUPS = ["\x1b[2mmodel \u2022 high\x1b[0m", "\x1b[32m[12.3%/1.0M]\x1b[0m \u{1f4b0}1.234", "\u23f1\ufe0f12m02s/1h30m", "5h 23% ~18:00"];
+const plain = (lines: string[]) => lines.map((line) => stripVTControlCharacters(line));
+
+test("groups that fit stay on one line, joined as before", () => {
+	assert.deepEqual(flowGroups(GROUPS, SEP, 200), [GROUPS.join(SEP)]);
+	assert.deepEqual(flowGroups([], SEP, 80), [], "no groups, no line");
+});
+
+test("a narrow width wraps between groups and never inside one", () => {
+	const width = 40;
+	const lines = flowGroups(GROUPS, SEP, width);
+	assert.ok(lines.length > 1, "expected a wrap");
+	assert.equal(plain(lines).join(" \u2022 "), stripVTControlCharacters(GROUPS.join(SEP)), "every group whole, in order");
+	for (const line of plain(lines)) assert.ok(!line.startsWith(" ") && !line.endsWith(" "), `separator left over: ${line}`);
+	for (const line of lines) assert.ok(visibleWidth(line) <= width, `wider than ${width}: ${line}`);
+});
+
+test("a group wider than the line on its own is broken, still within width", () => {
+	const width = 12;
+	const lines = flowGroups(["a", "\u{1f4c2}~/srcs/go/src/github.com/tosslab/conjecture-go", "main*"], " ", width);
+	for (const line of lines) assert.ok(visibleWidth(line) <= width, `wider than ${width}: ${line}`);
+	const unspaced = (text: string) => text.replaceAll(" ", "");
+	assert.equal(unspaced(plain(lines).join("")), "a\u{1f4c2}~/srcs/go/src/github.com/tosslab/conjecture-gomain*", "nothing lost");
 });
 
 // ---------------------------------------------------------------- session scan
