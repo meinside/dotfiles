@@ -63,7 +63,7 @@ const {
 	readAutoCompactEnabled: (cwd: string, trusted: boolean) => boolean;
 	buildStatsGroups: (data: {
 		model: { id: string } | undefined;
-		totals: { input: number; output: number; cacheRead: number; cacheWrite: number; cost: number };
+		totals: { input: number; output: number; cacheRead: number; cacheWrite: number; cost: number; cacheHitRate?: number };
 		context: undefined;
 		autoCompact: boolean;
 		duration: string;
@@ -127,6 +127,25 @@ test("an inline status ends the stats line and is left off the status line", () 
 		inline: [statuses.get("claude-usage") ?? ""],
 	});
 	assert.equal(groups.at(-1), "5h 35%");
+});
+
+test("tokens follow 🔢 and cache numbers 💾, each only when there is something to show", () => {
+	const statsOf = (over: Partial<Record<"input" | "output" | "cacheRead" | "cacheWrite" | "cacheHitRate", number>>) =>
+		buildStatsGroups({
+			model: { id: "m" },
+			totals: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, ...over },
+			context: undefined,
+			autoCompact: false,
+			duration: "0s/0s",
+			inline: [],
+		}).map((group) => stripVTControlCharacters(group))[1];
+	assert.equal(
+		statsOf({ input: 14, output: 2500, cacheRead: 43_000, cacheWrite: 12_000, cacheHitRate: 99.3 }),
+		"🔢 ↑14 ↓2.5k 💾 R43k W12k 99.3%",
+	);
+	assert.equal(statsOf({ input: 14, output: 2500 }), "🔢 ↑14 ↓2.5k", "no cache, no 💾");
+	assert.equal(statsOf({ cacheRead: 43_000, cacheHitRate: 99.3 }), "💾 R43k 99.3%", "no tokens, no 🔢");
+	assert.equal(statsOf({ input: 14, cacheHitRate: 50 }), "🔢 ↑14", "a hit rate without cache numbers is not shown");
 });
 
 // ---------------------------------------------------------------- wrapping

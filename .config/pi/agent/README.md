@@ -267,10 +267,11 @@ The numbers are re-derived from the session log, so:
 
 - **Session-wide, including abandoned branches** — `+N/-M` answers "how much editing has
   this session done", not "what is in the working tree", and only sees `edit`/`write`.
-- **`CH` is the latest response's cache hit rate**, not a session average.
+- **The `%` after 💾 (cache `R`ead, `W`rite) is the latest response's cache hit rate**, not a
+  session average.
 - The cost group is omitted when cost is zero, and there is no `(sub)` marker.
 
-`extensions/claude-usage.ts` adds the plan usage to the end of the second line (its key is
+`extensions/claude-usage.ts` adds the plan usage, after a `📊`, to the end of the second line (its key is
 in `CONFIG.inlineStatusKeys`), only while a `claude-bridge` or `anthropic` model is
 selected. It reads the rate-limit headers of each response and fetches nothing, so the
 numbers are as of the last response from any pi session; a window past its reset reads

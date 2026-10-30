@@ -4,7 +4,7 @@
  * Ports the layout/colors of ~/.config/claude/statusline.sh to pi's footer:
  *
  *   [session] user@host 📂dir (branch*) (+12/-3)
- *   model • thinking • [1.3%/1.0M] (auto) 💰0.158 • ↑14 ↓2.5k CR43k CW12k CH99.3% • ⏱1m02s/12m30s • <inline statuses>
+ *   model • thinking • [1.3%/1.0M] (auto) 💰 0.158 • 🔢 ↑14 ↓2.5k 💾 R43k W12k 99.3% • ⏱ 1m02s/12m30s • <inline statuses>
  *   <status texts published by other extensions via ctx.ui.setStatus()>
  *
  * Statuses whose key is in CONFIG.inlineStatusKeys go at the end of the second line
@@ -39,7 +39,7 @@ const CONFIG = {
 	 */
 	enabledByDefault: true,
 	/** Icons - set any of them to "" if the terminal font lacks the glyph. */
-	icons: { dir: "📂", cost: "💰", time: "⏱️", branch: "" },
+	icons: { dir: "📂", cost: "💰", tokens: "🔢", cache: "💾", time: "⏱️", branch: "" },
 	/** Interval between `git status --porcelain` checks, in ms. 0 disables the check. */
 	gitDirtyIntervalMs: 5000,
 	/**
@@ -49,7 +49,7 @@ const CONFIG = {
 	 *   "never"  - always show the raw model id
 	 */
 	modelLabel: "auto" as "auto" | "always" | "never",
-	/** Show token/cache statistics (↑ ↓ CR CW CH). */
+	/** Show token/cache statistics (↑in ↓out, then cache Read, Write and hit rate). */
 	showTokens: true,
 	/** Show the "(auto)" auto-compaction indicator. */
 	showAutoCompact: true,
@@ -524,7 +524,7 @@ interface StatsLine {
 }
 
 /**
- * `model • thinking • [1.3%/1.0M] (auto) 💰0.158 • ↑14 ↓2.5k CR43k CW12k CH99.3% • ⏱1m02s/12m30s`,
+ * `model • thinking • [1.3%/1.0M] (auto) 💰 0.158 • 🔢 ↑14 ↓2.5k 💾 R43k W12k 99.3% • ⏱ 1m02s/12m30s`,
  * as its groups: the parts STATS_SEPARATOR joins (model and thinking level are one).
  */
 export function buildStatsGroups(data: StatsLine): string[] {
@@ -552,23 +552,27 @@ export function buildStatsGroups(data: StatsLine): string[] {
 		usage.push(paint(body));
 	}
 	if (CONFIG.showAutoCompact && data.autoCompact) usage.push(dim("(auto)"));
-	if (totals.cost > 0) usage.push(`${CONFIG.icons.cost}${totals.cost.toFixed(3)}`);
+	if (totals.cost > 0) usage.push(`${CONFIG.icons.cost} ${totals.cost.toFixed(3)}`);
 	if (usage.length > 0) groups.push(usage.join(" "));
 
 	// token and cache usage
 	if (CONFIG.showTokens) {
+		const tokens: string[] = [];
+		if (totals.input) tokens.push(`↑${formatTokens(totals.input)}`);
+		if (totals.output) tokens.push(`↓${formatTokens(totals.output)}`);
+		const cache: string[] = [];
+		if (totals.cacheRead) cache.push(`R${formatTokens(totals.cacheRead)}`);
+		if (totals.cacheWrite) cache.push(`W${formatTokens(totals.cacheWrite)}`);
+		if (cache.length > 0 && totals.cacheHitRate !== undefined) cache.push(`${totals.cacheHitRate.toFixed(1)}%`);
+		// One group, so a wrap never parts the cache numbers from the tokens they belong to.
 		const stats: string[] = [];
-		if (totals.input) stats.push(`↑${formatTokens(totals.input)}`);
-		if (totals.output) stats.push(`↓${formatTokens(totals.output)}`);
-		if (totals.cacheRead) stats.push(`CR${formatTokens(totals.cacheRead)}`);
-		if (totals.cacheWrite) stats.push(`CW${formatTokens(totals.cacheWrite)}`);
-		const cached = totals.cacheRead || totals.cacheWrite;
-		if (cached && totals.cacheHitRate !== undefined) stats.push(`CH${totals.cacheHitRate.toFixed(1)}%`);
+		if (tokens.length > 0) stats.push(`${CONFIG.icons.tokens} ${tokens.join(" ")}`);
+		if (cache.length > 0) stats.push(`${CONFIG.icons.cache} ${cache.join(" ")}`);
 		if (stats.length > 0) groups.push(dim(stats.join(" ")));
 	}
 
 	// api/wall durations
-	if (CONFIG.showDuration) groups.push(dim(`${CONFIG.icons.time}${data.duration}`));
+	if (CONFIG.showDuration) groups.push(dim(`${CONFIG.icons.time} ${data.duration}`));
 
 	for (const text of data.inline) groups.push(sanitizeStatus(text));
 

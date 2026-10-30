@@ -1,4 +1,4 @@
-// Claude plan usage in pi's status line, e.g. "5h 35% ~16:59 · 7d 27% ~Fri 04:59".
+// Claude plan usage in pi's status line, e.g. "📊 5h 35% ~16:59 · 7d 27% ~Fri 04:59".
 //
 // Read from the anthropic-ratelimit-unified-* headers of each provider response:
 // the Anthropic API sends them, and pi-claude-bridge rebuilds them from Claude
@@ -24,6 +24,9 @@ export type Cache = {
 };
 
 const STATUS_KEY = "claude-usage";
+// One code point with default emoji presentation: always two cells, so the
+// statusline's width measurement matches the terminal (unlike ⏱️, which needs VS16).
+const ICON = "📊";
 const PROVIDERS = ["claude-bridge", "anthropic"];
 const HEADER = /^anthropic-ratelimit-unified-(.+)-(utilization|reset)$/;
 
@@ -80,7 +83,7 @@ export function percentColor(percent: number): Color {
 // percentage inside one "text" span would leave the rest of the line uncoloured.
 export function format(cache: Cache, paint: Paint = (_color, text) => text) {
 	const now = Date.now() / 1000;
-	return Object.entries(cache.windows)
+	const text = Object.entries(cache.windows)
 		.map(([name, w]) => {
 			const label = name === MODEL_WINDOW ? (w.model ?? "model") : name.replace(/^seven_day_/, "");
 			// A window past its reset is empty until the next response says otherwise.
@@ -90,6 +93,7 @@ export function format(cache: Cache, paint: Paint = (_color, text) => text) {
 			return `${paint("text", `${label} `)}${paint(percentColor(percent), `${percent}%`)}${reset}`;
 		})
 		.join(paint("text", " · "));
+	return text && `${ICON} ${text}`;
 }
 
 export default function (pi: ExtensionAPI) {
