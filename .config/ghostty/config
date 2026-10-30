@@ -1,7 +1,7 @@
 # .config/ghostty/config
 #
 # created on : 2025.01.02.
-# last update: 2026.09.15.
+# last update: 2026.10.30.
 
 # font
 #
@@ -25,6 +25,7 @@ theme = "Tomorrow Night Bright"
 foreground = "#ffffff"
 background = "#000000"
 background-opacity = 0.87
+#background-blur = "macos-glass-regular" # FIXME: background images also become transparent
 background-blur = 15
 background-image = ?"background.dat"
 background-image-opacity = 0.25
@@ -36,8 +37,7 @@ selection-foreground = "#000000"
 
 # window
 #
-# FIXME: was "tabs", looks weird since macOS 27.0 (https://github.com/ghostty-org/ghostty/issues/13070)
-macos-titlebar-style = "transparent"
+macos-titlebar-style = "tabs"
 window-padding-x = 12
 window-padding-y = 3,1
 window-width = 160
@@ -56,6 +56,22 @@ copy-on-select = clipboard
 
 # shell integration
 shell-integration-features = "cursor,sudo,title,ssh-env,ssh-terminfo,path"
+
+# notification (FIXME: doesn't work in $TMUX)
+#
+# (will notify after 30s, if unfocused)
+notify-on-command-finish = unfocused
+notify-on-command-finish-action = no-bell,notify
+notify-on-command-finish-after = 30s
+
+# working directory
+working-directory = "home"
+# (new window = home)
+window-inherit-working-directory = false
+# (new tab = inherit)
+tab-inherit-working-directory = true
+# (split = inherit)
+split-inherit-working-directory = true
 
 # others
 quit-after-last-window-closed = true
