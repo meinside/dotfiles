@@ -260,7 +260,7 @@ capability,` wins, and `no_new_privs` blocks exec transitions to another profile
 
 `extensions/statusline.ts` replaces pi's footer with a three-line layout (`user@host
 📂dir (branch*)`, then model/context/cost/tokens/durations, then other extensions'
-`ctx.ui.setStatus()`). `/statusline` toggles back; the choice lives on `globalThis`, so
+`ctx.ui.setStatus()`, with magpi's, pi-rewind's, quota-rotate's and pi-telegram's reworded by `STATUS_REWRITES`). `/statusline` toggles back; the choice lives on `globalThis`, so
 `/fork` and `/reload` keep it. On a terminal too narrow for a line, the line wraps between
 its groups instead of being cut, so the footer grows taller rather than losing its tail.
 

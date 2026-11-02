@@ -5,10 +5,11 @@
  *
  *   [session] user@host 📂dir (branch*) (+12/-3)
  *   model • thinking • [1.3%/1.0M] (auto) 💰 0.158 • 🔢 ↑14 ↓2.5k 💾 R43k W12k 99.3% • ⏱ 1m02s/12m30s • <inline statuses>
- *   <status texts published by other extensions via ctx.ui.setStatus()>
+ *   <status texts published by other extensions via ctx.ui.setStatus(), `•`-separated>
  *
  * Statuses whose key is in CONFIG.inlineStatusKeys go at the end of the second line
- * instead of the third (claude-usage.ts's plan usage).
+ * instead of the third (claude-usage.ts's plan usage). STATUS_REWRITES shortens a few
+ * of the third line's texts.
  *
  * A line wider than the terminal wraps between its groups (the space- or `•`-separated
  * parts above) rather than being cut, so a narrow terminal gets a taller footer with
@@ -579,12 +580,75 @@ export function buildStatsGroups(data: StatsLine): string[] {
 	return groups;
 }
 
-/** Statuses other extensions published via ctx.ui.setStatus(), sorted by key, one group each. */
-export function buildExtensionStatusGroups(statuses: ReadonlyMap<string, string>): string[] {
+/** One SGR color code, and any run of them, which other extensions' statuses may carry. */
+const SGR_CODE = "\\x1b\\[[0-9;]*m";
+const SGR = `(?:${SGR_CODE})*`;
+const SGR_CODES = new RegExp(SGR_CODE, "g");
+/** Every state pi-telegram's buildTelegramStatusBarText() ends its status with. */
+const TELEGRAM_STATES = "not configured|error|awaiting pairing|electing|disconnected|reconnecting|follower|leader|connected";
+// The state takes only its own closing code, so a queued count's color stays with the count.
+const TELEGRAM_STATUS = new RegExp(
+	`^(.*?) (${SGR}(?:${TELEGRAM_STATES})(?:${SGR_CODE})?)(${SGR} \\+\\d+${SGR})?$`,
+	"s",
+);
+const MAGPI_STATUS = /^🐦 magpi (.+) · (\S+) \|$/;
+// The ◆ goes with its own color codes, up to the one closing them; the count keeps its own.
+const REWIND_STATUS = new RegExp(`^${SGR}◆ (?:${SGR_CODE})?(.+)$`, "s");
+
+/**
+ * Shorter forms of other extensions' statuses, by key. Each matches the text the
+ * package publishes today (pi-magpi's and pi-rewind's updateStatus(), pi-telegram's
+ * buildTelegramStatusBarText()); a text that no longer matches, after an update
+ * changed it, is shown as published rather than dropped.
+ */
+const STATUS_REWRITES: Record<string, (text: string) => string | undefined> = {
+	// `🐦 magpi ▸G12 L3 · 40MB |` -> `🐦 G12 L3 40MB`; the `•` separator replaces the bar.
+	// ▸ (the write scope) goes too.
+	magpi: (text) => {
+		const match = MAGPI_STATUS.exec(text);
+		return match && `🐦 ${match[1].replaceAll("▸", "")} ${match[2]}`;
+	},
+	// `◆ 50 checkpoints` -> `⏪ 50 checkpoints`: rewind's own icon instead of a bare mark.
+	rewind: (text) => {
+		const match = REWIND_STATUS.exec(text);
+		return match && `⏪ ${match[1]}`;
+	},
+	// `quota -/9` -> `🔁 quota -/9`: the position in the model rotation chain. Every
+	// quota-rotate text gets it, its retry notice included.
+	"quota-rotate": (text) => `🔁 ${text}`,
+	// `<thread> leader +2` -> `⌲ leader "<thread>" +2`. Unnamed, pi-telegram's label is
+	// just `telegram`, which the icon already says.
+	telegram: (text) => {
+		const match = TELEGRAM_STATUS.exec(text);
+		if (!match) return undefined;
+		const [, label, state, queued = ""] = match;
+		const name = label.replace(SGR_CODES, "") === "telegram" ? "" : ` "${label}"`;
+		return `⌲ ${state}${name}${queued}`;
+	},
+};
+
+/** Statuses published without color, shown in the theme's `muted` gray like pi-rewind's count. */
+const MUTED_STATUS_KEYS = ["magpi", "quota-rotate"];
+
+/**
+ * Statuses other extensions published via ctx.ui.setStatus(), sorted by key, one group
+ * each. `muted` is the theme's muted color; the footer passes theme.fg("muted", ...).
+ */
+export function buildExtensionStatusGroups(
+	statuses: ReadonlyMap<string, string>,
+	muted: (text: string) => string = (text) => text,
+): string[] {
 	return Array.from(statuses.entries())
 		.filter(([key]) => !CONFIG.inlineStatusKeys.includes(key))
 		.sort(([a], [b]) => a.localeCompare(b))
-		.map(([, text]) => sanitizeStatus(text));
+		.map(([key, text]) => [key, sanitizeStatus(text)] as const)
+		// An extension with nothing to say publishes "" (magpi with an empty cache); a
+		// group of it would leave a separator standing alone.
+		.filter(([, clean]) => clean !== "")
+		.map(([key, clean]) => {
+			const shown = STATUS_REWRITES[key]?.(clean) || clean;
+			return MUTED_STATUS_KEYS.includes(key) ? muted(shown) : shown;
+		});
 }
 
 // ---------------------------------------------------------------- extension
@@ -608,7 +672,7 @@ export default function (pi: ExtensionAPI) {
 
 	/** Replace pi's footer with ours. */
 	function install(ctx: ExtensionContext): void {
-		ctx.ui.setFooter((footerTui, _theme, footerData) => {
+		ctx.ui.setFooter((footerTui, theme, footerData) => {
 			tui = footerTui;
 			const unsubscribe = footerData.onBranchChange(() => {
 				gitDirty.invalidate();
@@ -656,7 +720,11 @@ export default function (pi: ExtensionAPI) {
 							STATS_SEPARATOR,
 							width,
 						),
-						...flowGroups(buildExtensionStatusGroups(statuses), " ", width),
+						...flowGroups(
+							buildExtensionStatusGroups(statuses, (text) => theme.fg("muted", text)),
+							STATS_SEPARATOR,
+							width,
+						),
 					];
 
 					// Already within width; only a guard against a measuring disagreement.

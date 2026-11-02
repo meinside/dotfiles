@@ -69,7 +69,7 @@ const {
 		duration: string;
 		inline: string[];
 	}) => string[];
-	buildExtensionStatusGroups: (statuses: ReadonlyMap<string, string>) => string[];
+	buildExtensionStatusGroups: (statuses: ReadonlyMap<string, string>, muted?: (text: string) => string) => string[];
 };
 
 
@@ -106,6 +106,64 @@ test("ARN model ids fall back to the configured name", () => {
 
 test("extension statuses are collapsed to a single line", () => {
 	assert.equal(sanitizeStatus("  two\nlines\tand   gaps "), "two lines and gaps");
+});
+
+test("magpi's, pi-rewind's, quota-rotate's and pi-telegram's statuses are shortened; anything else, or a changed format, is kept", () => {
+	const accent = (text: string) => `\x1b[38;5;75m${text}\x1b[39m`;
+	const success = (text: string) => `\x1b[32m${text}\x1b[39m`;
+	const warning = (text: string) => `\x1b[33m${text}\x1b[39m`;
+	const shorten = (key: string, text: string) => buildExtensionStatusGroups(new Map([[key, text]]))[0];
+
+	assert.equal(shorten("magpi", "🐦 magpi ▸G1468 · 56.6MB |"), "🐦 G1468 56.6MB");
+	assert.equal(shorten("magpi", "🐦 magpi G1468 ▸L3 · 1.2GB |"), "🐦 G1468 L3 1.2GB");
+	assert.equal(shorten("magpi", "🐦 magpi v2 G1468"), "🐦 magpi v2 G1468");
+
+	assert.equal(shorten("telegram", `${accent("Obsidian")} ${success("leader")}`), `⌲ ${success("leader")} "${accent("Obsidian")}"`);
+	assert.equal(
+		shorten("telegram", `${accent("My Agent")} ${success("follower")}${warning(" +2")}`),
+		`⌲ ${success("follower")} "${accent("My Agent")}"${warning(" +2")}`,
+		"a name with spaces, and the queued count after it in its own color",
+	);
+	assert.equal(shorten("telegram", `${accent("leader")} ${success("leader")}`), `⌲ ${success("leader")} "${accent("leader")}"`);
+	assert.equal(shorten("telegram", `${accent("telegram")} ${warning("awaiting pairing")}`), `⌲ ${warning("awaiting pairing")}`);
+	assert.equal(shorten("telegram", "Obsidian online"), "Obsidian online");
+
+	// pi's theme.fg() for a dim token: color, then dim, closed together.
+	const dimmed = (text: string) => `\x1b[38;5;242m\x1b[2m${text}\x1b[22;39m`;
+	const muted = (text: string) => `\x1b[38;5;245m${text}\x1b[39m`;
+	assert.equal(shorten("rewind", dimmed("◆ ") + muted("50 checkpoints")), `⏪ ${muted("50 checkpoints")}`);
+	assert.equal(shorten("rewind", "◆ 1 checkpoint"), "⏪ 1 checkpoint");
+	assert.equal(shorten("rewind", "◇ 50 checkpoints"), "◇ 50 checkpoints");
+
+	assert.equal(shorten("quota-rotate", "quota -/9"), "🔁 quota -/9");
+	assert.equal(shorten("quota-rotate", "quota-rotate: waiting for pi's retry"), "🔁 quota-rotate: waiting for pi's retry");
+
+	assert.equal(shorten("sandbox", "🔒 Sandbox: 39 domains"), "🔒 Sandbox: 39 domains");
+});
+
+test("magpi's and quota-rotate's statuses take the muted gray; colored ones keep their own", () => {
+	const muted = (text: string) => `<muted>${text}</muted>`;
+	const statuses = new Map([
+		["magpi", "🐦 magpi ▸G1468 · 56.6MB |"],
+		["quota-rotate", "quota -/9"],
+		["rewind", "◆ 50 checkpoints"],
+		["sandbox", "🔒 Sandbox: 39 domains"],
+	]);
+	assert.deepEqual(buildExtensionStatusGroups(statuses, muted), [
+		"<muted>🐦 G1468 56.6MB</muted>",
+		"<muted>🔁 quota -/9</muted>",
+		"⏪ 50 checkpoints",
+		"🔒 Sandbox: 39 domains",
+	]);
+});
+
+test("an empty status takes no group, so no separator stands alone", () => {
+	const statuses = new Map([
+		["magpi", ""],
+		["quota-rotate", "quota -/9"],
+		["sandbox", " \n "],
+	]);
+	assert.deepEqual(buildExtensionStatusGroups(statuses), ["🔁 quota -/9"]);
 });
 
 test("an inline status ends the stats line and is left off the status line", () => {
