@@ -1,5 +1,5 @@
 /**
- * extensions/lib/telegram.ts is how guard.ts and ask-user-telegram.ts reach
+ * extensions/lib/telegram.ts is how guard.ts, ask-user-telegram.ts and prompt-notify.ts reach
  * pi-telegram, which is optional. Every way of it not being there has to come back
  * as "no Telegram", or a missing package would break confirmations and ask_user
  * instead of leaving them to the terminal. Fake packages in a temp dir stand in for
@@ -72,6 +72,31 @@ test("sends go to the active turn; throws and odd results become failures", asyn
 		assert.equal((await port.send({ text: "x" })).ok, false);
 		assert.equal(await port.isTelegramTurn(), false);
 	}
+});
+
+test("with no Telegram turn, a send goes to this instance's Thread; the turn probe does not", async () => {
+	const port = await loadTelegramPort(fakePackage({ "delivery.js": DELIVERY, "updates.js": UPDATES }));
+	assert.ok(port);
+	const scopes: unknown[] = [];
+	fakes.__fakeSend = (_view, options) => {
+		scopes.push(options);
+		if ((options as { scope: { kind: string } }).scope.kind === "active-turn") {
+			return { ok: false, reason: "target-unavailable", message: "" };
+		}
+		return { ok: true, value: { target: { chatId: 1, threadId: 2 }, messageIds: [1], generation: "g" } };
+	};
+	assert.equal((await port.send({ text: "x" })).ok, true);
+	assert.deepEqual(scopes.splice(0), [{ scope: { kind: "active-turn" } }, { scope: { kind: "instance" } }]);
+	assert.equal(await port.isTelegramTurn(), false, "ask_user is redirected only in a real Telegram turn");
+	assert.deepEqual(scopes.splice(0), [{ scope: { kind: "active-turn" } }]);
+
+	// Not loaded is not a missing turn: nothing to fall back to.
+	fakes.__fakeSend = (_view, options) => {
+		scopes.push(options);
+		return { ok: false, reason: "runtime-unavailable", message: "" };
+	};
+	assert.equal((await port.send({ text: "x" })).ok, false);
+	assert.equal(scopes.splice(0).length, 1);
 });
 
 test("a failing update registration leaves a harmless unregister", async () => {

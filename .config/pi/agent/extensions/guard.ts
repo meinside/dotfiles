@@ -20,7 +20,14 @@ import { randomBytes } from "node:crypto";
 import { homedir } from "node:os";
 import { isAbsolute, resolve, sep } from "node:path";
 import type { ExtensionAPI, ExtensionContext, ToolAnnotations } from "@earendil-works/pi-coding-agent";
-import { loadTelegramPort, type TelegramHandle, type TelegramPort } from "./lib/telegram.ts";
+import {
+	claimPrompt,
+	isUnreachable,
+	loadTelegramPort,
+	NOTIFY_AFTER_MS,
+	type TelegramHandle,
+	type TelegramPort,
+} from "./lib/telegram.ts";
 
 // ---------------------------------------------------------------- policy
 
@@ -228,8 +235,12 @@ export function answerCallback(update: unknown, pending: Map<string, Pending>, p
 
 // ---------------------------------------------------------------- extension
 
-/** `loadTelegram` is a parameter so tests can stand in for pi-telegram; pi passes only `pi`. */
-export default function (pi: ExtensionAPI, loadTelegram: () => Promise<TelegramPort | undefined> = loadTelegramPort) {
+/** `loadTelegram` and `notifyAfterMs` are parameters so tests can stand in for them; pi passes only `pi`. */
+export default function (
+	pi: ExtensionAPI,
+	loadTelegram: () => Promise<TelegramPort | undefined> = loadTelegramPort,
+	notifyAfterMs = NOTIFY_AFTER_MS,
+) {
 	let telegram: Promise<TelegramPort | undefined> | undefined;
 	let unregister: (() => void) | undefined;
 	const pending = new Map<string, Pending>();
@@ -252,9 +263,10 @@ export default function (pi: ExtensionAPI, loadTelegram: () => Promise<TelegramP
 	 * Ask before running. Blocks without asking when no UI can answer: headless runs
 	 * (`-p`, `--mode json`) should fail loudly rather than install something.
 	 *
-	 * During a Telegram turn the same question also goes to Telegram, and whichever
-	 * answer comes first decides. Telegram gets `summary` only, never the command:
-	 * it can carry tokens, and a message there stays on Telegram's servers.
+	 * Left unanswered for `notifyAfterMs`, the same question also goes to Telegram
+	 * (the Telegram turn's chat, else this instance's Thread), and whichever answer
+	 * comes first decides. Telegram gets `summary` only, never the command: it can
+	 * carry tokens, and a message there stays on Telegram's servers.
 	 */
 	async function allow(ctx: ExtensionContext, label: string, command: string, summary = label): Promise<boolean> {
 		if (!ctx.hasUI) return false;
@@ -264,6 +276,8 @@ export default function (pi: ExtensionAPI, loadTelegram: () => Promise<TelegramP
 		});
 		let done = false;
 
+		// Claimed before the dialog opens: its ui_prompt_start is what prompt-notify.ts checks.
+		const release = claimPrompt();
 		const local = new AbortController();
 		void ctx.ui
 			.select(`Allow this ${label}?\n\n  ${command.trim()}`, ["Allow once", "Block"], { signal: local.signal })
@@ -271,20 +285,29 @@ export default function (pi: ExtensionAPI, loadTelegram: () => Promise<TelegramP
 
 		const nonce = randomBytes(6).toString("hex");
 		const button = (text: string, answer: string) => ({ text, callback_data: `guard:${process.pid}:${nonce}:${answer}` });
-		const found = await port();
-		const sent = found
-			?.send({
-				text: `🛡 guard: allow this ${summary}?\nThe full command is shown in the terminal.`,
-				replyMarkup: { inline_keyboard: [[button("✅ Allow once", "y"), button("⛔ Block", "n")]] },
-			})
-			.then((result) => {
-				if (!result.ok) return undefined;
+		let found: TelegramPort | undefined;
+		let sent: Promise<TelegramHandle | undefined> | undefined;
+		const timer = setTimeout(() => {
+			sent = port().then(async (telegram) => {
+				found = telegram;
+				if (!telegram || done) return undefined;
+				const result = await telegram.send({
+					text: `🛡 guard: allow this ${summary}?\nThe full command is shown in the terminal.`,
+					replyMarkup: { inline_keyboard: [[button("✅ Allow once", "y"), button("⛔ Block", "n")]] },
+				});
+				if (!result.ok) {
+					if (!isUnreachable(result)) ctx.ui.notify(`guard: Telegram not reached (${result.reason}): ${result.message}`, "warning");
+					return undefined;
+				}
 				if (!done) pending.set(nonce, { handle: result.value, settle });
 				return result.value;
 			});
+		}, notifyAfterMs);
 
 		const { allowed, where } = await decided;
 		done = true;
+		clearTimeout(timer);
+		release();
 		pending.delete(nonce);
 		local.abort();
 		// Not awaited: the tool call should not wait on Telegram to tidy up.

@@ -11,7 +11,13 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import * as guardModule from "../extensions/guard.ts";
-import type { TelegramHandle, TelegramPort, TelegramUpdateHandler, TelegramView } from "../extensions/lib/telegram.ts";
+import {
+	isPromptClaimed,
+	type TelegramHandle,
+	type TelegramPort,
+	type TelegramUpdateHandler,
+	type TelegramView,
+} from "../extensions/lib/telegram.ts";
 import { readText } from "./lib.ts";
 
 type Handler = (event: unknown, ctx: unknown) => Promise<unknown>;
@@ -23,6 +29,7 @@ const entry = (guardModule as { default?: unknown }).default;
 const guard = (typeof entry === "function" ? entry : (entry as { default?: unknown })?.default) as (
 	pi: { on: (name: string, handler: Handler) => void; getAllTools: () => unknown[] },
 	loadTelegram?: () => Promise<TelegramPort | undefined>,
+	notifyAfterMs?: number,
 ) => void;
 const { answerCallback } = guardModule;
 
@@ -266,9 +273,10 @@ test("results with nothing to hide are left untouched", async () => {
 /**
  * pi-telegram as guard sees it through extensions/lib/telegram.ts: records what was
  * sent and edited, and taps a sent button the way the paired user's phone would.
- * `turn: false` is every case where there is no Telegram turn to send to.
+ * `failure` is the reason every send fails with; target-unavailable is every case
+ * where this pi has no Telegram chat to send to.
  */
-function fakeTelegram(turn = true) {
+function fakeTelegram(failure?: string) {
 	const sent: TelegramView[] = [];
 	const edits: TelegramView[] = [];
 	let handler: TelegramUpdateHandler | undefined;
@@ -276,13 +284,13 @@ function fakeTelegram(turn = true) {
 	const port: TelegramPort = {
 		send: async (view) => {
 			sent.push(view);
-			return turn ? { ok: true, value: handle } : { ok: false, reason: "target-unavailable", message: "" };
+			return failure ? { ok: false, reason: failure, message: "boom" } : { ok: true, value: handle };
 		},
 		edit: async (_handle, view) => {
 			edits.push(view);
 			return { ok: true, value: handle };
 		},
-		isTelegramTurn: async () => turn,
+		isTelegramTurn: async () => !failure,
 		onUpdate: (h) => {
 			handler = h;
 			return () => {
@@ -301,8 +309,11 @@ function fakeTelegram(turn = true) {
 function terminal() {
 	let answer: (choice: string | undefined) => void = () => {};
 	let signal: AbortSignal | undefined;
+	const notices: string[] = [];
 	const ui = {
-		notify: () => {},
+		notify: (text: string) => {
+			notices.push(text);
+		},
 		select: (_title: string, _options: string[], opts?: { signal?: AbortSignal }) => {
 			signal = opts?.signal;
 			return new Promise<string | undefined>((resolve) => {
@@ -311,23 +322,29 @@ function terminal() {
 			});
 		},
 	};
-	return { ctx: { cwd: CWD, hasUI: true, ui }, answer: (choice: string) => answer(choice), closed: () => signal?.aborted === true };
+	return {
+		ctx: { cwd: CWD, hasUI: true, ui },
+		answer: (choice: string) => answer(choice),
+		closed: () => signal?.aborted === true,
+		notices,
+	};
 }
 
-async function guardWith(telegram: TelegramPort | undefined) {
+/** Telegram hears of a confirmation after `notifyAfterMs`; 0 here unless a test is about the wait. */
+async function guardWith(telegram: TelegramPort | undefined, notifyAfterMs = 0) {
 	const own: Record<string, Handler> = {};
 	const on = (name: string, handler: Handler) => {
 		own[name] = handler;
 	};
-	guard({ on, getAllTools: () => MCP_TOOLS }, async () => telegram);
+	guard({ on, getAllTools: () => MCP_TOOLS }, async () => telegram, notifyAfterMs);
 	await own.session_start({}, {});
 	return own;
 }
 
-/** Lets the send that follows the terminal dialog happen. */
-const tick = () => new Promise((resolve) => setImmediate(resolve));
+/** Lets the delayed send that follows the terminal dialog happen. */
+const tick = () => new Promise((resolve) => setTimeout(resolve, 5));
 
-test("in a Telegram turn a tap there decides, and the terminal dialog closes", async () => {
+test("a tap on Telegram decides, and the terminal dialog closes", async () => {
 	for (const [answer, blocked] of [["y", false], ["n", true]] as const) {
 		const telegram = fakeTelegram();
 		const own = await guardWith(telegram.port);
@@ -373,8 +390,8 @@ test("an answer in the terminal settles the Telegram message, and a later tap do
 	assert.equal(telegram.tap("n"), "consume", "a stale guard button must not reach the model as [callback]");
 });
 
-test("outside a Telegram turn, or without pi-telegram, only the terminal is asked", async () => {
-	for (const telegram of [fakeTelegram(false), undefined]) {
+test("with no Telegram to reach, or without pi-telegram, only the terminal is asked, quietly", async () => {
+	for (const telegram of [fakeTelegram("target-unavailable"), fakeTelegram("runtime-unavailable"), undefined]) {
 		const own = await guardWith(telegram?.port);
 		const local = terminal();
 		const result = own.tool_call({ toolName: "bash", input: { command: "sudo true" } }, local.ctx) as Promise<ToolCallResult>;
@@ -382,7 +399,42 @@ test("outside a Telegram turn, or without pi-telegram, only the terminal is aske
 		local.answer("Allow once");
 		assert.equal(await result, undefined);
 		assert.deepEqual(telegram?.edits ?? [], []);
+		assert.deepEqual(local.notices, [], "not being connected is not worth a warning");
 	}
+});
+
+test("a send that fails for another reason says so in the terminal", async () => {
+	const own = await guardWith(fakeTelegram("transport-failed").port);
+	const local = terminal();
+	const result = own.tool_call({ toolName: "bash", input: { command: "sudo true" } }, local.ctx);
+	await tick();
+	local.answer("Block");
+	await result;
+	assert.equal(local.notices.length, 1);
+	assert.match(local.notices[0], /Telegram not reached \(transport-failed\): boom/);
+});
+
+test("answered before the wait is over, nothing goes to Telegram", async () => {
+	const telegram = fakeTelegram();
+	const own = await guardWith(telegram.port, 60_000);
+	const local = terminal();
+	const result = own.tool_call({ toolName: "bash", input: { command: "sudo true" } }, local.ctx) as Promise<ToolCallResult>;
+	await tick();
+	local.answer("Allow once");
+	assert.equal(await result, undefined);
+	await tick();
+	assert.deepEqual(telegram.sent, []);
+	assert.deepEqual(telegram.edits, []);
+});
+
+test("its dialog is claimed while open, so prompt-notify.ts does not announce it again", async () => {
+	const own = await guardWith(fakeTelegram().port, 60_000);
+	const local = terminal();
+	const result = own.tool_call({ toolName: "bash", input: { command: "sudo true" } }, local.ctx);
+	assert.ok(isPromptClaimed());
+	local.answer("Block");
+	await result;
+	assert.ok(!isPromptClaimed());
 });
 
 test("a session ending blocks a confirmation still waiting and stops listening", async () => {
