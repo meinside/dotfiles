@@ -71,11 +71,14 @@ test("only the percentage is coloured: warning above 40, error above 70, by the 
 
 	const text = format({ windows: { "5h": { utilization: 0.92, resetsAt: now() + hour }, "7d": { utilization: 0.2 } } }, tag);
 	assert.match(text, /^📊 <text:5h ><error:92%><text: ~[^>]+><text: · ><text:7d ><text:20%>$/);
-	// A window past its reset is plain 0%, whatever it read before.
-	assert.equal(format({ windows: { "5h": { utilization: 0.92, resetsAt: now() - hour } } }, tag), "📊 <text:5h 0%>");
 });
 
 test("a window past its reset reads 0% until the next response; a future one shows its reset", () => {
 	assert.equal(format({ windows: { "5h": { utilization: 0.92, resetsAt: now() - hour } } }), "📊 5h 0%");
+	assert.equal(
+		format({ windows: { "5h": { utilization: 0.92, resetsAt: now() - hour } } }, tag),
+		"📊 <text:5h 0%>",
+		"uncoloured, whatever it read before",
+	);
 	assert.match(format({ windows: { "5h": { utilization: 0.92, resetsAt: now() + hour } } }), /^📊 5h 92% ~\S/);
 });

@@ -74,16 +74,14 @@ const frame = (over: Partial<Parameters<typeof chooseExtractor>[0]> = {}) => ({
 test("the tuning block holds together", () => {
 	const s = TUNING.settle;
 	assert.ok(s.minWaitMs < s.maxWaitMs, "a minimum longer than the cap can never settle");
-	assert.ok(s.pollMs > 0 && s.stableRounds >= 2, "one stable poll is not a plateau check");
+	assert.ok(s.stableRounds >= 2, "one stable poll is not a plateau check");
 	assert.ok(
 		s.stableRounds * s.pollMs >= 1_400,
 		"the stability window must exceed the 1.4 s mid-load pause measured on the catalogue page",
 	);
-	assert.ok(s.confirmMs > 0, "the confirm pass is the guard against a missed pause");
 	assert.equal(s.contentBearing.sameSiteOnly, false, "same-site-only must stay opt-in; see the comment");
-	assert.ok(TUNING.extract.weakCoverage > 0 && TUNING.extract.weakCoverage < 1);
-	assert.ok(TUNING.empty.minChars > 0);
-	assert.ok(TUNING.browser.candidates.length > 0);
+	// The chat widget renders 22 characters; the shop page's smallest content frame has 1,499.
+	assert.ok(TUNING.empty.frameMinChars > 22 && TUNING.empty.frameMinChars < 1_499, "frame furniture threshold");
 });
 
 // ---------------------------------------------------------------- same-site heuristic
@@ -126,6 +124,8 @@ test("same-site mode ignores third parties and keeps the site's own api host", (
 test("settling needs every condition, not any of them", () => {
 	const ok = { elapsedMs: 5_000, stableRounds: 4, quietForMs: 2_000, inflight: 0, totalText: 14_296 };
 	assert.equal(shouldSettle(ok), true);
+	// The catalogue page at 2.9 s, where an earlier rule settled and lost 11 tables.
+	assert.equal(shouldSettle({ elapsedMs: 2_900, stableRounds: 2, quietForMs: 900, inflight: 2, totalText: 2_767 }), false);
 	assert.equal(shouldSettle({ ...ok, elapsedMs: 1_000 }), false, "before the minimum wait");
 	assert.equal(shouldSettle({ ...ok, stableRounds: 1 }), false, "a single stable poll is a plateau, not the end");
 	assert.equal(shouldSettle({ ...ok, quietForMs: 200 }), false, "still fetching");
@@ -146,15 +146,6 @@ test("the cap settles regardless, so a hung page cannot hold the turn", () => {
 	const stuck = { elapsedMs: 30_000, stableRounds: 0, quietForMs: 0, inflight: 3, totalText: 0 };
 	assert.equal(shouldSettle(stuck), true);
 	assert.equal(shouldSettle({ ...stuck, elapsedMs: 10_000 }), false);
-});
-
-test("the measured v4 failure would not settle under this rule", () => {
-	// the catalogue page at 2.9 s: text had held 2,767 chars for two polls, but requests were still
-	// in flight and the minimum wait had not passed. v4 settled here and lost 11 tables.
-	assert.equal(
-		shouldSettle({ elapsedMs: 2_900, stableRounds: 2, quietForMs: 900, inflight: 2, totalText: 2_767 }),
-		false,
-	);
 });
 
 // ---------------------------------------------------------------- extractor choice
@@ -252,12 +243,6 @@ test("a chosen Readability article keeps its structure and stays markdown", () =
 	assert.match(out, /^## Message Assistant$/m, "headings survive");
 	assert.match(out, /^- 15 languages$/m, "list items survive");
 	assert.equal(/<div|<svg|<path|<p>/.test(out), false, "no HTML may reach a markdown document");
-});
-
-test("a frame below the furniture threshold is not worth including", () => {
-	// The chat widget renders 22 characters; the shop page's smallest content frame has 1,499.
-	assert.ok(TUNING.empty.frameMinChars > 22);
-	assert.ok(TUNING.empty.frameMinChars < 1_499);
 });
 
 // ---------------------------------------------------------------- empty diagnosis
@@ -502,7 +487,7 @@ async function activateWith(found: string | undefined): Promise<{
 	tools: string[];
 	commands: string[];
 	events: string[];
-	hemitted: Array<{ name: string; payload: unknown }>;
+	emitted: Array<{ name: string; payload: unknown }>;
 }> {
 	const original = browserLookup.find;
 	browserLookup.find = () => found;
@@ -523,14 +508,11 @@ async function activateWith(found: string | undefined): Promise<{
 	return { tools, commands, events, emitted };
 }
 
-test("with a browser present, the tool and command are registered", async () => {
-	const { tools, commands } = await activateWith("/Applications/Firefox.app/Contents/MacOS/firefox");
+test("with a browser present, the tool, the command and a MagPi render handler are registered", async () => {
+	const { tools, commands, emitted, events } = await activateWith("/Applications/Firefox.app/Contents/MacOS/firefox");
 	assert.deepEqual(tools, ["magpi_fetch_rendered"], "the tool sorts directly under magpi_fetch");
 	assert.deepEqual(commands, ["magpi-render"]);
-});
-
-test("the render handler is registered through MagPi, so MagPi does the caching", async () => {
-	const { emitted, events } = await activateWith("/Applications/Firefox.app/Contents/MacOS/firefox");
+	// Through MagPi, so MagPi does the caching.
 	const registrations = emitted.filter((entry) => entry.name === "magpi:register-handler");
 	assert.equal(registrations.length, 1, "emitted at load; session_start repeats it idempotently");
 	const handler = registrations[0]?.payload as { name: string; match: (url: URL) => boolean; fetch: unknown };

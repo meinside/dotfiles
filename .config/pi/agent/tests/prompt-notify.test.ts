@@ -7,8 +7,9 @@
 
 import assert from "node:assert/strict";
 import test from "node:test";
-import { claimPrompt, type TelegramHandle, type TelegramPort, type TelegramView } from "../extensions/lib/telegram.ts";
+import { claimPrompt, type TelegramPort } from "../extensions/lib/telegram.ts";
 import * as notifyModule from "../extensions/prompt-notify.ts";
+import { fakeTelegram } from "./fake-telegram.ts";
 
 type Handler = (event: unknown, ctx: unknown) => Promise<unknown>;
 
@@ -21,25 +22,6 @@ const notify = (typeof entry === "function" ? entry : (entry as { default?: unkn
 ) => void;
 const { summarizeTitle } = notifyModule;
 
-function fakeTelegram(failure?: string) {
-	const sent: TelegramView[] = [];
-	const edits: TelegramView[] = [];
-	const handle: TelegramHandle = { target: { chatId: 42, threadId: 7 }, messageIds: [100], generation: "g1" };
-	const port: TelegramPort = {
-		send: async (view) => {
-			sent.push(view);
-			return failure ? { ok: false, reason: failure, message: "boom" } : { ok: true, value: handle };
-		},
-		edit: async (_handle, view) => {
-			edits.push(view);
-			return { ok: true, value: handle };
-		},
-		isTelegramTurn: async () => !failure,
-		onUpdate: () => () => {},
-	};
-	return { port, sent, edits };
-}
-
 function notifierWith(telegram: TelegramPort | undefined, notifyAfterMs = 0) {
 	const on: Record<string, Handler> = {};
 	const register = (name: string, handler: Handler) => {
@@ -47,7 +29,7 @@ function notifierWith(telegram: TelegramPort | undefined, notifyAfterMs = 0) {
 	};
 	notify({ on: register }, async () => telegram, notifyAfterMs);
 	const notices: string[] = [];
-	const ctx = { cwd: "/work/conjecture-go", ui: { notify: (text: string) => void notices.push(text) } };
+	const ctx = { cwd: "/work/some-project", ui: { notify: (text: string) => void notices.push(text) } };
 	return {
 		on,
 		notices,
@@ -64,7 +46,7 @@ test("a prompt left open is announced with its directory and title, then settled
 	await notifier.start("confirm", "Run project-local agents?");
 	await wait();
 	assert.equal(telegram.sent.length, 1);
-	assert.equal(telegram.sent[0].text, "⏳ pi (conjecture-go) is waiting for an answer in the terminal:\nRun project-local agents?");
+	assert.equal(telegram.sent[0].text, "⏳ pi (some-project) is waiting for an answer in the terminal:\nRun project-local agents?");
 	assert.equal(telegram.sent[0].replyMarkup, undefined, "answering stays in the terminal");
 	await notifier.end("confirm", "Run project-local agents?");
 	await wait();

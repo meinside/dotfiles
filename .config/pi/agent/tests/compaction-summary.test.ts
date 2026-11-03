@@ -14,7 +14,7 @@
  */
 
 import assert from "node:assert/strict";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test from "node:test";
@@ -58,8 +58,7 @@ const { budgetFor, improvesBudget, messagesFor, compactionFrom, describeAttempt,
 test("the budget mirrors pi's own sizing, including the model's cap", () => {
 	// The measured failure: pi's default reserve against a 128k output cap.
 	assert.equal(budgetFor(16_384, 128_000), 13_107);
-	// What this extension asks for instead: 3.4x the 7,689 a real summary needed, not the
-	// 8.5x of the first cut, because a larger cap also licenses a slower answer.
+	// What this extension asks for instead.
 	assert.equal(budgetFor(32_768, 128_000), 26_214);
 	// A small free model's output cap binds, and no reserve can lift it.
 	assert.equal(budgetFor(32_768, 8_192), 8_192);
@@ -100,11 +99,12 @@ test("the progress line answers the question that cancelled a working call", () 
 	assert.match(progressText(0, 1), /0s/, "the clock starts before the first tick");
 });
 
-test("an unreadable or malformed config file leaves the defaults in place", () => {
+test("an unreadable or malformed config file leaves the defaults in place", (t) => {
 	// An optional file's typo must not disable compaction.
 	assert.deepEqual(readFileConfig(join(tmpdir(), "compaction-summary-does-not-exist.json")), {});
 
 	const dir = mkdtempSync(join(tmpdir(), "compaction-summary-"));
+	t.after(() => rmSync(dir, { recursive: true, force: true }));
 	const write = (body: string) => {
 		const path = join(dir, `${Math.random().toString(36).slice(2)}.json`);
 		writeFileSync(path, body, "utf8");
@@ -163,14 +163,11 @@ test("an unmeasured context is not an over-full one", () => {
 	assert.equal(shouldTriggerEarly(over, 16_384, 1), false, "disabled leaves the decision to pi");
 });
 
-test("an empty summary never becomes a checkpoint", () => {
+test("a summary is handed back with the cut point and the count pi asked for; an empty one never is", () => {
 	const prep = { firstKeptEntryId: "entry-9", tokensBefore: 576_801 };
+	// An empty checkpoint would discard the conversation for nothing.
 	assert.equal(compactionFrom(prep, "", { in: 1 }), undefined);
 	assert.equal(compactionFrom(prep, "   \n\t ", { in: 1 }), undefined);
-});
-
-test("a real summary is handed back with the cut point and the count pi asked for", () => {
-	const prep = { firstKeptEntryId: "entry-9", tokensBefore: 576_801 };
 	const usage = { input: 181_000, output: 7_689 };
 	const result = compactionFrom(prep, "## Goal\n...", usage);
 	assert.deepEqual(result, {

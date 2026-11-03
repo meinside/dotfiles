@@ -14,7 +14,7 @@
  */
 
 import assert from "node:assert/strict";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import test from "node:test";
@@ -228,10 +228,10 @@ test("a narrow width wraps between groups and never inside one", () => {
 
 test("a group wider than the line on its own is broken, still within width", () => {
 	const width = 12;
-	const lines = flowGroups(["a", "\u{1f4c2}~/srcs/go/src/github.com/tosslab/conjecture-go", "main*"], " ", width);
+	const lines = flowGroups(["a", "\u{1f4c2}~/srcs/go/src/github.com/example/some-project", "main*"], " ", width);
 	for (const line of lines) assert.ok(visibleWidth(line) <= width, `wider than ${width}: ${line}`);
 	const unspaced = (text: string) => text.replaceAll(" ", "");
-	assert.equal(unspaced(plain(lines).join("")), "a\u{1f4c2}~/srcs/go/src/github.com/tosslab/conjecture-gomain*", "nothing lost");
+	assert.equal(unspaced(plain(lines).join("")), "a\u{1f4c2}~/srcs/go/src/github.com/example/some-projectmain*", "nothing lost");
 });
 
 // ---------------------------------------------------------------- session scan
@@ -360,7 +360,7 @@ test("reset clears totals, counters and pending write calls", () => {
 
 // ---------------------------------------------------------------- settings
 
-test("project settings are honoured only for a trusted project", () => {
+test("project settings are honoured only for a trusted project", (t) => {
 	// $TMPDIR can name a directory that nothing has created yet — a session inheriting
 	// TMPDIR=/tmp/<something> from whatever launched it makes mkdtemp fail with ENOENT
 	// and this check die for a reason that has nothing to do with what it asserts.
@@ -369,6 +369,9 @@ test("project settings are honoured only for a trusted project", () => {
 	mkdirSync(join(cwd, ".pi"));
 	writeFileSync(join(cwd, ".pi", "settings.json"), JSON.stringify({ compaction: { enabled: false } }));
 	const bare = mkdtempSync(join(tmpdir(), "pi-statusline-bare-"));
+	t.after(() => {
+		for (const dir of [cwd, bare]) rmSync(dir, { recursive: true, force: true });
+	});
 
 	// Trusted: the project file wins, exactly as SettingsManager would apply it.
 	assert.equal(readAutoCompactEnabled(cwd, true), false);

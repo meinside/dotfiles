@@ -1,9 +1,6 @@
 /**
- * `quota-rotate.json`'s `chain` is a list of model ids that other people own, and it
- * is the one external-fact list in this directory with no drift check — which is why
- * it is the one that went stale: `openrouter/z-ai/glm-5.2:free` sat in the chain after
- * OpenRouter withdrew the free endpoint, and it was found by hand rather than by
- * `check.sh`.
+ * `quota-rotate.json`'s `chain` is a list of model ids that other people own, and
+ * providers withdraw them (OpenRouter's free endpoints especially).
  *
  * A withdrawn id does not fail loudly. `pi-quota-rotate`'s `resolveChain()` drops any
  * pattern that matches no model, deliberately ("a chain is a preference list and a
@@ -75,6 +72,14 @@ function splitPattern(pattern: string): { provider: string; modelPattern: string
 	return { provider: trimmed.slice(0, slash), modelPattern: trimmed.slice(slash + 1) };
 }
 
+/** The entries of `chain` that resolve to no model: malformed, withdrawn or renamed. */
+function unresolvedEntries(chain: string[], models: Array<{ provider: string; id: string }>): string[] {
+	return chain.filter((pattern) => {
+		const split = splitPattern(pattern);
+		return !split || !models.some((m) => m.provider === split.provider && matchesModelId(m.id, split.modelPattern));
+	});
+}
+
 const config = readJson<QuotaRotateConfig>("quota-rotate.json");
 const sample = readJson<QuotaRotateConfig>("quota-rotate.json.sample");
 const { chain, maxRotationsPerRun } = settings(config);
@@ -99,17 +104,8 @@ test("every chain entry still resolves to a model pi knows", (t) => {
 	if (!config) return t.skip("quota-rotate.json unreadable");
 	if (models.length === 0) return t.skip("models-store.json unreadable; nothing to resolve against");
 
-	const unresolved: string[] = [];
-	for (const pattern of chain) {
-		const split = splitPattern(pattern);
-		if (!split) continue; // shape is the other test's business
-		const hits = models.filter(
-			(model) => model.provider === split.provider && matchesModelId(model.id, split.modelPattern),
-		);
-		if (hits.length === 0) unresolved.push(pattern);
-		else t.diagnostic(`${pattern} -> ${hits.length} model${hits.length === 1 ? "" : "s"}`);
-	}
-
+	// A malformed entry is the shape test's business.
+	const unresolved = unresolvedEntries(chain, models).filter((pattern) => splitPattern(pattern) !== null);
 	assert.deepEqual(
 		unresolved,
 		[],
@@ -153,10 +149,7 @@ test("the sample a fresh clone starts from resolves too", (t) => {
 	if (models.length === 0) return t.skip("models-store.json unreadable; nothing to resolve against");
 	const sampleChain = settings(sample).chain;
 	assert.ok(sampleChain.length > 0, "the sample must carry a chain; it is the starting point");
-	const unresolved = sampleChain.filter((pattern) => {
-		const split = splitPattern(pattern);
-		return !split || !models.some((m) => m.provider === split.provider && matchesModelId(m.id, split.modelPattern));
-	});
+	const unresolved = unresolvedEntries(sampleChain, models);
 	assert.deepEqual(unresolved, [], `the sample chain cannot resolve ${unresolved.join(", ")} on this machine`);
 
 	// Drift between the two is expected and only reported: the sample is a starting point,

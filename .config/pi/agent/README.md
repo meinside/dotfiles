@@ -1,6 +1,6 @@
 # pi coding agent config
 
-Config directory for [pi](https://github.com/earendil-works/pi-mono) (`pi-coding-agent`).
+Config directory for [pi](https://github.com/earendil-works/pi) (`pi-coding-agent`).
 
 **pi does not support XDG paths.** `getAgentDir()` returns `$PI_CODING_AGENT_DIR`,
 else `~/.pi/agent`. `~/.zshrc` exports the variable and a committed
@@ -54,7 +54,7 @@ ledger have no such option and stay.
 | `agents/*.md` | yes | Subagent definitions |
 | `prompts/*.md` | yes | Prompt templates, invoked as `/name` |
 | `check.sh` | yes | Entry point for the checks |
-| `tests/*.ts` | yes | The checks. `lib.ts` is shared helpers, the rest run standalone under `node --test` |
+| `tests/*.ts` | yes | The checks. `lib.ts` and `fake-telegram.ts` are shared helpers, the `*.test.ts` files run standalone under `node --test` |
 | `../../llama.cpp/config.ini` | yes | Router-level llama.cpp config, auto-loaded by every llama.cpp binary ([notes](#llamacpp-provider)) |
 | `../../llama.cpp/models.ini` | yes | Router model presets, pointed at by `$LLAMA_ARG_MODELS_PRESET` |
 
@@ -81,7 +81,7 @@ then `AGENTS.md` / `CLAUDE.md` from cwd and every ancestor. It reaches subagents
 pi ships no built-in sub-agents, so tiered model usage comes from the upstream
 `subagent` example extension, vendored here.
 
-- **Upstream repo:** <https://github.com/earendil-works/pi-mono>
+- **Upstream repo:** <https://github.com/earendil-works/pi>
 - **Upstream path:** `packages/coding-agent/examples/extensions/subagent/`
 - **Local copy of upstream:** resolved by `tests/lib.ts`'s `piPackageDir()` — `brew --prefix pi-coding-agent`, else the real path of the `pi` binary on `PATH` (npm installs), else that binary's managed-install release (`pi.dev/install.sh`)
 - **Vendored from:** pi 1.3.0

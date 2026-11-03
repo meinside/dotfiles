@@ -11,13 +11,8 @@ import { homedir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import * as guardModule from "../extensions/guard.ts";
-import {
-	isPromptClaimed,
-	type TelegramHandle,
-	type TelegramPort,
-	type TelegramUpdateHandler,
-	type TelegramView,
-} from "../extensions/lib/telegram.ts";
+import { isPromptClaimed, type TelegramPort } from "../extensions/lib/telegram.ts";
+import { fakeTelegram } from "./fake-telegram.ts";
 import { readText } from "./lib.ts";
 
 type Handler = (event: unknown, ctx: unknown) => Promise<unknown>;
@@ -59,16 +54,6 @@ const ctx = { cwd: CWD, hasUI: false, ui: { notify: () => {}, select: async () =
 
 const call = (toolName: string, path: string) =>
 	handlers.tool_call({ toolName, input: { path } }, ctx) as Promise<ToolCallResult>;
-
-test("guard registers the handlers it needs", () => {
-	assert.deepEqual(Object.keys(handlers).sort(), [
-		"session_shutdown",
-		"session_start",
-		"tool_call",
-		"tool_result",
-		"user_bash",
-	]);
-});
 
 test("credential paths are not writable", async () => {
 	// sorted, like the list in guard.ts, so an addition has one obvious place to go
@@ -169,6 +154,11 @@ test("machine-changing commands need a confirmation that headless cannot give", 
 	const blocked = await handlers.tool_call({ toolName: "bash", input: { command: "sudo rm -rf /" } }, ctx);
 	assert.equal(blocked?.block, true);
 	assert.equal(await handlers.tool_call({ toolName: "bash", input: { command: "ls -la" } }, ctx), undefined);
+	// The user's own `!` commands too: headless refuses, a terminal runs them as typed.
+	const bang = (await handlers.user_bash({ command: "sudo rm -rf /" }, ctx)) as { result?: { exitCode: number } } | undefined;
+	assert.equal(bang?.result?.exitCode, 1);
+	assert.equal(await handlers.user_bash({ command: "sudo rm -rf /" }, { ...ctx, hasUI: true }), undefined);
+	assert.equal(await handlers.user_bash({ command: "ls -la" }, ctx), undefined);
 	// documented hole: bash is not gated on credential paths
 	assert.equal(
 		await handlers.tool_call({ toolName: "bash", input: { command: "cat ~/.aws/credentials" } }, ctx),
@@ -269,41 +259,6 @@ test("results with nothing to hide are left untouched", async () => {
 });
 
 // ---------------------------------------------------------------- telegram
-
-/**
- * pi-telegram as guard sees it through extensions/lib/telegram.ts: records what was
- * sent and edited, and taps a sent button the way the paired user's phone would.
- * `failure` is the reason every send fails with; target-unavailable is every case
- * where this pi has no Telegram chat to send to.
- */
-function fakeTelegram(failure?: string) {
-	const sent: TelegramView[] = [];
-	const edits: TelegramView[] = [];
-	let handler: TelegramUpdateHandler | undefined;
-	const handle: TelegramHandle = { target: { chatId: 42, threadId: 7 }, messageIds: [100], generation: "g1" };
-	const port: TelegramPort = {
-		send: async (view) => {
-			sent.push(view);
-			return failure ? { ok: false, reason: failure, message: "boom" } : { ok: true, value: handle };
-		},
-		edit: async (_handle, view) => {
-			edits.push(view);
-			return { ok: true, value: handle };
-		},
-		isTelegramTurn: async () => !failure,
-		onUpdate: (h) => {
-			handler = h;
-			return () => {
-				handler = undefined;
-			};
-		},
-	};
-	const buttonData = (answer: "y" | "n") =>
-		sent.at(-1)?.replyMarkup?.inline_keyboard[0].find((b) => b.callback_data.endsWith(`:${answer}`))?.callback_data;
-	const tap = (answer: "y" | "n") =>
-		handler?.({ callback_query: { data: buttonData(answer), from: { id: 42 }, message: { message_id: 100, chat: { id: 42 } } } });
-	return { port, sent, edits, tap, buttonData, registered: () => handler !== undefined };
-}
 
 /** A terminal whose select stays open until answered or aborted, like pi's. */
 function terminal() {

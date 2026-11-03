@@ -11,7 +11,9 @@ import { agentModels, leaves, type ModelsConfig, modelEntries, readJson, readTex
 
 const PLACEHOLDER = /^<<<.*>>>$/;
 const SECRET_KEY = /(key|token|secret|password|credential)$/i;
-const RUNTIME_KEYS = ["lastChangelogVersion", "defaultThinkingLevel"];
+/** Written by pi itself: the last changelog shown, for pi and (since 1.5.0) per extension package. */
+const PI_WRITTEN_KEYS = ["lastChangelogVersion", "extensionChangelogVersions"];
+const RUNTIME_KEYS = [...PI_WRITTEN_KEYS, "defaultThinkingLevel"];
 const SAMPLES = ["models.json", "settings.json", "auth.json", "mcp.json", "claude-bridge.json"];
 
 for (const name of SAMPLES) {
@@ -132,7 +134,9 @@ test("defaultModel is a model id, not a name or a tier", (t) => {
 test("settings.json.sample tracks settings.json", (t) => {
 	const sample = readJson<Record<string, unknown>>("settings.json.sample");
 	if (!sample) return t.skip("settings.json.sample unreadable");
-	assert.ok(!("lastChangelogVersion" in sample), "settings.json.sample should not carry lastChangelogVersion");
+	for (const key of PI_WRITTEN_KEYS) {
+		assert.ok(!(key in sample), `settings.json.sample should not carry ${key}; pi writes it`);
+	}
 
 	const real = readJson<Record<string, unknown>>("settings.json");
 	if (!real) return t.diagnostic("settings.json absent; nothing to compare");

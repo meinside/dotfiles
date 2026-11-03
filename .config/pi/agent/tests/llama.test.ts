@@ -1,8 +1,8 @@
 /**
  * The llama.cpp router config lives outside this directory
  * (`${XDG_CONFIG_HOME:-~/.config}/llama.cpp/`, which is where every llama.cpp
- * binary looks by itself), but three of its invariants are only checkable
- * together with `models.json` and `settings.json`, and all three fail silently:
+ * binary looks by itself), but some of its invariants are only checkable
+ * together with `models.json` and `settings.json`, and all of them fail silently:
  *
  * - a `modelOverrides` key that does not match a router model id is *ignored*, so
  *   the thinking/sampling config for that model quietly disappears;
@@ -32,7 +32,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { importPi, type ModelsConfig, readJson } from "./lib.ts";
+import { importPi, readJson } from "./lib.ts";
 
 const LLAMA_PROVIDER = "llama.cpp";
 
