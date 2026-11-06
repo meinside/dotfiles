@@ -47,7 +47,7 @@ ledger have no such option and stay.
 | `extensions/claude-usage.ts` | yes | Claude plan usage (`5h`, `7d`, and the active model's weekly window) with reset times, at the end of the statusline ([notes](#statusline-extension)) |
 | `extensions/compaction-summary.ts` | yes | Gives the compaction summary room without shrinking the context window ([notes](#compaction-extensions)) |
 | `compaction-summary.json` | no | Optional `extensions/compaction-summary.ts` overrides: `reserveTokens`, `summarizerModel`, `triggerRatio`. Absent means defaults; a Bedrock id belongs here, not in the tracked extension |
-| `extensions/magpi-render.ts` | yes | Reads JavaScript-rendered pages through Firefox over WebDriver BiDi ([notes](#magpi-renderer)) |
+| `extensions/magpi-render.ts` | yes | Reads JavaScript-rendered pages through Firefox over WebDriver BiDi, and takes over MagPi's `webpage` handler to do so inside `magpi_fetch` ([notes](#magpi-renderer)) |
 | `extensions/section-order.ts` | yes | Workaround for pi-claude-bridge's "prompt-capture: no capture" turn failure after `/reload`: keeps custom prompt sections in transcript order. Remove once the bridge fixes it; `check.sh` fails when it does (reason in the file) |
 | `extensions/magpi-handlers.ts` | yes | Local MagPi fetch handlers: reddit, Discourse, naver blog ([notes](#magpi-handlers)) |
 | `AGENTS.md` | yes | [Global instructions](#global-instructions-agentsmd) for every session and subagent |
@@ -209,12 +209,13 @@ Rules that decide how entries are written:
   commands; the paths `magpi_fetch` returns must be rewritten.
 - **`~/.config/llama.cpp` is `allowRead`** so `tests/llama.test.ts` checks instead of
   skipping; not `allowWrite`, because `edit`/`write` leave a reviewable diff.
-- **`allowBrowserProcess` stays `false`** — it would make Chrome's cookie and login-data
-  stores bash-readable.
+- **`allowBrowserProcess` stays `false`.** It grants `bash` all Mach IPC (Keychain lookups
+  included) and inspection of every process; filesystem and network rules still apply.
+  Nothing here needs it, since extensions launch browsers outside the `bash` boundary.
 - **`~/.tool-versions` must be readable** even though the home root is `denyRead`, or asdf
   silently resolves a different version. Toolchains are XDG-relocated
   (`~/.local/share/{asdf,cargo,rustup,npm,pipx,uv}`).
-- **`$TMPDIR` is `/tmp/claude`**, created by `sandbox-runtime`. Only `/tmp` (and
+- **`$TMPDIR` is `/tmp/agents`**, created by `sandbox-runtime`. Only `/tmp` (and
   `/private/tmp`) is writable, and the variable outlives the directory when the sandbox is
   switched off mid-session — anything calling `os.tmpdir()` must `mkdirSync` it first.
 
@@ -342,22 +343,28 @@ Config is `magpi-render.json` (absent means defaults):
 - **Nothing is registered on a machine without Firefox** — a tool that can only fail still
   costs prompt tokens. Discovery tries `browserBinary`, absolute paths, then `PATH`; a
   browser installed later needs a `/reload`.
-- **No `sandbox.json` change is needed**: the browser is a child process, and `pi-sandbox`
-  enforces at the `bash` tool. `allowBrowserProcess` stays `false`.
 - **A throwaway profile per render**, so the real Firefox profile is never touched.
-- **6–15 s per page** against 0.3 s for a handler, and `navigator.webdriver` stays `true`,
-  so a site can tell this is automation.
+- **4–15 s per page** against 0.3 s for a handler, and `navigator.webdriver` stays `true`,
+  so a site can tell this is automation. Ad and analytics hosts are failed in the
+  browser, the page is scrolled so lazy content loads, and shadow DOM is read; each is a
+  `TUNING` entry.
 
-**Automatic escalation.** A `magpi_fetch` result under 600 bytes from the `webpage`
-handler with a page-shaped `kind` is treated as a shell: the host is recorded in
-`~/.local/state/pi/magpi-render/learned.json` and the result annotated. Thereafter that host is rendered
-through a handler registered on MagPi's own extension point, so MagPi does the caching and
-indexing. `learnHosts: false` turns the automatic half off, leaving `renderHosts`.
+**Escalation inside `magpi_fetch`.** The extension registers its own `webpage` handler,
+which replaces MagPi's by name. It only takes URLs no other handler claims, reads the page
+once (asking for `text/markdown` first, which Cloudflare-fronted sites answer), converts
+it with MagPi's own converter, and renders in the same call when the HTML is a shell or
+leaves content in same-site frames. Errors, PDFs and other non-HTML go to MagPi's own
+handler. The rules are `escalation()`; MagPi still caches and indexes the result.
 
-The first visit cannot be repaired automatically (nothing here can re-run MagPi's tool),
-and `refresh: true` is needed because the shell is already cached. **A partial loss is not
-detectable at all** — a page returning real bytes with empty iframes inside needs
-`renderHosts` or the explicit tool.
+- **It imports MagPi's source by path** (MagPi exposes registration, not its handlers).
+  When that fails, a thin result is annotated after the fact and its host recorded in
+  `~/.local/state/pi/magpi-render/learned.json` (`learnHosts`). `tests/magpi-render.test.ts` loads the real MagPi through pi's jiti, so
+  an update that moves those pieces fails `./check.sh` first.
+- **Hosts in `renderHosts` or `learned.json` skip the HTML** and always render.
+- **Testing renders from `bash`** needs `allowBrowserProcess: true` and
+  `"network": { "disabled": true }` in an untracked `.pi/sandbox.json`, and Firefox's own
+  sandbox off (`MOZ_DISABLE_CONTENT_SANDBOX=1`): macOS refuses a sandbox inside the
+  Seatbelt one, and the content process dies. pi itself needs neither.
 
 ## Model tiers
 
@@ -468,11 +475,11 @@ difference was not intentional.
 - `models.json.sample`: generated from the real file, replacing any Bedrock ARN
   with its `<<<...>>>` placeholder, keyed on the tier name. Regenerate whenever a
   model is added or a tier renamed. It also keeps an `amazon-bedrock` block the real
-  file no longer has, as a template: its names carry no `tier:`, since a tier may
+  file does not have, as a template: its names carry no `tier:`, since a tier may
   resolve only once. To switch back, move the tier names from `claude-bridge` onto it.
-- `settings.json.sample`: the real file minus the two keys pi rewrites at runtime
-  (`lastChangelogVersion`, `defaultThinkingLevel` — the sample holds the intended
-  starting level). `defaultProvider` and `defaultModel` are placeholders and only
+- `settings.json.sample`: the real file minus the keys pi writes itself
+  (`lastChangelogVersion`, `extensionChangelogVersions`). `defaultThinkingLevel`, which
+  pi also rewrites, stays as the intended starting level and is not compared. `defaultProvider` and `defaultModel` are placeholders and only
   work as a pair; `defaultModel` must be a raw id, **not** a tier. `check.sh` fails
   a half-filled pair.
 - `auth.json.sample`: maintained by hand as a template.

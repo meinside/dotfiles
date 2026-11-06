@@ -5,15 +5,9 @@
  * uses the same `reserveTokens` to decide when compaction starts (`contextWindow -
  * reserveTokens`). One number therefore answers two questions that pull apart on a
  * large-window model: it has to be small for the window to be usable and large for the
- * summary to fit. Measured on this machine, with the default 16,384:
- *
- *   576,801 token context, 427 messages to summarize
- *   budget 13,107 -> "generation hit the token cap and the summary is incomplete"
- *   budget 32,768 -> succeeded, and the summary came to 7,689 tokens (23% of it)
- *
- * The same input succeeded once it had headroom, and the summary it produced would have
- * fit in the original budget. The failure was overshoot, not a task that needed more
- * room, so headroom is the whole fix.
+ * summary to fit. Measured: a 577k-token session hit the cap at the default budget of
+ * 13,107 and succeeded at 26,214 with a 7,689-token summary, which would have fit the
+ * original. The failure is overshoot, so headroom is the fix.
  *
  * `session_before_compact` may return a summary of its own, which is where the two
  * questions come apart: this calls pi's own summarizer, with pi's own prompt, its own
@@ -47,18 +41,14 @@ const CONFIG = {
 	 * `0.8 * this`, capped by the model's own output limit. 32,768 -> 26,214 tokens,
 	 * about 3.4x the 7,689 a real summary of a 577k-token session needed.
 	 *
-	 * The first cut asked for 65,536 and that was a mistake in the other direction: a
-	 * larger cap also licenses a longer answer, and generation is the slow half. A
-	 * measured compaction of this session took 282 s under pi's own 32,768 budget, and an
-	 * attempt under 65,536 was still running at 206 s when it was cancelled. Headroom
+	 * Not larger: a bigger cap also licenses a longer answer, and generation is the slow
+	 * half. Measured: 282 s at 32,768, and 65,536 was still running at 206 s. Headroom
 	 * against overshoot is the goal; room for an essay is not.
 	 */
 	reserveTokens: 32_768,
 	/**
 	 * Thinking level for the summarization call. Reasoning tokens are drawn from the
-	 * same budget as the text, and the measured failure above already had thinking
-	 * `off`, so reasoning was not what saved or sank it: "off" keeps the budget for the
-	 * summary itself.
+	 * same budget as the text, so "off" keeps the budget for the summary itself.
 	 */
 	thinkingLevel: "off" as const,
 	/**
@@ -74,9 +64,7 @@ const CONFIG = {
 	summarizerModel: undefined as { provider: string; id: string } | undefined,
 	/**
 	 * How often the footer's elapsed-time status updates, in ms. Summarizing a large span
-	 * takes minutes with nothing on screen, which reads as a hang: one attempt was cancelled
-	 * at 206 s for that reason. A visible clock is the difference between waiting and giving
-	 * up.
+	 * takes minutes with nothing on screen, which reads as a hang and gets cancelled.
 	 */
 	progressIntervalMs: 1_000,
 	/**
@@ -95,17 +83,10 @@ const CONFIG = {
 	 * model, so once the window is full there is nothing compaction can do, and pi retries
 	 * a compact-and-retry exactly once.
 	 *
-	 * Both other tools that publish this converged on a ceiling for that reason. Gemini CLI
-	 * compresses at 0.7 of the window, and its maintainer's stated reason is that above
-	 * that any new input can overshoot the limit, after which nothing can be compressed.
-	 * Codex clamps the trigger to 0.9 of the window no matter what the user configures,
-	 * because compaction failures from overflow were common enough to remove the choice.
-	 *
-	 * 0.92 rather than their 0.7-0.9 because compacting is far more expensive here: a
-	 * measured summarization took 190 s and another 282 s, against the 3-10 s Gemini's
-	 * users report, so each early compaction costs minutes of waiting and an Opus-priced
-	 * call. 0.92 of 1M leaves 80,000 tokens of headroom, comfortably more than any single
-	 * turn has been observed to add, while still using 920k of the window.
+	 * Gemini CLI (0.7) and Codex (0.9) cap the trigger with a ratio for the same reason.
+	 * 0.92 here because a compaction costs minutes (measured 190 s and 282 s) and an
+	 * Opus-priced call, so compacting early is expensive; 0.92 of 1M still leaves 80,000
+	 * tokens, more than any single turn has been seen to add.
 	 *
 	 * This is a ceiling, never a target: `triggerAt` takes whichever of the two fires
 	 * first, so the ratio only binds on windows above `reserveTokens / (1 - ratio)` =

@@ -11,7 +11,7 @@ import { agentModels, leaves, type ModelsConfig, modelEntries, readJson, readTex
 
 const PLACEHOLDER = /^<<<.*>>>$/;
 const SECRET_KEY = /(key|token|secret|password|credential)$/i;
-/** Written by pi itself: the last changelog shown, for pi and (since 1.5.0) per extension package. */
+/** Written by pi itself: the last changelog shown, for pi and per extension package. */
 const PI_WRITTEN_KEYS = ["lastChangelogVersion", "extensionChangelogVersions"];
 const RUNTIME_KEYS = [...PI_WRITTEN_KEYS, "defaultThinkingLevel"];
 const SAMPLES = ["models.json", "settings.json", "auth.json", "mcp.json", "claude-bridge.json"];

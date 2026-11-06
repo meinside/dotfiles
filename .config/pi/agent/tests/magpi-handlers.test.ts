@@ -188,7 +188,7 @@ test("post id is read from every thread url shape", () => {
 
 // ---------------------------------------------------------------- comment trees
 
-test("comment tree is flattened depth-first with depth kept", () => {
+test("comment tree is flattened depth-first with depth kept, empty bodies dropped, up to the cap", () => {
 	const flat = flattenComments([
 		comment("a", "top", 5, listing([comment("b", "reply", 2, listing([comment("c", "deep", 1)]))])),
 		{ kind: "more", data: { children: ["x", "y"] } },
@@ -203,12 +203,10 @@ test("comment tree is flattened depth-first with depth kept", () => {
 			[0, "d", "second top"],
 		],
 	);
-});
-
-test("flatten drops empty bodies and honours the cap", () => {
-	const flat = flattenComments([comment("a", "kept"), comment("b", "   "), comment("c", "also kept")], 2);
+	// Empty bodies are dropped, and the cap counts what is kept.
+	const capped = flattenComments([comment("a", "kept"), comment("b", "   "), comment("c", "also kept"), comment("d", "over")], 2);
 	assert.deepEqual(
-		flat.map((c) => c.author),
+		capped.map((c) => c.author),
 		["a", "c"],
 	);
 });
@@ -513,8 +511,8 @@ test("discourse claims a topic on shape plus corroboration, not shape alone", ()
 	}
 	for (const href of [
 		// Measured collision: V2EX is a busy forum, is not Discourse, and its topic urls
-		// are exactly the slug-less shape. The old shape-only rule claimed them, which
-		// made a readable page unreadable — a handler cannot delegate back to MagPi.
+		// are exactly the slug-less shape. Claiming them makes a readable page unreadable,
+		// since a handler cannot delegate back to MagPi.
 		"https://www.v2ex.com/t/1012345",
 		"https://www.v2ex.com/t/1012345#reply5",
 		"https://example.com/t/12345",

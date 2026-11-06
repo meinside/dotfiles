@@ -19,8 +19,8 @@
  *   169. Claimed on URL shape *plus* a slug or a Discourse-named host, because the
  *   shape alone also fits `v2ex.com/t/<id>`, which is not Discourse.
  * - **naver-blog** — `blog.naver.com/<id>/<logNo>` puts the post inside an iframe,
- *   so readability returns a **0-byte** document (reproduced from this cache). The
- *   mobile host renders the same post server-side.
+ *   so readability returns a **0-byte** document. The mobile host renders the same
+ *   post server-side.
  *
  * Shared ground rules:
  *
@@ -28,11 +28,11 @@
  *   (`pi.events.emit("magpi:register-handler", ...)`, see its src/index.ts). Its
  *   `registerHandler()` replaces by name, so using a built-in's name (`reddit`)
  *   shadows it. Nothing under `npm/node_modules` is patched.
- * - MagPi's own TypeScript cannot be imported — Node refuses type stripping under
- *   `node_modules`, the same wall `tests/sandbox.test.ts` hits — so its
- *   `FetchContext`/`HandlerResult` are restated here, and its `htmlToMarkdown`
- *   (readability + turndown) is unavailable. `htmlToMarkdown()` below is a small
- *   replacement, good enough for the clean fragments these handlers deal with and
+ * - MagPi's own TypeScript is not imported. pi's jiti could load it by path
+ *   (`magpi-render.ts` does), but Node's test runner refuses type stripping under
+ *   `node_modules`, and these handlers are tested without MagPi. So its
+ *   `FetchContext`/`HandlerResult` are restated here, and `htmlToMarkdown()` below is a
+ *   small converter, good enough for the clean fragments these handlers deal with and
  *   nowhere near readability for a whole page.
  * - A handler **throws** rather than return an empty or blocked document: MagPi
  *   then falls back to a stale cache entry if it has one and reports the error
@@ -606,8 +606,7 @@ export function isDiscourseHost(hostname: string): boolean {
  * Shape alone is not enough, and the cost of getting it wrong is not a slow read but
  * an unreadable page: a handler cannot hand a URL back to MagPi's default one, so a
  * false positive turns a page that read fine into an error. Measured collision:
- * `v2ex.com/t/1012345` — a busy non-Discourse forum — matched the old shape-only rule
- * exactly.
+ * `v2ex.com/t/1012345`, a busy non-Discourse forum, has exactly the slug-less shape.
  *
  * So a claim needs the shape *and* one piece of corroboration: a slug, which every
  * canonical Discourse URL carries and V2EX's shape does not have, or a hostname that

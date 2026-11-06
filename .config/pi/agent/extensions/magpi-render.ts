@@ -1,53 +1,32 @@
 /**
  * magpi-render.ts - reading pages whose content only exists after JavaScript runs
  *
- * `magpi_fetch` reads the server's HTML. When a site builds its content in the
- * browser, that HTML is a shell: one parts-catalogue page answers 27.6 KB of Next.js scaffold
- * containing **zero** product data, and MagPi caches the 315-byte footer it extracted
- * from it as a *successful* `article`. This registers the escalation for that case:
- * drive the installed Firefox over WebDriver BiDi, wait for the page to stop changing,
- * and extract what a reader would see.
+ * `magpi_fetch` reads the server's HTML. When a site builds its content in the browser,
+ * that HTML is a shell, and MagPi caches the footer it extracted from it as a successful
+ * `article`. This drives the installed Firefox over WebDriver BiDi, waits for the page to
+ * stop changing, and extracts what a reader would see. Two ways in:
  *
- * Measured on the two pages this was built for:
- *
- *   parts catalogue   27.6 KB shell -> 14.3 K chars, 11 tables, price and spec tables
- *                     intact, Product + FAQPage ld+json. 13-15 s.
- *   shop product      reviews, Q&A and the description live in three iframes, so
- *                     no top-document extraction can see them. Frame traversal returns
- *                     61 KB across 4 frames. 6 s.
+ *   - inside `magpi_fetch`: a replacement for MagPi's `webpage` handler renders in the
+ *     same call when the HTML is a shell or leaves content in frames (`webpageHandler`);
+ *   - on request: the `magpi_fetch_rendered` tool and `/magpi-render <url>`.
  *
  * Design notes for anyone changing this file:
  *
- *   - **Every tunable is in TUNING at the top, with the measurement that set it.** The
- *     values are not taste: a 700 ms stability window (instead of 1.6 s) mistook
- *     the catalogue page's mid-load pause for the end and lost all 11 tables, and waiting for the
- *     `load` event never returns on the shop page at all. Argue with the evidence.
- *   - **Readability is a candidate, not the extractor.** It is built for articles and
- *     drops tables, which on a catalogue page *are* the content: it scored 0.08
- *     coverage with 0 tables where the layout pass scored 0.97 with 11. It is injected
- *     only when the layout pass looks weak.
- *   - **Extraction runs in the page**, so visibility comes from `getComputedStyle` and
- *     box geometry rather than from guessing at tag names. No server-side parser
- *     (Readability included) has that information.
- *   - **An empty result throws.** MagPi caches whatever it is handed, for `ttlHours`,
- *     and a rendered shell reads to the model as "this page says nothing" - the exact
- *     failure this file exists to fix, one layer further in.
- *   - **No site-specific code.** Two candidate handlers (the catalogue page's internal JSON API,
- *     the shop page's iframe endpoints) were measured, worked, and were dropped: an
- *     undocumented internal API has no compatibility promise, skips the site's own
- *     analytics, and is the first thing a site blocks. Rendering consumes the page the
- *     way the site intends.
- *   - **The browser is a child process, so it is outside `pi-sandbox`.** That extension
- *     enforces its policy at the `bash` tool; `spawn` from here is not covered, which
- *     is why this works with `allowBrowserProcess: false`. Measured: the same launch
- *     from inside sandboxed `bash` fails with Mach `bootstrap_check_in` errors.
- *   - **The BiDi socket is hand-rolled over `node:net`.** Node's global `WebSocket`
- *     honours `HTTP(S)_PROXY`, which this machine sets, and routes even a loopback
- *     connection through the proxy where the upgrade fails. A raw socket has no
- *     ambient configuration to get wrong.
- *   - Names borrow MagPi's: `magpi_fetch_rendered` sorts directly under `magpi_fetch`,
- *     which is the tool whose thin answer sends you here. Nothing under
- *     `npm/node_modules` is patched.
+ *   - **Every tunable is in TUNING, with the measurement that set it.** Change a value
+ *     with new evidence, not taste.
+ *   - **Readability is a candidate, not the extractor.** It drops tables, which on a
+ *     catalogue page are the content; see `TUNING.extract`.
+ *   - **Extraction runs in the page**, so visibility comes from `getComputedStyle` and box
+ *     geometry rather than from guessing at tag names.
+ *   - **An empty result throws.** MagPi caches whatever it is handed, and a rendered shell
+ *     reads to the model as "this page says nothing".
+ *   - **No site-specific code.** A site's internal API has no compatibility promise and is
+ *     the first thing it blocks; rendering consumes the page the way the site intends.
+ *   - **The browser is a child process, outside `pi-sandbox`**, which enforces at the
+ *     `bash` tool, so this works with `allowBrowserProcess: false`. A launch from
+ *     sandboxed `bash` does not (README, "MagPi renderer").
+ *   - Nothing under `npm/node_modules` is patched; MagPi is extended through its own
+ *     handler registration.
  */
 
 import { type ChildProcess, spawn } from "node:child_process";
@@ -56,15 +35,15 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { connect, type Socket } from "node:net";
 import { homedir, tmpdir } from "node:os";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 // ════════════════════════════════════════════════════════════════════════════════
 //  TUNING
 //
-//  Every number came out of a measured run against a Next.js parts-catalogue page whose
-//  payload is 11 tables, and an electronics shop product page whose reviews, Q&A and
-//  description live in three iframes. The measurement that set each value is named, so a
-//  change argues with evidence rather than with taste.
+//  The measurement that set each value is named beside it. "The catalogue page" is a
+//  Next.js parts catalogue whose payload is 11 tables; "the shop page" an electronics
+//  product page whose reviews and Q&A live in same-site iframes.
 // ════════════════════════════════════════════════════════════════════════════════
 export const TUNING = {
 	/** Waiting for the page to stop changing. */
@@ -85,6 +64,16 @@ export const TUNING = {
 		 */
 		networkIdleMs: 1_500,
 		/**
+		 * A request open longer than this stops counting as in flight: it is a long poll or
+		 * a beacon that never answers, not data on its way. This is also the longest a single
+		 * data request is waited for, so too short loses a slow API's content silently and too
+		 * long only costs time on pages with a request that never ends.
+		 * Not measured: how long legitimate requests take. Measured cost: on a furniture shop's
+		 * home page a same-site bot-check script never answered, so the page, stable from
+		 * ~4.5 s, settled at 9.9 s.
+		 */
+		staleRequestMs: 8_000,
+		/**
 		 * Never settle earlier than this.
 		 * Measured: the catalogue page's first table appears at 4.6 s, all 11 by 5.3 s.
 		 */
@@ -98,8 +87,7 @@ export const TUNING = {
 		 * Hard ceiling. Hitting it while text is still growing is reported rather than
 		 * quietly returned, because a truncated page that looks successful is the
 		 * failure this file exists to prevent.
-		 * Measured: the catalogue page completes at ~8 s, the shop page's iframes at ~6 s; settle lands
-		 * at 13-15 s and 6 s respectively.
+		 * Measured renders settle in 4-15 s.
 		 */
 		maxWaitMs: 25_000,
 		/**
@@ -107,8 +95,8 @@ export const TUNING = {
 		 * JS challenge ("Just a moment...") holds still for seconds before it navigates to the
 		 * real page, and stability alone would return the challenge. Longer pages are read as
 		 * articles mentioning one of the words, which must not wait out the cap.
-		 * Not measured: none of 309 renders in one session met a challenge. A hard block
-		 * ("Access denied") now costs the full cap instead of ~3 s.
+		 * Not measured against a real challenge. The cost: a short hard block ("Access
+		 * denied") waits out the cap.
 		 */
 		challengeMaxChars: 1_000,
 		/** A response only resets the idle timer when it could carry content. */
@@ -123,14 +111,61 @@ export const TUNING = {
 			 * Off by default, deliberately. Plenty of services serve their data from a
 			 * sibling domain rather than a subdomain - a separate `*-api.io`, a
 			 * CDN-hosted API - and restricting the signal would settle before that data
-			 * arrives. Losing content is invisible; waiting too long is not.
-			 * Measured cost of leaving it off: the catalogue page settles in 14.8 s instead of
-			 * 13.3 s, because datadog RUM, criteo and channel.io keep answering with
-			 * non-empty bodies (245 responses for one page; 80 of them third-party).
-			 * `magpi-render.json`'s `sameSiteOnlyHosts` turns it on per host.
+			 * arrives. Losing content is invisible; waiting too long is not. `TUNING.block`
+			 * keeps the worst third-party traffic off the timer instead, and
+			 * `magpi-render.json`'s `sameSiteOnlyHosts` turns this on per host.
 			 */
 			sameSiteOnly: false,
 		},
+	},
+
+	/**
+	 * Scrolling while the page settles, so content that loads on sight gets loaded.
+	 *
+	 * A block behind an `IntersectionObserver` reads "loading..." until it is scrolled to.
+	 * Steps run in every frame, moving the largest scroller (the window, or an app layout's own scrolling `div`). Settling waits
+	 * until every frame is at its end or the screens run out, so an endless feed stops
+	 * growing after `maxScreens` instead of holding the turn.
+	 */
+	scroll: {
+		/**
+		 * 12 screens at two per poll take 6 polls, about `minWaitMs`, so a page that settles
+		 * anyway is not held back by its own length. Measured: one screen per poll held the
+		 * 9-screen shop page back 5 s.
+		 */
+		maxScreens: 12,
+		screensPerPoll: 2,
+		/** Between the screens of one poll, so an `IntersectionObserver` sees each viewport. */
+		gapMs: 120,
+		/** Of the scroller's height, so consecutive viewports overlap and nothing is jumped over. */
+		viewportFraction: 0.9,
+	},
+
+	/**
+	 * Third-party requests failed before they leave the browser.
+	 *
+	 * Measured: 80 of the catalogue page's 245 responses were third-party (datadog RUM,
+	 * criteo, channel.io) and kept the idle timer from settling for 1.5 s; channel.io's chat
+	 * widget is also a frame of its own. Every request is intercepted over BiDi and continued
+	 * unless its host matches below, which costs one loopback round trip per request.
+	 *
+	 * Matched as a domain and its subdomains, and never against the page's own registrable
+	 * domain, so reading amplitude.com itself still loads amplitude.com. Ads and analytics
+	 * only: nothing here serves content a reader would see.
+	 */
+	block: {
+		enabled: true,
+		hosts: [
+			"adnxs.com", "ads-twitter.com", "adservice.google.com", "amazon-adsystem.com", "amplitude.com",
+			"analytics.tiktok.com", "bat.bing.com", "browser-intake-datadoghq.com", "channel.io", "clarity.ms",
+			"criteo.com", "criteo.net", "crazyegg.com", "datadoghq-browser-agent.com", "doubleclick.net",
+			"facebook.net", "fullstory.com", "google-analytics.com", "googleadservices.com",
+			"googlesyndication.com", "googletagmanager.com", "hotjar.com", "hotjar.io", "intercom.io",
+			"intercomcdn.com", "mixpanel.com", "moatads.com", "nr-data.net", "outbrain.com",
+			"px.ads.linkedin.com", "pubmatic.com", "quantserve.com", "rubiconproject.com",
+			"scorecardresearch.com", "segment.com", "segment.io", "snap.licdn.com", "taboola.com",
+			"wcs.naver.net", "groobee.io",
+		],
 	},
 
 	/** Choosing between the layout pass and Readability. */
@@ -158,10 +193,16 @@ export const TUNING = {
 	 * plus box geometry); these lists only cover what is visible but still not content.
 	 */
 	boilerplate: {
+		/**
+		 * `FORM` is deliberately absent: a page wrapped whole in one form (JSP and ASP.NET
+		 * sites do this) lost everything. Measured: a statute page's frame holds 144,599
+		 * characters inside `<form id="searchForm">` and rendered to 70. The controls are
+		 * skipped one by one instead, and a search form is `role=search`.
+		 */
 		skipTags: [
 			"SCRIPT", "STYLE", "NOSCRIPT", "SVG", "CANVAS", "TEMPLATE", "LINK", "META", "HEAD",
 			"IFRAME", "FRAME", "OBJECT", "EMBED", "AUDIO", "VIDEO",
-			"SELECT", "OPTION", "BUTTON", "FORM", "INPUT", "TEXTAREA", "LABEL",
+			"SELECT", "OPTION", "BUTTON", "INPUT", "TEXTAREA", "LABEL",
 		],
 		skipSemantic: ["NAV", "HEADER", "FOOTER", "ASIDE"],
 		skipRolePattern:
@@ -175,7 +216,7 @@ export const TUNING = {
 		mainSelectors: ["main", "[role=main]", "article"],
 	},
 
-	/** schema.org types worth lifting out of ld+json. Measured: the catalogue page injects Product and FAQPage. */
+	/** schema.org types worth lifting out of ld+json. */
 	structuredTypes:
 		"^(Product|Article|NewsArticle|BlogPosting|TechArticle|FAQPage|QAPage|Recipe|SoftwareApplication|Offer|AggregateOffer|Dataset|Book)$",
 
@@ -208,9 +249,9 @@ export const TUNING = {
 		startupTimeoutMs: 20_000,
 		/**
 		 * Launches tried when Firefox exits before announcing its BiDi port.
-		 * Measured: 2 of 309 renders in one session failed within a second, Firefox exiting 0
-		 * with only its headless banner on stderr; both URLs rendered when called again.
-		 * Cause unknown. A startup timeout is not retried: it has already cost 20 s.
+		 * Measured: about 1 render in 150 fails within a second, Firefox exiting 0 with only
+		 * its headless banner on stderr, and succeeds when called again; cause unknown. A
+		 * startup timeout is not retried: it has already cost 20 s.
 		 */
 		startupAttempts: 2,
 		startupRetryDelayMs: 1_000,
@@ -221,6 +262,13 @@ export const TUNING = {
 		 * the lifetime bugs until it is.
 		 */
 		reuse: false,
+		/**
+		 * Browsers alive at once; later renders queue. MagPi fetches a batch of URLs in
+		 * parallel and any of them may escalate, so this bounds a batch of shells to two
+		 * Firefox processes. Not measured: a queued render still counts against MagPi's 90 s
+		 * per-fetch deadline, which is what keeps this above one.
+		 */
+		maxConcurrent: 2,
 	},
 
 	/** Refusing to return a shell. */
@@ -229,9 +277,8 @@ export const TUNING = {
 		minChars: 200,
 		/**
 		 * A frame with less visible text than this is furniture, not content.
-		 * Measured: the catalogue page's Channel.io chat widget renders 22 characters in its own
-		 * frame; including it dumped 2 KB of the widget's markup into the document.
-		 * the shop page's smallest content frame (Q&A) has 1,499, so the gap is wide.
+		 * Measured: a chat widget's frame renders 22 characters; the shop page's smallest
+		 * content frame (Q&A) has 1,499.
 		 */
 		frameMinChars: 200,
 		/** Signals in the rendered text that name *why* it is empty. */
@@ -240,7 +287,9 @@ export const TUNING = {
 	},
 
 	/**
-	 * Noticing that `magpi_fetch` came back with a shell.
+	 * Noticing that `magpi_fetch` came back with a shell, after the fact: the fallback for
+	 * when MagPi's internals cannot be loaded (`loadMagpiInternals`). `minContentBytes` is
+	 * also the thin-answer threshold of `escalation()`.
 	 *
 	 * Detection reads MagPi's own `details` (`contentBytes`, `handler`, `kind`) rather than
 	 * its preview text, so formatting changes upstream cannot fool it.
@@ -248,10 +297,9 @@ export const TUNING = {
 	detect: {
 		/**
 		 * A `webpage` result smaller than this is a shell, not a page.
-		 * Measured: a marketing landing page cached **0 bytes** under a healthy title, and a
-		 * catalogue page 315 bytes of company footer. The shop page's 13,377 bytes are *not*
-		 * caught, and cannot be by any byte threshold: its loss is three empty iframes inside
-		 * an otherwise real page. This catches shells, not partial losses.
+		 * Measured: a landing page cached 0 bytes under a healthy title, the catalogue page
+		 * 315 bytes of footer. No byte threshold catches a partial loss; frames do, in
+		 * `escalation()`.
 		 */
 		minContentBytes: 600,
 		/**
@@ -263,6 +311,42 @@ export const TUNING = {
 		handlers: ["webpage"],
 		/** Page-shaped kinds only: a PDF, a JSON document or a cloned repo is not a shell. */
 		kinds: ["article", "text"],
+	},
+
+	/**
+	 * Deciding, inside MagPi's own fetch, that its answer needs the browser.
+	 *
+	 * This replaces MagPi's `webpage` handler with one that reads the same HTML and keeps
+	 * MagPi's markdown, but also reads what MagPi throws away - the page's frames, its
+	 * framework mount point, the data its scripts were handed - and renders in the same
+	 * call when those say the answer is incomplete. See `escalation()` for the rules.
+	 */
+	escalate: {
+		/**
+		 * Asked of every server. Sites behind Cloudflare's "Markdown for Agents" answer in
+		 * markdown; everything else ignores it and sends HTML.
+		 * Measured: blog.cloudflare.com returned 18,334 bytes of markdown with front matter,
+		 * where MagPi's own extraction of the HTML kept 9,403 characters.
+		 */
+		accept: "text/markdown, text/html;q=0.9, */*;q=0.8",
+		/** MagPi's own cap on a response body. */
+		maxBodyChars: 5 * 1024 * 1024,
+		/**
+		 * Framework mount points. Empty in the server's HTML means the page is built in the
+		 * browser, whatever else (header, footer, noscript) the server sent around it.
+		 */
+		appRootIds: ["root", "app", "__next", "__nuxt", "___gatsby", "svelte", "q-app", "main-app"],
+		/**
+		 * Prose embedded in the page's data is used instead of rendering only past this much.
+		 * Below it, the strings are as likely to be labels and SEO text as the content.
+		 * Measured: no shell so far clears it (the most was 650 characters of headlines), so
+		 * they render; the server-rendered pages that carry 20 KB of copy are not shells.
+		 */
+		embeddedMinChars: 1_500,
+		embeddedMaxChars: 20_000,
+		/** A string shorter than this is a label, not prose. CJK packs more per character. */
+		proseMinChars: 30,
+		proseMinCjkChars: 12,
 	},
 } as const;
 // ════════════════════════════════════════════════════════════════════════════════
@@ -316,10 +400,9 @@ export function loadConfig(cwd: string, projectTrusted: boolean): RenderConfig {
 
 /**
  * Registrable domain, approximated as the last two labels plus a short list of
- * two-part public suffixes. A correct answer needs the Public Suffix List; this is a
- * heuristic for a heuristic and is only consulted when `sameSiteOnly` is on.
- * `api.kr.example.com` and `kr.example.com` both reduce to `example.com`, which
- * is the case that matters.
+ * two-part public suffixes; a correct answer needs the Public Suffix List. It tells a
+ * page's own site from third parties: the idle timer, the tracker block, content frames.
+ * `api.kr.example.com` and `kr.example.com` both reduce to `example.com`.
  */
 const TWO_PART_SUFFIXES = new Set([
 	"co.kr", "or.kr", "ne.kr", "go.kr", "re.kr", "pe.kr",
@@ -362,6 +445,13 @@ export function isContentBearing(
 	return !host || registrableDomain(host) === options.pageDomain;
 }
 
+/** Whether a request's host is on `TUNING.block.hosts` and not the page's own site. */
+export function isBlockedHost(host: string, pageDomain: string): boolean {
+	const target = host.toLowerCase();
+	if (!target || registrableDomain(target) === pageDomain) return false;
+	return TUNING.block.hosts.some((entry) => target === entry || target.endsWith(`.${entry}`));
+}
+
 export interface SettleFacts {
 	elapsedMs: number;
 	stableRounds: number;
@@ -370,6 +460,8 @@ export interface SettleFacts {
 	totalText: number;
 	/** The page reads like a bot check; see `isChallenge`. */
 	challenge?: boolean;
+	/** A frame can still scroll to load more; see `TUNING.scroll`. */
+	scrolling?: boolean;
 }
 
 /** The settle rule, kept separate from the loop so its truth table can be tested. */
@@ -381,7 +473,8 @@ export function shouldSettle(facts: SettleFacts, maxWaitMs = TUNING.settle.maxWa
 		facts.quietForMs >= TUNING.settle.networkIdleMs &&
 		facts.inflight === 0 &&
 		facts.totalText > 0 &&
-		!facts.challenge
+		!facts.challenge &&
+		!facts.scrolling
 	);
 }
 
@@ -404,13 +497,9 @@ export interface FrameResult {
 }
 
 /**
- * One frame's numbers and payload, assembled explicitly.
- *
- * Explicitly, because spreading the structured-data result (`{ blocks, og }`) into this
- * shape silently left `structured` undefined: the ld+json the page declares about itself
- * - `Product` with its price and rating, `FAQPage` - was dropped, and the document ended
- * in `[null, null]` where that data should have been. Types did not catch it; the field
- * names differ and both spreads were valid.
+ * One frame's numbers and payload, assembled field by field: spreading `{ blocks, og }`
+ * into this shape type-checks and leaves `structured` undefined, silently dropping the
+ * page's ld+json.
  */
 export function toFrameResult(
 	frame: { url: string; depth: number },
@@ -429,9 +518,15 @@ export function toFrameResult(
 	};
 }
 
-/** Coverage against the rendered-text yardstick. Above 1 is impossible by construction. */
+/**
+ * Coverage against the rendered-text yardstick, at most 1.
+ *
+ * On a page measured through `innerText` it cannot exceed 1, since the extraction reads a
+ * subset of the same text. A page with shadow roots is measured by walking text nodes,
+ * whose whitespace counts differently: a fully read web-component page measured 1.02.
+ */
 export function coverageOf(frame: Pick<FrameResult, "plainLen" | "visibleLen">): number {
-	return frame.visibleLen > 0 ? frame.plainLen / frame.visibleLen : 0;
+	return frame.visibleLen > 0 ? Math.min(1, frame.plainLen / frame.visibleLen) : 0;
 }
 
 /** Which candidate wins for one frame, and why. */
@@ -467,8 +562,7 @@ export function assembleMarkdown(url: string, frames: FrameResult[]): string {
 			`<!-- structured data (schema.org) -->\n\n\`\`\`json\n${JSON.stringify(structured, null, 1).slice(0, 20_000)}\n\`\`\``,
 		);
 	}
-	// OpenGraph is what a page without ld+json still declares about itself; the shop page
-	// publishes 11 such tags and no ld+json at all.
+	// OpenGraph is what a page without ld+json still declares about itself.
 	const og = Object.assign({}, ...frames.map((frame) => frame.og)) as Record<string, string>;
 	if (Object.keys(og).length > 0) {
 		const rows = Object.entries(og).map(([key, value]) => `| ${key} | ${value.replace(/\|/g, "\\|")} |`);
@@ -536,7 +630,7 @@ export async function retryStartup<T>(
  *
  * Absolute candidates first, then `PATH`, because a Firefox installed by Homebrew's
  * formula, Nix or a Flatpak wrapper sits somewhere no fixed list can predict. `exists`
- * and `path` are injected so both outcomes are testable without depending on what the
+ * and `pathEnv` are injected so both outcomes are testable without depending on what the
  * machine running the checks happens to have.
  */
 export function findBrowser(
@@ -685,6 +779,204 @@ export function thinNote(url: string, bytes: number): string {
 	);
 }
 
+// ---------------------------------------------------------------- escalation
+
+/** What the server's HTML says about whether MagPi's markdown is the whole page. */
+export interface PageSignals {
+	/** A framework mount point (`TUNING.escalate.appRootIds`) with nothing in it. */
+	emptyRoot: boolean;
+	/** `<script>` elements that run code. Undefined when unknown, which counts as some. */
+	scripts?: number;
+	/** Same-site iframes with a visible size: content the server's HTML does not include. */
+	frames: string[];
+	/** Prose from the data the page hands its scripts (hydration state, ld+json). */
+	embedded: string;
+}
+
+export const NO_SIGNALS: PageSignals = { emptyRoot: false, frames: [], embedded: "" };
+
+const attribute = (tag: string, name: string): string | undefined => {
+	const match = new RegExp(`\\s${name}\\s*=\\s*("([^"]*)"|'([^']*)'|([^\\s>]+))`, "i").exec(tag);
+	return match ? (match[2] ?? match[3] ?? match[4] ?? "") : undefined;
+};
+
+/**
+ * Same-site iframes a reader would see. A player from another site (YouTube) and a
+ * zero-size form target are not content; the shop page's review and Q&A frames are.
+ */
+function contentFrames(html: string, pageUrl: URL): string[] {
+	const site = registrableDomain(pageUrl.hostname);
+	const frames: string[] = [];
+	for (const [tag] of html.matchAll(/<iframe\b[^>]*>/gi)) {
+		const src = attribute(tag, "src");
+		if (!src) continue;
+		let target: URL;
+		try {
+			target = new URL(src.replace(/&amp;/g, "&"), pageUrl);
+		} catch {
+			continue;
+		}
+		if (target.protocol !== "http:" && target.protocol !== "https:") continue;
+		if (registrableDomain(target.hostname) !== site) continue;
+		if (["width", "height"].some((name) => /^\s*[01](px)?\s*$/i.test(attribute(tag, name) ?? ""))) continue;
+		const style = attribute(tag, "style") ?? "";
+		if (/display\s*:\s*none|visibility\s*:\s*hidden|(^|;)\s*(width|height)\s*:\s*[01](px)?\s*(;|$)/i.test(style)) continue;
+		frames.push(target.href);
+	}
+	return frames;
+}
+
+const CJK = /[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]/g;
+
+/** Keys whose strings are never prose: identifiers, links, styling. */
+const NON_PROSE_KEYS = /^(@context|@type|@id|id|key|url|href|src|image|logo|icon|sameAs|className|class|style|slug|path|type|sku|gtin\d*|mpn|locale|lang)$/i;
+
+/** A Tailwind-style class list reads like words to a length check, and is not. */
+const looksLikeClassList = (text: string): boolean => {
+	const tokens = text.split(" ");
+	return tokens.every((token) => /^[a-z0-9:_\-[\]/.%!@#()]+$/.test(token)) && tokens.some((token) => /[-:]/.test(token));
+};
+
+/**
+ * Whether a string from page data reads as text a person wrote. Flight data carries CSS
+ * rules, font stacks and generated class names beside the copy; each rule removes one.
+ */
+export function isProse(raw: string): boolean {
+	const text = raw.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+	if (/^(https?:|\/|\$|data:|#|\{|\[)/.test(text)) return false;
+	if (/[{}]|=>|function\s*\(|\b[a-z-]+:[#\w(]/.test(text)) return false;
+	const words = text.split(" ");
+	if ((text.match(/,/g) ?? []).length > words.length * 0.4) return false;
+	if (words.filter((word) => /_|\d\p{L}|\p{L}\d/u.test(word)).length > words.length * 0.3) return false;
+	if ((text.match(CJK) ?? []).length >= TUNING.escalate.proseMinCjkChars) return true;
+	if (text.length < TUNING.escalate.proseMinChars || words.length < 4) return false;
+	if ((text.match(/\p{L}/gu) ?? []).length / text.length < 0.6) return false;
+	return !looksLikeClassList(text);
+}
+
+const decodeBasicEntities = (text: string): string =>
+	text
+		.replace(/&quot;/g, '"')
+		.replace(/&#39;|&apos;/g, "'")
+		.replace(/&lt;/g, "<")
+		.replace(/&gt;/g, ">")
+		.replace(/&nbsp;/g, " ")
+		.replace(/&amp;/g, "&");
+
+/**
+ * Prose from the data a page hands its scripts, in document order, deduplicated.
+ *
+ * MagPi deletes every `<script>` before extracting, which is right for code and wrong for
+ * these: ld+json, `__NEXT_DATA__`, `__NUXT_DATA__` and any other `application/json`
+ * block, Next.js app-router flight data (`self.__next_f.push`), and the
+ * `window.__INITIAL_STATE__ = {...}` convention. Framework-shaped, not site-shaped: no
+ * selector here names a site.
+ */
+export function embeddedText(html: string): string {
+	const found: string[] = [];
+	const seen = new Set<string>();
+	const add = (raw: string) => {
+		const text = decodeBasicEntities(raw.replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ").trim();
+		if (!seen.has(text) && isProse(text)) {
+			seen.add(text);
+			found.push(text);
+		}
+	};
+	const collect = (value: unknown, key = "", depth = 0): void => {
+		if (depth > 40 || NON_PROSE_KEYS.test(key)) return;
+		if (typeof value === "string") add(value);
+		else if (Array.isArray(value)) for (const item of value) collect(item, key, depth + 1);
+		else if (value && typeof value === "object") {
+			for (const [name, item] of Object.entries(value)) collect(item, name, depth + 1);
+		}
+	};
+	const parse = (text: string): unknown => {
+		try {
+			return JSON.parse(text);
+		} catch {
+			return undefined;
+		}
+	};
+	let flight = "";
+	for (const [, attrs, body] of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+		if (/\btype\s*=\s*["']?application\/(ld\+)?json/i.test(attrs)) {
+			collect(parse(body.trim()) ?? parse(decodeBasicEntities(body.trim())));
+			continue;
+		}
+		for (const [, literal] of body.matchAll(/self\.__next_f\.push\(\[\d+,\s*("(?:[^"\\]|\\.)*")\]\)/g)) {
+			const chunk = parse(literal);
+			if (typeof chunk === "string") flight += chunk;
+		}
+		const state = /^\s*window\.__[A-Z_]+__\s*=\s*([[{][\s\S]*?)\s*;?\s*$/.exec(body);
+		if (state) collect(parse(state[1]));
+	}
+	// Flight data is rows of JSON with React elements inside; their string literals are the text.
+	for (const [literal] of flight.matchAll(/"(?:[^"\\]|\\.){12,}"/g)) {
+		const text = parse(literal);
+		if (typeof text === "string") add(text);
+	}
+	return found.join("\n\n").slice(0, TUNING.escalate.embeddedMaxChars);
+}
+
+/** Everything `escalation()` needs from the server's HTML, read without a browser. */
+export function pageSignals(html: string, pageUrl: URL): PageSignals {
+	const ids = TUNING.escalate.appRootIds.map((id) => id.replace(/[$_]/g, "\\$&")).join("|");
+	// A comment may not run past its own `-->`, or a server-rendered root that opens with
+	// comments matches a later `--></div>` and reads as empty.
+	const emptyRoot = new RegExp(
+		`<(div|main|section)\\b[^>]*\\sid\\s*=\\s*["'](${ids})["'][^>]*>\\s*(<!--(?:(?!-->)[\\s\\S])*-->\\s*)*</\\1>`,
+		"i",
+	).test(html);
+	const scripts = [...html.matchAll(/<script\b([^>]*)>/gi)].filter(
+		([, attrs]) => !/\btype\s*=\s*["']?(application\/(ld\+)?json|text\/(template|x-template|html))/i.test(attrs),
+	).length;
+	return { emptyRoot, scripts, frames: contentFrames(html, pageUrl), embedded: embeddedText(html) };
+}
+
+export type EscalationAction = "keep" | "embedded" | "render";
+
+/**
+ * Whether MagPi's markdown stands, is completed from the page's data, or needs the browser.
+ *
+ *   1. An empty mount point: the page is built in the browser, so whatever MagPi found is
+ *      the furniture around it (the catalogue page's 315 bytes were its footer).
+ *   2. A thin answer from a page that runs scripts. A page without any cannot build
+ *      content later, so it is just short. One script is enough: example.com's adds
+ *      its translations.
+ *   3. Same-site frames, which hold content the HTML does not, however long the HTML is.
+ *
+ * The first two can be answered from the page's data when there is enough of it; the
+ * third cannot, since the frames' content is not in this document at all.
+ */
+export function escalation(
+	contentBytes: number,
+	signals: PageSignals,
+): { action: EscalationAction; reason: string } {
+	const enoughData = signals.embedded.length >= TUNING.escalate.embeddedMinChars;
+	if (signals.emptyRoot) {
+		return { action: enoughData ? "embedded" : "render", reason: "the page's mount point is empty in the server's HTML" };
+	}
+	if (contentBytes < TUNING.detect.minContentBytes && signals.scripts !== 0) {
+		return {
+			action: enoughData ? "embedded" : "render",
+			reason: `the server's HTML held ${contentBytes} bytes of text and runs scripts`,
+		};
+	}
+	if (signals.frames.length > 0) {
+		const count = signals.frames.length;
+		return { action: "render", reason: `${count} same-site frame${count === 1 ? "" : "s"} hold content the HTML does not` };
+	}
+	return { action: "keep", reason: "" };
+}
+
+/** A markdown response's title, from its front matter or its first heading. */
+export function markdownTitle(markdown: string): string | undefined {
+	const front = /^---\n([\s\S]*?)\n---/.exec(markdown);
+	const fromFront = front ? /^title:\s*(.+)$/m.exec(front[1])?.[1] : undefined;
+	const title = fromFront ?? /^#\s+(.+)$/m.exec(markdown)?.[1];
+	return title?.trim().replace(/^["']|["']$/g, "") || undefined;
+}
+
 // ---------------------------------------------------------------- websocket
 
 /**
@@ -692,12 +984,9 @@ export function thinNote(url: string, bytes: number): string {
  *
  * Node's global `WebSocket` honours `HTTP(S)_PROXY`, which this machine sets globally,
  * and sends even a loopback connection through the proxy, where the upgrade fails with
- * an immediate close. Measured on this machine before this existed. Only what BiDi
- * needs is implemented: text frames, server pings, close.
- *
- * Both the global `WebSocket` and pi's own dispatcher honour `NO_PROXY`, so a shell
- * that exports `NO_PROXY=localhost,127.0.0.1` would make this class replaceable by
- * `new WebSocket(url)`. Kept so the renderer does not depend on that variable.
+ * an immediate close. `NO_PROXY=localhost,127.0.0.1` would fix that too; this keeps the
+ * renderer independent of it. Only what BiDi needs is implemented: text frames, server
+ * pings, close.
  */
 export class RawWebSocket {
 	private socket?: Socket;
@@ -852,8 +1141,82 @@ function pageConfig(): string {
 	});
 }
 
-const PROBE =
-	'(() => { const text = document.body ? document.body.innerText : ""; return JSON.stringify({ ready: document.readyState, textLen: text.length, head: (document.title + " " + text).slice(0, 1000) }); })()';
+/**
+ * Visible text length, the yardstick for both settling and coverage.
+ *
+ * `innerText` does not see into shadow roots: on msn.com, web components throughout,
+ * `body.innerText` is 0 characters. Adding each shadow root's `innerText` is not enough
+ * either, since text slotted into a nested component belongs to neither (it missed two
+ * thirds of msn.com). So a page with any shadow root is measured by walking the composed
+ * tree; a page without one keeps `innerText`, which is cheaper.
+ */
+const VISIBLE_TEXT = `const __magpiVisibleLen = () => {
+  const body = document.body;
+  if (!body) return 0;
+  let shadowed = false;
+  for (const el of body.querySelectorAll("*")) if (el.shadowRoot) { shadowed = true; break; }
+  if (!shadowed) return body.innerText.replace(/\\s+/g, " ").trim().length;
+  let total = 0;
+  const walk = (node) => {
+    const slotted = node.tagName === "SLOT" && node.assignedNodes ? node.assignedNodes({ flatten: true }) : [];
+    const children = node.shadowRoot ? node.shadowRoot.childNodes : slotted.length ? slotted : node.childNodes;
+    for (const child of children) {
+      if (child.nodeType === 3) total += child.textContent.replace(/\\s+/g, " ").length;
+      else if (child.nodeType === 1 && !/^(STYLE|SCRIPT|NOSCRIPT|TEMPLATE|LINK)$/.test(child.tagName)) {
+        const style = getComputedStyle(child);
+        if (style.display !== "none" && style.visibility !== "hidden") walk(child);
+      }
+    }
+  };
+  walk(body);
+  return total;
+};`;
+
+/**
+ * One scroll step in this frame; true once nothing is left to scroll.
+ *
+ * The window when the document scrolls; otherwise the largest element that scrolls on its
+ * own, which is how app layouts (a fixed shell around one scrolling pane) are built. The
+ * choice is kept on the window so later steps do not search again.
+ */
+const SCROLL_STEP = `const __magpiScrollStep = (fraction) => {
+  let scroller = window.__magpiScroller;
+  if (!scroller || !scroller.isConnected) {
+    const doc = document.scrollingElement || document.documentElement;
+    scroller = doc && doc.scrollHeight > innerHeight + 2 ? doc : null;
+    if (!scroller && document.body) {
+      for (const el of document.body.querySelectorAll("*")) {
+        if (el.scrollHeight <= el.clientHeight + 2 || el.clientHeight < innerHeight / 2) continue;
+        if (!/^(auto|scroll|overlay)$/.test(getComputedStyle(el).overflowY)) continue;
+        if (!scroller || el.clientHeight * el.clientWidth > scroller.clientHeight * scroller.clientWidth) scroller = el;
+      }
+    }
+    window.__magpiScroller = scroller;
+  }
+  if (!scroller) return true;
+  const before = scroller.scrollTop;
+  scroller.scrollTop = before + Math.max(1, scroller.clientHeight * fraction);
+  return scroller.scrollTop === before || scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 2;
+};`;
+
+/** Measures a frame, scrolling it `TUNING.scroll.screensPerPoll` screens first while `scroll` is set. */
+function probeScript(scroll: boolean): string {
+	const { screensPerPoll, gapMs, viewportFraction } = TUNING.scroll;
+	return `(async () => {
+  ${VISIBLE_TEXT}
+  ${SCROLL_STEP}
+  let atEnd = true;
+  if (${scroll}) {
+    for (let i = 0; i < ${screensPerPoll}; i += 1) {
+      if (i > 0) await new Promise((resolve) => setTimeout(resolve, ${gapMs}));
+      atEnd = __magpiScrollStep(${viewportFraction});
+      if (atEnd) break;
+    }
+  }
+  const text = document.body ? document.body.innerText : "";
+  return JSON.stringify({ ready: document.readyState, textLen: __magpiVisibleLen(), head: (document.title + " " + text).slice(0, 1000), atEnd });
+})()`;
+}
 
 function structuredScript(): string {
 	return `(() => {
@@ -901,11 +1264,41 @@ function converterSource(): string {
   const SKIP_ROLE = new RegExp(CONFIG.skipRolePattern, "i");
   const SKIP_CLASS = new RegExp(CONFIG.skipClassPattern, "i");
 
+  // The composed tree: a shadow host's children are its shadow root's, and a slot's are
+  // the nodes assigned to it (or its fallback when none are). Light children a shadow root
+  // does not slot are not rendered, and are not read.
+  const nodesOf = (el) => {
+    if (el.shadowRoot) return [...el.shadowRoot.childNodes];
+    if (el.tagName === "SLOT" && el.assignedNodes) {
+      const assigned = el.assignedNodes({ flatten: true });
+      if (assigned.length) return assigned;
+    }
+    return [...el.childNodes];
+  };
+  const kids = (el) => nodesOf(el).filter((node) => node.nodeType === 1);
+  // Elements whose innerText would miss text: shadow hosts, slots, and everything above
+  // them. Everything else keeps innerText, so a page without shadow DOM reads as through it.
+  const composed = new Set();
+  const mark = (scope) => {
+    for (const el of scope.querySelectorAll("*")) {
+      if (!el.shadowRoot) continue;
+      for (let node = el; node; node = node.parentNode || node.host) composed.add(node);
+      for (const slot of el.shadowRoot.querySelectorAll("slot")) {
+        for (let node = slot; node && node !== el.shadowRoot; node = node.parentNode) composed.add(node);
+      }
+      mark(el.shadowRoot);
+    }
+  };
+  if (useLayout && root) mark(root.ownerDocument || document);
+
   const hidden = (el) => {
     if (el.getAttribute("aria-hidden") === "true") return true;
     if (!useLayout) return (el.style && el.style.display === "none") || false;
     const style = getComputedStyle(el);
     if (style.display === "none" || style.visibility === "hidden" || Number(style.opacity) === 0) return true;
+    // A slot, and any element styled away from its own box, measures 0x0 while its
+    // children render: the geometry test would drop all of them.
+    if (style.display === "contents") return false;
     const box = el.getBoundingClientRect();
     return box.width < CONFIG.minBoxPx && box.height < CONFIG.minBoxPx;
   };
@@ -917,7 +1310,15 @@ function converterSource(): string {
     const cls = typeof el.className === "string" ? el.className : "";
     return SKIP_CLASS.test(el.id || "") || SKIP_CLASS.test(cls);
   };
-  const text = (node) => (node.innerText || node.textContent || "").replace(/\\s+/g, " ").trim();
+  const flatText = (node) => {
+    let s = "";
+    for (const child of nodesOf(node)) {
+      if (child.nodeType === 3) s += child.textContent;
+      else if (child.nodeType === 1 && !SKIP_TAG.has(child.tagName) && !hidden(child)) s += " " + text(child) + " ";
+    }
+    return s;
+  };
+  const text = (node) => (composed.has(node) ? flatText(node) : node.innerText || node.textContent || "").replace(/\\s+/g, " ").trim();
   const cell = (node) => text(node).replace(/\\|/g, "\\\\|");
 
   const tableToMarkdown = (table) => {
@@ -961,7 +1362,7 @@ function converterSource(): string {
   const push = (value) => { const t = value.trim(); if (t) out.push(t); };
   const inline = (el) => {
     let s = "";
-    for (const node of el.childNodes) {
+    for (const node of nodesOf(el)) {
       if (node.nodeType === 3) s += node.textContent;
       else if (node.nodeType === 1) {
         if (SKIP_TAG.has(node.tagName) || hidden(node)) continue;
@@ -980,7 +1381,7 @@ function converterSource(): string {
   let tables = 0;
   const walk = (el, depth) => {
     if (depth > CONFIG.maxDepth) return;
-    for (const node of el.children) {
+    for (const node of kids(el)) {
       if (SKIP_TAG.has(node.tagName) || hidden(node) || boilerplate(node)) continue;
       const tag = node.tagName;
       if (tag === "TABLE") { const md = tableToMarkdown(node); if (md) { tables += 1; push("\\n" + md + "\\n"); } continue; }
@@ -988,7 +1389,7 @@ function converterSource(): string {
       if (tag === "LI") { push("- " + inline(node).trim()); continue; }
       if (tag === "PRE") { push("\\n\`\`\`\\n" + text(node) + "\\n\`\`\`\\n"); continue; }
       if (tag === "P" || tag === "BLOCKQUOTE") { const t = inline(node).trim(); push(tag === "BLOCKQUOTE" ? "> " + t : t); continue; }
-      if (![...node.children].some((c) => !SKIP_TAG.has(c.tagName))) { push(inline(node).trim()); continue; }
+      if (!kids(node).some((c) => !SKIP_TAG.has(c.tagName))) { push(inline(node).trim()); continue; }
       walk(node, depth + 1);
     }
   };
@@ -1011,30 +1412,27 @@ function converterSource(): string {
 function convertScript(): string {
 	return `(() => {
   ${converterSource()}
+  ${VISIBLE_TEXT}
   const CONFIG = ${pageConfig()};
   let main = null;
   for (const selector of CONFIG.mainSelectors) { main = document.querySelector(selector); if (main) break; }
   main = main || document.body;
   const result = __magpiConvert(main, true);
-  const visible = (document.body ? document.body.innerText : "").replace(/\\s+/g, " ").trim();
-  return JSON.stringify({ ...result, visibleLen: visible.length });
+  return JSON.stringify({ ...result, visibleLen: __magpiVisibleLen() });
 })()`;
 }
 
 /** Readability's own source, injected so it runs against the live DOM. */
 export function readabilityPath(): string {
-	return join(homedir(), ".pi", "agent", "npm", "node_modules", "@mozilla", "readability", "Readability.js");
+	return join(npmRoot(), "@mozilla", "readability", "Readability.js");
 }
 
 /**
  * Where `/magpi-render` leaves its output.
  *
- * A rendered page runs from 7 KB to 60 KB, which is not something to pour into a TUI,
- * and a custom message needs a registered renderer to appear at all: the first cut
- * returned one without a renderer, so the whole document vanished and only the summary
- * notification survived. A file plus its path is what MagPi does with its cache, and it
- * can be read, grepped and diffed. The name is stable per url, so a re-render overwrites
- * instead of accumulating.
+ * A rendered page runs from 7 KB to 60 KB, too much for a TUI, and a custom message
+ * without a registered renderer does not appear at all. A file can be read, grepped and
+ * diffed; the name is stable per url, so a re-render overwrites instead of accumulating.
  */
 export function renderArtifactPath(url: string): string {
 	let host = "page";
@@ -1050,11 +1448,10 @@ export function renderArtifactPath(url: string): string {
 /**
  * Readability, then the same converter over its output.
  *
- * Its `textContent` was used here first, and it has no block boundaries at all: the landing page
- * landing page came out as one run-on paragraph where "Message Assistant" and the
- * sentence after it merged into the token `AssistantAn`, which also broke full-text
- * search for `Assistant`. Its `content` is HTML, so parsing that and walking it with the
- * converter restores headings, lists and tables - and no HTML reaches the document.
+ * Not its `textContent`, which has no block boundaries: adjacent blocks merge into one
+ * token ("Assistant" + "An" -> `AssistantAn`), breaking full-text search too. Its
+ * `content` is HTML, so walking that with the converter keeps headings, lists and
+ * tables, and no HTML reaches the document.
  */
 function readableScript(source: string): string {
 	return `(() => {
@@ -1071,17 +1468,53 @@ function readableScript(source: string): string {
 
 // ---------------------------------------------------------------- the render
 
-interface RenderOutcome {
+export interface RenderOutcome {
 	markdown: string;
 	frames: number;
 	settleMs: number;
 	hitCap: boolean;
 	responses: number;
+	/** Requests failed by `TUNING.block`. */
+	blocked: number;
 	tables: number;
 	structured: number;
 }
 
-async function render(
+export function describeOutcome(outcome: RenderOutcome): string {
+	return (
+		`${outcome.frames} frame${outcome.frames === 1 ? "" : "s"}, ${outcome.tables} tables, ${outcome.structured} schema.org blocks, ` +
+		`${outcome.blocked} trackers blocked, settled in ${(outcome.settleMs / 1000).toFixed(1)}s` +
+		`${outcome.hitCap ? " (hit the wait cap; the page may still have been loading)" : ""}`
+	);
+}
+
+/** `TUNING.browser.maxConcurrent` browsers at once; the rest wait their turn in order. */
+const browserSlots = { running: 0, waiting: [] as (() => void)[] };
+
+async function withBrowserSlot<T>(work: () => Promise<T>): Promise<T> {
+	if (browserSlots.running >= TUNING.browser.maxConcurrent) {
+		await new Promise<void>((resolve) => browserSlots.waiting.push(resolve));
+	}
+	browserSlots.running += 1;
+	try {
+		return await work();
+	} finally {
+		browserSlots.running -= 1;
+		browserSlots.waiting.shift()?.();
+	}
+}
+
+function render(
+	url: string,
+	binary: string,
+	config: RenderConfig,
+	signal: AbortSignal | undefined,
+	onUpdate: ((text: string) => void) | undefined,
+): Promise<RenderOutcome> {
+	return withBrowserSlot(() => renderNow(url, binary, config, signal, onUpdate));
+}
+
+async function renderNow(
 	url: string,
 	binary: string,
 	config: RenderConfig,
@@ -1143,7 +1576,20 @@ async function render(
 		const pending = new Map<number, { resolve: (value: unknown) => void; reject: (error: Error) => void }>();
 		let lastResponseAt = Date.now();
 		let responses = 0;
-		let inflight = 0;
+		let blocked = 0;
+		/**
+		 * Requests in flight, by id, with their start time for `TUNING.settle.staleRequestMs`.
+		 * Not a counter: a failed request may never report back (measured: blocked
+		 * doubleclick requests from a YouTube frame sent no `network.fetchError`, holding the
+		 * page to the cap). A failed request leaves when it is failed; a redirect keeps its id.
+		 */
+		const inflight = new Map<string, number>();
+		const pendingRequests = () => {
+			const cutoff = Date.now() - TUNING.settle.staleRequestMs;
+			let count = 0;
+			for (const startedAt of inflight.values()) if (startedAt > cutoff) count += 1;
+			return count;
+		};
 		/** Last navigation response per browsing context; redirects overwrite their 3xx. */
 		const navigationStatus = new Map<string, number>();
 		socket.onMessage((text) => {
@@ -1155,15 +1601,32 @@ async function render(
 			}
 			const method = message.method as string | undefined;
 			if (method === "network.beforeRequestSent") {
-				inflight += 1;
+				const params = message.params as { isBlocked?: boolean; request?: { request?: string; url?: string } } | undefined;
+				const request = params?.request?.request;
+				if (request && !inflight.has(request)) inflight.set(request, Date.now());
+				if (params?.isBlocked && request) {
+					let host = "";
+					try {
+						host = new URL(params.request?.url ?? "").hostname;
+					} catch {
+						// not a URL with a host: let it through
+					}
+					const fail = isBlockedHost(host, pageDomain);
+					if (fail) {
+						blocked += 1;
+						inflight.delete(request);
+					}
+					// A request already gone (navigated away, cancelled) answers "no such request".
+					send(fail ? "network.failRequest" : "network.continueRequest", { request }).catch(() => {});
+				}
 				return;
 			}
 			if (method === "network.responseCompleted" || method === "network.fetchError") {
-				inflight = Math.max(0, inflight - 1);
 				responses += 1;
 				const params = message.params as
-					| { context?: string; navigation?: string | null; response?: ResponseFacts; request?: { url?: string } }
+					| { context?: string; navigation?: string | null; response?: ResponseFacts; request?: { request?: string; url?: string } }
 					| undefined;
+				if (params?.request?.request) inflight.delete(params.request.request);
 				if (params?.navigation && params.context && params.response) {
 					navigationStatus.set(params.context, params.response.status);
 				}
@@ -1198,6 +1661,8 @@ async function render(
 		await send("session.subscribe", {
 			events: ["network.beforeRequestSent", "network.responseCompleted", "network.fetchError"],
 		});
+		// Every request pauses until the handler above continues or fails it.
+		if (TUNING.block.enabled) await send("network.addIntercept", { phases: ["beforeRequestSent"] });
 		type TreeNode = { context?: string; url?: string; children?: TreeNode[] };
 		const flatten = (nodes: TreeNode[] | undefined, depth = 0, out: { context: string; url: string; depth: number }[] = []) => {
 			for (const node of nodes ?? []) {
@@ -1209,29 +1674,46 @@ async function render(
 		const root = flatten((await send<{ contexts: TreeNode[] }>("browsingContext.getTree", {})).contexts)[0]?.context;
 		if (!root) throw new Error("browser produced no browsing context");
 
-		const evaluate = async <T>(context: string, expression: string): Promise<T> => {
+		const evaluate = async <T>(context: string, expression: string, awaitPromise = false): Promise<T> => {
 			const result = await send<{ type: string; result?: { value?: string }; exceptionDetails?: { text?: string } }>(
 				"script.evaluate",
-				{ expression, target: { context }, awaitPromise: false },
+				{ expression, target: { context }, awaitPromise },
 			);
 			if (result.type === "exception") throw new Error(String(result.exceptionDetails?.text).slice(0, 200));
 			return JSON.parse(result.result?.value ?? "null") as T;
 		};
 		const frameTree = async () => flatten((await send<{ contexts: TreeNode[] }>("browsingContext.getTree", { root })).contexts);
 		let heads = "";
-		const measure = async () => {
+		let screens = 0;
+		let endPolls = 0;
+		let scrolledToEnd = TUNING.scroll.maxScreens === 0;
+		const measure = async (scroll = false) => {
 			let total = 0;
+			let atEnd = true;
 			const seen: string[] = [];
 			for (const frame of await frameTree()) {
 				try {
-					const probe = await evaluate<{ textLen: number; head: string }>(frame.context, PROBE);
+					const probe = await evaluate<{ textLen: number; head: string; atEnd: boolean }>(
+						frame.context,
+						probeScript(scroll),
+						true,
+					);
 					total += probe.textLen;
+					atEnd &&= probe.atEnd;
 					seen.push(probe.head);
 				} catch {
 					// a frame mid-navigation cannot be measured; the next poll will see it
 				}
 			}
 			heads = seen.join(" ");
+			// Counted only once there is text: a page still loading has nothing to scroll and
+			// would read as already at its end. The end has to be seen twice, since a step can
+			// land there just before more is appended.
+			if (scroll && total > 0) {
+				screens += TUNING.scroll.screensPerPoll;
+				endPolls = atEnd ? endPolls + 1 : 0;
+				scrolledToEnd = endPolls >= 2 || screens >= TUNING.scroll.maxScreens;
+			}
 			return total;
 		};
 
@@ -1245,21 +1727,22 @@ async function render(
 		while (Date.now() - start < maxWaitMs) {
 			if (signal?.aborted) throw new Error("cancelled");
 			await new Promise((resolve) => setTimeout(resolve, TUNING.settle.pollMs));
-			total = await measure();
+			total = await measure(!scrolledToEnd);
 			stable = total === last ? stable + 1 : 0;
 			last = total;
 			const facts: SettleFacts = {
 				elapsedMs: Date.now() - start,
 				stableRounds: stable,
 				quietForMs: Date.now() - lastResponseAt,
-				inflight,
+				inflight: pendingRequests(),
 				totalText: total,
 				challenge: isChallenge(heads, total),
+				scrolling: !scrolledToEnd,
 			};
-			onUpdate?.(`rendering ${target.host}: ${total} chars, ${responses} responses`);
+			onUpdate?.(`rendering ${target.host}: ${total} chars, ${responses} responses, ${blocked} blocked`);
 			if (facts.elapsedMs >= maxWaitMs || !shouldSettle(facts, maxWaitMs)) continue;
-			// Believing the first "settled" is what let an earlier revision stop at 2,767
-			// of the catalogue page's 14,296 characters and report success.
+			// The first "settled" can be a pause: on the catalogue page it fell at 2,767 of
+			// 14,296 characters.
 			await new Promise((resolve) => setTimeout(resolve, TUNING.settle.confirmMs));
 			const after = await measure();
 			if (after !== total) {
@@ -1330,12 +1813,212 @@ async function render(
 			settleMs,
 			hitCap,
 			responses,
+			blocked,
 			tables: frames.reduce((sum, f) => sum + f.tables, 0),
 			structured: structuredBlocks.length,
 		};
 	} finally {
 		cleanup();
 	}
+}
+
+// ---------------------------------------------------------------- MagPi's webpage handler
+
+/** A MagPi handler as its registry sees one, without importing MagPi's types. */
+export interface MagpiHandlerLike {
+	name: string;
+	description?: string;
+	match(url: URL): boolean;
+	fetch(url: URL, ctx: MagpiFetchContext): Promise<MagpiResult>;
+}
+
+export interface MagpiFetchContext {
+	mode: "light" | "full";
+	entryDir: string;
+	signal?: AbortSignal;
+	exec: unknown;
+}
+
+export interface MagpiResult {
+	kind: string;
+	title?: string;
+	content: string;
+	hasTree?: boolean;
+}
+
+/** The four pieces of MagPi this file builds on; `loadMagpiInternals()` finds them. */
+export interface MagpiInternals {
+	/** MagPi's own catch-all, for everything that is not plain HTML. */
+	defaultHandler: MagpiHandlerLike;
+	/** Name of the built-in handler MagPi would choose for a URL; "webpage" when none claims it. */
+	builtinFor(url: URL): string;
+	/** MagPi's GET: its user agent, its timeout, `FetchError` on a non-2xx status. */
+	httpGet(url: string, signal?: AbortSignal, headers?: Record<string, string>): Promise<Response>;
+	/** MagPi's HTML-to-markdown, so an unescalated page reads exactly as MagPi would have. */
+	htmlToMarkdown(html: string, url?: string): { title?: string; markdown: string };
+}
+
+/**
+ * Where MagPi's source sits: beside this file's directory, under the agent dir's npm root.
+ *
+ * Relative to this file rather than `~/.pi/agent`, because that spelling is `EPERM` to
+ * `bash` under `pi-sandbox` while this one is not, so the same code runs from a test.
+ */
+const npmRoot = (): string => fileURLToPath(new URL("../npm/node_modules/", import.meta.url));
+
+/**
+ * MagPi's internals, imported by path; undefined when that fails.
+ *
+ * There is no other way to reach them: MagPi exposes registration, not its handlers. pi
+ * loads extensions through jiti, which resolves MagPi's `./handler.js` specifiers to its
+ * `.ts` sources (node's own type stripping refuses files under `node_modules`, so a
+ * plain node test gets undefined here). The imports are fresh copies, which is safe
+ * because none of the four keeps state. A MagPi update that moves them leaves the
+ * original handler in place; `tests/magpi-render.test.ts` loads them through pi's jiti
+ * to say so before that happens.
+ */
+export async function loadMagpiInternals(root = join(npmRoot(), "pi-magpi", "src")): Promise<MagpiInternals | undefined> {
+	try {
+		// One at a time: these import each other, and loading them concurrently under jiti
+		// failed with "Cannot access 'defaultFetch' before initialization".
+		const handler = await import(join(root, "handlers", "handler.ts"));
+		const html = await import(join(root, "html.ts"));
+		const defaults = await import(join(root, "handlers", "default.ts"));
+		const registry = await import(join(root, "handlers", "registry.ts"));
+		const internals = {
+			defaultHandler: defaults.defaultHandler as MagpiHandlerLike,
+			builtinFor: (url: URL) => (registry.resolveHandler(url) as MagpiHandlerLike).name,
+			httpGet: handler.httpGet as MagpiInternals["httpGet"],
+			htmlToMarkdown: html.htmlToMarkdown as MagpiInternals["htmlToMarkdown"],
+		};
+		const complete =
+			internals.defaultHandler?.name === "webpage" &&
+			typeof internals.defaultHandler.fetch === "function" &&
+			typeof registry.resolveHandler === "function" &&
+			typeof internals.httpGet === "function" &&
+			typeof internals.htmlToMarkdown === "function";
+		return complete ? internals : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+const plainLength = (markdown: string): number => markdown.replace(/<!--[\s\S]*?-->/g, "").replace(/\s+/g, " ").trim().length;
+
+async function readCapped(response: Response): Promise<string> {
+	const text = await response.text();
+	return text.length > TUNING.escalate.maxBodyChars ? text.slice(0, TUNING.escalate.maxBodyChars) : text;
+}
+
+/** The `llms.txt` files MagPi's defaultFetch looks for before a page, in its order. */
+export function llmsProbes(url: URL, mode: MagpiFetchContext["mode"]): string[] {
+	if (mode === "full") return ["llms-full.txt", "llms.txt"];
+	return url.pathname === "/" ? ["llms.txt"] : [];
+}
+
+export interface WebpageDeps {
+	magpi: MagpiInternals;
+	/** Handlers other extensions registered with MagPi; whichever claims a URL keeps it. */
+	others: () => Iterable<MagpiHandlerLike>;
+	enabled: () => boolean;
+	/** A renderer for this call, or undefined when no browser is available now. */
+	renderer: () => ((url: URL, signal?: AbortSignal) => Promise<RenderOutcome>) | undefined;
+}
+
+/**
+ * MagPi's `webpage` handler, with the escalation built in.
+ *
+ * Registered under MagPi's own name, so MagPi's registry drops its copy (it replaces by
+ * name) and the label in MagPi's output and cache stays `webpage`. Registration puts it
+ * first, ahead of every built-in and of extension handlers registered earlier, so it
+ * claims a URL only where none of them would: what is left over is exactly what MagPi's
+ * catch-all would have had.
+ *
+ * The fetch reads the page once, with `Accept: text/markdown` first, and converts HTML
+ * with MagPi's own converter. Anything else - an error status, a PDF, JSON, plain text -
+ * goes to MagPi's handler untouched, which keeps its Wayback fallback.
+ */
+export function webpageHandler(deps: WebpageDeps): MagpiHandlerLike {
+	const { magpi } = deps;
+
+	const escalate = async (url: URL, base: MagpiResult, signals: PageSignals, signal?: AbortSignal): Promise<MagpiResult> => {
+		const { action, reason } = escalation(Buffer.byteLength(base.content, "utf8"), signals);
+		if (action === "keep") return base;
+		if (action === "embedded") {
+			return {
+				...base,
+				content:
+					`${base.content}\n\n<!-- magpi-render: ${reason}, but the page's own data carries its text, read below ` +
+					`without a browser. Order and context may be lost; magpi_fetch_rendered reads it as displayed. -->\n\n` +
+					`## Text from the page's embedded data\n\n${signals.embedded}`,
+			};
+		}
+		const renderer = deps.renderer();
+		if (!renderer) return base;
+		try {
+			const outcome = await renderer(url, signal);
+			// Rendering found less than the HTML had: the frames were empty, or the page
+			// served the browser something else. MagPi's answer is the better one.
+			if (plainLength(outcome.markdown) <= plainLength(base.content)) return base;
+			return {
+				kind: "rendered",
+				title: base.title,
+				content: `${outcome.markdown}\n\n<!-- rendered because ${reason}: ${describeOutcome(outcome)} -->`,
+			};
+		} catch (error) {
+			const message = (error as Error).message.replace(/--+>?/g, "-");
+			return { ...base, content: `${base.content}\n\n<!-- magpi-render: ${reason}, and rendering failed: ${message} -->` };
+		}
+	};
+
+	const handler: MagpiHandlerLike = {
+		name: "webpage",
+		description: `${magpi.defaultHandler.description ?? "Generic webpage"}; rendered through Firefox when the HTML is a shell or leaves content in frames`,
+		match: (url: URL) => {
+			if (!deps.enabled() || magpi.builtinFor(url) !== "webpage") return false;
+			for (const other of deps.others()) {
+				try {
+					if (other !== handler && other.match(url)) return false;
+				} catch {
+					// a handler that throws in match() is MagPi's to report, not ours
+				}
+			}
+			return true;
+		},
+		fetch: async (url: URL, ctx: MagpiFetchContext) => {
+			// MagPi's `llms.txt` probe, repeated: handing the URL to its defaultFetch instead
+			// would cost a second GET of the page for the signals (4.5 s on one slow site). A
+			// test fails if MagPi changes the probe.
+			for (const name of llmsProbes(url, ctx.mode)) {
+				try {
+					const probe = await magpi.httpGet(`${url.origin}/${name}`, ctx.signal);
+					const text = await readCapped(probe);
+					if (!/html/i.test(probe.headers.get("content-type") ?? "") && text.trim()) return { kind: "llms-txt", content: text };
+				} catch {
+					// the site does not publish it
+				}
+			}
+			let response: Response;
+			try {
+				response = await magpi.httpGet(url.href, ctx.signal, { accept: TUNING.escalate.accept });
+			} catch {
+				return magpi.defaultHandler.fetch(url, ctx);
+			}
+			const type = response.headers.get("content-type") ?? "";
+			if (/text\/markdown/i.test(type)) {
+				const markdown = (await readCapped(response)).trim();
+				return escalate(url, { kind: "article", title: markdownTitle(markdown), content: markdown }, NO_SIGNALS, ctx.signal);
+			}
+			if (!/html/i.test(type)) {
+				await response.body?.cancel().catch(() => {});
+				return magpi.defaultHandler.fetch(url, ctx);
+			}
+			const html = await readCapped(response);
+			const page = magpi.htmlToMarkdown(html, url.href);
+			return escalate(url, { kind: "article", title: page.title, content: page.markdown }, pageSignals(html, url), ctx.signal);
+		},
+	};
+	return handler;
 }
 
 // ---------------------------------------------------------------- extension
@@ -1373,9 +2056,7 @@ export default async function (pi: ExtensionAPI) {
 	}
 
 	const normalize = (raw: string): string => (/^[a-z]+:\/\//i.test(raw) ? raw : `https://${raw}`);
-	const describe = (outcome: RenderOutcome): string =>
-		`${outcome.frames} frame${outcome.frames === 1 ? "" : "s"}, ${outcome.tables} tables, ${outcome.structured} schema.org blocks, settled in ${(outcome.settleMs / 1000).toFixed(1)}s` +
-		`${outcome.hitCap ? " (hit the wait cap; the page may still have been loading)" : ""}`;
+	const describe = describeOutcome;
 
 	const active = (ctx: ExtensionContext) => {
 		const config = loadConfig(ctx.cwd, ctx.isProjectTrusted());
@@ -1444,7 +2125,7 @@ export default async function (pi: ExtensionAPI) {
 		},
 	});
 
-	// ------------------------------------------------------------ automatic escalation
+	// ------------------------------------------------------------ MagPi handlers
 
 	/**
 	 * Learned hosts live here after being read from disk, so `match` stays synchronous and
@@ -1479,10 +2160,43 @@ export default async function (pi: ExtensionAPI) {
 		},
 	};
 
+	/**
+	 * Every handler other extensions give MagPi, by name as MagPi keeps them, so the
+	 * webpage handler can stand back from their URLs. A handler registered before this
+	 * extension loaded is seen when it re-registers at `session_start`, as
+	 * `magpi-handlers.ts` does; one that never re-registers would be shadowed.
+	 */
+	const others = new Map<string, MagpiHandlerLike>();
+	pi.events.on("magpi:register-handler", (handler: unknown) => {
+		const candidate = handler as MagpiHandlerLike | undefined;
+		if (candidate && typeof candidate.name === "string" && typeof candidate.match === "function") {
+			others.set(candidate.name, candidate);
+		}
+	});
+
+	const magpi = await loadMagpiInternals();
+	const webpage = magpi
+		? webpageHandler({
+				magpi,
+				others: () => [...others.values()].filter((handler) => handler !== renderHandler),
+				enabled: () => loadConfig(process.cwd(), false).enabled,
+				renderer: () => {
+					// Global config only, as for the render handler above.
+					const config = loadConfig(process.cwd(), false);
+					const binary = browserLookup.find(config.browserBinary);
+					return binary ? (url, signal) => render(url.href, binary, config, signal, undefined) : undefined;
+				},
+			})
+		: undefined;
+
 	// Emitted twice for the reason `magpi-handlers.ts` documents: MagPi subscribes during
 	// its own activation, extension order is not guaranteed, and registering twice is
-	// idempotent because its registry replaces by name.
-	const register = () => pi.events.emit("magpi:register-handler", renderHandler);
+	// idempotent because its registry replaces by name. The webpage handler goes first so
+	// the render handler, registered after it, stands in front of it.
+	const register = () => {
+		if (webpage) pi.events.emit("magpi:register-handler", webpage);
+		pi.events.emit("magpi:register-handler", renderHandler);
+	};
 	register();
 	pi.on("session_start", async () => {
 		learned = loadLearned();
@@ -1491,14 +2205,16 @@ export default async function (pi: ExtensionAPI) {
 	});
 
 	/**
-	 * Detection: notice a shell, learn the host, say so.
+	 * Fallback detection, for when MagPi's internals could not be loaded: notice a shell,
+	 * learn the host, say so. Nothing here can re-run MagPi's tool, so the first visit is
+	 * annotated rather than repaired; from the second the render handler takes over.
 	 *
-	 * Nothing here can re-run MagPi's tool, so the first visit to a host is annotated
-	 * rather than repaired. From the second visit the handler above takes over and the
-	 * result is cached like any other fetch.
+	 * Off while the webpage handler runs. It sees every page this would, and a thin answer
+	 * it lets through runs no scripts or already failed in the browser; learning that host
+	 * would only send the next visit to the same failure.
 	 */
 	pi.on("tool_result", async (event, ctx) => {
-		if (event.toolName !== "magpi_fetch") return undefined;
+		if (webpage || event.toolName !== "magpi_fetch") return undefined;
 		const config = loadConfig(ctx.cwd, ctx.isProjectTrusted());
 		if (!config.enabled || !config.learnHosts) return undefined;
 		const details = event.details as FetchDetails | undefined;

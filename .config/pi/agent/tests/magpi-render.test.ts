@@ -1,27 +1,24 @@
 /**
- * `extensions/magpi-render.ts` drives a browser, so most of it cannot be unit tested.
- * What can be, and is here, are the decisions that made the difference between a run
- * that returned the catalogue page's 11 tables and one that returned a 2,767-character fragment
- * while reporting success:
+ * `extensions/magpi-render.ts`: the decisions that can be tested without a browser.
+ * The settle rule, the extractor choice, empty-render diagnosis, browser discovery and
+ * the registration gate, the WebSocket framing, the fallback detection and its learned
+ * hosts, and the escalation inside `magpi_fetch` (page signals, the rule, and the webpage
+ * handler against a fake MagPi, plus one check that the real MagPi still has the pieces
+ * it is built on).
  *
- *   - the settle rule (all five conditions, and the cap)
- *   - which extractor wins for a frame, given coverage and tables
- *   - the coverage yardstick, which cannot exceed 1 by construction
- *   - why an empty render is empty (login wall / bot check / nothing)
- *   - the same-site heuristic that decides whether a response resets the idle timer
- *   - browser discovery, and that a machine without Firefox registers nothing at all
- *   - the hand-rolled WebSocket framing, because a proxy-honouring global WebSocket
- *     could not reach a loopback BiDi socket on this machine
- *
- * No browser is launched and no network is touched.
+ * No browser is launched and no network is touched. What runs inside the page (the
+ * composed-tree walk, scrolling, the tracker block) was measured by hand; the
+ * measurements sit beside the values in `TUNING`.
  */
 
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { homedir, tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import test from "node:test";
+import { pathToFileURL } from "node:url";
 import * as renderModule from "../extensions/magpi-render.ts";
+import { CONFIG_DIR, piPackageDir } from "./lib.ts";
 
 const {
 	TUNING,
@@ -51,6 +48,15 @@ const {
 	loadConfig,
 	renderArtifactPath,
 	RawWebSocket,
+	isBlockedHost,
+	pageSignals,
+	embeddedText,
+	isProse,
+	escalation,
+	markdownTitle,
+	llmsProbes,
+	webpageHandler,
+	NO_SIGNALS,
 } = renderModule as typeof import("../extensions/magpi-render.ts");
 
 /** Type stripping leaves the CJS default nested one level deeper (as in guard.test.ts). */
@@ -82,6 +88,11 @@ test("the tuning block holds together", () => {
 	assert.equal(s.contentBearing.sameSiteOnly, false, "same-site-only must stay opt-in; see the comment");
 	// The chat widget renders 22 characters; the shop page's smallest content frame has 1,499.
 	assert.ok(TUNING.empty.frameMinChars > 22 && TUNING.empty.frameMinChars < 1_499, "frame furniture threshold");
+	// A statute page's 144,599 characters sit inside one <form> and rendered to 70.
+	assert.ok(!(TUNING.boilerplate.skipTags as readonly string[]).includes("FORM"), "a form can wrap the whole page");
+	assert.ok(s.staleRequestMs > 1_200 * 4, "a shorter stale cutoff abandons slow data requests; measure their durations before lowering it");
+	const { maxScreens, screensPerPoll } = TUNING.scroll;
+	assert.ok((maxScreens / screensPerPoll) * s.pollMs <= s.minWaitMs * 1.5, "scrolling should end near minWaitMs");
 });
 
 // ---------------------------------------------------------------- same-site heuristic
@@ -124,7 +135,7 @@ test("same-site mode ignores third parties and keeps the site's own api host", (
 test("settling needs every condition, not any of them", () => {
 	const ok = { elapsedMs: 5_000, stableRounds: 4, quietForMs: 2_000, inflight: 0, totalText: 14_296 };
 	assert.equal(shouldSettle(ok), true);
-	// The catalogue page at 2.9 s, where an earlier rule settled and lost 11 tables.
+	// A mid-load pause on the catalogue page: settling here loses its 11 tables.
 	assert.equal(shouldSettle({ elapsedMs: 2_900, stableRounds: 2, quietForMs: 900, inflight: 2, totalText: 2_767 }), false);
 	assert.equal(shouldSettle({ ...ok, elapsedMs: 1_000 }), false, "before the minimum wait");
 	assert.equal(shouldSettle({ ...ok, stableRounds: 1 }), false, "a single stable poll is a plateau, not the end");
@@ -154,6 +165,8 @@ test("coverage is a ratio against the rendered text and cannot exceed 1", () => 
 	assert.equal(coverageOf({ plainLen: 9_360, visibleLen: 13_926 }).toFixed(2), "0.67");
 	assert.equal(coverageOf({ plainLen: 0, visibleLen: 0 }), 0);
 	assert.ok(coverageOf({ plainLen: 40_540, visibleLen: 40_819 }) <= 1);
+	// A shadow-DOM page is measured by walking text nodes, which counted 2% over the extraction.
+	assert.equal(coverageOf({ plainLen: 473, visibleLen: 464 }), 1);
 });
 
 test("a table in the output beats Readability outright", () => {
@@ -192,10 +205,7 @@ test("frames are assembled in order, labelled, and empty ones dropped", () => {
 	assert.ok(out.indexOf("main body") < out.indexOf("| 번호 | 후기 |"), "tree order is preserved");
 });
 
-test("structured data survives the trip from the page to the document", () => {
-	// The first cut spread `{ blocks, og }` into a shape whose field is `structured`, so
-	// every block became undefined and the document ended in `[null, null]` where
-	// the catalogue page's Product and FAQPage data should have been.
+test("structured data survives the trip from the page to the document, or degrades to nothing", () => {
 	const result = toFrameResult(
 		{ url: "https://shop.example/product/1", depth: 0 },
 		{ markdown: "body", plainLen: 4, visibleLen: 4, tables: 11 },
@@ -210,9 +220,7 @@ test("structured data survives the trip from the page to the document", () => {
 	assert.match(out, /"@type": "Product"/);
 	assert.equal(out.includes("null"), false, "a dropped block must never serialise as null");
 	assert.match(out, /\| og:title \| Widget A1 \|/, "OpenGraph is what a page without ld+json still declares");
-});
 
-test("a missing structured-data payload degrades to nothing, not to null", () => {
 	const bare = toFrameResult(
 		{ url: "https://example.com/", depth: 0 },
 		{ markdown: "body", plainLen: 4, visibleLen: 4, tables: 0 },
@@ -220,15 +228,12 @@ test("a missing structured-data payload degrades to nothing, not to null", () =>
 	);
 	assert.deepEqual(bare.structured, []);
 	assert.deepEqual(bare.og, {});
-	const out = assembleMarkdown("https://example.com/", [bare]);
-	assert.equal(out.includes("schema.org"), false);
-	assert.equal(out.includes("opengraph"), false);
+	const plain = assembleMarkdown("https://example.com/", [bare]);
+	assert.equal(plain.includes("schema.org"), false);
+	assert.equal(plain.includes("opengraph"), false);
 });
 
 test("a chosen Readability article keeps its structure and stays markdown", () => {
-	// Measured on example.com: `textContent` had no block boundaries at all, so "Message
-	// Assistant" and the next sentence merged into the token `AssistantAn`, which broke
-	// both reading and full-text search. Its HTML now goes through the same converter.
 	const article = frame({
 		depth: 0,
 		markdown: "thin",
@@ -259,7 +264,7 @@ test("an empty render is diagnosed rather than returned", () => {
 // ---------------------------------------------------------------- browser discovery
 
 test("an empty render names the document's HTTP status when there was one", () => {
-	// a mistyped URL rendered empty and read like a block until the status was shown
+	// An empty 404 and an empty 403 look the same on screen and call for different next steps.
 	assert.equal(emptyDetail("empty", false, 25_000, 404), "the rendered page held no text (HTTP 404)");
 	assert.equal(emptyDetail("botcheck", false, 25_000, 403), "the page served a bot check (HTTP 403)");
 	assert.equal(emptyDetail("empty", true, 25_000), "nothing settled within 25000ms");
@@ -326,8 +331,6 @@ test("config paths sit beside MagPi's own, and defaults are safe", () => {
 });
 
 test("the command writes to a stable per-url path instead of a custom message", () => {
-	// A custom message needs a registered renderer; the first cut returned one without
-	// and the whole rendered document vanished, leaving only the summary notification.
 	const first = renderArtifactPath("https://kr.example.com/catalogue/detail/12345/?variant=A1-2020-500");
 	assert.match(first, /\/pi\/magpi-render\/kr\.example\.com-[0-9a-f]{8}\.md$/);
 	assert.equal(
@@ -341,24 +344,16 @@ test("the command writes to a stable per-url path instead of a custom message", 
 
 // ---------------------------------------------------------------- websocket framing
 
-test("text frames round-trip, including the 16- and 64-bit length forms", () => {
-	for (const size of [5, 125, 126, 1_000, 70_000]) {
-		const text = "a".repeat(size);
+test("text frames round-trip byte-exact, including the 16- and 64-bit length forms", () => {
+	const multibyte = JSON.stringify({ 항목: "상품 사양 A1-2020", 단가: "12,345원" });
+	for (const text of [...[5, 125, 126, 1_000, 70_000].map((size) => "a".repeat(size)), multibyte]) {
 		const decoded = RawWebSocket.decodeFrame(RawWebSocket.encodeText(text));
-		assert.ok(decoded, `frame of ${size} bytes should decode`);
+		assert.ok(decoded, `frame of ${text.length} characters should decode`);
 		assert.equal(decoded.opcode, 0x1);
 		assert.equal(decoded.fin, true);
 		assert.equal(decoded.payload.toString("utf8"), text);
 		assert.equal(decoded.rest.length, 0);
 	}
-});
-
-test("multibyte payloads survive masking", () => {
-	// A BiDi reply carries whatever the page held, so the framing has to be byte-exact for
-	// non-ASCII: a spec table cell and a price are the shape that actually travels.
-	const text = JSON.stringify({ 항목: "상품 사양 A1-2020", 단가: "12,345원" });
-	const decoded = RawWebSocket.decodeFrame(RawWebSocket.encodeText(text));
-	assert.equal(decoded?.payload.toString("utf8"), text);
 });
 
 test("a partial frame decodes to nothing rather than to garbage", () => {
@@ -395,7 +390,7 @@ const thin = (over: Record<string, unknown> = {}) => ({
 });
 
 test("a shell is recognised from MagPi's own details, and nothing else is", () => {
-	// The two measured shells: example.com cached 0 bytes under a healthy title, the catalogue page 315.
+	// The two measured shells: a landing page cached 0 bytes under a healthy title, the catalogue page 315.
 	assert.equal(isThinFetch(thin()), true, "0 bytes with a title is the worst case");
 	assert.equal(isThinFetch(thin({ url: "https://kr.example.com/x", contentBytes: 315 })), true);
 	// A real page.
@@ -533,4 +528,318 @@ test("without a browser, nothing is registered at all", async () => {
 	assert.deepEqual(commands, []);
 	assert.deepEqual(events, [], "no detection either: there is nothing to escalate to");
 	assert.deepEqual(emitted, [], "and no handler for MagPi to route into");
+});
+
+// ---------------------------------------------------------------- tracker block
+
+test("trackers are blocked with their subdomains, never the page's own site", () => {
+	assert.equal(isBlockedHost("www.google-analytics.com", "example.com"), true);
+	assert.equal(isBlockedHost("browser-intake-datadoghq.com", "example.com"), true, "the RUM host is its own domain");
+	assert.equal(isBlockedHost("gse.groobee.io", "example.com"), true);
+	assert.equal(isBlockedHost("api2.amplitude.com", "amplitude.com"), false, "reading amplitude.com loads amplitude.com");
+	assert.equal(isBlockedHost("notdoubleclick.net", "example.com"), false, "a suffix match stops at a label");
+	assert.equal(isBlockedHost("cdn.example.net", "example.com"), false);
+	assert.equal(isBlockedHost("", "example.com"), false);
+});
+
+// ---------------------------------------------------------------- page signals
+
+const page = new URL("https://shop.example.co.kr/goods/view?no=1");
+
+test("an empty mount point is a shell; one holding server-rendered markup is not", () => {
+	const shell = '<body><div id="__next"></div><script src="/app.js"></script></body>';
+	assert.equal(pageSignals(shell, page).emptyRoot, true);
+	assert.equal(pageSignals('<div id="root">\n  <!-- app mounts here -->\n</div>', page).emptyRoot, true);
+	// nuxt.com: a lazy comment pattern once stretched from these markers to a later
+	// `--></div>` and called a fully rendered page empty.
+	const ssr = '<div id="__nuxt" class="isolate"><!--[--><!--[--><main><h1>Nuxt</h1><p>Real copy</p></main><!--]--><!--]--></div>';
+	assert.equal(pageSignals(ssr, page).emptyRoot, false);
+	assert.equal(pageSignals('<div id="sidebar"></div>', page).emptyRoot, false, "only framework mount points count");
+});
+
+test("only scripts that run count; data blocks are not code", () => {
+	const html =
+		'<script src="/a.js"></script><script>init()</script>' +
+		'<script type="application/ld+json">{}</script><script type="application/json" id="__NEXT_DATA__">{}</script>';
+	assert.equal(pageSignals(html, page).scripts, 2);
+	assert.equal(pageSignals("<p>no code at all</p>", page).scripts, 0);
+});
+
+test("same-site frames a reader would see are content; players, form targets and hidden frames are not", () => {
+	// The electronics shop's product page, reduced to its four iframes.
+	const html = [
+		'<iframe width="764" height="482" src="https://www.youtube.com/embed/x"></iframe>',
+		'<iframe id="goods_review_frame" src="/goods/review_catalog?goods_seq=1&amp;iframe=1" width="100%" height="500"></iframe>',
+		'<iframe id="goods_qna_frame" src="https://www.example.co.kr/goods/qna_catalog?goods_seq=1" height="500"></iframe>',
+		'<iframe name="actionFrame" src="/main/blank" width="100%" height="0"></iframe>',
+		'<iframe src="/tracker" style="display:none"></iframe>',
+		'<iframe src="javascript:void(0)"></iframe>',
+	].join("");
+	assert.deepEqual(pageSignals(html, page).frames, [
+		"https://shop.example.co.kr/goods/review_catalog?goods_seq=1&iframe=1",
+		"https://www.example.co.kr/goods/qna_catalog?goods_seq=1",
+	]);
+});
+
+test("prose is told apart from labels, links, styling and identifiers", () => {
+	assert.equal(isProse("Learn how to create full-stack web applications with the App Router."), true);
+	assert.equal(isProse("2026년 추석 연휴에 따른 배송영향 및 운영안내"), true, "CJK carries more per character");
+	assert.equal(isProse("Add to cart"), false, "a label");
+	assert.equal(isProse("https://example.com/some/long/path/that/goes/on"), false);
+	// Each of these came out of real flight data next to the copy.
+	assert.equal(isProse("body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid}"), false);
+	assert.equal(isProse("'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Liberation Mono, monospace"), false);
+	assert.equal(isProse("VEU71W_className LH0ceq_className VEU71W_variable LH0ceq_variable"), false);
+	assert.equal(isProse("flex items-center justify-between px-4 py-2 md:px-8 text-sm"), false);
+	assert.equal(isProse("Ships in two days; returns are free for thirty days after delivery."), true, "a semicolon is prose");
+});
+
+test("text is lifted from every data payload MagPi deletes, once, in order", () => {
+	const description = "A compact relay module for switching mains loads from a microcontroller.";
+	const review = "Works exactly as described and arrived well packed, would buy again.";
+	const html = [
+		`<script type="application/ld+json">{"@type":"Product","name":"Relay","url":"https://shop.example/relay-module-with-a-long-path","description":"${description}"}</script>`,
+		`<script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{"className":"flex items-center justify-between px-4","reviews":[{"body":"${review}"},{"body":"${review}"}]}}}</script>`,
+		`<script>self.__next_f.push([1,"1:[\\"$\\",\\"p\\",null,{\\"children\\":\\"Rendered on the server and streamed to the browser in flight rows.\\"}]\\n"])</script>`,
+		'<script>window.__INITIAL_STATE__ = {"faq":[{"answer":"Yes, the coil is rated for continuous duty at five volts."}]};</script>',
+		'<script src="/app.js"></script>',
+	].join("\n");
+	const text = embeddedText(html);
+	assert.deepEqual(text.split("\n\n"), [
+		description,
+		review,
+		"Yes, the coil is rated for continuous duty at five volts.",
+		"Rendered on the server and streamed to the browser in flight rows.",
+	]);
+	assert.ok(!text.includes("shop.example"), "links are not prose");
+	assert.ok(embeddedText(`<script type="application/json">${JSON.stringify({ t: description.repeat(400) })}</script>`).length <= TUNING.escalate.embeddedMaxChars);
+});
+
+// ---------------------------------------------------------------- escalation rule
+
+test("escalation: a shell renders, a short page without scripts stays, frames render", () => {
+	const signals = (over: Partial<typeof NO_SIGNALS>) => ({ ...NO_SIGNALS, scripts: 3, ...over });
+	const big = TUNING.detect.minContentBytes * 10;
+	const thin = TUNING.detect.minContentBytes - 1;
+	const data = "x".repeat(TUNING.escalate.embeddedMinChars);
+	// The catalogue page: 315 bytes of footer around an empty mount point.
+	assert.equal(escalation(315, signals({ emptyRoot: true })).action, "render");
+	assert.equal(escalation(big, signals({ emptyRoot: true })).action, "render", "a long footer is still a footer");
+	assert.equal(escalation(big, signals({ emptyRoot: true, embedded: data })).action, "embedded");
+	assert.equal(escalation(thin, signals({})).action, "render");
+	assert.equal(escalation(thin, signals({ embedded: data })).action, "embedded");
+	assert.equal(escalation(thin, signals({ scripts: 0 })).action, "keep", "nothing can build more text later");
+	assert.equal(escalation(thin, { ...NO_SIGNALS }).action, "render", "unknown scripts count as some");
+	const framed = escalation(big, signals({ frames: ["https://shop.example/review", "https://shop.example/qna"] }));
+	assert.deepEqual(framed, { action: "render", reason: "2 same-site frames hold content the HTML does not" });
+	assert.equal(escalation(big, signals({ frames: ["f"], embedded: data })).action, "render", "frames are not in the data");
+	assert.equal(escalation(big, signals({})).action, "keep");
+});
+
+// ---------------------------------------------------------------- the webpage handler
+
+type Handler = ReturnType<typeof webpageHandler>;
+type Outcome = import("../extensions/magpi-render.ts").RenderOutcome;
+
+/** A MagPi stand-in: canned responses by URL, and a record of what was asked. */
+function fakeMagpi(responses: Record<string, { type?: string; body?: string; status?: number }>) {
+	const gets: Array<{ url: string; accept?: string }> = [];
+	const delegated: string[] = [];
+	let cancelled = 0;
+	const magpi = {
+		defaultHandler: {
+			name: "webpage",
+			description: "Generic webpage",
+			match: () => true,
+			fetch: async (url: URL) => {
+				delegated.push(url.href);
+				return { kind: "pdf", content: "from MagPi" };
+			},
+		},
+		builtinFor: (url: URL) => (url.hostname === "github.com" ? "github" : "webpage"),
+		httpGet: async (url: string, _signal?: AbortSignal, headers?: Record<string, string>) => {
+			gets.push({ url, accept: headers?.accept });
+			const found = responses[url];
+			if (!found || (found.status ?? 200) >= 400) throw new Error(`HTTP ${found?.status ?? 404} for ${url}`);
+			const response = new Response(found.body ?? "", { headers: { "content-type": found.type ?? "text/html" } });
+			const body = response.body;
+			if (body) {
+				const cancel = body.cancel.bind(body);
+				body.cancel = (reason?: unknown) => {
+					cancelled += 1;
+					return cancel(reason);
+				};
+			}
+			return response;
+		},
+		htmlToMarkdown: (html: string) => ({ title: "T", markdown: html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() }),
+	};
+	return { magpi, gets, delegated, cancelled: () => cancelled };
+}
+
+const outcome = (markdown: string): Outcome => ({
+	markdown, frames: 1, settleMs: 4_000, hitCap: false, responses: 10, blocked: 2, tables: 0, structured: 0,
+});
+
+function handlerWith(
+	magpi: ReturnType<typeof fakeMagpi>["magpi"],
+	over: Partial<Parameters<typeof webpageHandler>[0]> = {},
+): Handler {
+	return webpageHandler({ magpi, others: () => [], enabled: () => true, renderer: () => undefined, ...over });
+}
+
+const fetchCtx = { mode: "light" as const, entryDir: "/tmp/unused", exec: undefined };
+const SHELL = '<html><body><footer>(c) shop</footer><div id="__next"></div><script src="/app.js"></script></body></html>';
+const ARTICLE = `<html><body><article>${"Real article text that MagPi reads well. ".repeat(40)}</article></body></html>`;
+
+test("the webpage handler takes only what MagPi's catch-all would have taken", () => {
+	const { magpi } = fakeMagpi({});
+	const reddit = { name: "reddit", match: (url: URL) => url.hostname.endsWith("reddit.com"), fetch: async () => ({ kind: "x", content: "" }) };
+	const broken = { name: "broken", match: () => { throw new Error("bad match"); }, fetch: async () => ({ kind: "x", content: "" }) };
+	let enabled = true;
+	const handler = handlerWith(magpi, { others: () => [reddit, broken], enabled: () => enabled });
+	assert.equal(handler.name, "webpage", "MagPi's registry replaces by name, dropping its own copy");
+	assert.equal(handler.match(new URL("https://example.com/a")), true);
+	assert.equal(handler.match(new URL("https://github.com/a/b")), false, "a built-in claims it");
+	assert.equal(handler.match(new URL("https://www.reddit.com/r/x")), false, "an extension's handler claims it");
+	enabled = false;
+	assert.equal(handler.match(new URL("https://example.com/a")), false, "disabled: MagPi falls back to its own");
+});
+
+test("a page MagPi reads well is returned as MagPi would, from one request asking for markdown", async () => {
+	const fake = fakeMagpi({ "https://example.com/a": { body: ARTICLE } });
+	let rendered = 0;
+	const handler = handlerWith(fake.magpi, {
+		renderer: () => async () => {
+			rendered += 1;
+			return outcome("x");
+		},
+	});
+	const result = await handler.fetch(new URL("https://example.com/a"), fetchCtx);
+	assert.equal(result.kind, "article");
+	assert.equal(result.content, fake.magpi.htmlToMarkdown(ARTICLE).markdown);
+	assert.equal(rendered, 0);
+	assert.equal(fake.gets.length, 1, "no llms.txt probe off the root, no second GET");
+	assert.match(fake.gets[0]?.accept ?? "", /^text\/markdown/);
+});
+
+test("a markdown answer is kept as markdown, titled from its front matter or first heading", async () => {
+	const body = `---\ntitle: "Markdown for Agents"\n---\n\n# Other\n\n${"Converted at the edge. ".repeat(60)}`;
+	const fake = fakeMagpi({ "https://example.com/post": { type: "text/markdown; charset=utf-8", body } });
+	const result = await handlerWith(fake.magpi).fetch(new URL("https://example.com/post"), fetchCtx);
+	assert.deepEqual(result, { kind: "article", title: "Markdown for Agents", content: body.trim() });
+	assert.equal(markdownTitle("intro\n\n# The Heading\n\ntext"), "The Heading");
+	assert.equal(markdownTitle("no heading at all"), undefined);
+});
+
+test("anything that is not an HTML page goes to MagPi's own handler", async () => {
+	const fake = fakeMagpi({ "https://example.com/doc.pdf": { type: "application/pdf", body: "%PDF" } });
+	const handler = handlerWith(fake.magpi);
+	assert.deepEqual(await handler.fetch(new URL("https://example.com/doc.pdf"), fetchCtx), { kind: "pdf", content: "from MagPi" });
+	assert.equal(fake.cancelled(), 1, "the body it will fetch again is not downloaded twice");
+	// An error status is MagPi's too: it owns the Wayback fallback.
+	await handler.fetch(new URL("https://example.com/gone"), fetchCtx);
+	assert.deepEqual(fake.delegated, ["https://example.com/doc.pdf", "https://example.com/gone"]);
+});
+
+test("llms.txt is probed where MagPi probes it; at the root it is the answer, and its absence costs nothing more", async () => {
+	assert.deepEqual(llmsProbes(new URL("https://example.com/docs"), "light"), []);
+	assert.deepEqual(llmsProbes(new URL("https://example.com/docs"), "full"), ["llms-full.txt", "llms.txt"]);
+	const withLlms = fakeMagpi({ "https://example.com/llms.txt": { type: "text/plain", body: "# Site\n> summary" } });
+	assert.deepEqual(await handlerWith(withLlms.magpi).fetch(new URL("https://example.com/"), fetchCtx), {
+		kind: "llms-txt",
+		content: "# Site\n> summary",
+	});
+	const without = fakeMagpi({ "https://example.com/": { body: ARTICLE } });
+	const result = await handlerWith(without.magpi).fetch(new URL("https://example.com/"), fetchCtx);
+	assert.equal(result.kind, "article");
+	assert.deepEqual(without.gets.map((get) => get.url), ["https://example.com/llms.txt", "https://example.com/"], "one GET of the page");
+});
+
+test("a shell is rendered in the same call, and says why", async () => {
+	const fake = fakeMagpi({ "https://example.com/p": { body: SHELL } });
+	const asked: string[] = [];
+	const handler = handlerWith(fake.magpi, {
+		renderer: () => async (url: URL) => {
+			asked.push(url.href);
+			return outcome(`# p\n\n${"Rendered product data. ".repeat(30)}`);
+		},
+	});
+	const result = await handler.fetch(new URL("https://example.com/p"), fetchCtx);
+	assert.deepEqual(asked, ["https://example.com/p"]);
+	assert.equal(result.kind, "rendered");
+	assert.equal(result.title, "T", "MagPi's title stays");
+	assert.match(result.content, /^# p\n\nRendered product data\./);
+	assert.match(result.content, /<!-- rendered because the page's mount point is empty in the server's HTML: 1 frame, .*2 trackers blocked/);
+});
+
+test("when rendering fails or finds less, MagPi's answer stands", async () => {
+	const fake = fakeMagpi({ "https://example.com/p": { body: SHELL } });
+	const base = fake.magpi.htmlToMarkdown(SHELL).markdown;
+	const failing = handlerWith(fake.magpi, {
+		renderer: () => async () => {
+			throw new Error("Rendered it and got 12 characters: the page served a bot check --> retry");
+		},
+	});
+	const failed = await failing.fetch(new URL("https://example.com/p"), fetchCtx);
+	assert.equal(failed.kind, "article");
+	assert.ok(failed.content.startsWith(base));
+	assert.match(failed.content, /rendering failed: .*bot check/);
+	assert.equal((failed.content.match(/-->/g) ?? []).length, 1, "the error cannot close the comment early");
+	const smaller = handlerWith(fake.magpi, { renderer: () => async () => outcome("x") });
+	assert.equal((await smaller.fetch(new URL("https://example.com/p"), fetchCtx)).content, base);
+	const noBrowser = handlerWith(fake.magpi);
+	assert.equal((await noBrowser.fetch(new URL("https://example.com/p"), fetchCtx)).content, base);
+});
+
+test("a shell whose data carries its text is completed without a browser", async () => {
+	const prose = "Detailed product description that the page hands its scripts as data. ";
+	const html = SHELL.replace(
+		"</body>",
+		`<script type="application/ld+json">${JSON.stringify({ "@type": "Product", description: prose.repeat(30) })}</script></body>`,
+	);
+	const fake = fakeMagpi({ "https://example.com/p": { body: html } });
+	let rendered = 0;
+	const handler = handlerWith(fake.magpi, {
+		renderer: () => async () => {
+			rendered += 1;
+			return outcome("x");
+		},
+	});
+	const result = await handler.fetch(new URL("https://example.com/p"), fetchCtx);
+	assert.equal(rendered, 0);
+	assert.equal(result.kind, "article");
+	assert.match(result.content, /## Text from the page's embedded data\n\nDetailed product description/);
+	assert.match(result.content, /magpi_fetch_rendered reads it as displayed/);
+});
+
+// ---------------------------------------------------------------- the real MagPi
+
+/**
+ * The webpage handler imports MagPi's source by path and repeats its llms.txt probe, and
+ * a MagPi update can move either. Node's type stripping refuses `.ts` under
+ * `node_modules`, so this loads them the way pi does, through pi's own jiti.
+ */
+test("the installed MagPi still has what the webpage handler is built on", async (t) => {
+	const magpiDir = join(CONFIG_DIR, "npm", "node_modules", "pi-magpi");
+	const jitiEntry = join(dirname(dirname(piPackageDir())), "jiti", "lib", "jiti.mjs");
+	if (!existsSync(magpiDir) || !existsSync(jitiEntry)) {
+		t.skip("pi-magpi or pi's jiti is not installed here");
+		return;
+	}
+	const { createJiti } = (await import(pathToFileURL(jitiEntry).href)) as {
+		createJiti: (from: string, options: object) => { import: (id: string) => Promise<unknown> };
+	};
+	const jiti = createJiti(import.meta.url, { moduleCache: false });
+	const extension = (await jiti.import(join(CONFIG_DIR, "extensions", "magpi-render.ts"))) as typeof renderModule;
+	const internals = await extension.loadMagpiInternals();
+	assert.ok(internals, "MagPi's default handler, registry, httpGet or htmlToMarkdown moved");
+	assert.equal(internals.builtinFor(new URL("https://github.com/a/b")), "github");
+	assert.equal(internals.builtinFor(new URL("https://example.com/a")), "webpage");
+	assert.match(internals.htmlToMarkdown(ARTICLE).markdown, /Real article text/);
+	const source = readFileSync(join(magpiDir, "src", "handlers", "handler.ts"), "utf8");
+	assert.ok(
+		source.includes('probes = ["llms-full.txt", "llms.txt"]') && source.includes('url.pathname === "/") probes = ["llms.txt"]'),
+		"MagPi changed its llms.txt probe; update llmsProbes() to match",
+	);
 });

@@ -6,9 +6,8 @@
 // as patches and replays them in first-seen order: a section added later in a session
 // lands after the existing ones. When the two disagree, the bridge's exact-match
 // lookup fails with "prompt-capture: no capture for this N-char system prompt"
-// (upstream elidickinson/pi-claude-bridge#153, still open in 0.9.3). Seen here when
-// /reload connected pi-telegram in a session whose transcript already had pi's
-// `mcp_servers`: the builder put `telegram` first, the replay put it last.
+// (upstream elidickinson/pi-claude-bridge#153). For example, pi-telegram connecting
+// mid-session: the builder puts `telegram` before pi's `mcp_servers`, the replay after.
 //
 // Built-in extensions such as pi's MCP load after every file-based one, so this
 // handler cannot run last. It pre-inserts the transcript's names in replay order
