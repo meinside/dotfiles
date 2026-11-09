@@ -30,6 +30,36 @@
         }
       ]
     },
+    "exaone": {
+      "baseUrl": "https://api.exaone.ai/v1",
+      "api": "openai-completions",
+      "compat": {
+        "supportsDeveloperRole": false,
+        "supportsReasoningEffort": true,
+        "thinkingFormat": "openai",
+        "maxTokensField": "max_tokens"
+      },
+      "models": [
+        {
+          "id": "k-exaone_v2.5",
+          "name": "K-EXAONE 2.5",
+          "reasoning": true,
+          "input": ["text"],
+          "contextWindow": 491520,
+          "maxTokens": 32768,
+          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+          "thinkingLevelMap": {
+            "off": null,
+            "minimal": "low",
+            "low": "low",
+            "medium": "high",
+            "high": "high",
+            "xhigh": "max",
+            "max": "max"
+          }
+        }
+      ]
+    },
     "llama.cpp": {
       "modelOverrides": {
         "orcarouter/Qwen3.8-27B-Uncensored-GGUF:Q4_K_M": {

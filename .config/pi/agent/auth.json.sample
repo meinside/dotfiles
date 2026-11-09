@@ -33,5 +33,9 @@
   "openrouter": {
     "type": "api_key",
     "key": "<<<OPENROUTER_API_KEY>>>"
+  },
+  "exaone": {
+    "type": "api_key",
+    "key": "<<<LG_EXAONE_API_KEY>>>"
   }
 }

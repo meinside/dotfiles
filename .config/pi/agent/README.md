@@ -556,6 +556,17 @@ points at is `models.json`'s business; `check.sh` prints it.
 - **Prefer GGUF tags over `-mlx`.** The MLX runner is text-only despite advertising
   vision, and slows down as context grows.
 
+## EXAONE provider
+
+LG AI Research's K-EXAONE 2.5 ([API docs](https://docs.exaone.ai/en/docs/k-exaone-2.5)), a
+hand-written OpenAI-compatible provider with no tier. The key goes in `auth.json` as
+`"exaone": { "type": "api_key", "key": "..." }`.
+
+- **`contextWindow` is 512K minus `maxTokens`.** The API rejects a request whose input
+  plus `max_tokens` exceeds 524,288, so pi must compact before that sum reaches it.
+- **`thinkingLevelMap.off` is `null`.** `reasoning_effort` takes only `low`/`high`/`max`
+  and an omitted one means `max`, so thinking cannot be turned off.
+
 ## llama.cpp provider
 
 Not a hand-written provider: pi ships a hidden built-in extension registering the

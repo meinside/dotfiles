@@ -15,7 +15,8 @@
     "llama.cpp/**",
     "nvidia/**",
     "ollama/*",
-    "openrouter/**"
+    "openrouter/**",
+    "exaone/*"
   ],
   "defaultTools": ["+codemode"],
   "defaultThinkingLevel": "medium",
