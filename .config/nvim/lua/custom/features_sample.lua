@@ -8,11 +8,10 @@
 --
 -- and edit it)
 --
--- last update: 2026.07.09.
+-- last update: 2026.11.10.
 
 return {
 	linter = false,
-	code_assistance = false, -- eg. codeium, or etc.
 
 	-- Controls low-performance mode (disables heavy plugins like LSP/DAP,
 	-- and shrinks the treesitter parser set).

@@ -4,7 +4,7 @@
 --
 -- https://www.lazyvim.org/keymaps
 --
--- last update: 2026.05.11.
+-- last update: 2026.11.10.
 
 -- copy, paste below, and comment the current line
 vim.keymap.set("n", "ycc", "yygccp", {
@@ -82,19 +82,6 @@ end, { desc = "minimap: Toggle" })
 -- (code actions)
 --
 -- `\ca` for showing code action previews
-
--- (codeium)
---
-if require("custom").features().code_assistance then
-	-- alt-e: cycle through suggestions
-	vim.keymap.set("i", "<A-e>", function()
-		require("neocodeium").cycle_or_complete()
-	end, { desc = "Neocodeium: Cycle through suggestions" })
-	-- alt-f: accept
-	vim.keymap.set("i", "<A-f>", function()
-		require("neocodeium").accept()
-	end, { desc = "Neocodeium: Accept suggestion" })
-end
 
 -- (snacks.nvim)
 --
