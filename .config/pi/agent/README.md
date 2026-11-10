@@ -84,7 +84,7 @@ pi ships no built-in sub-agents, so tiered model usage comes from the upstream
 - **Upstream repo:** <https://github.com/earendil-works/pi>
 - **Upstream path:** `packages/coding-agent/examples/extensions/subagent/`
 - **Local copy of upstream:** resolved by `tests/lib.ts`'s `piPackageDir()` — `brew --prefix pi-coding-agent`, else the real path of the `pi` binary on `PATH` (npm installs), else that binary's managed-install release (`pi.dev/install.sh`)
-- **Vendored from:** pi 1.3.0
+- **Vendored from:** pi 1.5.1
 
 Each delegation spawns a separate `pi` process with its own context window. Agents
 come from `agents/*.md`.

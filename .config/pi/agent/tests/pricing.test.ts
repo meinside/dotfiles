@@ -32,29 +32,33 @@ function catalogCosts(node: unknown, out = new Map<string, Cost>()): Map<string,
 
 const number = (value: unknown): number => Number(value ?? 0);
 
-test("bedrock prices agree with pi's catalog", (t) => {
-	const catalog = readJson<unknown>("models-store.json");
-	const real = readJson<ModelsConfig>("models.json");
-	if (!catalog || !real) return t.skip("models-store.json or models.json unreadable");
+// The sample is checked too: its `amazon-bedrock` block is a template the real file
+// usually lacks, so it drifts unnoticed otherwise.
+for (const file of ["models.json", "models.json.sample"]) {
+	test(`${file}: bedrock prices agree with pi's catalog`, (t) => {
+		const catalog = readJson<unknown>("models-store.json");
+		const config = readJson<ModelsConfig>(file);
+		if (!catalog || !config) return t.skip(`models-store.json or ${file} unreadable`);
 
-	const costs = catalogCosts(catalog);
-	const models = real.providers?.["amazon-bedrock"]?.models ?? [];
-	for (const model of models) {
-		const slug = /\(([^)]+)\)/.exec(String(model?.name ?? ""))?.[1];
-		const mine = model?.cost;
-		if (!slug || !mine) continue;
+		const costs = catalogCosts(catalog);
+		const models = config.providers?.["amazon-bedrock"]?.models ?? [];
+		for (const model of models) {
+			const slug = /\(([^)]+)\)/.exec(String(model?.name ?? ""))?.[1];
+			const mine = model?.cost;
+			if (!slug || !mine) continue;
 
-		const hit = [...costs.keys()].sort().find((id) => PREFIXES.some((prefix) => id.startsWith(prefix + slug)));
-		if (!hit) {
-			t.diagnostic(`${slug}: not in pi's catalog; verify against the AWS pricing page`);
-			continue;
+			const hit = [...costs.keys()].sort().find((id) => PREFIXES.some((prefix) => id.startsWith(prefix + slug)));
+			if (!hit) {
+				t.diagnostic(`${slug}: not in pi's catalog; verify against the AWS pricing page`);
+				continue;
+			}
+			const theirs = costs.get(hit) ?? {};
+			const off = FIELDS.filter((field) => Math.abs(number(mine[field]) - number(theirs[field])) > 1e-9);
+			t.diagnostic(
+				off.length
+					? `${slug}: differs from catalog on ${off.map((f) => `${f} ${mine[f]} vs ${theirs[f]}`).join(", ")}`
+					: `${slug} ${FIELDS.map((f) => mine[f]).join("/")} per 1M`,
+			);
 		}
-		const theirs = costs.get(hit) ?? {};
-		const off = FIELDS.filter((field) => Math.abs(number(mine[field]) - number(theirs[field])) > 1e-9);
-		t.diagnostic(
-			off.length
-				? `${slug}: differs from catalog on ${off.map((f) => `${f} ${mine[f]} vs ${theirs[f]}`).join(", ")}`
-				: `${slug} ${FIELDS.map((f) => mine[f]).join("/")} per 1M`,
-		);
-	}
-});
+	});
+}
