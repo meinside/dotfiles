@@ -3,17 +3,19 @@
 # my zsh functions
 #
 # created on 2014.10.06.
-# updated on 2026.06.16.
+# updated on 2026.11.11.
 
 # list files changed in given days
 # (referenced: http://gotofritz.net/blog/howto/finding-recently-changed-files-osx-terminal/)
 ls-changed-in-days () {
-	if [[ $1 && -x $2 ]]; then
+	if [[ $1 == <-> && -d $2 ]]; then
 		echo "> listing files modified in $1 day(s): $2"
 
-		find $2 -type f -mtime -$1 -print0 | xargs -0 du -sk | sort -nr
+		# -exec ... + instead of xargs: GNU xargs runs `du` on cwd when nothing matches
+		find "$2" -type f -mtime "-$1" -exec du -sk {} + | sort -nr
 	else
 		echo "* usage: $0 NUM_DAYS DIR_PATH"
+		return 1
 	fi
 }
 
@@ -24,14 +26,14 @@ update-macos () {
 	softwareupdate --all --install --force
 
 	# mac appstore
-	if [[ -x `which mas` ]]; then
+	if (( $+commands[mas] )); then
 		echo
 		echo "> updating Mac App Store apps..."
 		mas upgrade
 	fi
 
 	# homebrew
-	if [[ -x `which brew` ]]; then
+	if (( $+commands[brew] )); then
 		echo
 		echo "> updating brew..."
 		brew update
@@ -64,34 +66,52 @@ update-linux () {
 	fi
 }
 
-# update bundle, brew, brew cask and everything!
+# update OS packages, go packages, oh-my-zsh, asdf plugins, and this repository
+# (--clean: also clean go module/build caches)
 update-all () {
+	local clean=false
+	local arg
+	for arg in "$@"; do
+		case "$arg" in
+			--clean) clean=true ;;
+			*)
+				echo "* usage: $0 [--clean]"
+				return 1
+				;;
+		esac
+	done
+
 	case "$OSTYPE" in
 		darwin*) update-macos ;;
 		linux-android) update-termux ;;
 		linux*) update-linux ;;
 	esac
 
-	# update go packages and clean module caches
-	if [[ -x `which goget` ]]; then
+	# update go packages (and clean module caches with --clean)
+	if (( $+commands[goget] )); then
 		echo
 		echo "> updating go packages..."
 		goget
 
-		echo
-		echo "> cleaning go module caches..."
-		go clean -modcache
+		if [[ $clean == true ]]; then
+			echo
+			echo "> cleaning go module caches..."
+			go clean -modcache
 
-		echo
-		echo "> cleaning go caches..."
-		go clean -cache
+			echo
+			echo "> cleaning go caches..."
+			go clean -cache
+		fi
 	fi
 
-	# upgrade oh-my-zsh
-	omz update
+	# upgrade oh-my-zsh (`omz` is a shell function, not a command)
+	if (( $+functions[omz] )); then
+		omz update
+	fi
 
 	# update asdf plugins
-	if [[ -d "$ASDF_DIR/bin" ]]; then
+	# (not checking $ASDF_DIR: unused since asdf v0.16, and "$ASDF_DIR/bin" becomes /bin when empty)
+	if (( $+commands[asdf] )); then
 		#asdf update # NOTE: does not work since v0.16.0 of asdf-vm
 
 		asdf plugin update --all
@@ -101,15 +121,22 @@ update-all () {
 		asdf latest --all | grep missing
 	fi
 
-	# pull this repository
-	(
-		cd ~ && git checkout master && git pull origin master
-	)
+	# pull this repository (only when on master, fast-forward only)
+	local branch
+	branch=$(git -C ~ symbolic-ref --short -q HEAD)
+	if [[ $branch == master ]]; then
+		echo
+		echo "> pulling ~..."
+		git -C ~ pull --ff-only origin master
+	else
+		echo
+		echo "* not on master (${branch:-detached HEAD}), skipped pulling ~"
+	fi
 }
 
 # list go imports
 list-go-imports () {
-	if [[ $1 && $1 == '--all' ]]; then
+	if [[ $1 == '--all' ]]; then
 		# show all (including standard packages)
 		go list -f '{{join .Deps "\n"}}' | xargs go list -f '{{.ImportPath}}'
 	else
