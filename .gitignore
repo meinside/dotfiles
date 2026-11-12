@@ -1,6 +1,6 @@
 # ~/.gitignore
 #
-# last update: 2026.10.14.
+# last update: 2026.11.12.
 
 # unnecessary binary files
 *.a
@@ -251,6 +251,7 @@ VirtualBox VMs/
 .davmail.properties
 .eclrc
 .gnupg/
+.keys/
 .selected_editor
 .zsh-update
 
