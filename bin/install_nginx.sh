@@ -221,6 +221,12 @@ function build {
 	cd "$NGINX_SRC_DIR"
 
 	# configure,
+	#
+	# --api=4.0 bounds `no-deprecated`: without it, no-deprecated strips every API
+	# deprecated up to the bundled OpenSSL version. OpenSSL 4.1 deprecated
+	# X509_check_host, X509_check_ip and ASN1_STRING_length, which nginx still
+	# calls, so the build fails with implicit-declaration errors. Raise this only
+	# once nginx stops using APIs deprecated in the newer version.
 	warn ">>> configuring nginx..."
 	./auto/configure \
 		--user=www-data \
@@ -237,7 +243,7 @@ function build {
 		--with-stream \
 		--with-stream_ssl_module \
 		--with-openssl="${OPENSSL_SRC_DIR}" \
-		--with-openssl-opt="no-nextprotoneg no-weak-ssl-ciphers no-ssl3 no-ssl3-method no-tls1 no-tls1_1 no-comp no-idea no-mdc2 no-rc2 no-rc4 no-rc5 no-deprecated no-shared ${ecflag} -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
+		--with-openssl-opt="--api=4.0 no-nextprotoneg no-weak-ssl-ciphers no-ssl3 no-ssl3-method no-tls1 no-tls1_1 no-comp no-idea no-mdc2 no-rc2 no-rc4 no-rc5 no-deprecated no-shared ${ecflag} -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
 		--with-pcre="${PCRE_SRC_DIR}" \
 		--with-zlib="${ZLIB_SRC_DIR}" \
 		--with-http_v3_module \
