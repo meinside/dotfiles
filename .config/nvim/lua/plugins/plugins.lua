@@ -321,7 +321,7 @@ return {
 			},
 			notifier = {
 				-- FIXME: for disabling Snacks notifier temporarily
-				-- (eg. for not truncating url from :NeoCodeium auth)
+				-- (eg. for not truncating long urls in notifications)
 				--enabled = false,
 				enabled = true,
 			},

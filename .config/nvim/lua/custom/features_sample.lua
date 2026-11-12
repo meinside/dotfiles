@@ -8,10 +8,12 @@
 --
 -- and edit it)
 --
--- last update: 2026.11.10.
+-- last update: 2026.11.12.
 
 return {
 	linter = false,
+
+	code_assistance = false, -- eg. github copilot, or etc.
 
 	-- Controls low-performance mode (disables heavy plugins like LSP/DAP,
 	-- and shrinks the treesitter parser set).

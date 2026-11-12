@@ -173,7 +173,7 @@ return {
 
 	-- code generation & completion
 	--
-	-- NOTE: 'monkoose/neocodeium' is enabled in ./genai.lua
+	-- NOTE: 'github/copilot.vim' is enabled in ./genai.lua
 
 	-- screenshot codeblocks
 	{
