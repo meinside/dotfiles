@@ -3,7 +3,7 @@
 # https://github.com/asdf-vm/asdf-plugins
 #
 # created on : 2022.04.14.
-# last update: 2026.11.11.
+# last update: 2026.11.13.
 
 # $ asdf plugin add babashka
 # $ asdf install babashka
@@ -138,7 +138,7 @@ ninja 1.13.2
 # $ asdf install nodejs
 #
 # https://nodejs.org/en/about/releases/
-nodejs 26.13.0
+nodejs 26.13.1
 
 # $ asdf plugin add python
 # $ asdf install python
@@ -171,7 +171,7 @@ ruby 4.0.9
 #   :MasonInstall rust-analyzer
 #
 # https://github.com/rust-lang/rust/releases
-rust 1.99.1
+rust 1.100.0
 
 # $ asdf plugin add tinygo https://github.com/troyjfarrell/asdf-tinygo
 # $ asdf install tinygo
