@@ -3,7 +3,7 @@
 # my zsh functions
 #
 # created on 2014.10.06.
-# updated on 2026.11.11.
+# updated on 2026.11.18.
 
 # list files changed in given days
 # (referenced: http://gotofritz.net/blog/howto/finding-recently-changed-files-osx-terminal/)
@@ -42,6 +42,7 @@ update-macos () {
 		echo
 		echo "> cleaning brew..."
 		brew cleanup
+		brew autoremove
 	else
 		echo
 		echo "* brew not installed"
@@ -61,12 +62,20 @@ update-linux () {
 			sudo apt-get -y autoremove && \
 			sudo apt-get -y autoclean
 	elif [ -x /usr/bin/pacman ]; then
-		sudo pacman -Syu && \
+		sudo pacman -Syu || return
+
+		# paccache comes from the separate pacman-contrib package
+		if (( $+commands[paccache] )); then
 			sudo paccache -ruk0
+		fi
+	else
+		echo
+		echo "* no supported package manager (apt-get, pacman) found"
 	fi
 }
 
-# update OS packages, go packages, oh-my-zsh, asdf plugins, and this repository
+# pull this repository, then update OS packages, go packages, pipx packages,
+# neovim plugins, oh-my-zsh, and asdf plugins
 # (--clean: also clean go module/build caches)
 update-all () {
 	local clean=false
@@ -80,6 +89,24 @@ update-all () {
 				;;
 		esac
 	done
+
+	# pull this repository first, so the steps below use its latest
+	# ~/.gogets, asdf tool-versions, etc. (only when on master, fast-forward only)
+	local branch
+	if ! (( $+commands[git] )); then
+		echo
+		echo "* git not installed, skipped pulling ~"
+	elif ! git -C ~ rev-parse --git-dir &>/dev/null; then
+		echo
+		echo "* ~ is not a git repository, skipped pulling ~"
+	elif branch=$(git -C ~ symbolic-ref --short -q HEAD); [[ $branch == master ]]; then
+		echo
+		echo "> pulling ~..."
+		git -C ~ pull --ff-only origin master
+	else
+		echo
+		echo "* not on master (${branch:-detached HEAD}), skipped pulling ~"
+	fi
 
 	case "$OSTYPE" in
 		darwin*) update-macos ;;
@@ -104,8 +131,24 @@ update-all () {
 		fi
 	fi
 
+	# upgrade pipx packages
+	if (( $+commands[pipx] )); then
+		echo
+		echo "> upgrading pipx packages..."
+		pipx upgrade-all
+	fi
+
+	# update neovim plugins (only when lazy.nvim is installed)
+	if (( $+commands[nvim] )) && [[ -d ${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy ]]; then
+		echo
+		echo "> updating neovim plugins..."
+		nvim --headless '+Lazy! sync' +qa
+	fi
+
 	# upgrade oh-my-zsh (`omz` is a shell function, not a command)
 	if (( $+functions[omz] )); then
+		echo
+		echo "> upgrading oh-my-zsh..."
 		omz update
 	fi
 
@@ -114,23 +157,22 @@ update-all () {
 	if (( $+commands[asdf] )); then
 		#asdf update # NOTE: does not work since v0.16.0 of asdf-vm
 
+		echo
+		echo "> updating asdf plugins..."
 		asdf plugin update --all
 		asdf reshim
 
-		# list outdated ones
-		asdf latest --all | grep missing
-	fi
-
-	# pull this repository (only when on master, fast-forward only)
-	local branch
-	branch=$(git -C ~ symbolic-ref --short -q HEAD)
-	if [[ $branch == master ]]; then
+		# list ones whose latest version is not installed
+		# (`asdf latest --all` prints: NAME<TAB>VERSION<TAB>installed|missing)
 		echo
-		echo "> pulling ~..."
-		git -C ~ pull --ff-only origin master
-	else
-		echo
-		echo "* not on master (${branch:-detached HEAD}), skipped pulling ~"
+		echo "> checking outdated asdf tools..."
+		local outdated
+		outdated=$(asdf latest --all | awk '$3 == "missing"')
+		if [[ -n $outdated ]]; then
+			echo "$outdated"
+		else
+			echo "(all up to date)"
+		fi
 	fi
 }
 
