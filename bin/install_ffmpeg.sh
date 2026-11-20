@@ -4,7 +4,7 @@
 #
 # for building ffmpeg from source code.
 #
-# last update: 2026.08.06.
+# last update: 2026.11.20.
 
 set -euo pipefail
 
@@ -15,7 +15,7 @@ set -euo pipefail
 # frequently updated values
 
 # https://github.com/FFmpeg/FFmpeg/tags
-readonly FFMPEG_VERSION="n9.0" # XXX - edit for newer ffmpeg version
+readonly FFMPEG_VERSION="n9.1" # XXX - edit for newer ffmpeg version
 
 ################################
 #
