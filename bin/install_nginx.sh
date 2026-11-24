@@ -227,6 +227,11 @@ function build {
 	# X509_check_host, X509_check_ip and ASN1_STRING_length, which nginx still
 	# calls, so the build fails with implicit-declaration errors. Raise this only
 	# once nginx stops using APIs deprecated in the newer version.
+	#
+	# no-tests: nginx builds OpenSSL with a bare `make`, which also builds the
+	# hundreds of test programs; with no-shared each one statically links
+	# libcrypto, filling >1GB and failing with "No space left on device".
+	# nginx only needs libssl.a and libcrypto.a.
 	warn ">>> configuring nginx..."
 	./auto/configure \
 		--user=www-data \
@@ -243,7 +248,7 @@ function build {
 		--with-stream \
 		--with-stream_ssl_module \
 		--with-openssl="${OPENSSL_SRC_DIR}" \
-		--with-openssl-opt="--api=4.0 no-nextprotoneg no-weak-ssl-ciphers no-ssl3 no-ssl3-method no-tls1 no-tls1_1 no-comp no-idea no-mdc2 no-rc2 no-rc4 no-rc5 no-deprecated no-shared ${ecflag} -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
+		--with-openssl-opt="--api=4.0 no-tests no-nextprotoneg no-weak-ssl-ciphers no-ssl3 no-ssl3-method no-tls1 no-tls1_1 no-comp no-idea no-mdc2 no-rc2 no-rc4 no-rc5 no-deprecated no-shared ${ecflag} -DOPENSSL_NO_HEARTBEATS -fstack-protector-strong" \
 		--with-pcre="${PCRE_SRC_DIR}" \
 		--with-zlib="${ZLIB_SRC_DIR}" \
 		--with-http_v3_module \
